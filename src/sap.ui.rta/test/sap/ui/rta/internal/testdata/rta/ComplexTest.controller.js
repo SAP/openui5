@@ -1,20 +1,14 @@
 sap.ui.define([
-	"sap/base/Log",
 	"sap/m/MessageToast",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/fl/Utils",
 	"sap/ui/core/Element"
 ], function(
-	Log,
 	MessageToast,
 	Controller,
-	MockServer,
 	Fragment,
 	JSONModel,
-	FlUtils,
 	Element
 ) {
 	"use strict";
@@ -36,45 +30,11 @@ sap.ui.define([
 
 		onInit() {
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
-			const oManifest = FlUtils.getAppComponentForControl(this.getView()).getManifest();
-			const iServerDelay = new URLSearchParams(window.location.search).get("serverDelay");
 
-			const iAutoRespond = iServerDelay || 1000;
-			const oDataSources = oManifest["sap.app"].dataSources;
-
-			MockServer.config({
-				autoRespond: true,
-				autoRespondAfter: iAutoRespond
-			});
-
-			for (const property in oDataSources) {
-				if (oDataSources.hasOwnProperty(property)) {
-					const dataSource = oDataSources[property];
-
-					if (dataSource.settings && dataSource.settings.localUri) {
-						if (typeof dataSource.type === "undefined" || dataSource.type === "OData") {
-							const oMockServer = new MockServer({
-								rootUri: dataSource.uri
-							});
-							const sMetadataUrl = this._sResourcePath + dataSource.settings.localUri;
-							const sMockServerPath = sMetadataUrl.slice(0, sMetadataUrl.lastIndexOf("/") + 1);
-							const aEntities = dataSource.settings.aEntitySetsNames ? dataSource.settings.aEntitySetsNames : [];
-							oMockServer.simulate(sMetadataUrl, {
-								sMockdataBaseUrl: sMockServerPath,
-								bGenerateMissingMockData: true,
-								aEntitySetsNames: aEntities
-							});
-							oMockServer.start();
-							Log.info(`Running the app with mock data for ${property}`);
-						}
-					} else {
-						Log.error(`Running the app with mock data for ${property}`);
-					}
-				}
-			}
-
-			// Models are defined in the manifest and created by the Component framework
-			// so that sap.ui.fl can apply annotation changes via the modelCreatedHook.
+			// The OData models are defined in the manifest and created by the Component
+			// framework (so sap.ui.fl can apply annotation changes via the modelCreatedHook).
+			// The MockServers for those models are started before the Component is created,
+			// see mockserver.js.
 			const oView = this.getView();
 
 			const oTableModel = new JSONModel();

@@ -922,15 +922,29 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Sets the maxLines property on the appShortcut and systemInfo Text controls.
+	 *
+	 * Default assignment:
+	 *   - OneByOne, OneByHalf, TwoByHalf, TwoByOne → maxLines = 1
+	 *   - All other frame types (TwoByTwo, …) → maxLines = 2
+	 *
+	 * Exception — bump one value to maxLines = 2 when text exceeds 11 characters
+	 * (applies to TwoByHalf IconMode only):
+	 *   - appShortcut > 11 chars (or both > 11): appShortcut = 2, systemInfo = 1
+	 *   - only systemInfo > 11 chars: appShortcut = 1, systemInfo = 2
+	 *   - appShortcut has priority so it gets the extra line first.
+	 * @private
+	 */
 	GenericTile.prototype._setMaxLines = function() {
 		var sFrameType = this.getFrameType(),
-			iLines = sFrameType === FrameType.OneByOne || sFrameType === FrameType.TwoByHalf ? 1 : 2;
+			iLines = sFrameType === FrameType.OneByOne || sFrameType === FrameType.TwoByHalf || sFrameType === FrameType.TwoByOne || sFrameType === FrameType.OneByHalf ? 1 : 2;
 
 		//Default maxLines
 		this._oAppShortcut.setMaxLines(iLines);
 		this._oSystemInfo.setMaxLines(iLines);
 
-		if (this.getFrameType() === FrameType.TwoByHalf) {
+		if (this.getFrameType() === FrameType.TwoByHalf && this._isIconMode()) {
 			var bAppShortcutMore = this.getAppShortcut().length > 11,
 				bSystemInfoMore = this.getSystemInfo().length > 11;
 
@@ -1558,6 +1572,7 @@ sap.ui.define([
 		// when subheader is available, the header can have maximal 4 lines and the subheader can have 1 line
 		// when subheader is unavailable, the header can have maximal 5 lines
 
+		this._bIsImageContent = false;
 		var frameType = this.getFrameType();
 		if (this._isIconMode()) {
 			var iHeaderLines,iSubHeaderLines;
@@ -1569,7 +1584,7 @@ sap.ui.define([
 			}
 			this._oTitle.setMaxLines(iHeaderLines);
 			this._oSubTitle.setMaxLines(iSubHeaderLines);
-		} else if (frameType === FrameType.TwoByOne && (this.getLinkTileContents() > 0 || this.getMode() === GenericTileMode.ActionMode)) {
+		} else if (frameType === FrameType.TwoByOne && (this.getLinkTileContents().length > 0 || this.getMode() === GenericTileMode.ActionMode)) {
 			this._oTitle.setMaxLines(2);
 		} else if (frameType === FrameType.OneByHalf || frameType === FrameType.TwoByHalf) {
 			this._oTitle.setMaxLines(2);
@@ -1591,32 +1606,35 @@ sap.ui.define([
 	GenericTile.prototype._applyContentMode = function (bSubheader) {
 		// If the FrameType is OneByOne or TwoByOne and the subheader is available, the header can have a maximum of 2 lines and the subheader can have only 1 line.
 		// If the FrameType is OneByOne or TwoByOne and the subheader is unavailable, the header can have a maximum of 3 lines.
-		// If the FrameType is OneByHalf or TwoByHalf and the content is available, the header can have a maximum of 1 line.
+		// If the FrameType is OneByHalf or TwoByHalf and content is available with subtitle: header has max 1 line.
+		// If the FrameType is OneByHalf or TwoByHalf and content is available without subtitle: header has max 2 lines.
 		// If the FrameType is OneByHalf or TwoByHalf and the content is unavailable, the header can have a maximum of 2 lines.
 
 		var frameType = this.getFrameType();
 		var aTileContent = this.getTileContent();
 		var bIsImageContent = false;
+		var bIsNumericContent = false;
 
 		if (frameType === FrameType.TwoByHalf || frameType === FrameType.OneByHalf) {
 			if (aTileContent.length) {
 				for (var i = 0; i < aTileContent.length; i++) {
 					var aTileCnt = aTileContent[i].getAggregation('content');
 					if (aTileCnt !== null) {
-						if ((frameType === FrameType.OneByHalf && aTileCnt.getMetadata().getName() === "sap.m.ImageContent")) {
+						if (aTileCnt.getMetadata().getName() === "sap.m.ImageContent") {
 							bIsImageContent = true;
-							this._oTitle.setMaxLines(2);
-							break;
-						} else {
-							this._oTitle.setMaxLines(1);
-							break;
+						} else if (frameType === FrameType.OneByHalf && aTileCnt.getMetadata().getName() === "sap.m.NumericContent") {
+							bIsNumericContent = true;
 						}
+						this._oTitle.setMaxLines(bSubheader ? 1 : 2);
+						break;
 					}
-					this._oTitle.setMaxLines(2);
+					this._oTitle.setMaxLines(bSubheader ? 1 : 2);
 				}
 			} else {
-				this._oTitle.setMaxLines(2);
+				this._oTitle.setMaxLines(bSubheader ? 1 : 2);
 			}
+			this._bIsImageContent = bIsImageContent;
+			this._bIsNumericContent = bIsNumericContent;
 		} else if (frameType === FrameType.TwoByOne && (this.getLinkTileContents().length > 0 || this.getMode() === GenericTileMode.ActionMode)) {
 			var bIsPriorityPresent = this.isA("sap.m.ActionTile") && this.getProperty("priority") && this.getProperty("priorityText");
 			if (bSubheader && !bIsPriorityPresent) {
@@ -1630,7 +1648,7 @@ sap.ui.define([
 			this._oTitle.setMaxLines(3);
 		}
 
-		this._changeTileContentContentVisibility(true, frameType, bIsImageContent);
+		this._changeTileContentContentVisibility(true, frameType, bIsImageContent, bIsNumericContent);
 	};
 
 	/**
@@ -1639,13 +1657,14 @@ sap.ui.define([
 	 * @param {boolean} visible Determines if the content should be made visible or not
 	 * @private
 	 */
-	GenericTile.prototype._changeTileContentContentVisibility = function (visible, frameType, bIsImageContent) {
+	GenericTile.prototype._changeTileContentContentVisibility = function (visible, frameType, bIsImageContent, bIsNumericContent) {
 		var aTileContent;
+		var bHasAppInfo = !!(this.getAppShortcut() || this.getSystemInfo());
 
 		aTileContent = this.getTileContent();
 		for (var i = 0; i < aTileContent.length; i++) {
-			//Hide ImageContent for FrameType OneByHalf
-			if ( frameType == FrameType.OneByHalf && bIsImageContent ) {
+			// Hide content when appShortcut/systemInfo is present (app info takes priority over content display)
+			if (frameType == FrameType.OneByHalf && (bIsImageContent || bIsNumericContent) && bHasAppInfo) {
 				aTileContent[i].setRenderContent(false);
 			} else {
 				aTileContent[i].setRenderContent(visible);

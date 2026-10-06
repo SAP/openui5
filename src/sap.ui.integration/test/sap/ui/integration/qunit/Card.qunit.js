@@ -4287,6 +4287,165 @@ sap.ui.define([
 		});
 
 
+		QUnit.test("childCards entry with inline object manifest creates a child card via _createChildCard", function (assert) {
+			// Arrange
+			const oInlineManifest = {
+				"sap.app": { "id": "inline.child.card", "type": "card" },
+				"sap.card": { "type": "Object" }
+			};
+			this.oCard.setManifest({
+				"sap.app": { "id": "test.card.childCards.objManifest", "type": "card" },
+				"sap.card": {
+					"type": "Object",
+					"header": { "title": "Parent Card" },
+					"configuration": {
+						"childCards": {
+							"child1": { "manifest": oInlineManifest }
+						}
+					}
+				}
+			});
+			this.oCard.startManifestProcessing();
+
+			// Act
+			const oChildCard = this.oCard._createChildCard({ childCardKey: "child1" });
+
+			// Assert
+			assert.ok(oChildCard, "_createChildCard returns a card for inline manifest objects.");
+			assert.deepEqual(oChildCard.getManifest(), oInlineManifest, "Child card receives the inline manifest.");
+
+			// Clean up
+			oChildCard.destroy();
+		});
+
+		QUnit.test("childCards entry with unknown key logs error and returns null", function (assert) {
+			// Arrange
+			this.oCard.setManifest({
+				"sap.app": { "id": "test.card.childCards.missingKey", "type": "card" },
+				"sap.card": {
+					"type": "Object",
+					"header": { "title": "Parent Card" },
+					"configuration": {
+						"childCards": {
+							"child1": { "manifest": "validChild.json" }
+						}
+					}
+				}
+			});
+			this.oCard.startManifestProcessing(); // creates _oCardManifest synchronously
+
+			const oErrorLogSpy = sinon.spy(Log, "error");
+
+			// Act
+			const oChildCard = this.oCard._createChildCard({ childCardKey: "nonExistent" });
+
+			// Assert
+			assert.strictEqual(oChildCard, null, "_createChildCard returns null when childCardKey is not found in childCards config.");
+			assert.ok(
+				oErrorLogSpy.calledWith(sinon.match(/cannot find.*nonExistent/i)),
+				"Error is logged when childCardKey is not found."
+			);
+
+			// Clean up
+			oErrorLogSpy.restore();
+		});
+
+		QUnit.test("showCard resolves to a card when child card config has inline manifest object", async function (assert) {
+			// Arrange
+			const oInlineManifest = { "sap.app": { "id": "inline" }, "sap.card": { "type": "Object" } };
+			this.oCard.setManifest({
+				"sap.app": { "id": "test.card.childCards.showCardInline", "type": "card" },
+				"sap.card": {
+					"type": "Object",
+					"header": { "title": "Parent Card" },
+					"configuration": {
+						"childCards": {
+							"child": { "manifest": oInlineManifest }
+						}
+					}
+				}
+			});
+			this.oCard.startManifestProcessing();
+
+			// Act
+			const oResult = await this.oCard.showCard({ childCardKey: "child" });
+
+			// Assert
+			assert.ok(oResult, "showCard resolves to a card when the child card config has an inline manifest.");
+
+			// Clean up
+			oResult.destroy();
+		});
+
+		QUnit.test("_createChildCardForDialog returns null and logs error for inline manifest object", function (assert) {
+			// Arrange
+			this.oCard.setManifest({
+				"sap.app": { "id": "test.card.childCards.dialogInline", "type": "card" },
+				"sap.card": {
+					"type": "Object",
+					"header": { "title": "Parent Card" },
+					"configuration": {
+						"childCards": {
+							"child1": {
+								"manifest": {
+									"sap.app": { "id": "inline.child.card", "type": "card" },
+									"sap.card": { "type": "Object" }
+								}
+							}
+						}
+					}
+				}
+			});
+			this.oCard.startManifestProcessing();
+
+			const oErrorLogSpy = sinon.spy(Log, "error");
+
+			// Act
+			const oChildCard = this.oCard._createChildCardForDialog({ childCardKey: "child1" });
+
+			// Assert
+			assert.strictEqual(oChildCard, null, "_createChildCardForDialog returns null for inline manifest objects.");
+			assert.ok(
+				oErrorLogSpy.calledWith(sinon.match(/Inline manifest objects are not supported/)),
+				"Error is logged when childCards manifest entry is an inline object."
+			);
+
+			// Clean up
+			oErrorLogSpy.restore();
+		});
+
+		QUnit.test("_createChildCardForDialog returns null and logs error for unknown key", function (assert) {
+			// Arrange
+			this.oCard.setManifest({
+				"sap.app": { "id": "test.card.childCards.dialogMissingKey", "type": "card" },
+				"sap.card": {
+					"type": "Object",
+					"header": { "title": "Parent Card" },
+					"configuration": {
+						"childCards": {
+							"child1": { "manifest": "validChild.json" }
+						}
+					}
+				}
+			});
+			this.oCard.startManifestProcessing();
+
+			const oErrorLogSpy = sinon.spy(Log, "error");
+
+			// Act
+			const oChildCard = this.oCard._createChildCardForDialog({ childCardKey: "nonExistent" });
+
+			// Assert
+			assert.strictEqual(oChildCard, null, "_createChildCardForDialog returns null when childCardKey is not found.");
+			assert.ok(
+				oErrorLogSpy.calledWith(sinon.match(/cannot find.*nonExistent/i)),
+				"Error is logged when childCardKey is not found."
+			);
+
+			// Clean up
+			oErrorLogSpy.restore();
+		});
+
 		QUnit.module("Design property", {
 			beforeEach: function () {
 				this.oCard = new Card();

@@ -161,7 +161,7 @@ sap.ui.define([
 
 			/**
 			 * Specifies the interaction mode.
-			 * @ui5-experimental-since 1.121
+			 * @since 1.121
 			 */
 			interactionMode : {type : "sap.m.IconTabFilterInteractionMode", group : "Behavior", defaultValue : IconTabFilterInteractionMode.Auto}
 		},

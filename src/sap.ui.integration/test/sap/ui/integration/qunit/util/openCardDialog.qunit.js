@@ -604,6 +604,39 @@ sap.ui.define([
 		assert.ok(oDialog.isOpen(), "Dialog is open");
 	});
 
+	QUnit.test("Returns null without setting parent busy when child card config has inline manifest object", function (assert) {
+		// Arrange - a separate parent card with an inline object as childCards manifest.
+		// startManifestProcessing creates _oCardManifest synchronously from the inline JSON,
+		// so no async waiting is needed before calling openCardDialog.
+		const oParentCard = new Card({
+			manifest: {
+				"sap.app": { "id": "test.card.parent.inlineChild", "type": "card" },
+				"sap.card": {
+					"type": "Object",
+					"header": { "title": "Parent" },
+					"configuration": {
+						"childCards": {
+							"badChild": {
+								"manifest": { "sap.app": { "id": "inline" }, "sap.card": { "type": "Object" } }
+							}
+						}
+					}
+				}
+			}
+		});
+		oParentCard.startManifestProcessing();
+
+		// Act
+		const oResult = openCardDialog(oParentCard, { childCardKey: "badChild" });
+
+		// Assert
+		assert.strictEqual(oResult, null, "openCardDialog returns null when child card config has an inline manifest.");
+		assert.notOk(oParentCard.getBusy(), "Parent card is NOT set busy when openCardDialog aborts early.");
+
+		// Clean up
+		oParentCard.destroy();
+	});
+
 	QUnit.module("Child card - loading placeholder", {
 		beforeEach: function () {
 			this.oHost = new Host({

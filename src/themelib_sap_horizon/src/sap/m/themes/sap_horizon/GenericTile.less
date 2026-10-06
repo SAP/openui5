@@ -26,18 +26,14 @@
 	}
 }
 
-.sapMGTTInfoContainer {
-	height: 2.5rem;
-}
-
 .tileWithAppInfo {
 
 	.sapMGTTInfo {
-		padding: 0.125rem 1rem 0.125rem 0.25rem;
+		padding: 0.188rem 0.25rem 0.188rem 0.25rem;
 		text-transform: uppercase;
-		margin-bottom: 0.7rem;
-		border-radius: 0.125rem 0 0 0.125rem;
-		background-color: var(--sapInfobar_NonInteractive_Background);
+		margin-bottom: 0.5rem;
+		border-radius: var(--sapButton_BorderCornerRadius);
+		background-color: var(--sapIndicationColor_10b_Background);
 		width: fit-content;
 
 		.sapMText {
@@ -50,8 +46,11 @@
 			justify-content: flex-end;
 
 			.sapMText {
-				color: var(--sapTile_TitleTextColor);
+				color: var(--sapTile_TextColor);
+				text-shadow: var(--sapContent_TextShadow);
 				padding-left: 0.15rem;
+				font-weight: normal;
+				padding-bottom: 0.125rem;
 			}
 		}
 
@@ -64,7 +63,10 @@
 			justify-content: flex-end;
 
 			.sapMText {
-				color: var(--sapTile_TextColor);
+				color: var(--sapIndicationColor_10b_TextColor);
+				text-shadow: var(--sapContent_TextShadow);
+				text-transform: uppercase;
+				font-weight: bold;
 			}
 		}
 	}
@@ -437,6 +439,8 @@ large.sapUiSizeCompact .sapMGT.sapMGTLineMode,
 
 	.sapMGTTInfoWrapper {
 		border-radius: 0 var(--sapTile_BorderCornerRadius) var(--sapTile_BorderCornerRadius) 0 !important;
+		margin: 0.188rem 0.50rem 0.188rem 0.25rem;
+		align-content: center;
 	}
 }
 

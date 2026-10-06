@@ -165,15 +165,24 @@ test("BlockLayerUtils — direct qunit file in qunit/ root", () => {
 	assert("test file found", r.TEST_FILE && r.TEST_FILE !== "null", `Expected test file, got ${r.TEST_FILE}`);
 });
 
-test("sap.ui.rta.RuntimeAuthoring — defaults.page with {suite} placeholder", () => {
+test("sap.ui.rta.RuntimeAuthoring — behind bCompAvailable conditional, not resolved by name", () => {
+	// RuntimeAuthoring is inside `if (bCompAvailable) { merge(...) }` in the rta testsuite.
+	// The VM correctly excludes it (sap.ui.comp unavailable in OpenUI5). The test file exists
+	// and runs fine, but it's not in the testsuite listing. Use file path input instead.
 	const r = run("sap.ui.rta.RuntimeAuthoring");
+	assert("not found by name", r.ERROR && r.ERROR.includes("No test found"),
+		`Expected no match (comp-conditional), got: ${r._raw.substring(0, 200)}`);
+});
+
+test("sap.ui.rta.startKeyUserAdaptation — defaults.page with {suite} and {name} placeholders", () => {
+	const r = run("sap.ui.rta.startKeyUserAdaptation");
 	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
 	assert("library", r.LIBRARY === "sap.ui.rta", `Expected sap.ui.rta, got ${r.LIBRARY}`);
 	assert("URL type", r.URL_TYPE === "defaults_page", `Expected defaults_page, got ${r.URL_TYPE}`);
 	assert("no literal {suite}", r.TEST_URL && !r.TEST_URL.includes("{suite}"), `URL should not contain literal {suite}: ${r.TEST_URL}`);
 	assert("no literal {name}", r.TEST_URL && !r.TEST_URL.includes("{name}"), `URL should not contain literal {name}: ${r.TEST_URL}`);
 	assert("URL has testsuite=", r.TEST_URL && r.TEST_URL.includes("testsuite="), `URL should contain testsuite= param: ${r.TEST_URL}`);
-	assert("URL has test=RuntimeAuthoring", r.TEST_URL && r.TEST_URL.includes("test=RuntimeAuthoring"), `URL should contain test=RuntimeAuthoring: ${r.TEST_URL}`);
+	assert("URL has test=", r.TEST_URL && r.TEST_URL.includes("test=api/startKeyUserAdaptation"), `URL should contain test=api/startKeyUserAdaptation: ${r.TEST_URL}`);
 });
 
 test("sap/ui/core/routing/Router — slash notation input", () => {
@@ -226,6 +235,110 @@ test("sap.ui.core.Control — known non-match (test key is ControlDefinition)", 
 	const r = run("sap.ui.core.Control");
 	// Control has no matching testsuite key (it's registered as "ControlDefinition")
 	assert("error output", r.ERROR && r.ERROR.includes("No test found"), `Expected no match for Control: ${r._raw.substring(0, 200)}`);
+});
+
+// --- Module array resolution tests ---
+
+test("Element_focus — module array entry resolves to parent key Element", () => {
+	const r = run("Element_focus");
+	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
+	assert("library", r.LIBRARY === "sap.ui.core", `Expected sap.ui.core, got ${r.LIBRARY}`);
+	assert("test key is parent", r.TEST_KEY === "Element", `Expected parent key Element, got ${r.TEST_KEY}`);
+	assert("URL contains test=Element", r.TEST_URL && r.TEST_URL.includes("test=Element"), `URL should contain test=Element: ${r.TEST_URL}`);
+	assert("URL does NOT contain Element_focus", r.TEST_URL && !r.TEST_URL.includes("Element_focus"), `URL should not contain Element_focus: ${r.TEST_URL}`);
+});
+
+test("sap.ui.core.Element_focus — qualified module array entry", () => {
+	const r = run("sap.ui.core.Element_focus");
+	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
+	assert("library", r.LIBRARY === "sap.ui.core", `Expected sap.ui.core, got ${r.LIBRARY}`);
+	assert("test key is parent", r.TEST_KEY === "Element", `Expected parent key Element, got ${r.TEST_KEY}`);
+});
+
+test("element_focus — case-insensitive module array lookup", () => {
+	const r = run("element_focus");
+	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
+	assert("test key is parent", r.TEST_KEY === "Element", `Expected parent key Element, got ${r.TEST_KEY}`);
+});
+
+test("Element_base — another module array entry in same parent", () => {
+	const r = run("Element_base");
+	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
+	assert("library", r.LIBRARY === "sap.ui.core", `Expected sap.ui.core, got ${r.LIBRARY}`);
+	assert("test key is parent", r.TEST_KEY === "Element", `Expected parent key Element, got ${r.TEST_KEY}`);
+});
+
+test("GridDropInfo — direct key wins over module array entry", () => {
+	const r = run("GridDropInfo");
+	const count = parseInt(r.MATCHES, 10);
+	assert("matches found", count >= 1, `Expected >=1 matches, got ${count}`);
+	// Should resolve via direct key match, not module array fallback
+	const sapF = r._matches.find((m) => m.LIBRARY === "sap.f");
+	assert("sap.f match found", !!sapF, `Expected sap.f match`);
+	assert("key is GridDropInfo", sapF && sapF.TEST_KEY === "GridDropInfo", `Expected key GridDropInfo, got ${sapF && sapF.TEST_KEY}`);
+});
+
+test("GridKeyboardDragAndDrop — module array entry in sap.f resolves to parent", () => {
+	const r = run("GridKeyboardDragAndDrop");
+	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
+	assert("library", r.LIBRARY === "sap.f", `Expected sap.f, got ${r.LIBRARY}`);
+	assert("test key is parent", r.TEST_KEY === "GridDropInfo", `Expected parent key GridDropInfo, got ${r.TEST_KEY}`);
+});
+
+// --- Deduplication tests ---
+
+test("Button — ambiguous matches are deduplicated (no duplicate lib+key)", () => {
+	const r = run("Button");
+	const count = parseInt(r.MATCHES, 10);
+	assert("has matches", count >= 2, `Expected >=2 matches, got ${count}`);
+	// Check no duplicate lib+key pairs
+	const seen = new Set();
+	let hasDupes = false;
+	for (const m of r._matches) {
+		const k = `${m.LIBRARY}:${m.TEST_KEY}`;
+		if (seen.has(k)) { hasDupes = true; break; }
+		seen.add(k);
+	}
+	assert("no duplicate lib+key", !hasDupes, `Found duplicate lib+key in matches: ${r._matches.map(m => `${m.LIBRARY}:${m.TEST_KEY}`).join(", ")}`);
+});
+
+// --- File path input tests ---
+
+test("file path: src/sap.ui.core/.../BlockLayerUtils.qunit.js", () => {
+	const r = run("src/sap.ui.core/test/sap/ui/core/qunit/BlockLayerUtils.qunit.js");
+	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
+	assert("library", r.LIBRARY === "sap.ui.core", `Expected sap.ui.core, got ${r.LIBRARY}`);
+	assert("test key", r.TEST_KEY === "BlockLayerUtils", `Expected key BlockLayerUtils, got ${r.TEST_KEY}`);
+	assert("URL contains test=BlockLayerUtils", r.TEST_URL && r.TEST_URL.includes("test=BlockLayerUtils"), `URL should contain test=BlockLayerUtils: ${r.TEST_URL}`);
+});
+
+test("file path: src/sap.ui.core/.../Element_focus.qunit.js — module array via file path", () => {
+	const r = run("src/sap.ui.core/test/sap/ui/core/qunit/Element_focus.qunit.js");
+	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
+	assert("library", r.LIBRARY === "sap.ui.core", `Expected sap.ui.core, got ${r.LIBRARY}`);
+	assert("test key is parent", r.TEST_KEY === "Element", `Expected parent key Element, got ${r.TEST_KEY}`);
+});
+
+test("file path: src/sap.ui.table/.../extensions/KeyboardDelegate.qunit.js — subdirectory key", () => {
+	const r = run("src/sap.ui.table/test/sap/ui/table/qunit/extensions/KeyboardDelegate.qunit.js");
+	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
+	assert("library", r.LIBRARY === "sap.ui.table", `Expected sap.ui.table, got ${r.LIBRARY}`);
+	assert("test key", r.TEST_KEY === "KeyboardDelegate", `Expected key KeyboardDelegate, got ${r.TEST_KEY}`);
+});
+
+test("file path: src/sap.ui.core/.../LocalBusyIndicator.qunit.js", () => {
+	const r = run("src/sap.ui.core/test/sap/ui/core/qunit/LocalBusyIndicator.qunit.js");
+	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
+	assert("library", r.LIBRARY === "sap.ui.core", `Expected sap.ui.core, got ${r.LIBRARY}`);
+	assert("test key", r.TEST_KEY === "LocalBusyIndicator", `Expected key LocalBusyIndicator, got ${r.TEST_KEY}`);
+});
+
+test("file path: absolute path resolves same as relative", () => {
+	const abs = path.join(REPO_ROOT, "src/sap.ui.core/test/sap/ui/core/qunit/BlockLayerUtils.qunit.js");
+	const r = run(abs);
+	assert("matches", r.MATCHES === "1", `Expected 1 match, got ${r.MATCHES}`);
+	assert("library", r.LIBRARY === "sap.ui.core", `Expected sap.ui.core, got ${r.LIBRARY}`);
+	assert("test key", r.TEST_KEY === "BlockLayerUtils", `Expected key BlockLayerUtils, got ${r.TEST_KEY}`);
 });
 
 // --- Summary ---

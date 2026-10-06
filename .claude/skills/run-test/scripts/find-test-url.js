@@ -15,6 +15,7 @@
 const fs = require("fs");
 const path = require("path");
 const http = require("http");
+const vm = require("vm");
 
 const moduleInput = process.argv[2];
 if (!moduleInput) {
@@ -90,9 +91,140 @@ function findFiles(dir, namePattern, opts = {}) {
 }
 
 // --- 3. Parse testsuite JS to extract defaults.page and test entries ---
+
+// VM-based evaluation helpers.
+// Execute testsuite AMD modules in a sandboxed Node.js VM context,
+// correctly handling conditional merges, programmatic iteration, and XHR checks.
+
+function deepMerge(target, ...sources) {
+	for (const src of sources) {
+		if (!src || typeof src !== "object") continue;
+		for (const [k, v] of Object.entries(src)) {
+			if (v && typeof v === "object" && !Array.isArray(v) && target[k] && typeof target[k] === "object") {
+				deepMerge(target[k], v);
+			} else {
+				target[k] = v;
+			}
+		}
+	}
+	return target;
+}
+
+function deepStub() {
+	return new Proxy(function() { return false; }, {
+		get: (_, prop) => prop === Symbol.toPrimitive ? () => "" : deepStub(),
+		apply: (_, __, args) => {
+			const objs = args.filter(a => a && typeof a === "object" && !Array.isArray(a));
+			if (objs.length === 0) return false;
+			return deepMerge({}, ...objs);
+		}
+	});
+}
+
+function StubXHR() { this.status = 0; this.responseText = "{}"; }
+StubXHR.prototype.open = function() {};
+StubXHR.prototype.send = function() {};
+
+/**
+ * Execute a testsuite file in a sandboxed VM and return the raw config object.
+ * Returns null on any failure (file not found, parse error, timeout, etc.).
+ */
+function vmParseTestsuite(filePath) {
+	let src;
+	try { src = fs.readFileSync(filePath, "utf8"); } catch { return null; }
+	let config = null;
+
+	const sandbox = {
+		sap: { ui: {
+			define: function(depsOrFactory, factory) {
+				const fn = typeof depsOrFactory === "function" ? depsOrFactory : factory;
+				if (typeof fn !== "function") return;
+				try { config = fn(...Array(fn.length).fill(deepStub())); } catch {}
+			},
+			require: Object.assign(deepStub(), { toUrl: () => "" })
+		}},
+		XMLHttpRequest: StubXHR,
+		JSON: JSON,
+		Object: Object,
+		Array: Array,
+		parseInt: parseInt,
+		parseFloat: parseFloat,
+		console: { log: () => {}, warn: () => {}, error: () => {}, info: () => {} },
+		window: deepStub(),
+		self: deepStub(),
+		parent: deepStub(),
+		top: deepStub(),
+		document: deepStub(),
+		location: deepStub(),
+		navigator: deepStub(),
+		setTimeout: deepStub(),
+		clearTimeout: deepStub()
+	};
+
+	try { vm.runInNewContext(src, sandbox, { filename: filePath, timeout: 5000 }); } catch {}
+	return config;
+}
+
+/**
+ * Transform a raw VM config object into the shape expected by callers:
+ * { defaultsPage: string|null, tests: { [key]: { page: string|null, modules: string[]|null } } }
+ *
+ * Returns null if the config is unusable (not an object, no real test entries).
+ */
+function extractParsedResult(config) {
+	if (!config || typeof config !== "object") return null;
+
+	// defaultsPage — must be a real string, not a Proxy
+	let defaultsPage = null;
+	const defaults = config.defaults;
+	if (defaults && typeof defaults.page === "string") {
+		defaultsPage = defaults.page;
+	}
+
+	const tests = {};
+	if (config.tests && typeof config.tests === "object") {
+		for (const [key, entry] of Object.entries(config.tests)) {
+			if (!entry || typeof entry !== "object") continue;
+
+			let page = null;
+			if (typeof entry.page === "string") page = entry.page;
+
+			let modules = null;
+			if (Array.isArray(entry.module)) {
+				const entries = entry.module.filter(m => typeof m === "string").map(moduleEntryToBareName);
+				if (entries.length > 0) modules = entries;
+			} else if (typeof entry.module === "string") {
+				modules = [moduleEntryToBareName(entry.module)];
+			}
+
+			tests[key] = { page, modules };
+		}
+	}
+
+	// Empty tests when config.tests existed → GenericTestCollection or similar failure
+	if (Object.keys(tests).length === 0 && config.tests) return null;
+	return { defaultsPage, tests };
+}
+
 const parseCache = new Map();
 function parseTestsuite(filePath) {
 	if (parseCache.has(filePath)) return parseCache.get(filePath);
+
+	// Try VM-based evaluation first (handles merge(), conditionals, iteration)
+	const vmConfig = vmParseTestsuite(filePath);
+	const vmResult = extractParsedResult(vmConfig);
+	if (vmResult && Object.keys(vmResult.tests).length > 0) {
+		parseCache.set(filePath, vmResult);
+		return vmResult;
+	}
+
+	// VM failed (GenericTestCollection, imported testsuites, etc.) — fall back to regex
+	const regexResult = regexParseTestsuite(filePath);
+	parseCache.set(filePath, regexResult);
+	return regexResult;
+}
+
+function regexParseTestsuite(filePath) {
 	const content = fs.readFileSync(filePath, "utf8");
 
 	// Extract defaults.page using brace-walking to handle nested objects
@@ -193,11 +325,61 @@ function parseTestsuite(filePath) {
 			}
 		}
 
-		tests[key] = { page };
+		// Extract module: property (string or array) at the top level of the test body.
+		// This lists sub-test files that are loaded together under this parent key.
+		let modules = null;
+		let modDepth = 0;
+		for (const line of lines) {
+			if (modDepth <= 0) {
+				// module: [...] (array form)
+				const arrMatch = line.match(/module\s*:\s*\[/);
+				if (arrMatch) {
+					// Collect the full array content, may span multiple lines
+					const arrStart = testBody.indexOf(line) + arrMatch.index + arrMatch[0].length;
+					let bracketDepth = 1;
+					let j = arrStart;
+					while (j < testBody.length && bracketDepth > 0) {
+						if (testBody[j] === "[") bracketDepth++;
+						if (testBody[j] === "]") bracketDepth--;
+						j++;
+					}
+					const arrContent = testBody.substring(arrStart, j - 1);
+					// Extract quoted strings from the array
+					const entries = [];
+					const strPattern = /["']([^"']+)["']/g;
+					let strMatch;
+					while ((strMatch = strPattern.exec(arrContent)) !== null) {
+						entries.push(moduleEntryToBareName(strMatch[1]));
+					}
+					if (entries.length > 0) modules = entries;
+					break;
+				}
+				// module: "..." (string form)
+				const strModMatch = line.match(/module\s*:\s*["']([^"']+)["']/);
+				if (strModMatch) {
+					modules = [moduleEntryToBareName(strModMatch[1])];
+					break;
+				}
+			}
+			// Track brace depth (same approach as page extraction)
+			let inStr = null;
+			for (const ch of line) {
+				if (inStr) {
+					if (ch === inStr) inStr = null;
+				} else if (ch === '"' || ch === "'") {
+					inStr = ch;
+				} else if (ch === "{") {
+					modDepth++;
+				} else if (ch === "}") {
+					modDepth--;
+				}
+			}
+		}
+
+		tests[key] = { page, modules };
 	}
 
 	const result = { defaultsPage, tests };
-	parseCache.set(filePath, result);
 	return result;
 }
 
@@ -220,18 +402,47 @@ async function main() {
 	baseUrl = `http://localhost:${foundPort}`;
 
 	// 2. Normalize module name
-	const moduleNormalized = moduleInput.replace(/\./g, "/");
-	const componentName = path.basename(moduleNormalized);
-
-	// Detect library hint from fully qualified name
+	// Detect file path input before dot→slash normalization would destroy it.
+	// File paths contain "/" and end with ".qunit.js" or ".qunit.html".
+	// Pattern: [abs-or-rel/]src/<library>/test/<namespace>/qunit/[subdirs/]<Name>.qunit.js
+	let componentName;
 	let libraryHint = null;
-	if (moduleNormalized.startsWith("sap/")) {
-		const parts = moduleNormalized.split("/");
-		for (let end = parts.length - 1; end >= 2; end--) {
-			const candidate = parts.slice(0, end).join(".");
-			if (fs.existsSync(path.join(repoRoot, "src", candidate))) {
-				libraryHint = candidate;
-				break;
+	let fileKeyHint = null; // relative path from qunit dir, used as testsuite key candidate
+
+	const isFilePath = moduleInput.includes("/") &&
+		(/\.qunit\.(js|html)$/.test(moduleInput) || (moduleInput.includes("/test/") && moduleInput.includes("/qunit/")));
+
+	if (isFilePath) {
+		// Strip suffix to get the base
+		const stripped = moduleInput.replace(/\.qunit\.(js|html)$/, "");
+		componentName = path.basename(stripped);
+
+		// Extract library from src/<library>/test/ pattern
+		const libMatch = moduleInput.match(/(?:^|\/|\\)src\/([^/\\]+)\/test\//);
+		if (libMatch) {
+			libraryHint = libMatch[1];
+
+			// Extract file key: path relative to the qunit/ directory (without suffix)
+			// e.g., "extensions/KeyboardDelegate" from ".../qunit/extensions/KeyboardDelegate.qunit.js"
+			const qunitMarker = "/qunit/";
+			const qunitIdx = stripped.indexOf(qunitMarker);
+			if (qunitIdx !== -1) {
+				fileKeyHint = stripped.substring(qunitIdx + qunitMarker.length);
+			}
+		}
+	} else {
+		const moduleNormalized = moduleInput.replace(/\./g, "/");
+		componentName = path.basename(moduleNormalized);
+
+		// Detect library hint from fully qualified name
+		if (moduleNormalized.startsWith("sap/")) {
+			const parts = moduleNormalized.split("/");
+			for (let end = parts.length - 1; end >= 2; end--) {
+				const candidate = parts.slice(0, end).join(".");
+				if (fs.existsSync(path.join(repoRoot, "src", candidate))) {
+					libraryHint = candidate;
+					break;
+				}
 			}
 		}
 	}
@@ -271,7 +482,12 @@ async function main() {
 		// Build candidate keys for this file
 		// Testsuite keys can use slash or dot notation (e.g., "p13n/Popup" vs "p13n.Popup"),
 		// so try both for each candidate.
+		// When input was a file path, fileKeyHint gives us the exact relative key from the
+		// qunit directory — prepend it as the highest-priority candidate.
 		const candidateKeys = [fileKey];
+		if (fileKeyHint && fileKeyHint !== fileKey && !candidateKeys.includes(fileKeyHint)) {
+			candidateKeys.unshift(fileKeyHint);
+		}
 		if (fileKey.includes("/")) {
 			// Add dot-notation variant: "p13n/Popup" -> "p13n.Popup"
 			candidateKeys.push(fileKey.replace(/\//g, "."));
@@ -347,6 +563,45 @@ async function main() {
 		}
 	}
 
+	// Fallback: if still no matches, search inside module: [...] arrays of test entries.
+	// This handles cases like "Element_focus" which is listed inside the "Element" test's
+	// module array but has no top-level testsuite key of its own.
+	if (allMatches.length === 0) {
+		const libDirs2 = libraryHint
+			? [libraryHint]
+			: fs.readdirSync(path.join(repoRoot, "src")).filter((d) => {
+				const testDir2 = path.join(repoRoot, "src", d, "test");
+				return fs.existsSync(testDir2) && fs.statSync(path.join(repoRoot, "src", d)).isDirectory();
+			});
+
+		const lowerComponent = componentName.toLowerCase();
+		for (const lib of libDirs2) {
+			const testDir = path.join(repoRoot, "src", lib, "test");
+			if (!fs.existsSync(testDir)) continue;
+			const testsuiteFiles = findFiles(testDir, /^testsuite.*\.qunit\.js$/, { excludeDemokit: true });
+
+			for (const tsFile of testsuiteFiles) {
+				const parsed = parseTestsuite(tsFile);
+				for (const [parentKey, entry] of Object.entries(parsed.tests)) {
+					if (!entry.modules) continue;
+					const hasMatch = entry.modules.some((m) => m.toLowerCase() === lowerComponent);
+					if (hasMatch) {
+						allMatches.push({
+							testFile: null,
+							library: lib,
+							foundKey: parentKey,
+							testsuite: tsFile,
+							parsedSuite: parsed
+						});
+						break;
+					}
+				}
+				if (allMatches.length > 0) break;
+			}
+			if (allMatches.length > 0) break;
+		}
+	}
+
 	// Filter matches when user gave a qualified name (library hint exists):
 	// 1. Keep only matches from the hinted library
 	// 2. Among those, if any match has foundKey === componentName exactly,
@@ -372,6 +627,18 @@ async function main() {
 				finalMatches = exact;
 			}
 		}
+	}
+
+	// Deduplicate matches — the same lib + key can appear more than once when
+	// multiple .qunit.js files in the same library match the same testsuite key.
+	{
+		const seen = new Set();
+		finalMatches = finalMatches.filter(m => {
+			const k = `${m.library}:${m.foundKey}`;
+			if (seen.has(k)) return false;
+			seen.add(k);
+			return true;
+		});
 	}
 
 	if (finalMatches.length === 0) {
@@ -421,6 +688,14 @@ async function main() {
 		console.log(`${prefix}URL_TYPE: ${urlType}`);
 		console.log(`${prefix}TEST_URL: ${testUrl}`);
 	});
+}
+
+// Extract bare name from a module array entry path.
+// "testdata/core/Element_focus.qunit" → "Element_focus"
+// "./rules/Button.qunit" → "Button"
+// "./UploadCollection.qunit" → "UploadCollection"
+function moduleEntryToBareName(entry) {
+	return path.basename(entry).replace(/\.qunit$/, "");
 }
 
 function escapeRegex(str) {

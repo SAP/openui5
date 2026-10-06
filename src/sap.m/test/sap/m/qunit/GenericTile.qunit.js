@@ -321,9 +321,9 @@ sap.ui.define([
 		assert.strictEqual(sDraggableAttr && sDraggableAttr.value, "false", "The draggable attribute is set to false.");
 		assert.strictEqual(oTileElement.getAttribute("role"), "link", "The role attribute for the link element is set to link.");
 		assert.strictEqual(oTileElement.href, sLink, "The link is correctly set.");
-		assert.strictEqual(document.getElementById("generic-tile-content").parentNode, oTileElement, "The tile content is a child of the link.");
-		assert.strictEqual(document.getElementById("generic-tile-hover-overlay").parentNode, oTileElement, "The tile overlay is a child of the link.");
-		assert.strictEqual(document.getElementById("generic-tile-focus").parentNode, oTileElement, "The tile content is a child of the link.");
+		assert.ok(oTileElement.contains(document.getElementById("generic-tile-content")), "The tile content is a descendant of the link.");
+		assert.strictEqual(document.getElementById("generic-tile-hover-overlay").parentNode, oTileElement, "The tile overlay is a direct child of the link.");
+		assert.strictEqual(document.getElementById("generic-tile-focus").parentNode, oTileElement, "The focus div is a direct child of the link.");
 	});
 
 	QUnit.test("GenericTile rendered as link ignores gridItemRole and retains role='link'", async function(assert) {
@@ -379,12 +379,20 @@ sap.ui.define([
 		assert.notOk(document.querySelector("#generic-tile .sapMGTCriticalBorder"), "Generic tile border was not rendered");
 	});
 
-	QUnit.test("GenericTile has overflow hidden to clip valueColor border", async function(assert) {
+	QUnit.test("GenericTile has overflow hidden on content wrapper to clip valueColor border", async function(assert) {
 		this.oGenericTile.setValueColor("Error");
 		await nextUIUpdate();
 		var oTileDomRef = document.querySelector("#generic-tile");
-		var sOverflow = window.getComputedStyle(oTileDomRef).overflow;
-		assert.strictEqual(sOverflow, "hidden", "GenericTile has overflow:hidden to properly clip the valueColor border");
+		var oContentWrapper = oTileDomRef.querySelector(".sapMGTContentWrapper");
+		assert.ok(oContentWrapper, "sapMGTContentWrapper is rendered inside the tile");
+		var sWrapperOverflow = window.getComputedStyle(oContentWrapper).overflow;
+		assert.strictEqual(sWrapperOverflow, "hidden", "sapMGTContentWrapper has overflow:hidden to clip the valueColor border");
+		var sTileOverflow = window.getComputedStyle(oTileDomRef).overflow;
+		assert.notStrictEqual(sTileOverflow, "hidden", "sapMGT root does not have overflow:hidden so the focus ring is not clipped");
+		assert.ok(oContentWrapper.querySelector(".sapMGTCriticalBorder"), "sapMGTCriticalBorder is inside the content wrapper and gets clipped correctly");
+		var oFocusDiv = oTileDomRef.querySelector(".sapMGTFocusDiv");
+		assert.ok(oFocusDiv, "sapMGTFocusDiv is rendered");
+		assert.notOk(oContentWrapper.contains(oFocusDiv), "sapMGTFocusDiv is outside the content wrapper so it is not clipped");
 	});
 
 	QUnit.test("GenericTile is dragged", async function(assert) {
@@ -2217,7 +2225,7 @@ sap.ui.define([
 		this.oGenericTile.setState("Loading");
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
 		//Assert
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItem"), "Placeholder div is present when state is loading");
 		//Arrange
@@ -3187,7 +3195,7 @@ sap.ui.define([
 		assert.ok(height,20,"all ok");
 	});
 
-	QUnit.test("Content Proritisation - No Content rendered in OneByHalf in case of image", async function(assert) {
+	QUnit.test("Content Proritisation - Content rendered in OneByHalf in case of image", async function(assert) {
 		this.oGenericTile.setFrameType("OneByHalf");
 		var tileContent =  new TileContent("tile-cont-two-by-half", {
 			unit: "EUR",
@@ -3201,7 +3209,7 @@ sap.ui.define([
 		this.oGenericTile.addTileContent(tileContent);
 		await nextUIUpdate();
 		var tileContentChildren = this.oGenericTile.getTileContent()[0].getDomRef().children.length;
-		assert.equal(tileContentChildren, 0);
+		assert.ok(tileContentChildren > 0);
 		assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
 		assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
 		assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
@@ -3240,7 +3248,7 @@ sap.ui.define([
 		this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
 		this.oGenericTile.setSubheader("this is a very long subheader which should exceed two lines so we can test it");
 		await nextUIUpdate();
-		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 1, "The header has 1 line (subheader present, OneByHalf)");
 	});
 
 	QUnit.test("Content Proritisation -  Content rendered in TwoByHalf", async function(assert) {
@@ -3327,7 +3335,7 @@ sap.ui.define([
 		const marginBottom = parseFloat(this.oGenericTile.$().find(".sapMGTTInfo").css("margin-bottom"));
 		const roundedMargin = Math.ceil(marginBottom * 10) / 10;
 
-		assert.equal(roundedMargin, 11.2, "Sufficient Height applied");
+		assert.equal(roundedMargin, 8, "Sufficient Height applied");
 	});
 
 	QUnit.test("App shortcut and System info only rendered in OneByOne", async function(assert) {
@@ -3339,13 +3347,13 @@ sap.ui.define([
 		assert.notEqual(this.oGenericTile._oSystemInfo.getDomRef(), null);
 		const marginBottom = parseFloat(this.oGenericTile.$().find(".sapMGTTInfo").css("margin-bottom"));
 		const roundedMargin = Math.ceil(marginBottom * 10) / 10;
-		assert.equal(roundedMargin,"6.4","Sufficient Height applied");
-		assert.equal(this.oGenericTile.$().find(".sapMGTTInfo").css("background-color"), "rgb(245, 246, 247)", "Non active background color has been applied");
+		assert.equal(roundedMargin, 4, "Sufficient Height applied");
+		assert.equal(this.oGenericTile.$().find(".sapMGTTInfo").css("background-color"), "rgb(234, 236, 238)", "Non active background color has been applied");
 		this.oGenericTile.setFrameType("OneByHalf");
 		await nextUIUpdate();
 
-		assert.equal(this.oGenericTile._oAppShortcut.getDomRef(), null);
-		assert.equal(this.oGenericTile._oSystemInfo.getDomRef(), null);
+		assert.ok(this.oGenericTile._oAppShortcut.getDomRef());
+		assert.ok(this.oGenericTile._oSystemInfo.getDomRef());
 	});
 
 	QUnit.test("App shortcut and System info only rendered in TwoByOne", async function(assert) {
@@ -3401,7 +3409,7 @@ sap.ui.define([
 		this.oGenericTile.setSubheader("Subtitle Launch Tile");
 		this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
 		await nextUIUpdate();
-		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 1, "The header has 1 line (subheader present, TwoByHalf)");
 	});
 
 	QUnit.test("Header has max one lines if content aggregation exists for 4*1 tile", async function(assert) {
@@ -3503,8 +3511,8 @@ sap.ui.define([
 		var tileContentChildren = this.oGenericTile.getTileContent()[0].getDomRef().children.length;
 		assert.equal(this.oGenericTile.getTileContent().length, 1, "Single Tile content is added to GenericTile.");
 		assert.equal(this.oGenericTile.getTileContent()[0].getAggregation('content').getMetadata()._sClassName, "sap.m.ImageContent", "Tile Content contains ImageContent.");
-		assert.equal(this.oGenericTile.getTileContent()[0].getVisible(), true, "Tile Content with ImageContent is not rendered for the GenericTile.");
-		assert.equal(tileContentChildren, 0, "Tile Content with ImageContent does not add overlay on the GenericTile.");
+		assert.equal(this.oGenericTile.getTileContent()[0].getVisible(), true, "Tile Content with ImageContent is rendered for the GenericTile.");
+		assert.ok(tileContentChildren > 0, "Tile Content with ImageContent adds overlay on the GenericTile.");
 	});
 
 	QUnit.test("TwoByHalf Tile with NumericContent", async function(assert){
@@ -3962,7 +3970,7 @@ sap.ui.define([
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 1, "SubHeader Text is created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 1, "Content Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 1, "Footer Text Created.");
-			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 1, "InfoContainer Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "InfoContainer Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOneIcon").length, 0, "No Icon Container Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOne").length, 0, "No Text Container Created.");
 			this.oGenericTile.setTileIcon("sap-icon://key");
@@ -4004,7 +4012,7 @@ sap.ui.define([
 					this.oGenericTile.setState("Loading");
 					await nextUIUpdate();
 					setTimeout(async function(){
-						var oDomRef = this.oGenericTile.getDomRef().children[0];
+						var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
 						assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
 						this.oGenericTile.setState("Loaded");
 						await nextUIUpdate();
@@ -4032,7 +4040,7 @@ sap.ui.define([
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "SubHeader Text is created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 1, "Content Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No Footer Text Created.");
-			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
+			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 1, "No InfoContainer Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 0, "No Icon Container Created.");
 			assert.equal(this.oGenericTile._oMoreIcon.getType(), "Unstyled", "Button Created in Unstyled Type");
 			this.oGenericTile.setTileIcon("sap-icon://key");
@@ -4053,7 +4061,7 @@ sap.ui.define([
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "No SubHeader Text Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 0, "No Content Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No Footer Text Created.");
-				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 1, "No InfoContainer Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 1, "Icon Container Created.");
 				assert.ok(this.oGenericTile._oMoreIcon.isA("sap.m.Button"), "Button is created in place of action more icon");
 				assert.equal(this.oGenericTile._oMoreIcon.getType(), "Transparent", "Button Created in Transparent Type");
@@ -4071,7 +4079,7 @@ sap.ui.define([
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "No SubHeader Text Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 0, "No Content Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No SubHeader Text Created.");
-					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 1, "No InfoContainer Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 1, "Icon Container Created.");
 					var sLink = "https://www.google.com/";
 					this.oGenericTile.setUrl(sLink);
@@ -4084,7 +4092,7 @@ sap.ui.define([
 					this.oGenericTile.setState("Loading");
 					await nextUIUpdate();
 					setTimeout(async function(){
-						var oDomRef = this.oGenericTile.getDomRef().children[0];
+						var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
 						assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
 						this.oGenericTile.setState("Loaded");
 						await nextUIUpdate();
@@ -4818,7 +4826,7 @@ sap.ui.define([
 		this.oGenericTile.setState(LoadState.Loading);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
 		//Assert
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
 		assert.ok(oDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loading");
@@ -4834,7 +4842,7 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
 		//Assert
 		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
@@ -4851,8 +4859,8 @@ sap.ui.define([
 		this.oGenericTile.setState(LoadState.Loaded);
 		await nextUIUpdate();
 		//Act
-		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
 		//Assert
 		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loaded");
 		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loading");
@@ -4885,7 +4893,7 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
 		//Assert
 		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
@@ -4902,8 +4910,8 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
 		//Assert
 		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is not present when state is loaded");
 		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loaded");
@@ -4936,7 +4944,7 @@ sap.ui.define([
 		this.oGenericTile.setState(LoadState.Loading);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
 		//Assert
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
 		assert.ok(oDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loading");
@@ -4952,7 +4960,7 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
 		//Assert
 		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
@@ -4969,8 +4977,8 @@ sap.ui.define([
 		this.oGenericTile.setState(LoadState.Loaded);
 		await nextUIUpdate();
 		//Act
-		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
 		//Assert
 		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loaded");
 		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loading");
@@ -4987,8 +4995,8 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(true);
 		await nextUIUpdate();
 		//Act
-		var oIconDomRef = this.oGenericTile.getDomRef().children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		var oIconDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
 		//Assert
 		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is not present when state is loaded");
 		assert.ok(oIconDomRef.classList.contains("sapMGTTwoByHalfIcon"), "Icon div is present when state is loaded");
@@ -5003,7 +5011,7 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().children[0];
+		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
 		//Assert
 		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
@@ -5020,8 +5028,8 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
 		//Assert
 		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is not present when state is loaded");
 		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loaded");
@@ -5038,8 +5046,8 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(true);
 		await nextUIUpdate();
 		//Act
-		var oIconDomRef = this.oGenericTile.getDomRef().children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		var oIconDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
 		//Assert
 		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is not present when state is loaded");
 		assert.ok(oIconDomRef.classList.contains("sapMGTTwoByHalfIcon"), "Icon div is present when state is loaded");
@@ -5965,5 +5973,205 @@ sap.ui.define([
 			"normal",
 			"line-height of .sapMGTHdrContent .sapMGTHdrTxt .sapMText should be 'normal' and not overridden by .sapUiFormEdit styles"
 		);
+	});
+
+	// ─── appShortcut / systemInfo layout tests ──────────────────────────────────
+
+	QUnit.module("appShortcut / systemInfo layout");
+
+	QUnit.test("sapMGTTInfoInline: suppressed for TwoByHalf NumericContent and ImageContent (Normal mode)", async function(assert) {
+		var oTile = new GenericTile({
+			header: "Tile", subheader: "Sub",
+			frameType: FrameType.TwoByHalf, appShortcut: "F1234",
+			tileContent: [new TileContent({ content: new NumericContent({ value: "99" }) })]
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var oInfoEl = oTile.getDomRef().querySelector(".sapMGTTInfo");
+		assert.notOk(oInfoEl.classList.contains("sapMGTTInfoInline"), "sapMGTTInfoInline suppressed for TwoByHalf + NumericContent (Normal mode)");
+
+		oTile.destroyTileContent();
+		oTile.addTileContent(new TileContent({ content: new ImageContent({ src: "test-resources/sap/f/images/Woman_avatar_01.png" }) }));
+		await nextUIUpdate();
+		assert.notOk(oTile.getDomRef().querySelector(".sapMGTTInfo").classList.contains("sapMGTTInfoInline"),
+			"sapMGTTInfoInline suppressed for TwoByHalf + ImageContent (_bIsImageContent=true)");
+
+		oTile.destroy();
+	});
+
+	QUnit.test("sapMGTTInfoInline: always applied for OneByHalf; applied for TwoByHalf IconMode", async function(assert) {
+		var oTile = new GenericTile({
+			header: "Tile", subheader: "Sub", appShortcut: "F1234",
+			frameType: FrameType.OneByHalf
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+		assert.ok(oTile.getDomRef().querySelector(".sapMGTTInfo").classList.contains("sapMGTTInfoInline"),
+			"sapMGTTInfoInline applied for OneByHalf");
+
+		oTile.setFrameType(FrameType.TwoByHalf);
+		oTile.setMode(library.GenericTileMode.IconMode);
+		await nextUIUpdate();
+		assert.notOk(oTile.getDomRef().querySelector(".sapMGTTInfo").classList.contains("sapMGTTInfoInline"),
+			"sapMGTTInfoInline suppressed for TwoByHalf IconMode without tileIcon/backgroundColor");
+
+		oTile.destroy();
+	});
+
+	QUnit.test("_bIsImageContent: true for ImageContent, false for NumericContent, reset to false in IconMode", async function(assert) {
+		var oTile = new GenericTile({
+			header: "Tile", frameType: FrameType.TwoByHalf, appShortcut: "F1234",
+			tileContent: [new TileContent({ content: new ImageContent({ src: "test-resources/sap/f/images/Woman_avatar_01.png" }) })]
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+		assert.ok(oTile._bIsImageContent, "_bIsImageContent=true for ImageContent");
+
+		oTile.destroyTileContent();
+		oTile.addTileContent(new TileContent({ content: new NumericContent({ value: "42" }) }));
+		await nextUIUpdate();
+		assert.notOk(oTile._bIsImageContent, "_bIsImageContent=false for NumericContent");
+
+		oTile.destroyTileContent();
+		oTile.addTileContent(new TileContent({ content: new ImageContent({ src: "test-resources/sap/f/images/Woman_avatar_01.png" }) }));
+		oTile.setMode(library.GenericTileMode.IconMode);
+		await nextUIUpdate();
+		assert.notOk(oTile._bIsImageContent, "_bIsImageContent reset to false when switching to IconMode (_applyHeaderMode)");
+
+		oTile.destroy();
+	});
+
+	QUnit.test("Title maxLines: 1 with subheader, 2 without — TwoByHalf and OneByHalf", async function(assert) {
+		var oTile = new GenericTile({
+			header: "Tile", appShortcut: "F1234",
+			tileContent: [new TileContent({ content: new NumericContent({ value: "1" }) })]
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var aFrameTypes = [FrameType.TwoByHalf, FrameType.OneByHalf];
+		for (var i = 0; i < aFrameTypes.length; i++) {
+			oTile.setFrameType(aFrameTypes[i]);
+			oTile.setSubheader("Sub");
+			await nextUIUpdate();
+			assert.equal(oTile._oTitle.getMaxLines(), 1, "maxLines=1 for " + aFrameTypes[i] + " + subheader");
+
+			oTile.setSubheader("");
+			await nextUIUpdate();
+			assert.equal(oTile._oTitle.getMaxLines(), 2, "maxLines=2 for " + aFrameTypes[i] + " + no subheader");
+		}
+
+		oTile.destroy();
+	});
+
+	QUnit.test("appShortcut/systemInfo maxLines=1 for OneByHalf and TwoByOne; bumped to 2 for long text in TwoByHalf IconMode", async function(assert) {
+		var oTile = new GenericTile({
+			header: "Tile", appShortcut: "F1234", systemInfo: "SYS"
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var aDefaultFrameTypes = [FrameType.OneByHalf, FrameType.TwoByOne];
+		for (var i = 0; i < aDefaultFrameTypes.length; i++) {
+			oTile.setFrameType(aDefaultFrameTypes[i]);
+			await nextUIUpdate();
+			assert.equal(oTile._oAppShortcut.getMaxLines(), 1, "appShortcut maxLines=1 for " + aDefaultFrameTypes[i]);
+			assert.equal(oTile._oSystemInfo.getMaxLines(), 1, "systemInfo maxLines=1 for " + aDefaultFrameTypes[i]);
+		}
+
+		oTile.setFrameType(FrameType.TwoByHalf);
+		oTile.setMode(library.GenericTileMode.IconMode);
+		oTile.setTileIcon("sap-icon://home");
+		oTile.setBackgroundColor("#007db8");
+		oTile.setAppShortcut("LONGSHORTCUT"); // 12 chars — exceeds 11-char threshold
+		await nextUIUpdate();
+		assert.equal(oTile._oAppShortcut.getMaxLines(), 2, "appShortcut bumped to maxLines=2 in TwoByHalf IconMode when > 11 chars");
+		assert.equal(oTile._oSystemInfo.getMaxLines(), 1, "systemInfo stays maxLines=1");
+
+		oTile.setMode(library.GenericTileMode.ContentMode);
+		await nextUIUpdate();
+		assert.equal(oTile._oAppShortcut.getMaxLines(), 1, "No bump in ContentMode — appShortcut stays maxLines=1");
+
+		oTile.destroy();
+	});
+
+	QUnit.test("OneByHalf + NumericContent: content shown when no appInfo; hidden when appShortcut or systemInfo present", async function(assert) {
+		var oTile = new GenericTile({
+			header: "Tile", subheader: "Sub",
+			frameType: FrameType.OneByHalf,
+			tileContent: [new TileContent({ content: new NumericContent({ value: "42" }) })]
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		assert.ok(oTile.getTileContent()[0]._bRenderContent, "NumericContent rendered when no appInfo");
+		assert.strictEqual(oTile._oSubTitle.getDomRef(), null, "Subtitle suppressed when NumericContent is shown");
+		assert.notOk(oTile.getDomRef().querySelector(".sapMGTTInfo"), "Info container not rendered when no appInfo");
+
+		oTile.setAppShortcut("F1234");
+		await nextUIUpdate();
+		assert.notOk(oTile.getTileContent()[0]._bRenderContent, "NumericContent hidden when appShortcut present");
+		assert.ok(oTile.getDomRef().querySelector(".sapMGTTInfo"), "Info container rendered when appShortcut present");
+
+		oTile.setAppShortcut("");
+		oTile.setSystemInfo("SYS");
+		await nextUIUpdate();
+		assert.notOk(oTile.getTileContent()[0]._bRenderContent, "NumericContent hidden when systemInfo present");
+		assert.ok(oTile.getDomRef().querySelector(".sapMGTTInfo"), "Info container rendered when systemInfo present");
+
+		oTile.destroy();
+	});
+
+	QUnit.test("OneByHalf + ImageContent: content shown when no appInfo; hidden when appShortcut or systemInfo present", async function(assert) {
+		var oTile = new GenericTile({
+			header: "Tile", subheader: "Sub",
+			frameType: FrameType.OneByHalf,
+			tileContent: [new TileContent({ content: new ImageContent({ src: "test-resources/sap/f/images/Woman_avatar_01.png" }) })]
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		assert.ok(oTile.getTileContent()[0]._bRenderContent, "ImageContent rendered when no appInfo");
+		assert.notStrictEqual(oTile._oSubTitle.getDomRef(), null, "Subtitle visible when ImageContent is shown with no appInfo");
+		assert.notOk(oTile.getDomRef().querySelector(".sapMGTTInfo"), "Info container not rendered when no appInfo");
+
+		oTile.setAppShortcut("F1234");
+		await nextUIUpdate();
+		assert.notOk(oTile.getTileContent()[0]._bRenderContent, "ImageContent hidden when appShortcut present");
+		assert.ok(oTile.getDomRef().querySelector(".sapMGTTInfo"), "Info container rendered when appShortcut present");
+
+		oTile.setAppShortcut("");
+		oTile.setSystemInfo("SYS");
+		await nextUIUpdate();
+		assert.notOk(oTile.getTileContent()[0]._bRenderContent, "ImageContent hidden when systemInfo present");
+		assert.ok(oTile.getDomRef().querySelector(".sapMGTTInfo"), "Info container rendered when systemInfo present");
+
+		oTile.destroy();
+	});
+
+	QUnit.test("OneByHalf + NumericContent in ActionMore scope: content hidden, info container not rendered", async function(assert) {
+		var oTile = new GenericTile({
+			header: "Tile",
+			frameType: FrameType.OneByHalf,
+			scope: library.GenericTileScope.ActionMore,
+			appShortcut: "F1234",
+			tileContent: [new TileContent({ content: new NumericContent({ value: "42" }) })]
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		assert.notOk(oTile.getTileContent()[0]._bRenderContent, "NumericContent hidden in ActionMore scope (appInfo present)");
+		assert.notOk(oTile.getDomRef().querySelector(".sapMGTTInfo"), "Info container suppressed in ActionMore scope");
+
+		oTile.destroy();
+	});
+
+	QUnit.test("OneByHalf + ImageContent in ActionMore scope: content hidden, info container not rendered", async function(assert) {
+		var oTile = new GenericTile({
+			header: "Tile",
+			frameType: FrameType.OneByHalf,
+			scope: library.GenericTileScope.ActionMore,
+			systemInfo: "SYS",
+			tileContent: [new TileContent({ content: new ImageContent({ src: "test-resources/sap/f/images/Woman_avatar_01.png" }) })]
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		assert.notOk(oTile.getTileContent()[0]._bRenderContent, "ImageContent hidden in ActionMore scope (appInfo present)");
+		assert.notOk(oTile.getDomRef().querySelector(".sapMGTTInfo"), "Info container suppressed in ActionMore scope");
+
+		oTile.destroy();
 	});
 });

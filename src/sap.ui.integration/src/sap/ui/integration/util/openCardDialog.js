@@ -209,7 +209,11 @@ sap.ui.define([
 		if (oParameters._cardId) {
 			oChildCard = Element.getElementById(oParameters._cardId);
 		} else {
-			oChildCard = oParentCard._createChildCard(oParameters);
+			oChildCard = oParentCard._createChildCardForDialog(oParameters);
+		}
+
+		if (!oChildCard) {
+			return null;
 		}
 
 		if (oParameters.isPaginationCard) {

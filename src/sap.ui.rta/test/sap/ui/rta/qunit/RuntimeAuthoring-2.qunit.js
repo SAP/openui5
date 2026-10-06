@@ -1000,6 +1000,32 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("when isReloadNeeded is called and a save requiring a reload already happened", async function(assert) {
+			await this.oRta.start();
+			this.oRta._bSavedChangesNeedReload = true;
+			const oNeedsReloadStub = sandbox.stub(this.oRta._oSerializer, "needsReload").resolves(false);
+
+			const bIsReloadNeeded = await this.oRta.isReloadNeeded();
+
+			assert.strictEqual(bIsReloadNeeded, true, "then isReloadNeeded resolves true from the cached flag");
+			assert.strictEqual(oNeedsReloadStub.callCount, 0, "then the serializer is not consulted once the flag is set");
+		});
+
+		QUnit.test("when isReloadNeeded is called and no reload was cached yet", async function(assert) {
+			await this.oRta.start();
+			this.oRta._bSavedChangesNeedReload = false;
+			const oNeedsReloadStub = sandbox.stub(this.oRta._oSerializer, "needsReload").resolves(true);
+
+			const bIsReloadNeeded = await this.oRta.isReloadNeeded();
+
+			assert.strictEqual(bIsReloadNeeded, true, "then isReloadNeeded resolves to the serializer result");
+			assert.strictEqual(oNeedsReloadStub.callCount, 1, "then the serializer is consulted");
+
+			oNeedsReloadStub.resolves(false);
+			const bIsReloadNeededAgain = await this.oRta.isReloadNeeded();
+			assert.strictEqual(bIsReloadNeededAgain, false, "then isReloadNeeded reflects a serializer result of false");
+		});
+
 		QUnit.test("when re-entering adaptation mode and ChangeVisualization reports persisted changes, then the 'Highlight All Changes' button becomes enabled", async function(assert) {
 			await this.oRta.start();
 			const oCViz = this.oRta.getChangeVisualization();

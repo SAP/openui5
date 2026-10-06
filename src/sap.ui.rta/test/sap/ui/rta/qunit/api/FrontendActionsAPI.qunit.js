@@ -167,6 +167,7 @@ sap.ui.define([
 			{ name: "callAction", args: { controlId: "c1", actionId: "a1" } },
 			{ name: "getContext", args: { controlId: "c1", actionId: "a1" } },
 			{ name: "saveChanges", args: undefined },
+			{ name: "saveAndReloadApp", args: undefined },
 			{ name: "saveAndActivateChanges", args: { title: "v1" } }
 		].forEach(function(oCase) {
 			QUnit.test(`when ${oCase.name} is called before startRTA`, async function(assert) {
@@ -539,6 +540,93 @@ sap.ui.define([
 					`then contextEntityType is populated from the delegate for model '${oEntry.modelName}'`
 				);
 			});
+		});
+
+		QUnit.test("when saveAndReloadApp is called and a reload is needed", async function(assert) {
+			await FrontendActionsAPI.startRTA({ agentName: "TestAgent" });
+			const oRtaInstance = this.aStartedInstances[0];
+			sandbox.stub(oRtaInstance, "isReloadNeeded").resolves(true);
+			// stub the reload itself so the test app is not torn down/reloaded
+			const oSaveAndReloadStub = sandbox.stub(oRtaInstance, "saveAndReload").resolves();
+			const oSetModeSpy = sandbox.spy(oRtaInstance, "setMode");
+
+			const oResult = await FrontendActionsAPI.saveAndReloadApp();
+
+			assert.strictEqual(oResult.isSuccess, true, "then a success envelope is returned");
+			assert.ok(oSetModeSpy.calledWith("adaptation"), "then RTA is switched to adaptation mode");
+			assert.strictEqual(oSaveAndReloadStub.callCount, 1, "then the app is saved and reloaded");
+		});
+
+		QUnit.test("when saveAndReloadApp is called and no reload is needed", async function(assert) {
+			await FrontendActionsAPI.startRTA({ agentName: "TestAgent" });
+			const oRtaInstance = this.aStartedInstances[0];
+			sandbox.stub(oRtaInstance, "isReloadNeeded").resolves(false);
+			const oSaveAndReloadStub = sandbox.stub(oRtaInstance, "saveAndReload").resolves();
+
+			const oResult = await FrontendActionsAPI.saveAndReloadApp();
+
+			assert.strictEqual(oResult.isSuccess, true, "then a success envelope is returned");
+			assert.strictEqual(oSaveAndReloadStub.callCount, 0, "then no reload is triggered when none is needed");
+		});
+
+		QUnit.test("when saveAndReloadApp is called and the reload fails", async function(assert) {
+			await FrontendActionsAPI.startRTA({ agentName: "TestAgent" });
+			const oRtaInstance = this.aStartedInstances[0];
+			sandbox.stub(oRtaInstance, "isReloadNeeded").resolves(true);
+			sandbox.stub(oRtaInstance, "saveAndReload").rejects(new Error("reload boom"));
+
+			const oResult = await FrontendActionsAPI.saveAndReloadApp();
+
+			assert.strictEqual(oResult.isSuccess, false, "then a failure envelope is returned instead of a raw rejection");
+			assert.strictEqual(
+				oResult.error.getCode(),
+				FrontendActionError.ErrorCodes.GENERIC_ERROR,
+				"then the failure carries the GENERIC_ERROR code"
+			);
+			assert.strictEqual(oResult.error.getMessage(), "reload boom", "then the failure carries the underlying error message");
+		});
+
+		QUnit.test("when callAction applies a change that introduces a reload requirement", async function(assert) {
+			await FrontendActionsAPI.startRTA({ agentName: "TestAgent" });
+			const oRtaInstance = this.aStartedInstances[0];
+			const oAction = await findActionWithRequiredParam(oRtaInstance);
+			assert.ok(oAction, "given an editable control exposing an action with a required parameter");
+
+			// After the action is applied the session requires a reload.
+			sandbox.stub(oRtaInstance, "isReloadNeeded").resolves(true);
+
+			const oResult = await FrontendActionsAPI.callAction({
+				controlId: oAction.controlId,
+				actionId: oAction.actionId,
+				payload: { [oAction.requiredParamName]: "New Value" }
+			});
+
+			assert.strictEqual(oResult.isSuccess, true, "then a success envelope is returned");
+			assert.strictEqual(oResult.payload.reloadNeeded, true, "then the payload reports that a reload is now needed");
+		});
+
+		QUnit.test("when callAction applies a change but a reload was already required beforehand", async function(assert) {
+			await FrontendActionsAPI.startRTA({ agentName: "TestAgent" });
+			const oRtaInstance = this.aStartedInstances[0];
+			const oAction = await findActionWithRequiredParam(oRtaInstance);
+			assert.ok(oAction, "given an editable control exposing an action with a required parameter");
+
+			// A reload was already pending before this action; the result still reflects
+			// the current session reload state (true), not whether *this* action caused it.
+			sandbox.stub(oRtaInstance, "isReloadNeeded").resolves(true);
+
+			const oResult = await FrontendActionsAPI.callAction({
+				controlId: oAction.controlId,
+				actionId: oAction.actionId,
+				payload: { [oAction.requiredParamName]: "New Value" }
+			});
+
+			assert.strictEqual(oResult.isSuccess, true, "then a success envelope is returned");
+			assert.strictEqual(
+				oResult.payload.reloadNeeded,
+				true,
+				"then the payload reflects the current session reload state"
+			);
 		});
 	});
 

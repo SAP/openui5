@@ -39,6 +39,7 @@ GenericTileLineModeRenderer.render = function(oRm, oControl) {
 
 	// Render a link when URL is provided, not in action scope and the state is enabled
 	var bRenderLink = oControl.getUrl() && !oControl._isInActionScope() && sState !== LoadState.Disabled;
+	var bSuppressInfoContainer = sScope === GenericTileScope.Actions || sScope === GenericTileScope.ActionMore;
 
 	this._bRTL = Localization.getRTL();
 
@@ -139,7 +140,7 @@ GenericTileLineModeRenderer.render = function(oRm, oControl) {
 			this._renderSubheader(oRm, oControl);
 		}
 		oRm.close("span");
-		if (oControl.getSystemInfo() || oControl.getAppShortcut()) {
+		if (!bSuppressInfoContainer && (oControl.getSystemInfo() || oControl.getAppShortcut())) {
 			this._renderInfoContainer(oRm,oControl);
 		}
 		oRm.close("span");
@@ -159,7 +160,7 @@ GenericTileLineModeRenderer.render = function(oRm, oControl) {
 		oRm.openEnd();
 		oRm.close("div");
 
-	} else if (oControl.getSystemInfo() || oControl.getAppShortcut()){
+	} else if (!bSuppressInfoContainer && (oControl.getSystemInfo() || oControl.getAppShortcut())){
 		oRm.openStart("div", oControl.getId() + "-touchArea");
 		oRm.class("sapMGTTouchArea");
 		oRm.openEnd();

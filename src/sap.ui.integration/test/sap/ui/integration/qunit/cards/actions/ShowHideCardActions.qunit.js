@@ -320,11 +320,9 @@ sap.ui.define([
 		// Act
 		this.oCard.getCardHeader().firePress();
 
-		const oDialog = this.oCard.getDependents()[0];
-		const oChildCard = oDialog.getContent()[0];
-
 		// Assert
-		assert.strictEqual(oChildCard.getManifest(), "", "Child card has no manifest set");
+		const oDialog = this.oCard.getDependents()[0];
+		assert.notOk(oDialog, "No dialog is opened when child card key doesn't exist.");
 		assert.ok(oSpy.calledWith("'ShowCard' action cannot find a child card with key 'childCard1'.", null, "sap.ui.integration.widgets.Card"), "Error logged for missing child card key");
 	});
 

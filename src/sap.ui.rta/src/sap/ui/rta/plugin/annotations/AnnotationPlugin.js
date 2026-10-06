@@ -55,6 +55,24 @@ sap.ui.define([
 		}
 	}
 
+	// For single-rename scenarios we remove any existing control-based rename change in the
+	// context of the given control and change type, so the annotation change becomes the single
+	// source of truth for the label.
+	async function getLegacyRenameChanges(oElement, oAction) {
+		const aLegacyRenameChanges = [];
+		if (oAction.singleRename) {
+			const aUIChanges = await PersistenceWriteAPI._getUIChanges({
+				selector: oElement
+			});
+			const oAppComponent = Utils.getAppComponentForControl(oElement);
+			aLegacyRenameChanges.push(...aUIChanges.filter((oChange) =>
+				oChange.getChangeType() === oAction.controlBasedRenameChangeType
+				&& JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent) === oElement.getId()
+			));
+		}
+		return aLegacyRenameChanges;
+	}
+
 	function getActionIcon(oAnnotationAction) {
 		const sDefaultIcon = oAnnotationAction.type === AnnotationTypes.StringType ? "sap-icon://edit" : "sap-icon://request";
 		const sActionIcon = oAnnotationAction.icon;
@@ -161,19 +179,7 @@ sap.ui.define([
 			});
 
 			if (aAnnotationChanges.length) {
-				const aLegacyRenameChanges = [];
-				// for single rename scenarios we are able to remove any existing control based rename change in the context of
-				// the given control and change type
-				if (oAction.singleRename) {
-					const aUIChanges = await PersistenceWriteAPI._getUIChanges({
-						selector: oElement
-					});
-					const oAppComponent = Utils.getAppComponentForControl(oElement);
-					aLegacyRenameChanges.push(...aUIChanges.filter((oChange) =>
-						oChange.getChangeType() === oAction.controlBasedRenameChangeType
-						&& JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent) === oElement.getId()
-					));
-				}
+				const aLegacyRenameChanges = await getLegacyRenameChanges(oElement, oAction);
 				return handleCompositeCommand.call(this, oElement, oAction, aAnnotationChanges, aLegacyRenameChanges);
 			}
 			return undefined;
@@ -212,7 +218,11 @@ sap.ui.define([
 						icon: getActionIcon(oAction),
 						rank: iRank + iIndex,
 						action: oAction,
-						text: sActionText
+						text: sActionText,
+						description: `Apply the "${sActionText}" annotation change to this element `
+							+ `(annotation change type "${oAction.changeType}"). `
+							+ "Call getContext first to list the editable annotation properties with their "
+							+ `current values, then invoke with featureKey "${sKey}" and the desired changes.`
 					}));
 				}
 				iIndex++;
@@ -227,6 +237,129 @@ sap.ui.define([
 	 */
 	AnnotationPlugin.prototype.getActionName = function() {
 		return "annotation";
+	};
+
+	/**
+	 * Returns the parameters that a programmatic consumer (e.g. an AI agent) must provide to
+	 * create the annotation commands. As a single overlay can offer multiple annotation actions,
+	 * the concrete action is selected via the <code>featureKey</code> parameter.
+	 * @returns {object[]} List of parameter descriptors
+	 * @override
+	 */
+	AnnotationPlugin.prototype.getParameters = function() {
+		return [
+			{
+				name: "featureKey",
+				type: "string",
+				required: true,
+				description: "Identifies which annotation action to run. Must be one of the keys in "
+					+ "`getContext().annotationActions`."
+			},
+			{
+				name: "changes",
+				type: "array",
+				required: true,
+				description: "The annotation changes to apply. Each entry is an object "
+					+ "{ annotationPath: string, value: string|boolean|object }. `annotationPath` must be one of "
+					+ "the paths listed under the chosen action's `properties` in getContext; `value` is the new "
+					+ "value (a string for String/rename actions, a boolean for Boolean actions, or one of the "
+					+ "`possibleValues` keys for ValueList actions)."
+			}
+		];
+	};
+
+	/**
+	 * Returns element-specific context that an AI agent needs before it can fill the parameters:
+	 * the available annotation actions (keyed by feature key) together with the editable
+	 * properties, their current values and any allowed values as provided by the delegate.
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Target overlay
+	 * @returns {Promise<object>} Map of context entries in <code>{ description, value }</code> shape
+	 * @override
+	 */
+	AnnotationPlugin.prototype.getContext = async function(oOverlay) {
+		const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oOverlay);
+		const oElement = oResponsibleElementOverlay.getElement();
+		const oAnnotationActionMap = this.getAction(oResponsibleElementOverlay) || {};
+		const mAnnotationActions = {};
+
+		for (const sKey in oAnnotationActionMap) {
+			const oAction = oAnnotationActionMap[sKey];
+			// the delegate provides the service url and the element-specific annotation properties
+			// eslint-disable-next-line no-await-in-loop
+			const oChangeInfo = await oAction.delegate.getAnnotationsChangeInfo(oElement, oAction.annotation);
+			mAnnotationActions[sKey] = {
+				title: this.getActionText(oResponsibleElementOverlay, oAction),
+				valueType: oAction.type,
+				changeType: oAction.changeType,
+				serviceUrl: oChangeInfo.serviceUrl,
+				properties: (oChangeInfo.properties || []).map((oProperty) => ({
+					annotationPath: oProperty.annotationPath,
+					propertyName: oProperty.propertyName,
+					label: oProperty.label || oProperty.propertyName,
+					currentValue: oProperty.currentValue
+				})),
+				possibleValues: oChangeInfo.possibleValues || []
+			};
+		}
+
+		return {
+			annotationActions: {
+				description: "Available annotation actions keyed by feature key. Pass the chosen key as the "
+					+ "`featureKey` parameter. For each action, `valueType` is one of String/Boolean/ValueList, "
+					+ "`properties` lists the editable annotation targets (use `annotationPath` in the `changes` "
+					+ "parameter and `currentValue` to see the present value), and `possibleValues` lists the "
+					+ "allowed values for ValueList actions. The Annotation Change will not change the control directly, "
+					+ "but it will change the underlying annotation data. This means that one change will affect all controls "
+					+ "bound to the same annotation. Only one change must be created for a particular value to be changed, "
+					+ "even if it is shown by multiple controls. "
+					+ "But the change will only be applied after a reload, for this the UI offers a reload option.",
+				value: mAnnotationActions
+			}
+		};
+	};
+
+	/**
+	 * Headless executor for the annotation action. Builds and fires the annotation command(s) for the
+	 * action selected via <code>mParameters.featureKey</code>, mirroring the interactive handler.
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Target overlay
+	 * @param {object} mParameters - Parameters as declared in {@link #getParameters}
+	 * @returns {Promise<void>} Resolves once the command has been fired
+	 * @override
+	 */
+	AnnotationPlugin.prototype.createCommands = async function(oOverlay, mParameters) {
+		const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oOverlay);
+		const oElement = oResponsibleElementOverlay.getElement();
+		const oAnnotationActionMap = this.getAction(oResponsibleElementOverlay) || {};
+		const oAction = oAnnotationActionMap[mParameters.featureKey];
+
+		if (!oAction) {
+			throw new Error(`No annotation action found for feature key '${mParameters.featureKey}'`);
+		}
+		if (!checkDesigntimeActionProperties(oAction)) {
+			throw new Error(`The annotation action for feature key '${mParameters.featureKey}' is not configured correctly`);
+		}
+		oAction.featureKey = mParameters.featureKey;
+
+		const aChanges = mParameters.changes || [];
+		if (!aChanges.length) {
+			return;
+		}
+
+		const { serviceUrl: sServiceUrl } = await oAction.delegate.getAnnotationsChangeInfo(oElement, oAction.annotation);
+		const bIsStringType = oAction.type === AnnotationTypes.StringType;
+
+		const aAnnotationChanges = aChanges.map((oChange) => {
+			const oContent = { annotationPath: oChange.annotationPath };
+			// String type annotations are saved as translatable text, all other types as plain value
+			oContent[bIsStringType ? "text" : "value"] = oChange.value;
+			return {
+				serviceUrl: sServiceUrl,
+				content: oContent
+			};
+		});
+
+		const aLegacyRenameChanges = await getLegacyRenameChanges(oElement, oAction);
+		await handleCompositeCommand.call(this, oElement, oAction, aAnnotationChanges, aLegacyRenameChanges);
 	};
 
 	AnnotationPlugin.prototype.destroy = function(...args) {

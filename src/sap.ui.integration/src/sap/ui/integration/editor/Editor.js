@@ -32,7 +32,8 @@ sap.ui.define([
 	"sap/m/StandardTreeItem",
 	"./EditorRenderer",
 	"./EditorFieldManager",
-	"./EditorTranslation"
+	"./EditorTranslation",
+	"./EditorContext"
 ], function(
 	Localization,
 	Control,
@@ -63,7 +64,8 @@ sap.ui.define([
 	StandardTreeItem,
 	EditorRenderer,
 	EditorFieldManager,
-	EditorTranslation
+	EditorTranslation,
+	EditorContext
 ) {
 	"use strict";
 
@@ -94,7 +96,6 @@ sap.ui.define([
 	}
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g,
 		REGEXP_PARAMETERS = /\{\{parameters\.([^\}\}]+)/g,
-		CONTEXT_TIMEOUT = 5000,
 		MessageStripId = "_strip",
 		MODULE_PREFIX = "module:",
 		CONTEXT_ENTRIES;
@@ -307,36 +308,6 @@ sap.ui.define([
 		return this._oPreview;
 	};
 
-	Editor.prototype.flattenData = function(oData, s, a, path) {
-		path = path || "";
-		a = a || [];
-		if (typeof oData === "object") {
-			if (!oData[s]) {
-				for (var n in oData) {
-					this.flattenData(oData[n], s, a, path + "/" + n);
-				}
-			} else {
-				//found leave
-				if (oData.type) {
-					a.push({
-						path: oData.pathvalue || path.substring(1),
-						value: oData.pathvalue || "{context>" + path.substring(1) + "/value}",
-						object: oData
-					});
-				} else {
-					a.push({
-						path: path.substring(1),
-						object: oData
-					});
-					for (var n in oData) {
-						this.flattenData(oData[n], s, a, path + "/" + n);
-					}
-				}
-			}
-		}
-		return a;
-	};
-
 	Editor.prototype.setJson = function (vIdOrSettings, bSuppress) {
 		this._vIdOrSettings = deepClone(vIdOrSettings, 500);
 		this._fieldReady = false;
@@ -422,7 +393,7 @@ sap.ui.define([
 					await this._loadSpecialTranslations();
 				}
 				//add a context model
-				this._createContextModel();
+				EditorContext.createContextModel(this, CONTEXT_ENTRIES, "editor.internal");
 				if (this._oManifest.getResourceBundle()) {
 					this._enhanceI18nModel(this._oManifest.getResourceBundle());
 				}
@@ -1173,7 +1144,7 @@ sap.ui.define([
 			that._oSettingsModel = new JSONModel(that._oDesigntimeInstance.getSettings());
 			that.setModel(that._oSettingsModel, "currentSettings");
 			that.setModel(that._oSettingsModel, "items");
-			return that._loadValueContextInDesigntime();
+			return EditorContext.loadValueContextInDesigntime(that);
 		}).then(function () {
 			that._applyDesigntimeLayers(); //changes done from admin to content on the dt values
 			return that._requestExtensionData();
@@ -1529,143 +1500,6 @@ sap.ui.define([
 		}
 		mChecks[":errors"] = Object.values(mChecks).indexOf(false) > -1;
 		return mChecks;
-	};
-
-	/**
-	 * Creates a model for the context object of the host environment
-	 */
-	Editor.prototype._createContextModel = function () {
-		var oHost = this.getHostInstance(),
-			oContextModel = new JSONModel({}),
-			oFlatContextModel = new JSONModel([]);
-
-			//add the models in any case
-		this.setModel(oContextModel, "context");
-		this.setModel(oFlatContextModel, "contextflat");
-		oContextModel._aPendingPromises = [];
-		oFlatContextModel._getPathObject = function (sPath) {
-			var a = this.getData().filter(function (o) {
-				if (o.path === sPath) {
-					return true;
-				}
-			});
-			return a.length ? a[0] : null;
-		};
-		oFlatContextModel._getValueObject = function (sValue) {
-			var a = this.getData() || [];
-			a = a.filter(function (o) {
-				if (o.value === sValue || o.object.value === sValue) {
-					return true;
-				}
-			});
-			return a.length ? a[0] : null;
-		};
-		var oContextDataPromise = new Promise(function (resolve, reject) {
-			if (oHost && oHost.getContext) {
-				var bResolved = false;
-				setTimeout(function () {
-					if (bResolved) {
-						return;
-					}
-					Log.error("sap.ui.integration.editor.Editor: context could not be determined with " + CONTEXT_TIMEOUT + ".");
-					bResolved = true;
-					resolve({});
-				}, CONTEXT_TIMEOUT);
-				oHost.getContext().then(function (oContextData) {
-					if (bResolved) {
-						Log.error("sap.ui.integration.editor.Editor: context returned after more than " + CONTEXT_TIMEOUT + ". Context is ignored.");
-					}
-					bResolved = true;
-					resolve(oContextData || {});
-				});
-			} else {
-				resolve({});
-			}
-		});
-
-		//get the context from the host
-		oContextDataPromise.then(function (oContextData) {
-			var oData = this._mergeContextData(oContextData);
-			oContextModel.setData(oData);
-			oFlatContextModel.setData(this.flattenData(oData, "label"));
-		}.bind(this));
-
-		//async update of the value via host call
-		oContextModel.getProperty = function (sPath, oContext) {
-			if (sPath && !sPath.startsWith("/") && !oContext) {
-				sPath = "/" + sPath;
-			}
-			var sAbsolutePath = this.resolve(sPath, oContext),
-				pGetProperty;
-			if (sAbsolutePath.endsWith("/value")) {
-				this._mValues = this._mValues || {};
-				if (this._mValues.hasOwnProperty(sAbsolutePath)) {
-					return this._mValues[sAbsolutePath];
-					//when should this be invalidated?
-				}
-				this._mValues[sAbsolutePath] = undefined;
-				// ask the host and timeout if it does not respond
-				pGetProperty = Utils.timeoutPromise(oHost.getContextValue(sAbsolutePath.substring(1)));
-				pGetProperty = pGetProperty.then(function (vValue) {
-						this._mValues[sAbsolutePath] = vValue;
-						this.checkUpdate();
-					}.bind(this))
-					.catch(function (sReason) {
-						this._mValues[sAbsolutePath] = null;
-						this.checkUpdate();
-						Log.error("sap.ui.integration.editor.Editor: path " + sAbsolutePath + " could not be resolved. Reason: " + sReason);
-					}.bind(this));
-
-				this._aPendingPromises.push(pGetProperty);
-				return undefined;
-			} else {
-				//resolve dt data locally
-				return JSONModel.prototype.getProperty.apply(this, arguments);
-			}
-		};
-	};
-
-	Editor.prototype._mergeContextData = function (oContextData) {
-		var oData = {};
-		//empty entry
-		oData["empty"] = CONTEXT_ENTRIES.empty;
-		//custom entries
-		for (var n in oContextData) {
-			oData[n] = oContextData[n];
-		}
-		//editor internal
-		oData["editor.internal"] = CONTEXT_ENTRIES["editor.internal"];
-		return oData;
-	};
-
-	Editor.prototype._loadValueContextInDesigntime = function () {
-		var oContextModel = this.getModel("context");
-		var oSettings = this._oDesigntimeInstance.getSettings();
-		var sItemsString;
-		if (oSettings && oSettings.form && oSettings.form.items) {
-			sItemsString = JSON.stringify(oSettings.form.items);
-		}
-		if (sItemsString) {
-			var contextParamRegExp = /\{context\>[\/?\w+.]+\}/g;
-			var aResult = sItemsString.match(contextParamRegExp);
-			var aContextEntries;
-			if (aResult && aResult.length > 0) {
-				// only value context need to load
-				aResult = aResult.filter(function (sResult) {
-					return sResult.endsWith("value}");
-				});
-				aContextEntries = aResult.map(function (sResult) {
-					return sResult.substring(9, sResult.length - 1);
-				});
-				aContextEntries.forEach(function (sContextEntry) {
-					oContextModel.getProperty(sContextEntry);
-				});
-				return Promise.all(oContextModel._aPendingPromises).then(function () {
-					oContextModel._aPendingPromises = [];
-				});
-			}
-		}
-		return Promise.resolve();
 	};
 
 	/**
@@ -2477,59 +2311,14 @@ sap.ui.define([
 		return false;
 	};
 
-
-
 	Editor.oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language);
 
-	//init context entries
-	Editor.initContextEntries = function () {
-		return {
-			empty: {
-				label: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EMPTY_VAL"),
-				type: "string",
-				description: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EMPTY_DESC"),
-				placeholder: "",
-				value: ""
-			},
-			"editor.internal": {
-				label: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_INTERNAL_VAL"),
-				todayIso: {
-					type: "string",
-					label: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_TODAY_VAL"),
-					description: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_TODAY_DESC"),
-					tags: [],
-					placeholder: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_TODAY_VAL"),
-					customize: ["format.dataTime"],
-					value: "{{parameters.TODAY_ISO}}"
-				},
-				nowIso: {
-					type: "string",
-					label: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_NOW_VAL"),
-					description: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_NOW_DESC"),
-					tags: [],
-					placeholder: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_NOW_VAL"),
-					customize: ["dateFormatters"],
-					value: "{{parameters.NOW_ISO}}"
-				},
-				currentLanguage: {
-					type: "string",
-					label: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_LANG_VAL"),
-					description: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_LANG_VAL"),
-					tags: ["technical"],
-					customize: ["languageFormatters"],
-					placeholder: Editor.oResourceBundle.getText("EDITOR_CONTEXT_EDITOR_LANG_VAL"),
-					value: "{{parameters.LOCALE}}"
-				}
-			}
-		};
-	};
-
 	//create static context entries
-	CONTEXT_ENTRIES = Editor.initContextEntries();
+	CONTEXT_ENTRIES = EditorContext.initContextEntries(Editor.oResourceBundle);
 
 	//change static members if language changed
 	Editor.prototype._applyLanguageChange = function () {
-		CONTEXT_ENTRIES = Editor.initContextEntries();
+		CONTEXT_ENTRIES = EditorContext.initContextEntries(Editor.oResourceBundle);
 	};
 
 	//map of language strings in their actual language representation, initialized in Editor.init
