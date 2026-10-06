@@ -1914,14 +1914,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach((bHasPredicate) => {
-	[false, true].forEach((bAllowSame) => {
-		const sTitle = "updateAll: properties, has key predicate : " + bHasPredicate
-			+ ", check bAllowSame=" + bAllowSame;
-		if (!bHasPredicate && bAllowSame) {
-			return;
-		}
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("updateAll: properties, has key predicate : " + bHasPredicate, function (assert) {
 		var mChangeListeners = {},
 			oHelperMock = this.mock(_Helper),
 			oSource = {
@@ -1945,11 +1938,11 @@ sap.ui.define([
 
 		if (bHasPredicate) {
 			_Helper.setPrivateAnnotation(oSource, "predicate", "('1')");
-			_Helper.setPrivateAnnotation(oUpdatedTarget, "predicate", "('1')");
 		}
-		if (bAllowSame) {
-			_Helper.setPrivateAnnotation(oTarget, "predicate", "('1')");
-		}
+		_Helper.setPrivateAnnotation(oTarget, "predicate", "('42')");
+		_Helper.setPrivateAnnotation(oUpdatedTarget, "predicate",
+			bHasPredicate ? "('1')" : "('42')");
+
 		oHelperMock.expects("buildPath").withExactArgs("path", "@$ui5._");
 		oHelperMock.expects("buildPath").withExactArgs("path", "changed").returns("~changed");
 		oHelperMock.expects("buildPath").withExactArgs("path", "fromNull").returns("~fromNull");
@@ -1963,7 +1956,6 @@ sap.ui.define([
 		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource);
 
 		assert.deepEqual(oTarget, oUpdatedTarget);
-	});
 	});
 });
 

@@ -2981,7 +2981,10 @@ sap.ui.define([
 					vTargetProperty = oTarget[sProperty];
 
 				if (sProperty === "@$ui5._") {
-					_Helper.copyPrivateAnnotation(oSource, "predicate", oTarget, true);
+					const sSourcePredicate = _Helper.getPrivateAnnotation(oSource, "predicate");
+					if (sSourcePredicate) {
+						 _Helper.setPrivateAnnotation(oTarget, "predicate", sSourcePredicate);
+					}
 				} else if (Array.isArray(vSourceProperty)) {
 					// copy complete collection
 					oTarget[sProperty] = vSourceProperty;
