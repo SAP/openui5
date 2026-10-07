@@ -7,9 +7,11 @@
 /* Variables overriding            */
 /* ------------------------------- */
 
-@_sap_m_LightBox_OverlayBackground: fade(@sapUiBlockLayerBackground, 60);
-@_sap_m_LightBox_ContainerBackground: var(--sapGroup_ContentBackground);
-@_sap_m_LightBox_SubtitleMarginTop: 0.25rem;
+.sapUI5Scope {
+	--_sap_m_LightBox_OverlayBackground: ~'hsl(from var(--sapBlockLayer_Background) h s l / .6)';
+	--_sap_m_LightBox_ContainerBackground: var(--sapGroup_ContentBackground);
+	--_sap_m_LightBox_SubtitleMarginTop: 0.25rem;
+}
 
 /* ------------------------------- */
 /* Footer                          */

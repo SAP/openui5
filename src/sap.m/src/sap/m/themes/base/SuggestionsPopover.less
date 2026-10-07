@@ -3,20 +3,21 @@
 /* Base theme                                */
 /* ========================================= */
 
-@_sap_m_SuggestionsPopover_ItemMinHeight: 2.5rem;
-@_sap_m_SuggestionsPopover_ItemMinHeightCompact: 2rem;
-@_sap_m_SuggestionsPopover_GroupItemHeight: 2.75rem;
-@_sap_m_SuggestionsPopover_GroupItemHeightCompact: 2.75rem;
-
-@_sap_m_SuggestionsPopover_TabularItemHeight: 2.5rem;
-@_sap_m_SuggestionsPopover_TabularItemHeightCompact: 2rem;
-@_sap_m_SuggestionsPopover_TabularGroupItemHeight: 2.5rem;
-@_sap_m_SuggestionsPopover_TabularGroupItemHeightCompact: 2rem;
+.sapUI5Scope {
+	--_sap_m_SuggestionsPopover_ItemMinHeight: 2.5rem;
+	--_sap_m_SuggestionsPopover_ItemMinHeightCompact: 2rem;
+	--_sap_m_SuggestionsPopover_GroupItemHeight: 2.75rem;
+	--_sap_m_SuggestionsPopover_GroupItemHeightCompact: 2.75rem;
+	--_sap_m_SuggestionsPopover_TabularItemHeight: 2.5rem;
+	--_sap_m_SuggestionsPopover_TabularItemHeightCompact: 2rem;
+	--_sap_m_SuggestionsPopover_TabularGroupItemHeight: 2.5rem;
+	--_sap_m_SuggestionsPopover_TabularGroupItemHeightCompact: 2rem;
+}
 
 .sapMSuggestionsPopover {
 
 	.sapMListUl > .sapMLIB.sapMSLIWrapping {
-		min-height: @_sap_m_SuggestionsPopover_ItemMinHeight;
+		min-height: var(--_sap_m_SuggestionsPopover_ItemMinHeight);
 	}
 
 	.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
@@ -24,16 +25,16 @@
 	}
 
 	.sapMListUl > .sapMLIB.sapMGHLI {
-		height: @_sap_m_SuggestionsPopover_GroupItemHeight;
+		height: var(--_sap_m_SuggestionsPopover_GroupItemHeight);
 	}
 
 	.sapMListTbl .sapMLIB {
-		height: @_sap_m_SuggestionsPopover_TabularItemHeight;
+		height: var(--_sap_m_SuggestionsPopover_TabularItemHeight);
 	}
 
 	.sapMListTbl .sapMListTblHeader,
 	.sapMListTbl .sapMLIB.sapMGHLI {
-		height: @_sap_m_SuggestionsPopover_TabularGroupItemHeight;
+		height: var(--_sap_m_SuggestionsPopover_TabularGroupItemHeight);
 	}
 
 	.sapMListTbl .sapMListTblHeader .sapMColumnHeader,
@@ -53,7 +54,7 @@ div.sapMSuggestionsPopover {
 }
 
 .sapMSuggestionsPopover.sapMPopover:not(.sapMSuggestionPopoverDefaultWidth):not(.sapMSuggestionPopoverInputWidth) {
-	max-width: ~"calc(100% - 2rem)" !important;
+	max-width: ~'calc(100% - 2rem)' !important;
 }
 
 .sapMSuggestionsPopover.sapMPopover .sapMPopoverCont {
@@ -66,7 +67,7 @@ div.sapMSuggestionsPopover {
 	&.sapMSuggestionsPopover {
 
 		.sapMListUl > .sapMLIB.sapMSLIWrapping {
-			min-height: @_sap_m_SuggestionsPopover_ItemMinHeightCompact;
+			min-height: var(--_sap_m_SuggestionsPopover_ItemMinHeightCompact);
 		}
 
 		.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
@@ -74,16 +75,16 @@ div.sapMSuggestionsPopover {
 		}
 
 		.sapMListUl > .sapMLIB.sapMGHLI {
-			height: @_sap_m_SuggestionsPopover_GroupItemHeightCompact;
+			height: var(--_sap_m_SuggestionsPopover_GroupItemHeightCompact);
 		}
 
 		.sapMListTbl .sapMLIB {
-			height: @_sap_m_SuggestionsPopover_TabularItemHeightCompact;
+			height: var(--_sap_m_SuggestionsPopover_TabularItemHeightCompact);
 		}
 
 		.sapMListTbl .sapMListTblHeader,
 		.sapMListTbl .sapMLIB.sapMGHLI {
-			height: @_sap_m_SuggestionsPopover_TabularGroupItemHeightCompact;
+			height: var(--_sap_m_SuggestionsPopover_TabularGroupItemHeightCompact);
 		}
 
 		.sapMListTbl .sapMListTblHeader .sapMColumnHeader,
@@ -103,7 +104,7 @@ div.sapMSuggestionsPopover {
 }
 
 .sapMSuggestionsPopover .sapMDLIValue {
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	color: var(--sapList_TextColor);
 	padding-right: 1rem;
 }
@@ -113,11 +114,11 @@ div.sapMSuggestionsPopover {
 }
 
 .sapMSuggestionsPopover .sapMDLILabel {
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 }
 
 .sapMSuggestionsPopover .sapMSLITitleOnly {
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 }
 
 div.sapMSuggestionsPopover .sapMSuggestionsPopoverValueState {

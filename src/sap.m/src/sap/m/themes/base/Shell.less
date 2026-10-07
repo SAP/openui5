@@ -3,16 +3,16 @@
 /* Base theme                   */
 /* ============================ */
 
-@_sap_m_Shell_AppWidthLimit: 1280px;
-@_sap_m_Shell_AppWidthLimitBy2: @_sap_m_Shell_AppWidthLimit / 2;
-@_sap_m_Shell_AppWidthLimitPlusPadding: @_sap_m_Shell_AppWidthLimit + 16px;
-
-@_sap_m_Shell_AppHeight: 3333px; /* Ux decision: never show the header, so make this value large enough even for zoom-out cases */
-@_sap_m_Shell_HeaderHeight: 68px; /* should be 4.25rem */
-@_sap_m_Shell_MinHeightForHeader: (@_sap_m_Shell_AppHeight + @_sap_m_Shell_HeaderHeight);
-
-@_sap_m_Shell_MinWidthForLogoAside: 1480px; /* = @_sap_m_Shell_AppWidthLimit + 200; but additions do not work in LESS for media query arguments */
-@_sap_m_Shell_MinWidthForBigLogoAside: 1680px; /* = @_sap_m_Shell_AppWidthLimit + 400; but additions do not work in LESS for media query arguments */
+.sapUI5Scope {
+	--_sap_m_Shell_AppWidthLimit: 1280px;
+	--_sap_m_Shell_AppWidthLimitBy2: ~'calc(var(--_sap_m_Shell_AppWidthLimit) / 2)';
+	--_sap_m_Shell_AppWidthLimitPlusPadding: ~'calc(var(--_sap_m_Shell_AppWidthLimit) + 16px)';
+	--_sap_m_Shell_AppHeight: 3333px;
+	--_sap_m_Shell_HeaderHeight: 68px; /* should be 4.25rem */
+	--_sap_m_Shell_MinHeightForHeader: ~'calc(var(--_sap_m_Shell_AppHeight) + var(--_sap_m_Shell_HeaderHeight))';
+	--_sap_m_Shell_MinWidthForLogoAside: 1480px;
+	--_sap_m_Shell_MinWidthForBigLogoAside: 1680px;
+}
 
 .sapMShell {
 	width: 100%;
@@ -91,7 +91,9 @@
 
 /* modifications for taller screens */
 
-@media (min-height: @_sap_m_Shell_MinHeightForHeader) { /* 1500px plus 96px for header */
+/* Ux decision: never show the header, so make this value large enough even for zoom-out cases */
+
+@media (min-height: 3401px) { /* 1500px plus 96px for header */
 
 	html.sap-desktop .sapMShellLogo {
 		position: absolute;
@@ -151,7 +153,7 @@
 
 	html.sap-desktop .sapMShellContent {
 		position: absolute;
-		top: @_sap_m_Shell_HeaderHeight;
+		top: var(--_sap_m_Shell_HeaderHeight);
 		bottom: 0;
 		height: auto !important; /* important because overwritten by SplitApp/App control */
 	}
@@ -170,28 +172,30 @@
 
 /* modifications for wider screens */
 
-@media (min-width: @_sap_m_Shell_AppWidthLimit) {
+@media (min-width: 1280px) {
 
 	html.sap-desktop .sapMShellLogo {
 		margin-left: 1rem;
 	}
 
 	html.sap-desktop .sapMShellAppWidthLimited .sapMShellCentralBox {
-		width: @_sap_m_Shell_AppWidthLimit;
-		margin-left: -@_sap_m_Shell_AppWidthLimitBy2; /* @_sap_m_Shell_AppWidthLimit divided by 2 */
+		width: var(--_sap_m_Shell_AppWidthLimit);
+		margin-left: ~'calc(-1 * var(--_sap_m_Shell_AppWidthLimitBy2))'; /* --_sap_m_Shell_AppWidthLimit divided by 2 */
 		left: 50%;
-		background-color: fade(lighten(@sapUiBaseBG, 5), 30);
+		background-color: ~'hsl(from var(--sapBackgroundColor) h s calc(l + 5%) / .3)';
 	}
 }
 
-@media (min-width: @_sap_m_Shell_AppWidthLimit) {
+@media (min-width: 1280px) {
 
 	html.sap-desktop .sapMShellAppWidthLimited .sapMShellHeader {
 		padding: 0;
 	}
 }
 
-@media (min-width: @_sap_m_Shell_MinWidthForLogoAside) {
+/* = var(--_sap_m_Shell_AppWidthLimit) + 200; CSS custom properties cannot be used in media query conditions */
+
+@media (min-width: 1480px) {
 
 	html.sap-desktop .sapMShellAppWidthLimited .sapMShellLogo {
 		position: absolute;
@@ -200,7 +204,7 @@
 		width: 80px;
 		text-align: center;
 		display: block;
-		right: @_sap_m_Shell_AppWidthLimit;
+		right: var(--_sap_m_Shell_AppWidthLimit);
 		top: 0;
 		margin: 0.75em;
 		margin-left: 0;
@@ -212,7 +216,9 @@
 	}
 }
 
-@media (min-width: @_sap_m_Shell_MinWidthForBigLogoAside) {
+/* = var(--_sap_m_Shell_AppWidthLimit) + 400; CSS custom properties cannot be used in media query conditions */
+
+@media (min-width: 1680px) {
 
 	html.sap-desktop .sapMShellAppWidthLimited .sapMShellLogo {
 		width: 160px;

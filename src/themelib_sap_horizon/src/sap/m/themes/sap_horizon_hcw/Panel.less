@@ -25,12 +25,12 @@
 .sapMPanelWrappingDiv,
 /* do not want border if expanded and if only header text */
 .sapMPanelWrappingDivTb {
-	border-bottom: @sapGroup_TitleBorderWidth solid @sapUiGroupTitleBorderColor;
+	border-bottom: var(--sapGroup_TitleBorderWidth) solid var(--sapGroup_TitleBorderColor);
 }
 
 .sapMPanelWrappingDiv.sapMPanelWrappingDivExpanded,
 .sapMPanelWrappingDivTb.sapMPanelWrappingDivTbExpanded {
-	border-bottom: @sapGroup_TitleBorderWidth solid @sapUiGroupTitleBorderColor;
+	border-bottom: var(--sapGroup_TitleBorderWidth) solid var(--sapGroup_TitleBorderColor);
 }
 
 .sapMPanel .sapMPanelWrappingDiv .sapMPanelHdr,
@@ -43,7 +43,7 @@
 }
 
 .sapMPanelContent:not(.sapMPanelBGTransparent) {
-	border-bottom: @sapGroup_TitleBorderWidth solid @sapUiGroupTitleBorderColor;
+	border-bottom: var(--sapGroup_TitleBorderWidth) solid var(--sapGroup_TitleBorderColor);
 }
 
 .sapMPanelContent {

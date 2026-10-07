@@ -10,13 +10,13 @@
 	}
 
 	.sapMMenuItem.sapMMenuItemDisabled .sapMMenuItemIcon {
-		opacity: @sapUiContentDisabledOpacity;
+		opacity: var(--sapContent_DisabledOpacity);
 	}
 
 	.sapMMenuItem.sapMMenuItemSubMenuOpen,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
-		background-color: @sapUiListSelectionHoverBackground;
+		background-color: var(--sapList_Hover_SelectionBackground);
 	}
 
 	.sapMMenuItemIcon {
@@ -31,8 +31,7 @@
 		}
 	}
 
-	.sapMMenuItemSubMenu > div:after {
+	.sapMMenuItemSubMenu > div::after {
 		font-size: 0.75rem;
 	}
-
 }

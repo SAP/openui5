@@ -1,6 +1,6 @@
 /* ======================================= */
 /* CSS for control sap.m/PlanningCalendar  */
-/* Horizon theme                           */
+/* Morning Horizon theme                   */
 /* ======================================= */
 
 /* show every second row in an other color */
@@ -37,7 +37,7 @@
 .sapMSize1.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected.sapMLIBHoverable:hover,
 .sapMSize1.sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected.sapMLIBHoverable:hover + .sapMListTblSubRow,
 .sapMPlanCal:not(.sapMPlanCalSuppressAlternatingRowColors) > .sapMList > table > tbody > tr.sapMListTblSubRow:nth-child(4n).sapMLIBSelected.sapMLIBHoverable:hover {
-	background-color: @sapUiListSelectionHoverBackground;
+	background-color: var(--sapList_Hover_SelectionBackground);
 }
 
 /* Calendar overstyling */
@@ -92,8 +92,8 @@ html.sap-desktop .sapMPlanCal .sapUiCalDatesRow .sapUiCalItemSel:focus > .sapUiC
 
 html.sap-desktop .sapMPlanCal .sapUiCalTimesRow .sapUiCalItemSel:focus > .sapUiCalItemText::after,
 .sapMPlanCal .sapUiCalTimesRow .sapUiCalItemSel:focus-visible > .sapUiCalItemText::after {
-	left: 0.0rem;
-	right: 0.0rem;
+	left: 0;
+	right: 0;
 }
 
 html.sap-desktop .sapMPlanCal .sapUiCalMonthsRow .sapUiCalItemSel:focus > .sapUiCalItemText::after,

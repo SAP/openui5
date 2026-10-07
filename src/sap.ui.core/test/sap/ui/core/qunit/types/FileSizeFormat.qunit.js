@@ -143,7 +143,7 @@ sap.ui.define([
 		checkFormat("decimal", "1", "1 Byte");
 		checkFormat("decimal", "0x1", "1 Byte");
 		checkFormat("decimal", 999999, "1 MB");
-		checkFormat("binary", NaN, " Byte");
+		checkFormat("decimal", NaN, " Byte");
 	});
 
 	QUnit.test("format default", function (assert) {
@@ -159,7 +159,7 @@ sap.ui.define([
 		checkFormat("default", 1, "1 Byte");
 		checkFormat("default", "1", "1 Byte");
 		checkFormat("default", "0x1", "1 Byte");
-		checkFormat("binary", NaN, " Byte");
+		checkFormat("default", NaN, " Byte");
 	});
 
 	QUnit.test("parse binary", function (assert) {

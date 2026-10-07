@@ -11,7 +11,7 @@
 	padding: 0;
 }
 
-.sapMPlanCal > .sapMList .sapMListInfoTBar.sapMTB-Transparent-CTX.sapMTB >:first-child {
+.sapMPlanCal > .sapMList .sapMListInfoTBar.sapMTB-Transparent-CTX.sapMTB > :first-child {
 	margin-left: 0;
 }
 
@@ -152,7 +152,7 @@
 	padding-bottom: 0;
 }
 
-.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapUiCalRow > .sapUiCalContent >.sapUiCalContentOver {
+.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapUiCalRow > .sapUiCalContent > .sapUiCalContentOver {
 	bottom: 0;
 }
 
@@ -171,7 +171,7 @@
 	display: block;
 }
 
-.sapMPlanCal > .sapMList > table > tbody > tr > td > .sapMListTblSubCnt > .sapMListTblSubCntRow >.sapMListTblSubCntVal {
+.sapMPlanCal > .sapMList > table > tbody > tr > td > .sapMListTblSubCnt > .sapMListTblSubCntRow > .sapMListTblSubCntVal {
 	margin: 0;
 }
 
@@ -200,7 +200,7 @@
 }
 
 .sapMSize0.sapMPlanCal > .sapMList .sapMListInfoTBar .sapUiCalWeeksRow.sapMPlanWeeksRowOneMonthView,
-.sapMSize1.sapMPlanCal > .sapMList .sapMListInfoTBar .sapUiCalWeeksRow.sapMPlanWeeksRowOneMonthView{
+.sapMSize1.sapMPlanCal > .sapMList .sapMListInfoTBar .sapUiCalWeeksRow.sapMPlanWeeksRowOneMonthView {
 	display: none;
 }
 
@@ -261,6 +261,7 @@
 
 		&.sapMPlanWeeksRowDayView,
 		&.sapMPlanWeeksRowWeekView {
+
 			.sapMPlanWeeksLabelRow {
 				display: none;
 			}
@@ -307,6 +308,7 @@
 	width: 100%;
 	display: block;
 }
+
 .sapMPlanCal .sapMListBGTransparent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover),
 .sapMPlanCal .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover),
 .sapMPlanCal .sapMListBGSolid .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected) {
@@ -447,7 +449,7 @@ html.sap-desktop .sapMPlanCal .sapMTblCellFocusable.sapMPlanCalAppRow:focus,
 	outline: none;
 
 	&::after {
-		content: "";
+		content: '';
 		position: absolute;
 		top: 0;
 		left: 0.0625rem;
@@ -463,7 +465,7 @@ html.sap-desktop .sapMPlanCal .sapMLIBFocusable:focus,
 	outline: none;
 
 	&.sapMListTblRow:not(.sapMTableRowCustomFocus)::after {
-		content: "";
+		content: '';
 		position: absolute;
 		top: 0;
 		left: 0.0625rem;
@@ -480,7 +482,7 @@ html.sap-desktop .sapMPlanCal .sapMLIBFocusable:focus,
 
 }
 
-.sapMPlanCalHead{
+.sapMPlanCalHead {
 	width: 20%;
 	flex: 0 0 20%;
 }
@@ -506,7 +508,7 @@ html.sap-desktop .sapMPlanCal .sapMLIBFocusable:focus,
 
 .sapUiCalWeeksRow {
 	display: flex;
-	flex:  0 0 100%;
+	flex: 0 0 100%;
 	width: 100%;
 }
 
@@ -518,7 +520,7 @@ html.sap-desktop .sapMPlanCal .sapMLIBFocusable:focus,
 	margin-top: 0;
 }
 
-.sapMPlanWeeksLabelRow{
+.sapMPlanWeeksLabelRow {
 	display: flex;
 	align-items: center;
 	width: 20%;

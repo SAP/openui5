@@ -3,12 +3,11 @@
 /* Base theme                  */
 /* =========================== */
 
-@_sap_m_Page_AppHeight: 3333px; /* Ux decision: never show the header, so make this value large enough even for zoom-out cases */
-@_sap_m_Page_HeaderHeight: 68px; /* should be 4.25rem */
-@_sap_m_Page_MinHeightForHeader: (@_sap_m_Page_AppHeight + @_sap_m_Page_HeaderHeight);
-@_sap_m_Page_FloatinFooterHeight: 2.75rem;
-@_sap_m_Page_FloatinFooterHeight_Compact: 2.5rem;
-@_sap_m_Page_FloatingFooterMarginBottom: 0.5rem;
+.sapUI5Scope {
+	--_sap_m_Page_FloatinFooterHeight: 2.75rem;
+	--_sap_m_Page_FloatinFooterHeight_Compact: 2.5rem;
+	--_sap_m_Page_FloatingFooterMarginBottom: 0.5rem;
+}
 
 .sapMPage,
 .sapMPage > section {
@@ -126,7 +125,7 @@ html[data-sap-ui-browser^='ff'].sap-desktop {
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
-.sapUiContainerContentPadding(~".sapMPage", ~"> section");
+.sapUiContainerContentPadding(~'.sapMPage', ~'> section');
 
 /* Fiori 2.0 adaptation */
 .sapF2CollapsedHeader > .sapMPageHeader {
@@ -180,7 +179,7 @@ html[data-sap-ui-browser^='ff'].sap-desktop {
 
 .sapMPageWithFloatingFooter.sapMPageWithFooter > section {
 	bottom: 0;
-	scroll-padding-bottom: ~"calc(@{_sap_m_Page_FloatinFooterHeight} + @{_sap_m_Page_FloatingFooterMarginBottom} + 2px)";
+	scroll-padding-bottom: ~"calc(var(--_sap_m_Page_FloatinFooterHeight) + var(--_sap_m_Page_FloatingFooterMarginBottom) + 2px)";
 
 	&::after {
 		content: '';
@@ -193,7 +192,7 @@ html[data-sap-ui-browser^='ff'].sap-desktop {
 
 .sapUiSizeCompact .sapMPageWithFooter.sapMPageWithFloatingFooter > section {
 	bottom: 0;
-	scroll-padding-bottom: ~"calc(@{_sap_m_Page_FloatinFooterHeight_Compact} + @{_sap_m_Page_FloatingFooterMarginBottom} + 2px)";
+	scroll-padding-bottom: ~"calc(var(--_sap_m_Page_FloatinFooterHeight_Compact) + var(--_sap_m_Page_FloatingFooterMarginBottom) + 2px)";
 	padding-bottom: 3.5rem;
 }
 
@@ -269,7 +268,7 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 }
 
 /* sap.m.Shell + Tiles Page specific style */
-@media (min-height: @_sap_m_Page_MinHeightForHeader) {
+@media (min-height: 3401px) {
 
 	.sap-desktop .sapMShell .sapMPage.sapMPageHideHeaderWhenShellHeader header.sapMIBar {
 		display: none;

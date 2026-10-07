@@ -4,25 +4,27 @@
 /* ============================= */
 
 @_sap_m_Dialog_VerticalMargin: 3.5%;
-@_sap_m_Dialog_BarHeight: 3rem;
-@_sap_m_Dialog_BarCompactHeight: 2.5rem;
-@_sap_m_Dialog_SubHeaderHeight: 3rem;
-@_sap_m_Dialog_SubHeaderCompactHeight: 2rem;
-@_sap_m_Dialog_InfoDesignBarHeight: 2rem;
 
-@_sap_m_Dialog_Padding: 1rem;
-@_sap_m_Dialog_NoStateHeaderShadow: inset 0 -0.0625rem var(--sapPageHeader_BorderColor);
-@_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.125rem var(--sapSuccessBorderColor);
-@_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.125rem var(--sapErrorBorderColor);
-@_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.125rem var(--sapWarningBorderColor);
-@_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.125rem var(--sapInformationBorderColor);
-@_sap_m_Dialog_HeaderFocusBorderRadius: 0px;
-@_sap_m_Dialog_HeaderFocusBorderBottomOffset: 3px;
-@_sap_m_Dialog_HeaderFocusBorderTopOffset: 2px;
-@_sap_m_Dialog_HeaderFocusBorderLeftOffset: 2px;
-@_sap_m_Dialog_HeaderFocusBorderRightOffset: 2px;
-@_sap_m_Dialog_FocusOutlineOffset: 0.0625rem;
-@_sap_m_Dialog_ResizableBottomRightRadius: 1.75rem;
+.sapMDialog {
+	--_sap_m_Dialog_BarHeight: 3rem;
+	--_sap_m_Dialog_BarCompactHeight: 2.5rem;
+	--_sap_m_Dialog_SubHeaderHeight: 3rem;
+	--_sap_m_Dialog_SubHeaderCompactHeight: 2rem;
+	--_sap_m_Dialog_InfoDesignBarHeight: 2rem;
+	--_sap_m_Dialog_Padding: 1rem;
+	--_sap_m_Dialog_NoStateHeaderShadow: inset 0 -0.0625rem var(--sapPageHeader_BorderColor);
+	--_sap_m_Dialog_SuccessHeaderShadow: inset 0 -0.125rem var(--sapSuccessBorderColor);
+	--_sap_m_Dialog_ErrorHeaderShadow: inset 0 -0.125rem var(--sapErrorBorderColor);
+	--_sap_m_Dialog_WarningHeaderShadow: inset 0 -0.125rem var(--sapWarningBorderColor);
+	--_sap_m_Dialog_InformationHeaderShadow: inset 0 -0.125rem var(--sapInformationBorderColor);
+	--_sap_m_Dialog_HeaderFocusBorderRadius: 0;
+	--_sap_m_Dialog_HeaderFocusBorderBottomOffset: 3px;
+	--_sap_m_Dialog_HeaderFocusBorderTopOffset: 2px;
+	--_sap_m_Dialog_HeaderFocusBorderLeftOffset: 2px;
+	--_sap_m_Dialog_HeaderFocusBorderRightOffset: 2px;
+	--_sap_m_Dialog_FocusOutlineOffset: 0.0625rem;
+	--_sap_m_Dialog_ResizableBottomRightRadius: 1.75rem;
+}
 
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
@@ -33,7 +35,7 @@
 .sapMDialog {
 	/* scale(1) - Chrome does not clip children when transform is not applied resulting in non-visible border-radius */
 	/* translateZ(0px) - Safari Problem with z-index - After dialog was opened it was inserted behind the dark overlay */
-	-webkit-transform: scale(1) translateZ(0px);
+	transform: scale(1) translateZ(0);
 	background-clip: padding-box;
 	min-height: 6rem;
 	outline: none;
@@ -147,7 +149,7 @@ html.sap-desktop .sapMDialog {
 
 	&:focus {
 		outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
-		outline-offset: ~"calc(-1 * var(--sapContent_FocusWidth))";
+		outline-offset: ~'calc(-1 * var(--sapContent_FocusWidth))';
 	}
 }
 
@@ -188,10 +190,10 @@ html.sap-desktop .sapMDialog {
 .sapMDialog.sapUiPopupWithPadding:not(.sapUiNoContentPadding) {
 
 	.sapMDialogScrollCont {
-		padding: @_sap_m_Dialog_Padding;
+		padding: var(--_sap_m_Dialog_Padding);
 
 		&.sapMDialogStretchContent {
-			height: calc(~"100% - 2 * " @_sap_m_Dialog_Padding);
+			height: ~'calc(100% - 2 * var(--_sap_m_Dialog_Padding))';
 		}
 	}
 }
@@ -215,7 +217,7 @@ html.sap-desktop .sapMDialog {
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
-.sapUiContainerContentPadding(~".sapMDialog", ~"> .sapMDialogSection > .sapMDialogScroll > .sapMDialogScrollCont");
+.sapUiContainerContentPadding(~'.sapMDialog', ~'> .sapMDialogSection > .sapMDialogScroll > .sapMDialogScrollCont');
 
 /* ====================================================== */
 
@@ -236,7 +238,7 @@ html.sap-desktop .sapMDialog {
 	display: inline;
 }
 
-/* remove the branding color of bar in page when page is in dialog*/
+/* remove the branding color of bar in page when page is in dialog */
 .sapMDialog .sapMIBar.sapMPageHeader::before {
 	border-top: none;
 }
@@ -272,7 +274,7 @@ html.sap-desktop .sapMDialog {
 
 	&.sapMDialog,
 	.sapMDialog {
-		min-height: @_sap_m_Dialog_BarCompactHeight;
+		min-height: var(--_sap_m_Dialog_BarCompactHeight);
 
 		&.sapMDialogWithSubHeader {
 
@@ -285,11 +287,11 @@ html.sap-desktop .sapMDialog {
 		}
 
 		.sapMDialogTitleGroup {
-			min-height: @_sap_m_Dialog_BarCompactHeight;
+			min-height: var(--_sap_m_Dialog_BarCompactHeight);
 
 			.sapMHeader-CTX,
 			.sapMSubHeader-CTX {
-				height: @_sap_m_Dialog_BarCompactHeight;
+				height: var(--_sap_m_Dialog_BarCompactHeight);
 				padding-top: 0.25rem;
 				padding-bottom: 0.25rem;
 				box-sizing: border-box;
@@ -297,20 +299,20 @@ html.sap-desktop .sapMDialog {
 		}
 
 		& > .sapMDialogSection {
-			min-height: @_sap_m_Dialog_BarCompactHeight;
+			min-height: var(--_sap_m_Dialog_BarCompactHeight);
 		}
 
 		& > .sapMDialogFooter {
-			height: @_sap_m_Dialog_BarCompactHeight;
+			height: var(--_sap_m_Dialog_BarCompactHeight);
 
 			.sapMFooter-CTX {
-				height: @_sap_m_Dialog_BarCompactHeight;
+				height: var(--_sap_m_Dialog_BarCompactHeight);
 			}
 		}
 
 		.sapMDialogSubHeader {
-			height: @_sap_m_Dialog_SubHeaderCompactHeight;
-			top: @_sap_m_Dialog_BarCompactHeight;
+			height: var(--_sap_m_Dialog_SubHeaderCompactHeight);
+			top: var(--_sap_m_Dialog_BarCompactHeight);
 		}
 	}
 }
@@ -344,7 +346,7 @@ html.sap-desktop .sapMDialog {
 
 .sapMDialog {
 	box-sizing: content-box;
-	min-height: @_sap_m_Dialog_BarHeight;
+	min-height: var(--_sap_m_Dialog_BarHeight);
 
 	.sapMDialogFooter {
 
@@ -358,7 +360,7 @@ html.sap-desktop .sapMDialog {
 		&.sapMDialogSubHeaderInfoBar {
 
 			.sapMDialogSubHeader {
-				height: @_sap_m_Dialog_InfoDesignBarHeight;
+				height: var(--_sap_m_Dialog_InfoDesignBarHeight);
 			}
 		}
 
@@ -371,7 +373,7 @@ html.sap-desktop .sapMDialog {
 	}
 
 	.sapMDialogTitleGroup {
-		min-height: @_sap_m_Dialog_BarHeight;
+		min-height: var(--_sap_m_Dialog_BarHeight);
 		left: 0;
 		position: absolute;
 		right: 0;
@@ -387,7 +389,7 @@ html.sap-desktop .sapMDialog {
 		&::before {
 			content: '';
 			position: absolute;
-			inset: @_sap_m_Dialog_FocusOutlineOffset;
+			inset: var(--_sap_m_Dialog_FocusOutlineOffset);
 			border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 			border-radius: var(--sapElement_BorderCornerRadius);
 			pointer-events: none;
@@ -395,17 +397,17 @@ html.sap-desktop .sapMDialog {
 		}
 
 		&.sapMDialogResizable::before {
-			border-radius: var(--sapElement_BorderCornerRadius) var(--sapElement_BorderCornerRadius) @_sap_m_Dialog_ResizableBottomRightRadius var(--sapElement_BorderCornerRadius);
+			border-radius: var(--sapElement_BorderCornerRadius) var(--sapElement_BorderCornerRadius) var(--_sap_m_Dialog_ResizableBottomRightRadius) var(--sapElement_BorderCornerRadius);
 		}
 	}
 
 	& > .sapMDialogSection {
 		flex: 1 1 100%;
-		min-height: @_sap_m_Dialog_BarHeight;
+		min-height: var(--_sap_m_Dialog_BarHeight);
 	}
 
 	& > .sapMDialogFooter {
-		height: @_sap_m_Dialog_BarHeight;
+		height: var(--_sap_m_Dialog_BarHeight);
 		position: relative;
 	}
 
@@ -415,11 +417,11 @@ html.sap-desktop .sapMDialog {
 
 	.sapMDialogSubHeader {
 		cursor: default;
-		height: @_sap_m_Dialog_SubHeaderHeight;
+		height: var(--_sap_m_Dialog_SubHeaderHeight);
 		left: 0;
 		position: absolute;
 		right: 0;
-		top: @_sap_m_Dialog_BarHeight;
+		top: var(--_sap_m_Dialog_BarHeight);
 		z-index: 2;
 	}
 }
@@ -434,7 +436,7 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 }
 
 .sapMDialog > .sapMDialogHeader > div:last-of-type .sapMIBar {
-	box-shadow: @_sap_m_Dialog_NoStateHeaderShadow;
+	box-shadow: var(--_sap_m_Dialog_NoStateHeaderShadow);
 }
 
 .sapMDialogWarning > .sapMDialogHeader {
@@ -444,7 +446,7 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 	}
 
 	& > div:last-of-type .sapMIBar {
-		box-shadow: @_sap_m_Dialog_WarningHeaderShadow;
+		box-shadow: var(--_sap_m_Dialog_WarningHeaderShadow);
 	}
 }
 
@@ -455,7 +457,7 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 	}
 
 	& > div:last-of-type .sapMIBar {
-		box-shadow: @_sap_m_Dialog_ErrorHeaderShadow;
+		box-shadow: var(--_sap_m_Dialog_ErrorHeaderShadow);
 	}
 }
 
@@ -466,7 +468,7 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 	}
 
 	& > div:last-of-type .sapMIBar {
-		box-shadow: @_sap_m_Dialog_SuccessHeaderShadow;
+		box-shadow: var(--_sap_m_Dialog_SuccessHeaderShadow);
 	}
 }
 
@@ -477,7 +479,7 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 	}
 
 	& > div:last-of-type .sapMIBar {
-		box-shadow: @_sap_m_Dialog_InformationHeaderShadow;
+		box-shadow: var(--_sap_m_Dialog_InformationHeaderShadow);
 	}
 }
 

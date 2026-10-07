@@ -3,15 +3,15 @@
 /* Quartz High Contrast Black theme  */
 /* ================================= */
 
-/* ========================================================================== */
 /* Variables */
-/* ========================================================================== */
 
 @_sap_m_Dialog_VerticalMargin: 3%;
-@_sap_m_Dialog_BarHeight: 2.75rem;
-@_sap_m_Dialog_SubHeaderCompactHeight: 2.25rem;
 
-@_sap_m_Dialog_NoStateHeaderShadow: @sapUiShadowHeader;
+.sapMDialog {
+	--_sap_m_Dialog_BarHeight: 2.75rem;
+	--_sap_m_Dialog_SubHeaderCompactHeight: 2.25rem;
+	--_sap_m_Dialog_NoStateHeaderShadow: var(--sapContent_HeaderShadow);
+}
 
 .sapMDialogSubHeader .sapMIBar {
 	height: 100%;

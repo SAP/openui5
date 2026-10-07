@@ -4,11 +4,13 @@
 /* ================================= */
 
 /* header shadow - different states */
-@_sap_m_MessageBox_InformationShadow: var(--sapContent_Information_HeaderShadow);
-@_sap_m_MessageBox_WarningShadow: var(--sapContent_Warning_HeaderShadow);
-@_sap_m_MessageBox_ErrorShadow: var(--sapContent_Error_HeaderShadow);
-@_sap_m_MessageBox_SuccessShadow: var(--sapContent_Success_HeaderShadow);
-@_sap_m_MessageBox_QuestionShadow: var(--sapContent_HeaderShadow);
+.sapUI5Scope {
+	--_sap_m_MessageBox_InformationShadow: var(--sapContent_Information_HeaderShadow);
+	--_sap_m_MessageBox_WarningShadow: var(--sapContent_Warning_HeaderShadow);
+	--_sap_m_MessageBox_ErrorShadow: var(--sapContent_Error_HeaderShadow);
+	--_sap_m_MessageBox_SuccessShadow: var(--sapContent_Success_HeaderShadow);
+	--_sap_m_MessageBox_QuestionShadow: var(--sapContent_HeaderShadow);
+}
 
 .sapMMessageBoxLinkText {
 	vertical-align: bottom;
@@ -43,22 +45,22 @@
 .sapMDialog.sapMMessageDialog {
 
 	&.sapMMessageBoxInfo .sapMDialogTitleGroup > .sapMBar {
-		box-shadow: @_sap_m_MessageBox_InformationShadow;
+		box-shadow: var(--_sap_m_MessageBox_InformationShadow);
 	}
 
 	&.sapMMessageBoxWarning .sapMDialogTitleGroup > .sapMBar {
-		box-shadow: @_sap_m_MessageBox_WarningShadow;
+		box-shadow: var(--_sap_m_MessageBox_WarningShadow);
 	}
 
 	&.sapMMessageBoxError .sapMDialogTitleGroup > .sapMBar {
-		box-shadow: @_sap_m_MessageBox_ErrorShadow;
+		box-shadow: var(--_sap_m_MessageBox_ErrorShadow);
 	}
 
 	&.sapMMessageBoxSuccess .sapMDialogTitleGroup > .sapMBar {
-		box-shadow: @_sap_m_MessageBox_SuccessShadow;
+		box-shadow: var(--_sap_m_MessageBox_SuccessShadow);
 	}
 
 	&.sapMMessageBoxQuestion .sapMDialogTitleGroup > .sapMBar {
-		box-shadow: @_sap_m_MessageBox_QuestionShadow;
+		box-shadow: var(--_sap_m_MessageBox_QuestionShadow);
 	}
 }

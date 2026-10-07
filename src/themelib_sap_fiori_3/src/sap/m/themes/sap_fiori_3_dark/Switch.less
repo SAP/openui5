@@ -3,8 +3,9 @@
 /* Quartz Dark theme             */
 /* ============================= */
 
-@_sap_m_Switch_OffBackground: darken(@sapUiButtonBackground, 3);
-@_sap_m_Switch_OffBorderColor: var(--sapButton_BorderColor);
+.sapUI5Scope {
+	--_sap_m_Switch_OffBackground: ~'hsl(from var(--sapButton_Background) h s calc(l - 3%))';
+}
 
 /* Switch container */
 .sapMSwtCont {
@@ -29,6 +30,7 @@ html.sap-desktop {
 		right: -0.125rem;
 		outline: 1px dotted var(--sapContent_FocusColor);
 	}
+
 	.sapUiSizeCompact {
 
 		.sapMSwtCont:focus > .sapMSwt:not(.sapMSwtNoLabel)::before {
@@ -74,10 +76,7 @@ html.sap-desktop {
 	height: 1.375rem;
 	overflow: visible;
 	border: var(--sapButton_BorderWidth) solid;
-	border-top-left-radius: 0.75rem;
-	border-top-right-radius: 0.75rem;
-	border-bottom-right-radius: 0.75rem;
-	border-bottom-left-radius: 0.75rem;
+	border-radius: 0.75rem 0.75rem 0.75rem 0.75rem;
 
 	&.sapMSwtNoLabel {
 		width: 3.25rem;
@@ -92,7 +91,7 @@ html.sap-desktop {
 
 /* background */
 .sapMSwtOff:not(.sapMSwtAcceptReject) {
-	background: @_sap_m_Switch_OffBackground;
+	background: var(--_sap_m_Switch_OffBackground);
 	border-color: var(--sapContent_ForegroundBorderColor);
 }
 
@@ -133,10 +132,7 @@ html.sap-desktop {
 .sapMSwtOff .sapMSwtHandle {
 	height: 1.875rem;
 	width: 1.875rem;
-	border-top-left-radius: 1rem;
-	border-top-right-radius: 1rem;
-	border-bottom-right-radius: 1rem;
-	border-bottom-left-radius: 1rem;
+	border-radius: 1rem 1rem 1rem 1rem;
 	border: var(--sapButton_BorderWidth) solid;
 	left: 1.9375rem;
 }
@@ -187,7 +183,7 @@ html.sap-desktop {
 
 /* Switch */
 .sapMSwtAcceptReject.sapMSwt {
-	background: @_sap_m_Switch_OffBackground;
+	background: var(--_sap_m_Switch_OffBackground);
 
 	/* on */
 	&.sapMSwtOn {

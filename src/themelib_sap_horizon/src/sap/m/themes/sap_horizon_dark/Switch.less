@@ -355,7 +355,7 @@ html.sap-desktop {
 					width: 1.25rem;
 				}
 
-				&.sapMSwtOn .sapMSwtHandle{
+				&.sapMSwtOn .sapMSwtHandle {
 					left: 1.88rem;
 				}
 
@@ -381,7 +381,7 @@ html.sap-desktop {
 	.sapMSwtOn.sapMSwtAcceptReject .sapMSwtLabelOn::before,
 	.sapMSwtOff.sapMSwtNoLabel .sapMSwtLabelOff::before,
 	.sapMSwtOff.sapMSwtAcceptReject .sapMSwtLabelOff::before {
-		font-size: @sapMFontMediumSize;
+		font-size: var(--sapFontSize);
 		right: 0.3125rem;
 	}
 
@@ -396,6 +396,7 @@ html.sap-desktop {
 
 /* Read only - extended selectors for Horizon specificity */
 .sapMSwt.sapMSwtReadOnly {
+
 	&.sapMSwtOn:not(.sapMSwtAcceptReject),
 	&.sapMSwtOff:not(.sapMSwtAcceptReject),
 	&.sapMSwtAcceptReject.sapMSwtOn,
