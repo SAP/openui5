@@ -3,23 +3,23 @@
 /* Base theme                      */
 /* =============================== */
 
-@_sap_m_LightBox_MinHeight: 18rem;
-@_sap_m_LightBox_FooterOneLineHeightCompact: 2.5rem;
-@_sap_m_LightBox_FooterTwoLinesHeightCompact: 3.5rem;
-@_sap_m_LightBox_FooterOneLineHeightCozy: 3rem;
-@_sap_m_LightBox_FooterTwoLinesHeightCozy: 3.5rem;
-@_sap_m_LightBox_TitleSectionPadding: 1rem;
-@_sap_m_LightBox_TitleSectionPaddingTwoLines: 0.5rem;
-@_sap_m_LightBox_BusyIndicatorHeight: 1rem;
-@_sap_m_LightBox_SubtitleMarginTop: 0.5rem;
-@_sap_m_LightBox_OverlayBackground: var(--sapBlockLayer_Background);
-@_sap_m_LightBox_ContainerBackground: var(--sapBackgroundColor);
-@_sap_m_LightBox_OverlayOpacity: 0.9;
-@_sap_m_LightBox_FontFamily: var(--sapFontFamily);
+.sapUI5Scope {
+	--_sap_m_LightBox_MinHeight: 18rem;
+	--_sap_m_LightBox_FooterOneLineHeightCompact: 2.5rem;
+	--_sap_m_LightBox_FooterTwoLinesHeightCompact: 3.5rem;
+	--_sap_m_LightBox_FooterOneLineHeightCozy: 3rem;
+	--_sap_m_LightBox_FooterTwoLinesHeightCozy: 3.5rem;
+	--_sap_m_LightBox_TitleSectionPadding: 1rem;
+	--_sap_m_LightBox_TitleSectionPaddingTwoLines: 0.5rem;
+	--_sap_m_LightBox_BusyIndicatorHeight: 1rem;
+	--_sap_m_LightBox_SubtitleMarginTop: 0.5rem;
+	--_sap_m_LightBox_OverlayBackground: var(--sapBlockLayer_Background);
+	--_sap_m_LightBox_ContainerBackground: var(--sapBackgroundColor);
+	--_sap_m_LightBox_OverlayOpacity: 0.9;
+	--_sap_m_LightBox_FontFamily: var(--sapFontFamily);
+}
 
-/* ========================================================================== */
 /* Container */
-/* ========================================================================== */
 
 .sapMLightBox {
 	min-width: 20rem;
@@ -27,29 +27,29 @@
 	min-height: 18rem;
 	max-height: 100%;
 	border-radius: var(--sapElement_BorderCornerRadius);
-	background-color: @_sap_m_LightBox_ContainerBackground;
+	background-color: var(--_sap_m_LightBox_ContainerBackground);
 	box-shadow: var(--sapContent_Shadow3);
 	outline: none;
 	padding: 0;
 }
 
 html[data-sap-ui-browser^='sf'] .sapMLightBox {
-	transform: translateZ(0px); /* fixes displaying the control behind the block layer in Safari */
+	transform: translateZ(0); /* fixes displaying the control behind the block layer in Safari */
 }
 
 .sap-desktop .sapMLightBox {
-	max-width: calc(~"100% - 4rem");
-	max-height: calc(~"100% - 4rem");
+	max-width: calc(~'100% - 4rem');
+	max-height: calc(~'100% - 4rem');
 }
 
 .sap-tablet .sapMLightBox {
-	max-width: calc(~"100% - 2rem");
-	max-height: calc(~"100% - 2rem");
+	max-width: calc(~'100% - 2rem');
+	max-height: calc(~'100% - 2rem');
 }
 
 .sap-phone .sapMLightBox {
-	max-width: calc(~"100% - 1rem");
-	max-height: calc(~"100% - 1rem");
+	max-width: calc(~'100% - 1rem');
+	max-height: calc(~'100% - 1rem');
 }
 
 .sapMLightBoxFooter {
@@ -62,8 +62,8 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 /* ========================================================================== */
 
 .sapMLightBox + .sapUiBLy {
-	background: @_sap_m_LightBox_OverlayBackground;
-	opacity: @_sap_m_LightBox_OverlayOpacity;
+	background: var(--_sap_m_LightBox_OverlayBackground);
+	opacity: var(--_sap_m_LightBox_OverlayOpacity);
 }
 
 /* ========================================================================== */
@@ -94,22 +94,22 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 	position: absolute;
 	bottom: 0;
 	justify-content: space-between;
-	height: @_sap_m_LightBox_FooterOneLineHeightCozy;
+	height: var(--_sap_m_LightBox_FooterOneLineHeightCozy);
 	align-items: flex-end;
 	border-radius: 0 0 var(--sapElement_BorderCornerRadius) var(--sapElement_BorderCornerRadius);
 
 	&.sapMLightBoxFooterTwoLines {
-		height: @_sap_m_LightBox_FooterTwoLinesHeightCozy;
+		height: var(--_sap_m_LightBox_FooterTwoLinesHeightCozy);
 	}
 }
 
-.sapMLabel.sapMLightBoxSubtitle  {
-	margin-top: @_sap_m_LightBox_SubtitleMarginTop;
+.sapMLabel.sapMLightBoxSubtitle {
+	margin-top: var(--_sap_m_LightBox_SubtitleMarginTop);
 }
 
 .sapMLightBoxTitleSection {
 	margin: 0 1rem;
-	padding: @_sap_m_LightBox_TitleSectionPadding 0;
+	padding: var(--_sap_m_LightBox_TitleSectionPadding) 0;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
@@ -117,7 +117,7 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 }
 
 .sapMLightBoxTwoLines .sapMLightBoxTitleSection {
-	padding: @_sap_m_LightBox_TitleSectionPaddingTwoLines 0;
+	padding: var(--_sap_m_LightBox_TitleSectionPaddingTwoLines) 0;
 }
 
 .sapMLightBoxFooter .sapMBtn {
@@ -137,15 +137,15 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 /* ========================================================================== */
 
 .sapMLightBoxImageContainer {
-	min-height: calc(@_sap_m_LightBox_MinHeight - 3.5rem);
+	min-height: ~'calc(var(--_sap_m_LightBox_MinHeight) - 3.5rem)';
 	position: absolute;
 	top: 0;
-	bottom: @_sap_m_LightBox_FooterOneLineHeightCozy;
+	bottom: var(--_sap_m_LightBox_FooterOneLineHeightCozy);
 	width: 100%;
 }
 
 .sapMLightBoxImageContainerTwoLines {
-	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightCozy);
+	height: ~'calc(100% - var(--_sap_m_LightBox_FooterTwoLinesHeightCozy))';
 	position: absolute;
 	top: 0;
 	width: 100%;
@@ -161,14 +161,14 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 
 		.sapMBusyIndicator {
 			display: block;
-			margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterOneLineHeightCompact) / 2;
+			margin-top: ~'calc((var(--_sap_m_LightBox_MinHeight) - var(--_sap_m_LightBox_BusyIndicatorHeight) - var(--_sap_m_LightBox_FooterOneLineHeightCompact)) / 2)';
 		}
 
 		.sapMLightBoxTwoLines {
 
 			.sapMBusyIndicator {
 				height: 14rem;
-				margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterTwoLinesHeightCompact) / 2;
+				margin-top: ~'calc((var(--_sap_m_LightBox_MinHeight) - var(--_sap_m_LightBox_BusyIndicatorHeight) - var(--_sap_m_LightBox_FooterTwoLinesHeightCompact)) / 2)';
 			}
 		}
 	}
@@ -178,14 +178,14 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 
 	.sapMBusyIndicator {
 		display: block;
-		margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterOneLineHeightCozy) / 2;
+		margin-top: ~'calc((var(--_sap_m_LightBox_MinHeight) - var(--_sap_m_LightBox_BusyIndicatorHeight) - var(--_sap_m_LightBox_FooterOneLineHeightCozy)) / 2)';
 	}
 
 	.sapMLightBoxTwoLines {
 
 		.sapMBusyIndicator {
 			height: 14rem;
-			margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterTwoLinesHeightCozy) / 2;
+			margin-top: ~'calc((var(--_sap_m_LightBox_MinHeight) - var(--_sap_m_LightBox_BusyIndicatorHeight) - var(--_sap_m_LightBox_FooterTwoLinesHeightCozy)) / 2)';
 		}
 	}
 }
@@ -205,19 +205,19 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 .sapUiSizeCompact {
 
 	.sapMLightBoxImageContainer {
-		bottom: @_sap_m_LightBox_FooterOneLineHeightCompact;
+		bottom: var(--_sap_m_LightBox_FooterOneLineHeightCompact);
 	}
 
 	.sapMLightBoxImageContainerTwoLines {
-		bottom: @_sap_m_LightBox_FooterTwoLinesHeightCompact;
-		height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightCompact);
+		bottom: var(--_sap_m_LightBox_FooterTwoLinesHeightCompact);
+		height: ~'calc(100% - var(--_sap_m_LightBox_FooterTwoLinesHeightCompact))';
 	}
 
 	.sapMLightBoxFooter {
-		height: @_sap_m_LightBox_FooterOneLineHeightCompact;
+		height: var(--_sap_m_LightBox_FooterOneLineHeightCompact);
 
 		&.sapMLightBoxFooterTwoLines {
-			height: @_sap_m_LightBox_FooterTwoLinesHeightCompact;
+			height: var(--_sap_m_LightBox_FooterTwoLinesHeightCompact);
 		}
 	}
 
@@ -226,7 +226,7 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 	}
 
 	.sapMLightBoxTwoLines .sapMLightBoxTitleSection {
-		padding: @_sap_m_LightBox_TitleSectionPaddingTwoLines 0;
+		padding: var(--_sap_m_LightBox_TitleSectionPaddingTwoLines) 0;
 	}
 
 	.sapMLightBoxFooter .sapMBtn {

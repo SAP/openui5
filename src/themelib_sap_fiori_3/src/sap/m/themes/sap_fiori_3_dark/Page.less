@@ -33,7 +33,7 @@
 		background-image: none;
 	}
 
-	/* Hack - temporary - this is the FLP change*/
+	/* Hack - temporary - this is the FLP change */
 	#sapUshellDashboardPage {
 		background-color: transparent !important;
 		background-image: none !important;
@@ -53,24 +53,24 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 
 	@keyframes bounceShow {
 
-		0% {
+		from {
 			transform: translateY(100%);
 			opacity: 0;
 		}
 
-		100% {
+		to {
 			opacity: 1;
 		}
 	}
 
 	@keyframes bounceHide {
 
-		0% {
+		from {
 			transform: translateY(-5%);
 			opacity: 1;
 		}
 
-		100% {
+		to {
 			transform: translateY(100%);
 			opacity: 0;
 		}
@@ -135,6 +135,7 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 }
 
 .sapMPageWithHeader {
+
 	.sapMPageHeader:has(.sapFShellBar) + section,
 	.sapMPageHeader:has([ui5-shellbar]) + section {
 		top: 2.75rem;
@@ -197,6 +198,7 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 	}
 
 	.sapMPageWithHeader {
+
 		.sapMPageHeader:has(.sapFShellBar) + section,
 		.sapMPageHeader:has([ui5-shellbar]) + section {
 			top: 2.75rem;

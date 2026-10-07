@@ -7,20 +7,20 @@
 	position: relative;
 	display: inline-block;
 	margin: 0;
-	font-weight: @sapUiFontHeaderWeight;
+	font-weight: normal;
 	color: var(--sapGroup_TitleTextColor);
 	font-family: var(--sapFontHeaderFamily);
 	box-sizing: border-box;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	cursor: text;
-	text-shadow: @sapUiShadowText;
+	text-shadow: var(--sapContent_TextShadow);
 
-	&[tabindex="0"] {
+	&[tabindex='0'] {
 		cursor: default;
 	}
 
-	&[tabindex="0"]:focus {
+	&[tabindex='0']:focus {
 		outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	}
 }
@@ -40,7 +40,7 @@
 
 /* Level Styling */
 
-/* Level Auto*/
+/* Level Auto */
 .sapMTitleStyleAuto {
 	font-size: var(--sapFontHeader5Size);
 }
@@ -81,7 +81,7 @@
 
 .sapMIBar-CTX .sapMTitle {
 	color: var(--sapPageHeader_TextColor);
-	text-shadow: @sapUiShadowText;
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 .sapMTB-Transparent-CTX .sapMTitle {
@@ -90,7 +90,7 @@
 
 .sapMIBar-CTX.sapMFooter-CTX .sapMTitle {
 	color: var(--sapPageFooter_TextColor);
-	text-shadow: @sapUiShadowText;
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 /* DynamicPageTitle Heading-CTX */

@@ -24,7 +24,7 @@
 	line-height: 3rem;
 	margin: 0;
 	-webkit-text-size-adjust: none; /* To improve readability Mobile Safari automatically increases the size of small text so let's disable this */
-	font-weight: @sapUiFontHeaderWeight;
+	font-weight: normal;
 	font-size: var(--sapGroup_Title_FontSize);
 	font-family: var(--sapFontHeaderFamily);
 	color: var(--sapGroup_TitleTextColor);
@@ -181,7 +181,7 @@ html.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel {
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
-.sapUiContainerContentPadding(~".sapMPanel", ~"> .sapMPanelContent");
+.sapUiContainerContentPadding(~'.sapMPanel', ~'> .sapMPanelContent');
 
 .sapMPanelExpandable .sapMPanelWrappingDiv {
 

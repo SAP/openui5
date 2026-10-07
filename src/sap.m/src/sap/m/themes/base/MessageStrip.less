@@ -7,7 +7,7 @@
 	border: var(--sapMessage_BorderWidth) solid;
 	border-radius: var(--sapPopover_BorderCornerRadius);
 	box-sizing: border-box;
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	font-weight: normal;
 	padding: 0.4375rem 1rem;
 	position: relative;
@@ -19,6 +19,7 @@
 
 	/* ColorSet1 styles - Using SAP Indication Colors 1-10 */
 	&.sapMMsgStripColorSet1 {
+
 		&.sapMMsgStripColorScheme1 {
 			background-color: var(--sapIndicationColor_1_Background);
 			border-color: var(--sapIndicationColor_1_BorderColor);
@@ -122,6 +123,7 @@
 
 	/* ColorSet2 styles - Using SAP Indication Color "b" variants for different colors */
 	&.sapMMsgStripColorSet2 {
+
 		&.sapMMsgStripColorScheme1 {
 			background-color: var(--sapIndicationColor_1b_Background);
 			border-color: var(--sapIndicationColor_1b_BorderColor);
@@ -276,7 +278,6 @@ html[data-sap-ui-animation='on'] {
 	& > .sapMText {
 		line-height: 1.2;
 	}
-
 }
 
 .sapMMsgStripCloseButton {

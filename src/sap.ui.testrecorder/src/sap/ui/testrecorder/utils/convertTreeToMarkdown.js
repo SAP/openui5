@@ -130,7 +130,13 @@ sap.ui.define([], function() {
 			return '""';
 		}
 		// Fallback for complex types
-		return '"' + JSON.stringify(vValue).replace(/"/g, '\\"') + '"';
+		try {
+			return '"' + JSON.stringify(vValue).replace(/"/g, '\\"') + '"';
+		} catch (e) {
+			// Guard against circular references
+			// (e.g. live UI5 instances stored in mProperties/mAssociations).
+			return '"[object]"';
+		}
 	}
 
 	/**

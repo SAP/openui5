@@ -1,16 +1,16 @@
 /* =============================== */
 /* CSS for control sap.m/ListBase  */
-/* Fiori 3 theme                   */
+/* Quartz Light theme              */
 /* =============================== */
 
 .sapMGrowingListDescription,
 .sapMGrowingListTriggerText > .sapMSLITitle {
-	text-shadow: @sapUiShadowText;
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 .sapMSticky > .sapMListHdrText,
 .sapMSticky > .sapMListHdrTBar.sapMTB-Transparent-CTX {
-	background: lighten(@sapUiListHeaderBackground, 2);
+	background: ~'hsl(from var(--sapList_HeaderBackground) h s calc(l + 2))';
 }
 
 .sapMGrowingListTrigger {

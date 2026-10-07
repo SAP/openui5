@@ -117,7 +117,7 @@
 /* Growing feature */
 
 .sapMGrowingList {
-	border-bottom: 1px solid @sapUiButtonActionSelectBorderColor;
+	border-bottom: 1px solid var(--sapList_BorderColor);
 }
 
 .sapMGrowingListTrigger {
@@ -139,12 +139,12 @@
 }
 
 .sapMGrowingList > .sapMCLI.sapMLIB:not(.sapMLIBActive) {
-	background: @sapUiButtonActionSelectBackground;
+	background: var(--sapList_Background);
 	border-bottom: none;
 }
 
 .sapMGrowingList > .sapMCLI.sapMLIBHoverable:hover {
-	background: @sapUiButtonLiteActionSelectHoverBackground;
+	background: var(--sapList_Hover_Background);
 }
 
 .sapMGrowingListBusyIndicatorVisible .sapMGrowingListTriggerText,
@@ -153,7 +153,7 @@
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
-.sapUiContainerContentPadding(~".sapMList");
+.sapUiContainerContentPadding(~'.sapMList');
 
 .sapUiFioriObjectPage > section > .sapMList:not(.sapMListInsetBG) {
 	margin: 1rem 0;
@@ -214,7 +214,7 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 	height: 2rem;
 	box-sizing: border-box;
 	-webkit-text-size-adjust: none; /* To improve readability Mobile Safari automatically increases the size of small text so let's disable this */
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	line-height: 2rem;
 	background-color: var(--sapList_FooterBackground);
 	color: var(--sapList_FooterTextColor);
@@ -317,7 +317,7 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 /* Compact size */
 .sapUiSizeCompact .sapMListNoData {
 	min-height: 2rem;
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 }
 
 .sapUiSizeCompact .sapMGrowingListDescription {

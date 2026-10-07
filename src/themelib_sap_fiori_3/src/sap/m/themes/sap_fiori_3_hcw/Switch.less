@@ -3,8 +3,6 @@
 /* Quartz High Contrast White theme  */
 /* ================================= */
 
-@_sap_m_Switch_OffBorderColor: var(-sapButton_BorderColor);
-
 /* Switch container */
 .sapMSwtCont {
 	overflow: hidden;
@@ -75,10 +73,7 @@ html.sap-desktop {
 	height: 1.375rem;
 	overflow: visible;
 	border: var(--sapButton_BorderWidth) solid;
-	border-top-left-radius: 0.75rem;
-	border-top-right-radius: 0.75rem;
-	border-bottom-right-radius: 0.75rem;
-	border-bottom-left-radius: 0.75rem;
+	border-radius: 0.75rem 0.75rem 0.75rem 0.75rem;
 
 	&.sapMSwtNoLabel {
 		width: 3.25rem;
@@ -136,10 +131,7 @@ html.sap-desktop {
 .sapMSwtOff .sapMSwtHandle {
 	height: 1.875rem;
 	width: 1.875rem;
-	border-top-left-radius: 1rem;
-	border-top-right-radius: 1rem;
-	border-bottom-right-radius: 1rem;
-	border-bottom-left-radius: 1rem;
+	border-radius: 1rem 1rem 1rem 1rem;
 	border: var(--sapButton_BorderWidth) solid;
 	left: 1.9375rem;
 }
@@ -257,6 +249,7 @@ html.sap-desktop {
 
 /* Compact mode */
 .sapUiSizeCompact {
+
 	.sapMSwtCont {
 		width: 3.75rem;
 		/* in order to have a touchable area of 2rem */

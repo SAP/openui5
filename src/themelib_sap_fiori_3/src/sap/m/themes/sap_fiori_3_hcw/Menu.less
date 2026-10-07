@@ -4,24 +4,23 @@
 /* ==================================== */
 
 .sapMMenu {
-
-	box-shadow: @sapUiContentShadow1;
+	box-shadow: var(--sapContent_Shadow1);
 
 	.sapMMenuItem {
 		padding: 0 0.75rem;
 	}
 
 	.sapMMenuItem.sapMMenuItemDisabled .sapMMenuItemIcon {
-		opacity: @sapUiContentDisabledOpacity;
+		opacity: var(--sapContent_DisabledOpacity);
 	}
 
 	.sapMMenuItem.sapMMenuItemSubMenuOpen {
-    background-color: @sapUiListSelectionBackgroundColor
-  }
+		background-color: var(--sapList_SelectionBackgroundColor);
+	}
 
-  .sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
+	.sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
-		background-color: @sapUiListActiveBackground;
+		background-color: var(--sapList_Active_Background);
 	}
 
 	.sapMMenuItemIcon {
@@ -36,8 +35,7 @@
 		}
 	}
 
-	.sapMMenuItemSubMenu > div:after {
+	.sapMMenuItemSubMenu > div::after {
 		font-size: 0.75rem;
 	}
-
 }

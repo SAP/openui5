@@ -3,7 +3,9 @@
 /* Base theme                            */
 /* ===================================== */
 
-@_sap_m_MessageView_DescIcon_Width: 3rem;
+.sapUI5Scope {
+	--_sap_m_MessageView_DescIcon_Width: 1rem;
+}
 
 .sapMMsgView {
 	height: 100%;
@@ -35,13 +37,14 @@
 
 	.sapMMsgViewDescriptionText {
 		padding-bottom: 1rem;
-		font-size: @sapMFontMediumSize;
+		font-size: var(--sapFontSize);
 		display: block;
 	}
 
 	.sapMMsgViewDescriptionLink {
 		display: block;
 		margin: 1rem 0 0 3rem;
+		font-size: var(--sapFontSize);
 	}
 
 	.sapMMsgViewDescriptionText:empty {
@@ -77,7 +80,7 @@
 	.sapMSLIDescription {
 		margin-top: 0.125rem;
 		font-family: var(--sapFontFamily);
-		font-size:  @sapMFontMediumSize;
+		font-size: var(--sapFontSize);
 		color: var(--sapContent_LabelColor);
 		overflow: visible;
 	}
@@ -85,7 +88,7 @@
 	.sapMSLITitle {
 		font-family: var(--sapFontHeaderFamily);
 		font-size: var(--sapFontHeader5Size);
-		font-weight: @sapUiFontHeaderWeight;
+		font-weight: normal;
 		color: var(--sapGroup_TitleTextColor);
 		overflow: visible;
 	}
@@ -116,7 +119,7 @@
 	}
 
 	.sapMTextMaxWidth {
-		max-width: ~"calc(100% - @{_sap_m_MessageView_DescIcon_Width})";
+		max-width: ~'calc(100% - var(--_sap_m_MessageView_DescIcon_Width))';
 	}
 
 	.sapMSLITitle,
@@ -144,7 +147,7 @@
 .sapMMsgViewDescIcon {
 	position: absolute;
 	left: 0;
-	width: @_sap_m_MessageView_DescIcon_Width;
+	width: var(--_sap_m_MessageView_DescIcon_Width);
 	top: 0.7rem;
 	font-size: 1.35rem;
 }
@@ -197,12 +200,12 @@
 		margin-right: 0;
 	}
 
-	.sapMBtnCustomIcon  {
+	.sapMBtnCustomIcon {
 		margin-left: 0;
 	}
 
 	.sapMMsgViewDescIcon {
-		width: @_sap_m_MessageView_DescIcon_Width;
+		width: var(--_sap_m_MessageView_DescIcon_Width);
 		height: 1.626rem;
 		line-height: 1.626rem;
 		font-size: 1rem;

@@ -4,9 +4,11 @@
 /* ============================= */
 
 /* Switch required variables */
-@_sap_m_Switch_OnPosition: -32;
-@_sap_m_Switch_OffPosition: 0;
-@_sap_m_Switch_TransitionTime: 175;
+.sapUI5Scope {
+	--_sap_m_Switch_OnPosition: -32;
+	--_sap_m_Switch_OffPosition: 0;
+	--_sap_m_Switch_TransitionTime: 175;
+}
 
 /* Switch common styles */
 .sapMSwtText,
@@ -31,7 +33,6 @@
 	vertical-align: top;
 	outline: none;
 	-webkit-user-select: none;
-	-moz-user-select: none;
 	user-select: none;
 	padding: 0.5rem 0 0.5rem 0;
 }
@@ -55,10 +56,7 @@
 	margin: 0 1px;
 	/* note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
 	but does support the long-hand properties for each corner like "border-top-left-radius" */
-	border-top-left-radius: 1rem;
-	border-top-right-radius: 1rem;
-	border-bottom-right-radius: 1rem;
-	border-bottom-left-radius: 1rem;
+	border-radius: 1rem 1rem 1rem 1rem;
 	overflow: hidden;
 }
 
@@ -112,7 +110,7 @@
 	transition: left 0.125s ease-in-out;
 }
 
-html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
+html[dir='rtl'] .sapMSwtTrans > .sapMSwtInner {
 	transition-property: right;
 }
 
@@ -176,11 +174,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 
 	/* note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property */
 	/* but does support the long-hand properties for each corner like "border-top-left-radius" */
-	border-top-left-radius: 0.75rem;
-	border-top-right-radius: 0.75rem;
-	border-bottom-right-radius: 0.75rem;
-	border-bottom-left-radius: 0.75rem;
-	-webkit-background-clip: padding-box;
+	border-radius: 0.75rem;
 	background-clip: padding-box;
 }
 
@@ -203,6 +197,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 }
 
 .sapMSwt.sapMSwtReadOnly {
+
 	&.sapMSwtOn:not(.sapMSwtAcceptReject),
 	&.sapMSwtOff:not(.sapMSwtAcceptReject),
 	&.sapMSwtAcceptReject.sapMSwtOn,
@@ -222,6 +217,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 	}
 
 	&.sapMSwtNoLabel {
+
 		&.sapMSwtOn .sapMSwtLabelOn::before,
 		&.sapMSwtOff .sapMSwtLabelOff::before {
 			color: var(--sapButton_Handle_TextColor);
@@ -229,6 +225,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 	}
 
 	&.sapMSwtAcceptReject {
+
 		&.sapMSwtOn .sapMSwtLabelOn::before,
 		&.sapMSwtOff .sapMSwtLabelOff::before {
 			color: var(--sapButton_Handle_TextColor);

@@ -4012,7 +4012,7 @@ sap.ui.define([
 					this.oGenericTile.setState("Loading");
 					await nextUIUpdate();
 					setTimeout(async function(){
-						var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+						var oDomRef = this.oGenericTile.getDomRef().children[0];
 						assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
 						this.oGenericTile.setState("Loaded");
 						await nextUIUpdate();
@@ -4092,7 +4092,7 @@ sap.ui.define([
 					this.oGenericTile.setState("Loading");
 					await nextUIUpdate();
 					setTimeout(async function(){
-						var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+						var oDomRef = this.oGenericTile.getDomRef().children[0];
 						assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
 						this.oGenericTile.setState("Loaded");
 						await nextUIUpdate();
@@ -4826,7 +4826,7 @@ sap.ui.define([
 		this.oGenericTile.setState(LoadState.Loading);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
 		//Assert
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
 		assert.ok(oDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loading");
@@ -4842,7 +4842,7 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
 		//Assert
 		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
@@ -4859,8 +4859,8 @@ sap.ui.define([
 		this.oGenericTile.setState(LoadState.Loaded);
 		await nextUIUpdate();
 		//Act
-		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
 		//Assert
 		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loaded");
 		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loading");
@@ -4893,7 +4893,7 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
 		//Assert
 		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is present when state is loading");
@@ -4910,8 +4910,8 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
 		//Assert
 		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is not present when state is loaded");
 		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsOneByOne"), "Row Placeholder div is present when state is loaded");
@@ -4944,7 +4944,7 @@ sap.ui.define([
 		this.oGenericTile.setState(LoadState.Loading);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
 		//Assert
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
 		assert.ok(oDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loading");
@@ -4960,7 +4960,7 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
 		//Assert
 		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
@@ -4977,8 +4977,8 @@ sap.ui.define([
 		this.oGenericTile.setState(LoadState.Loaded);
 		await nextUIUpdate();
 		//Act
-		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
 		//Assert
 		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loaded");
 		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loading");
@@ -4995,8 +4995,8 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(true);
 		await nextUIUpdate();
 		//Act
-		var oIconDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
+		var oIconDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
 		//Assert
 		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is not present when state is loaded");
 		assert.ok(oIconDomRef.classList.contains("sapMGTTwoByHalfIcon"), "Icon div is present when state is loaded");
@@ -5011,7 +5011,7 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
+		var oDomRef = this.oGenericTile.getDomRef().children[0];
 		//Assert
 		assert.equal(this.oGenericTile.getIconLoaded(), false, "IconLoaded property = false");
 		assert.ok(oDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is present when state is loading");
@@ -5028,8 +5028,8 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(false);
 		await nextUIUpdate();
 		//Act
-		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
+		var oPlaceHolderDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
 		//Assert
 		assert.ok(oPlaceHolderDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is not present when state is loaded");
 		assert.ok(oPlaceHolderDomRef.children[0].classList.contains("sapMGTContentShimmerPlaceholderRowsTwoByHalf"), "Row Placeholder div is present when state is loaded");
@@ -5046,8 +5046,8 @@ sap.ui.define([
 		this.oGenericTile.setIconLoaded(true);
 		await nextUIUpdate();
 		//Act
-		var oIconDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().querySelector(".sapMGTContentWrapper").children[1];
+		var oIconDomRef = this.oGenericTile.getDomRef().children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
 		//Assert
 		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemTwoByHalf"), "Placeholder div is not present when state is loaded");
 		assert.ok(oIconDomRef.classList.contains("sapMGTTwoByHalfIcon"), "Icon div is present when state is loaded");
