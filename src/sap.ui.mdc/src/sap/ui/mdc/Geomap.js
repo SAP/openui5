@@ -46,7 +46,7 @@ sap.ui.define([
          *
          * @alias sap.ui.mdc.Geomap
          * @see {@link topic:1dd2aa91115d43409452a271d11be95b sap.ui.mdc}
-         * @ui5-experimental-since 1.142
+         * @since 1.154
          */
         const Geomap = Control.extend("sap.ui.mdc.Geomap", /** @lends sap.ui.mdc.Geomap.prototype */ {
             metadata: {
@@ -166,7 +166,7 @@ sap.ui.define([
                      * }</code></pre>
                      * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
                      * Do not bind or modify the module. This property can only be configured during control initialization.
-                     * @ui5-experimental-since 1.142
+                     * @since 1.154
                      */
                     delegate: {
                         type: "object",
@@ -251,7 +251,7 @@ sap.ui.define([
          * @property {object} [constraints]
          * Defines if any constraints are applied to the property.
          * @public
-         * @ui5-experimental-since 1.142
+         * @since 1.154
          */
 
 

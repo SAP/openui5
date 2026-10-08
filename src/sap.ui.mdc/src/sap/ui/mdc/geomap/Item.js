@@ -15,7 +15,7 @@ sap.ui.define([
      * @extends sap.ui.core.Element
      * @author SAP SE
      * @public
-     * @ui5-experimental-since 1.142
+     * @since 1.154
      * @alias sap.ui.mdc.geomap.Item
      */
     const Item = Element.extend("sap.ui.mdc.geomap.Item", /** @lends sap.ui.mdc.geomap.Item.prototype */ {
@@ -25,7 +25,7 @@ sap.ui.define([
                 /**
                  * The unique identifier of the geomap item that reflects the name of property in the PropertyInfo.
                  *
-                 * @since 1.142
+                 * @since 1.154
                  */
                 propertyKey: {
                     type: "string"

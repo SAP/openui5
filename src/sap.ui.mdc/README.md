@@ -4,14 +4,6 @@ Runtime resources of the [OpenUI5](https://github.com/UI5/openui5) UI Library **
 
 
 
-
-## Experimental Library
-
-The APIs in this library are experimental. See the [OpenUI5 Compatibility Rules](https://sdk.openui5.org/topic/91f087396f4d1014b6dd926db0e91070) for details about experimental APIs.
-
-
-
-
 ## Usage
 
 Add this library as a dependency to your UI5 project by using [UI5 CLI](https://ui5.github.io/cli/):

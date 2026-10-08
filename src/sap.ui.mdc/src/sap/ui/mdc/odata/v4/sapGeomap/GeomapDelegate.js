@@ -57,7 +57,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Geomap} oGeomap Reference to the MDC geomap
 	 * @returns {array} Array of the property infos to be used within MDC geomap
-	 * @ui5-experimental-since 1.142
+	 * @since 1.154
 	 * @private
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 */
@@ -110,7 +110,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Geomap} oGeomap Reference to the MDC geomap
 	 * @returns {object} BindingInfo object
 	 *
-	 * @ui5-experimental-since 1.142
+	 * @since 1.154
 	 * @private
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 */
