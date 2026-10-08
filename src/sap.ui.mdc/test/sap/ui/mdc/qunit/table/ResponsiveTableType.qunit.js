@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/m/Text",
+	"sap/m/IllustratedMessage",
 	"sap/m/Menu",
 	"sap/m/plugins/ColumnResizer",
 	"sap/ui/model/json/JSONModel",
@@ -24,6 +25,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/DataType",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/mdc/table/utils/Personalization",
 	"sap/ui/thirdparty/jquery",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler"
 ], function(
@@ -38,6 +40,7 @@ sap.ui.define([
 	RowSettings,
 	RowActionItem,
 	Text,
+	IllustratedMessage,
 	Menu,
 	ColumnResizer,
 	JSONModel,
@@ -49,6 +52,7 @@ sap.ui.define([
 	Device,
 	DataType,
 	VariantManagement,
+	PersonalizationUtils,
 	jQuery,
 	TestModificationHandler
 ) {
@@ -2065,5 +2069,91 @@ sap.ui.define([
 
 		oColumn1.destroy();
 		oTable.destroy();
+	});
+
+	QUnit.module("setContextMenu", {
+		beforeEach: async function() {
+			this.oType = new ResponsiveTableType();
+			this.oTable = new Table({type: this.oType});
+			await this.oTable.initialized();
+			this.oInnerTable = this.oTable._oTable;
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Context menu appears on the inner table", function(assert) {
+		const oMenu = new Menu();
+
+		this.oType.setContextMenu(oMenu);
+		assert.strictEqual(this.oInnerTable.getContextMenu(), oMenu);
+		oMenu.destroy();
+	});
+
+	QUnit.test("Context menu can be cleared", function(assert) {
+		const oMenu = new Menu();
+
+		this.oType.setContextMenu(oMenu);
+		this.oType.setContextMenu();
+		assert.strictEqual(this.oInnerTable.getContextMenu(), null);
+		oMenu.destroy();
+	});
+
+	QUnit.test("setContextMenu is safe to call before the inner table is created", function(assert) {
+		assert.expect(0);
+		const oType = new ResponsiveTableType();
+
+		oType.setContextMenu(new Menu());
+		oType.destroy();
+	});
+
+	QUnit.module("setNoData", {
+		beforeEach: async function() {
+			this.oType = new ResponsiveTableType();
+			this.oTable = new Table({type: this.oType});
+			await this.oTable.initialized();
+			this.oInnerTable = this.oTable._oTable;
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("String noData appears on the inner table", function(assert) {
+		this.oType.setNoData("No data");
+		assert.strictEqual(this.oInnerTable.getNoData(), "No data");
+	});
+
+	QUnit.test("IllustratedMessage appears on the inner table with correct settings", function(assert) {
+		const fnOpenSettingsDialog = sinon.stub(PersonalizationUtils, "openSettingsDialog");
+		const oNoData = new IllustratedMessage();
+
+		this.oType.setNoData(oNoData);
+
+		assert.strictEqual(this.oInnerTable.getNoData(), oNoData, "inner table has the IllustratedMessage");
+		assert.notOk(oNoData.getEnableVerticalResponsiveness(), "enableVerticalResponsiveness is false for ResponsiveTable");
+
+		const oNoColumnsMessage = this.oInnerTable.getAggregation("_noColumnsMessage");
+		assert.ok(oNoColumnsMessage, "a no-columns message is added");
+		const oButton = oNoColumnsMessage.getAdditionalContent()[0];
+		assert.ok(oButton.isA("sap.m.Button"), "the no-columns message has a settings button");
+		assert.strictEqual(oButton.getIcon(), "sap-icon://action-settings", "button uses the settings icon");
+		oButton.firePress();
+		assert.ok(fnOpenSettingsDialog.calledOnceWith(this.oTable), "pressing the button opens the settings dialog");
+
+		fnOpenSettingsDialog.restore();
+	});
+
+	QUnit.test("setNoData is safe to call before the inner table is created", function(assert) {
+		assert.expect(0);
+		const oType = new ResponsiveTableType();
+
+		oType.setNoData("No data");
+		oType.destroy();
+	});
+
+	QUnit.test("Default no data text is set on the inner table when setNoData is never called", function(assert) {
+		assert.strictEqual(this.oInnerTable.getNoData(), this.oTable._getDefaultNoDataText(), "inner table has the default no data text");
 	});
 });

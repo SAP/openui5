@@ -61,6 +61,28 @@ sap.ui.define([
 		delete oControl._oInvalidationSuppressedUIArea;
 	}
 
+	function schedulePendingModification(oControl) {
+		if (!oControl._pPendingModification && oControl._onModifications instanceof Function) {
+			oControl._pPendingModification = (async function runCycle() {
+				try {
+					do {
+						await Engine.getInstance().waitForChanges(oControl);
+						const aAffectedControllerKeys = Engine.getInstance().getTrace(oControl);
+						Engine.getInstance().clearTrace(oControl);
+						Engine.getInstance().fireStateChange(oControl);
+						await oControl._onModifications(aAffectedControllerKeys);
+						resumeInvalidation(oControl);
+					} while (Engine.getInstance().getTrace(oControl)?.length);
+				} catch (oError) {
+					SAPLog.error(`Error during mdc flex handling: ${oError}`);
+					resumeInvalidation(oControl);
+				} finally {
+					delete oControl._pPendingModification;
+				}
+			}());
+		}
+	}
+
 	function fConfigModified(oControl, oChange) {
 
 		if (oControl.isA) {
@@ -72,24 +94,7 @@ sap.ui.define([
 				}
 			});
 
-			if (!oControl._pPendingModification && oControl._onModifications instanceof Function) {
-				oControl._pPendingModification = (async () => {
-					try {
-						do {
-							await Engine.getInstance().waitForChanges(oControl);
-							const aAffectedControllerKeys = Engine.getInstance().getTrace(oControl);
-							Engine.getInstance().clearTrace(oControl);
-							Engine.getInstance().fireStateChange(oControl);
-							await oControl._onModifications(aAffectedControllerKeys);
-						} while (Engine.getInstance().getTrace(oControl)?.length > 0);
-					} catch (oError) {
-						SAPLog.error(`Error during mdc flex handling: ${oError}`);
-					} finally {
-						delete oControl._pPendingModification;
-						resumeInvalidation(oControl);
-					}
-				})();
-			}
+			schedulePendingModification(oControl);
 		}
 	}
 

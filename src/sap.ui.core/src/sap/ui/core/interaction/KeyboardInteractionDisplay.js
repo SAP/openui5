@@ -79,7 +79,8 @@ sap.ui.define([
 		for (const oDependent of aDependents) {
 			if (oDependent.isA("sap.ui.core.CommandExecution") && oDependent.getVisible()) {
 				const oCommandInfo = oDependent._getCommandInfo();
-				const sKbd = ShortcutHelper.normalizeShortcutText(oCommandInfo.shortcut);
+				const bMacLiteral = ShortcutHelper.isPlatformShortcutMacLiteral(oCommandInfo.shortcut);
+				const sKbd = ShortcutHelper.normalizeShortcutText(ShortcutHelper.getPlatformShortcut(oCommandInfo.shortcut), bMacLiteral);
 
 				aCommandInfos.push({
 					name: oDependent.getCommand(),

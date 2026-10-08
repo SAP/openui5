@@ -3,20 +3,22 @@
 /* Base theme                      */
 /* =============================== */
 
-@_sapMTextAreaPadding: 0.4375rem 0.5625rem;
-@_sapMTextAreaPadding_Compact: 0.125rem 0.4375rem;
-@_sapMTextAreaReadonlyPadding: 0.4375rem 0.5625rem;
-@_sapMTextAreaReadonlyPadding_Compact: 0.125rem 0.4375rem;
-@_sapMTextAreaValueStateSuccessPadding: 0.4375rem 0.5625rem;
-@_sapMTextAreaValueStateSuccessPadding_Compact: 0.125rem 0.4375rem;
-@_sapMTextAreaValueStateInformationPadding: 0.375rem 0.5rem;
-@_sapMTextAreaValueStateInformationPadding_Compact: 0.0625rem 0.375rem;
-@_sapMTextAreaValueStateErrorWarningPadding: 0.375rem 0.5rem;
-@_sapMTextAreaValueStateErrorWarningPadding_Compact: 0.0625rem 0.375rem;
-@_sapMTextAreaContentWrapperPadding: 0;
-@_sapMTextAreaContentWrapperValueStateSuccessPadding: 0;
-@_sapMTextAreaContentWrapperValueStateInformationPadding: 0;
-@_sapMTextAreaContentWrapperValueStateErrorWarningPadding: 0;
+.sapUI5Scope {
+	--_sap_m_TextArea_Padding: 0.4375rem 0.5625rem;
+	--_sap_m_TextArea_Padding_Compact: 0.125rem 0.4375rem;
+	--_sap_m_TextArea_ReadonlyPadding: 0.4375rem 0.5625rem;
+	--_sap_m_TextArea_ReadonlyPadding_Compact: 0.125rem 0.4375rem;
+	--_sap_m_TextArea_ValueStateSuccessPadding: 0.4375rem 0.5625rem;
+	--_sap_m_TextArea_ValueStateSuccessPadding_Compact: 0.125rem 0.4375rem;
+	--_sap_m_TextArea_ValueStateInformationPadding: 0.375rem 0.5rem;
+	--_sap_m_TextArea_ValueStateInformationPadding_Compact: 0.0625rem 0.375rem;
+	--_sap_m_TextArea_ValueStateErrorWarningPadding: 0.375rem 0.5rem;
+	--_sap_m_TextArea_ValueStateErrorWarningPadding_Compact: 0.0625rem 0.375rem;
+	--_sap_m_TextArea_ContentWrapperPadding: 0;
+	--_sap_m_TextArea_ContentWrapperValueStateSuccessPadding: 0;
+	--_sap_m_TextArea_ContentWrapperValueStateInformationPadding: 0;
+	--_sap_m_TextArea_ContentWrapperValueStateErrorWarningPadding: 0;
+}
 
 /* uses sapMInputBase styles */
 
@@ -33,7 +35,7 @@
 	width: 100%;
 	line-height: 0;
 	display: block;
-	padding: @_sapMTextAreaContentWrapperPadding;
+	padding: var(--_sap_m_TextArea_ContentWrapperPadding);
 }
 
 .sapMTextArea .sapMTextAreaInner {
@@ -46,7 +48,7 @@
 .sapMTextAreaWithCounter {
 
 	& .sapMTextAreaCounter {
-		float:right;
+		float: right;
 		overflow: hidden;
 		font-family: var(--sapFontFamily);
 		font-size: var(--sapFontSmallSize);
@@ -98,32 +100,32 @@
 
 	.sapMTextAreaInner,
 	.sapMTextAreaMirror {
-		padding: @_sapMTextAreaPadding;
+		padding: var(--_sap_m_TextArea_Padding);
 	}
 
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperError,
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperWarning {
-		padding: @_sapMTextAreaContentWrapperValueStateErrorWarningPadding;
+		padding: var(--_sap_m_TextArea_ContentWrapperValueStateErrorWarningPadding);
 
 		.sapMTextAreaInner,
 		.sapMTextAreaMirror {
-			padding: @_sapMTextAreaValueStateErrorWarningPadding;
+			padding: var(--_sap_m_TextArea_ValueStateErrorWarningPadding);
 		}
 	}
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperSuccess {
-		padding: @_sapMTextAreaContentWrapperValueStateSuccessPadding;
+		padding: var(--_sap_m_TextArea_ContentWrapperValueStateSuccessPadding);
 
 		.sapMTextAreaInner,
 		.sapMTextAreaMirror {
-			padding: @_sapMTextAreaValueStateSuccessPadding;
+			padding: var(--_sap_m_TextArea_ValueStateSuccessPadding);
 		}
 	}
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperInformation {
-		padding: @_sapMTextAreaContentWrapperValueStateInformationPadding;
+		padding: var(--_sap_m_TextArea_ContentWrapperValueStateInformationPadding);
 
 		.sapMTextAreaInner,
 		.sapMTextAreaMirror {
-			padding: @_sapMTextAreaValueStateInformationPadding;
+			padding: var(--_sap_m_TextArea_ValueStateInformationPadding);
 		}
 	}
 }
@@ -132,7 +134,7 @@
 
 	.sapMTextAreaInner,
 	.sapMTextAreaMirror {
-		padding: @_sapMTextAreaReadonlyPadding;
+		padding: var(--_sap_m_TextArea_ReadonlyPadding);
 	}
 }
 
@@ -167,7 +169,7 @@
 
 		.sapMTextAreaInner,
 		.sapMTextAreaMirror {
-			padding: @_sapMTextAreaReadonlyPadding_Compact;
+			padding: var(--_sap_m_TextArea_ReadonlyPadding_Compact);
 		}
 	}
 }
@@ -176,7 +178,7 @@
 
 	.sapMTextAreaInner,
 	.sapMTextAreaMirror {
-		padding: @_sapMTextAreaPadding_Compact;
+		padding: var(--_sap_m_TextArea_Padding_Compact);
 	}
 
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperError,
@@ -184,7 +186,7 @@
 
 		.sapMTextAreaInner,
 		.sapMTextAreaMirror {
-			padding: @_sapMTextAreaValueStateErrorWarningPadding_Compact;
+			padding: var(--_sap_m_TextArea_ValueStateErrorWarningPadding_Compact);
 		}
 	}
 
@@ -192,7 +194,7 @@
 
 		.sapMTextAreaInner,
 		.sapMTextAreaMirror {
-			padding: @_sapMTextAreaValueStateSuccessPadding_Compact;
+			padding: var(--_sap_m_TextArea_ValueStateSuccessPadding_Compact);
 		}
 	}
 
@@ -200,7 +202,7 @@
 
 		.sapMTextAreaInner,
 		.sapMTextAreaMirror {
-			padding: @_sapMTextAreaValueStateInformationPadding_Compact;
+			padding: var(--_sap_m_TextArea_ValueStateInformationPadding_Compact);
 		}
 	}
 }

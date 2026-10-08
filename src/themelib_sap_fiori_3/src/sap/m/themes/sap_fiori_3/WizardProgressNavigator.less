@@ -1,10 +1,7 @@
 /* ============================================== */
 /* CSS for control sap.m/WizardProgressNavigator  */
-/* Fiori 3 theme                                  */
+/* Quartz Light theme                             */
 /* ============================================== */
-
-@_sap_m_WizardProgressNavigator_StepUnderlineHeight: 0.188rem;
-@_sap_m_WizardProgressNavigator_BoxShadow: 0.0625rem;
 
 .sapMWizardProgressNav {
 	position: absolute;
@@ -27,7 +24,7 @@
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current='true'] .sapMWizardProgressNavStepCircle::after {
-	height: @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
+	height: var(--_sap_m_WizardProgressNavigator_StepUnderlineHeight);
 	background: var(--sapSelectedColor);
 	content: '';
 	display: block;

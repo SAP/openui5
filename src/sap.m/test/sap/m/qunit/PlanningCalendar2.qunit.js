@@ -2968,6 +2968,33 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
+	QUnit.test("_updateViewSwitchLabelFor is called always when handleResize is triggered", async function (assert) {
+		var oPC = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
+			oHeader = oPC._getHeader(),
+			oUpdateLabelSpy;
+
+		oPC.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// resize the PC
+		oPC._resizeProxy({
+			size: { width: 310, height: 600 }
+		});
+
+		// Create spy after rendering to focus on manual resize behavior
+		oUpdateLabelSpy = sinon.spy(oHeader, "_updateViewSwitchLabelFor");
+
+		// trigger handleResize with value less than 15px
+		oPC._resizeProxy({
+			size: { width: 300, height: 600 }
+		});
+
+		assert.ok(oUpdateLabelSpy.calledOnce, "_updateViewSwitchLabelFor was called when handleResize is triggered");
+
+		oUpdateLabelSpy.restore();
+		oPC.destroy();
+	});
+
 	QUnit.module("Resize Appointments", {
 		beforeEach: function () {
 			this.oPCRow = new PlanningCalendar();

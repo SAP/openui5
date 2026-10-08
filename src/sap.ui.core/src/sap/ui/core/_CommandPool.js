@@ -14,7 +14,10 @@ sap.ui.define([
 			description: "{{SAP_SHARE}}"
 		},
 		"sap:create": {
-			shortcut: "Ctrl+Enter",
+			shortcut: {
+				"default": "Ctrl+Alt+N",
+				"macintosh": "Ctrl+Option+N"
+			},
 			description: "{{SAP_CREATE}}"
 		},
 		"sap:edit": {

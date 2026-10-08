@@ -57,8 +57,10 @@
 					header="Parent Mountain">
 					<Text text="{mountains>parent_mountain}"/>
 				</mdct:Column>
+				<mdc:footer>
+					<Text text="Footer of the table"/>
+				</mdc:footer>
 			</mdc:Table>
 		</f:content>
 	</f:DynamicPage>
-
 </mvc:View>

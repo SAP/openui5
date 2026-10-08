@@ -3,8 +3,9 @@
 /* Quartz High Contrast Black theme               */
 /* ============================================== */
 
-@_sap_m_WizardProgressNavigator_StepUnderlineHeight: 0.313rem;
-@_sap_m_WizardProgressNavigator_BoxShadow: 0.0625rem;
+.sapUI5Scope {
+	--_sap_m_WizardProgressNavigator_StepUnderlineHeight: 0.313rem;
+}
 
 .sapMWizardProgressNav {
 	position: absolute;
@@ -27,7 +28,7 @@
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current='true'] .sapMWizardProgressNavStepCircle::after {
-	height: @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
+	height: var(--_sap_m_WizardProgressNavigator_StepUnderlineHeight);
 	background: var(--sapTextColor);
 	content: '';
 	display: block;

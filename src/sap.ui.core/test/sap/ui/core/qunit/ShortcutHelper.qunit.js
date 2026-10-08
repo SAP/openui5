@@ -60,6 +60,64 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("normalizeShortcutText - bMacLiteral parameter", function(assert) {
+		const bOriginalMac = Device.os.macintosh;
+		Device.os.macintosh = true; // Simulate macOS
+		try {
+			// Without bMacLiteral: "Ctrl+N" is remapped to "Cmd+N" on macOS
+			assert.strictEqual(ShortcutHelper.normalizeShortcutText("Ctrl+N"), "Cmd+N",
+				"Without bMacLiteral, Ctrl is remapped to Cmd on macOS");
+
+			// With bMacLiteral=true: "Ctrl+N" stays "Ctrl+N" even on macOS
+			assert.strictEqual(ShortcutHelper.normalizeShortcutText("Ctrl+N", true), "Ctrl+N",
+				"With bMacLiteral=true, Ctrl stays Ctrl on macOS");
+
+			// With bMacLiteral=true: "Option" stays "Option", "Ctrl" stays "Ctrl"
+			assert.strictEqual(ShortcutHelper.normalizeShortcutText("Option+Ctrl+N", true), "Ctrl+Option+N",
+				"With bMacLiteral=true, Option stays Option and Ctrl stays Ctrl");
+
+			// With bMacLiteral=true: "Cmd+S" stays "Cmd+S"
+			assert.strictEqual(ShortcutHelper.normalizeShortcutText("Cmd+S", true), "Cmd+S",
+				"With bMacLiteral=true, Cmd stays Cmd");
+		} finally {
+			Device.os.macintosh = bOriginalMac;
+		}
+	});
+
+	QUnit.test("getPlatformShortcut", function(assert) {
+		const bOriginalMac = Device.os.macintosh;
+		const oShortcut = { "default": "Ctrl+Alt+N", "macintosh": "Ctrl+Option+N" };
+		try {
+			assert.strictEqual(ShortcutHelper.getPlatformShortcut("Ctrl+S"), "Ctrl+S", "string is returned unchanged");
+
+			Device.os.macintosh = false; // Simulate Windows
+			assert.strictEqual(ShortcutHelper.getPlatformShortcut(oShortcut), "Ctrl+Alt+N", "default variant used on non-macOS");
+
+			Device.os.macintosh = true; // Simulate macOS
+			assert.strictEqual(ShortcutHelper.getPlatformShortcut(oShortcut), "Ctrl+Option+N", "macintosh variant used on macOS");
+			assert.strictEqual(ShortcutHelper.getPlatformShortcut({ "default": "Ctrl+S" }), "Ctrl+S", "default used on macOS when no macintosh variant is defined");
+		} finally {
+			Device.os.macintosh = bOriginalMac;
+		}
+	});
+
+	QUnit.test("isPlatformShortcutMacLiteral", function(assert) {
+		const bOriginalMac = Device.os.macintosh;
+		const oShortcut = { "default": "Ctrl+Alt+N", "macintosh": "Ctrl+N" };
+		try {
+			assert.strictEqual(ShortcutHelper.isPlatformShortcutMacLiteral("Ctrl+S"), false, "string is never mac literal");
+
+			Device.os.macintosh = false; // Simulate Windows
+			assert.strictEqual(ShortcutHelper.isPlatformShortcutMacLiteral(oShortcut), false, "not mac literal on Windows even with macintosh key");
+
+			Device.os.macintosh = true; // Simulate macOS
+			assert.strictEqual(ShortcutHelper.isPlatformShortcutMacLiteral(oShortcut), true, "mac literal on macOS when macintosh key is present");
+			assert.strictEqual(ShortcutHelper.isPlatformShortcutMacLiteral({ "default": "Ctrl+S" }), false, "not mac literal when no macintosh key");
+		} finally {
+			Device.os.macintosh = bOriginalMac;
+		}
+	});
+
 	QUnit.test("findShortcut", function(assert) {
 		assert.expect(2);
 		oPanel.addDependent(oCE);
@@ -98,6 +156,36 @@ sap.ui.define([
 		oNormalizedShortcut = ShortcutHelper.getNormalizedShortcutSpec(oShortcut);
 		assert.deepEqual(oNormalizedShortcut, oExpectedSpec, "Shortcut normalized sucessfully from object");
 		assert.throws(ShortcutHelper.getNormalizedShortcutSpec.bind(ShortcutHelper, oInvalidShortcut), "shortcut object invalid");
+	});
+
+	QUnit.test("getNormalizedShortcutSpec - platform object", function(assert) {
+		// getNormalizedShortcutSpec resolves platform objects ({default, macintosh}) internally
+		// and treats the macintosh variant as a literal shortcut (no Ctrl→Cmd remapping).
+		const bOriginalMac = Device.os.macintosh;
+		try {
+			// On macOS: macintosh variant is used and "Ctrl" stays physical Control
+			Device.os.macintosh = true;
+			var oSpecMac = ShortcutHelper.getNormalizedShortcutSpec({ "default": "Ctrl+Alt+N", "macintosh": "Ctrl+N" });
+			assert.strictEqual(oSpecMac.ctrlKey, true, "macintosh variant: Ctrl stays physical Control (ctrlKey=true)");
+			assert.strictEqual(oSpecMac.metaKey, false, "macintosh variant: no Cmd remap (metaKey=false)");
+			assert.strictEqual(oSpecMac.altKey, false, "macintosh variant: Alt not set");
+			assert.strictEqual(oSpecMac.key, "n", "macintosh variant: key is 'n'");
+
+			// On Windows: default variant is used with standard parsing
+			Device.os.macintosh = false;
+			var oSpecWin = ShortcutHelper.getNormalizedShortcutSpec({ "default": "Ctrl+Alt+N", "macintosh": "Ctrl+N" });
+			assert.strictEqual(oSpecWin.ctrlKey, true, "default variant on Windows: ctrlKey=true");
+			assert.strictEqual(oSpecWin.altKey, true, "default variant on Windows: altKey=true");
+			assert.strictEqual(oSpecWin.metaKey, false, "default variant on Windows: metaKey=false");
+
+			// On macOS without macintosh key: falls back to default with standard Ctrl→Cmd remap
+			Device.os.macintosh = true;
+			var oSpecFallback = ShortcutHelper.getNormalizedShortcutSpec({ "default": "Ctrl+S" });
+			assert.strictEqual(oSpecFallback.ctrlKey, false, "no macintosh key on Mac: Ctrl remapped to Cmd (ctrlKey=false)");
+			assert.strictEqual(oSpecFallback.metaKey, true, "no macintosh key on Mac: Ctrl remapped to Cmd (metaKey=true)");
+		} finally {
+			Device.os.macintosh = bOriginalMac;
+		}
 	});
 
 	QUnit.test("parseShortcut", function(assert) {
@@ -139,6 +227,50 @@ sap.ui.define([
 		assert.deepEqual(oParsedSpec, oExpectedSpecPlus, "Shortcut with 'Plus' parsed sucessfully");
 	});
 
+	QUnit.test("parseShortcut - bMacLiteral parameter", function(assert) {
+		// When bMacLiteral=true, the shortcut is in macOS format. Mac modifier names are
+		// converted to Windows equivalents ("Option"->"Alt", "Cmd"->"Ctrl") and the Ctrl-to-Cmd
+		// remapping is skipped because "Ctrl" means physical Control in a macOS shortcut.
+		const oExpectedOptionCtrlN = {
+			key: 'n',
+			ctrlKey: true,
+			ctrlRequested: true,
+			altKey: true,
+			shiftKey: false,
+			metaKey: false
+		};
+
+		const bOriginalMac = Device.os.macintosh;
+		try {
+			Device.os.macintosh = false; // Simulate Windows
+			assert.deepEqual(ShortcutHelper.parseShortcut("Option+Ctrl+N", true), oExpectedOptionCtrlN,
+				"bMacLiteral=true: 'Option+Ctrl+N' parsed correctly on Windows (Option->Alt)");
+
+			Device.os.macintosh = true; // Simulate macOS
+			assert.deepEqual(ShortcutHelper.parseShortcut("Option+Ctrl+N", true), oExpectedOptionCtrlN,
+				"bMacLiteral=true: 'Option+Ctrl+N' parsed correctly on macOS (Ctrl not remapped to Cmd)");
+
+			// Without bMacLiteral: "Ctrl+N" gets Ctrl->Cmd remap on macOS
+			var oParsedDefault = ShortcutHelper.parseShortcut("Ctrl+N");
+			assert.strictEqual(oParsedDefault.ctrlKey, false, "Without bMacLiteral, ctrlKey is false (remapped to Cmd)");
+			assert.strictEqual(oParsedDefault.metaKey, true, "Without bMacLiteral, metaKey is true (Ctrl remapped to Cmd)");
+
+			// With bMacLiteral=true: "Ctrl+N" stays literal (even without Mac-specific modifiers)
+			const oExpectedLiteral = {
+				key: 'n',
+				ctrlKey: true,
+				ctrlRequested: true,
+				altKey: false,
+				shiftKey: false,
+				metaKey: false
+			};
+			assert.deepEqual(ShortcutHelper.parseShortcut("Ctrl+N", true), oExpectedLiteral,
+				"bMacLiteral=true: Ctrl stays physical Control on macOS");
+		} finally {
+			Device.os.macintosh = bOriginalMac;
+		}
+	});
+
 	QUnit.test("translateRegisteredKeyToStandard", function(assert) {
 		assert.expect(2);
 
@@ -174,6 +306,44 @@ sap.ui.define([
 		assert.equal(undefined, ShortcutHelper.validateShortcutString("CTRL+s"), "Shortcut valid");
 		assert.equal(undefined, ShortcutHelper.validateShortcutString("CTRL+ALT+s"), "Shortcut valid");
 		assert.equal(undefined, ShortcutHelper.validateShortcutString("CTRL+ALT+SHIFT+s"), "Shortcut valid");
+	});
+
+	QUnit.test("validateShortcutString - macOS modifiers", function(assert) {
+		assert.expect(2);
+		// "Option"/"Cmd" are validated against their Windows equivalents ("Alt"/"Ctrl")
+		assert.equal(ShortcutHelper.validateShortcutString("Option+Ctrl+N"), undefined, "'Option+Ctrl+N' valid (validated as 'Ctrl+Alt+N')");
+		assert.equal(ShortcutHelper.validateShortcutString("Cmd+S"), undefined, "'Cmd+S' valid (validated as 'Ctrl+S')");
+	});
+
+	QUnit.test("validateKeyCombination - macOS modifiers checked against disallowed list", function(assert) {
+		assert.expect(3);
+		// macOS-format shortcuts are always passed as platform objects so that
+		// getNormalizedShortcutSpec resolves them through the macintosh-literal path
+		// (converts mac modifiers to Windows equivalents before validation).
+		const bOriginalMac = Device.os.macintosh;
+		Device.os.macintosh = true; // Simulate macOS so macintosh variant is selected
+		try {
+			// "Option+Ctrl+N" -> "Ctrl+Alt+N": not disallowed, so it is allowed
+			assert.equal(ShortcutHelper.validateKeyCombination(
+				ShortcutHelper.getNormalizedShortcutSpec({ "default": "Ctrl+Alt+N", "macintosh": "Option+Ctrl+N" })
+			), undefined, "'Option+Ctrl+N' allowed (maps to 'ctrl+alt+n')");
+
+			// "Cmd+W" -> "Ctrl+W" (close tab): disallowed
+			assert.throws(function() {
+				ShortcutHelper.validateKeyCombination(
+					ShortcutHelper.getNormalizedShortcutSpec({ "default": "Ctrl+W", "macintosh": "Cmd+W" })
+				);
+			}, "'Cmd+W' is disallowed (maps to 'ctrl+w')");
+
+			// "Cmd+N" -> "Ctrl+N" (new window): disallowed
+			assert.throws(function() {
+				ShortcutHelper.validateKeyCombination(
+					ShortcutHelper.getNormalizedShortcutSpec({ "default": "Ctrl+N", "macintosh": "Cmd+N" })
+				);
+			}, "'Cmd+N' is disallowed (maps to 'ctrl+n')");
+		} finally {
+			Device.os.macintosh = bOriginalMac;
+		}
 	});
 
 	// forbidden shift and symbols combinations
@@ -274,5 +444,36 @@ sap.ui.define([
 				assert.ok(true, "shortcut should not be triggered");
 			}, e), "Shortcut should not be triggered");
 		});
+	});
+
+	QUnit.test("handleKeydown - Dead key fallback via event.code", function(assert) {
+		assert.expect(1);
+		// On macOS, Ctrl+Option+N produces event.key "Dead" with event.code "KeyN".
+		// handleKeydown should fall back to event.code to identify the physical key.
+		var bOriginalMac = Device.os.macintosh;
+		Device.os.macintosh = true;
+
+		var oSpec = ShortcutHelper.getNormalizedShortcutSpec({
+			"default": "Ctrl+Alt+N",
+			"macintosh": "Ctrl+Option+N"
+		});
+
+		// Simulate a left Alt keydown so that the AltGr guard (bLastAltWasLeftAlt) allows the shortcut
+		document.dispatchEvent(new KeyboardEvent("keydown", { keyCode: 18, location: 1 }));
+
+		var e = jQuery.Event("keydown");
+		e.key = "Dead";       // macOS dead key
+		e.code = "KeyN";      // physical key
+		e.ctrlKey = true;
+		e.altKey = true;
+		e.shiftKey = false;
+		e.metaKey = false;
+		e.srcElement = document.createElement("div");
+
+		ShortcutHelper.handleKeydown(oSpec, "Ctrl+Option+N", function() {
+			assert.ok(true, "shortcut triggered despite Dead key");
+		}, e);
+
+		Device.os.macintosh = bOriginalMac;
 	});
 });

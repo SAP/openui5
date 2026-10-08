@@ -3,6 +3,7 @@
 		<Page id="page" title="Commands">
 			<dependents>
 				<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />
+				<core:CommandExecution id="CE_CREATE" command="Create" enabled="true" execute=".onSave" />
 			</dependents>
 			<Panel id="myPanel">
 				<my:MyControl id="myControl" myEvent="cmd:MyCommand" />

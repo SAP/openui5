@@ -294,7 +294,7 @@ sap.ui.define([
 				}
 			},
 			scrollThreshold: "{$sap.ui.mdc.Table#type>/scrollThreshold}",
-			noData: oTable._getNoDataText(),
+			noData: oTable._getDefaultNoDataText(),
 			extension: [oTable._oToolbar],
 			ariaLabelledBy: [oTable._oTableTitle],
 			rowSettingsTemplate: mRowSettingsConfig ? new InnerRowSettings(mRowSettingsConfig) : null,
@@ -600,6 +600,37 @@ sap.ui.define([
 				oGridTable.addAriaLabelledBy(sFilterInfoBarAccTextId);
 			}
 		}
+	};
+
+	GridTableType.prototype.setFooter = function(oFooter) {
+		this.getInnerTable()?.setFooter(oFooter);
+	};
+
+	GridTableType.prototype.setContextMenu = function(oContextMenu) {
+		this.getInnerTable()?.setContextMenu(oContextMenu);
+	};
+
+	GridTableType.prototype.createNoColumnsMessage = function() {
+		const oMessage = TableTypeBase.prototype.createNoColumnsMessage.apply(this, arguments);
+		oMessage.setEnableVerticalResponsiveness(true);
+		return oMessage;
+	};
+
+	GridTableType.prototype.setNoData = function(vNoData) {
+		const oGridTable = this.getInnerTable();
+
+		if (!oGridTable) {
+			return;
+		}
+
+		if (vNoData?.isA?.("sap.m.IllustratedMessage")) {
+			vNoData.setEnableVerticalResponsiveness(true);
+			if (!oGridTable.getAggregation("_noColumnsMessage")) {
+				oGridTable.setAggregation("_noColumnsMessage", this.createNoColumnsMessage());
+			}
+		}
+
+		oGridTable.setNoData(vNoData);
 	};
 
 	GridTableType.prototype.updateSortIndicator = function(oColumn, sSortOrder) {

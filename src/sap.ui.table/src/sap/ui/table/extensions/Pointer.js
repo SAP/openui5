@@ -614,7 +614,7 @@ sap.ui.define([
 			} else if (oRow && oRow.isSummary()) {
 				// Sum row cannot be selected
 				oEvent.preventDefault();
-			} else if (oEvent.target.classList.contains("sapUiTableGroupIcon") || oEvent.target.classList.contains("sapUiTableTreeIcon")) {
+			} else if (oEvent.target.closest(".sapUiTableGroupIcon") || oEvent.target.classList.contains("sapUiTableTreeIcon")) {
 				// Expand/Collapse icon
 				oRow.toggleExpandedState();
 			} else {

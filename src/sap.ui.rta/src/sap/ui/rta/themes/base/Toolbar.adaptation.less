@@ -19,8 +19,21 @@
 	.sapMDialogFooter {
 		.sapMIBar {
 			padding: 0;
+			& > .sapMBarChild:last-child {
+				margin-right: 0;
+			}
 		}
 	}
+
+	.sapMDialogHeader {
+		.sapMTB {
+			padding: 0 0.5rem;
+			.sapMBarChild.sapMBarChildFirstChild {
+				margin-left: 0.5rem;
+			}
+		}
+	}
+
 	.sapUiRtaOriginalVersionList {
 		width: 100%;
 		.sapMLIBFocusable:focus,

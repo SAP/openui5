@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/integration/designtime/editor/CardPreview",
 	"sap/base/util/extend",
 	"sap/base/Log",
-	"sap/ui/integration/editor/EditorContext"
+	"sap/ui/integration/editor/EditorContext",
+	"sap/ui/integration/editor/EditorTranslation"
 ], function(
 	Element,
 	Editor,
@@ -29,7 +30,8 @@ sap.ui.define([
 	CardPreview,
 	extend,
 	Log,
-	EditorContext
+	EditorContext,
+	EditorTranslation
 ) {
 	"use strict";
 
@@ -310,7 +312,7 @@ sap.ui.define([
 		this.fireManifestReady();
 		this._initResourceBundlesForMultiTranslation();
 		if (this.getMode() === Constants.EDITOR_MODE.TRANSLATION) {
-			await this._loadSpecialTranslations();
+			await EditorTranslation.loadSpecialTranslations(this);
 		}
 		//add a context model
 		EditorContext.createContextModel(this, CONTEXT_ENTRIES, "card.internal");

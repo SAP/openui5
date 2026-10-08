@@ -139,9 +139,8 @@ ObjectNumberRenderer.render = function(oRm, oON) {
  * @private
  */
 ObjectNumberRenderer.renderText = function(oRm, oON) {
-	var sUnit = oON.getUnit(),
-		bFormattedMode = oON.getDisplayMode() !== ObjectNumberDisplayMode.Default,
-		sNumber = bFormattedMode ? oON._getFormattedNumber() : oON.getNumber();
+	const bFormattedMode = oON.getDisplayMode() !== ObjectNumberDisplayMode.Default,
+		sNumber = oON._getFormattedNumber();
 
 	oRm.openStart("span", oON.getId() + "-number");
 	oRm.class("sapMObjectNumberText");
@@ -151,9 +150,7 @@ ObjectNumberRenderer.renderText = function(oRm, oON) {
 	oRm.openEnd();
 
 	oRm.text(sNumber);
-	if (sUnit !== "" && !bFormattedMode) {
-		oRm.text(" ");
-	}
+	oRm.text(oON._getSpaceSeparator());
 	oRm.close("span");
 };
 
@@ -170,9 +167,6 @@ ObjectNumberRenderer.renderUnit = function(oRm, oON) {
 		oRm.openStart("span", oON.getId() + "-unit");
 		oRm.class("sapMObjectNumberUnit");
 		oRm.openEnd();
-		if (sDisplayMode === ObjectNumberDisplayMode.Unit) {
-			oRm.text(oON.constructor.FIGURE_SPACE);
-		}
 		oRm.text(sUnit);
 		oRm.close("span");
 	}

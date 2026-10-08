@@ -760,7 +760,7 @@ sap.ui.define([
 								oItem.value = oItem._translatedValue;
 							}
 							if (oEditor.getMode() === Constants.EDITOR_MODE.TRANSLATION) {
-								var sCurrentLanguageSpecificText = oEditor._getCurrentLanguageSpecificText(sTranslationTextKey);
+								var sCurrentLanguageSpecificText = oEditor.getCurrentLanguageSpecificText(sTranslationTextKey);
 								if (sCurrentLanguageSpecificText !== "") {
 									oItem._translatedValue = sCurrentLanguageSpecificText;
 								}
@@ -772,9 +772,9 @@ sap.ui.define([
 						}
 						if (oEditor.getMode() === Constants.EDITOR_MODE.TRANSLATION) {
 							if (oEditor._isValueWithHandlebarsTranslation(oItem.label)) {
-								oItem._translatedLabel = oEditor._getCurrentLanguageSpecificText(oItem.label.substring(2, oItem.label.length - 2), true);
+								oItem._translatedLabel = oEditor.getCurrentLanguageSpecificText(oItem.label.substring(2, oItem.label.length - 2));
 							} else if (oItem.label && oItem.label.startsWith("{i18n>")) {
-								oItem._translatedLabel = oEditor._getCurrentLanguageSpecificText(oItem.label.substring(6, oItem.label.length - 1), true);
+								oItem._translatedLabel = oEditor.getCurrentLanguageSpecificText(oItem.label.substring(6, oItem.label.length - 1));
 							}
 						}
 					} else if (oItem.type === "string[]") {

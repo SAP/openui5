@@ -678,106 +678,6 @@ sap.ui.define([
 		assert.equal(invalidateSpy.callCount, 0);
 	});
 
-	QUnit.test("noDataAggregation", function(assert) {
-		const done = assert.async();
-		const setNoDataSpy = sinon.spy(this.oTable, "setNoData");
-		const invalidateSpy = sinon.spy(this.oTable, "invalidate");
-		const sNoDataText = "Some No Data text";
-		this.oTable.setNoData(sNoDataText);
-
-		assert.equal(invalidateSpy.callCount, 0);
-		assert.ok(setNoDataSpy.returned(this.oTable));
-
-		this.oTable.initialized().then(function() {
-			invalidateSpy.reset();
-			assert.equal(this.oTable._oTable.getNoData(), this.oTable.getNoData());
-			assert.equal(this.oTable._oTable.getNoData(), sNoDataText);
-
-			this.oTable.setNoData();
-			assert.equal(this.oTable.getNoData(), null);
-
-			this.oTable.setNoData("foo");
-			assert.equal(this.oTable._oTable.getNoData(), "foo");
-
-			this.oTable.setNoData(undefined);
-			assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
-			assert.equal(invalidateSpy.callCount, 0);
-
-			this.oTable.setNoData("test");
-			this.oTable.setType(TableType.ResponsiveTable);
-
-			this.oTable.initialized().then(function() {
-				invalidateSpy.reset();
-				assert.equal(this.oTable._oTable.getNoData(), "test");
-
-				this.oTable.setNoData();
-				assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
-
-				this.oTable.setNoData("another text");
-				assert.equal(this.oTable._oTable.getNoData(), "another text");
-
-				this.oTable.setNoData(null);
-				assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
-				assert.equal(invalidateSpy.callCount, 0);
-
-				invalidateSpy.resetHistory();
-
-				const oNoData = new IllustratedMessage();
-				const fnOpenSettingsDialogStub = sinon.stub(PersonalizationUtils, "openSettingsDialog");
-				this.oTable.setNoData(oNoData);
-
-				assert.ok(setNoDataSpy.returned(this.oTable));
-				assert.equal(this.oTable._oTable.getNoData(), this.oTable.getNoData());
-				assert.notOk(this.oTable._oTable.getNoData().getEnableVerticalResponsiveness());
-				assert.ok(this.oTable._oTable.getAggregation("_noColumnsMessage"), "No columns illustration message is added");
-				assert.ok(this.oTable._oTable.getAggregation("_noColumnsMessage").getAdditionalContent()[0].isA("sap.m.Button"));
-				assert.equal(this.oTable._oTable.getAggregation("_noColumnsMessage").getAdditionalContent()[0].getIcon(),
-					"sap-icon://action-settings");
-				assert.notOk(this.oTable._oTable.getAggregation("_noColumnsMessage").getEnableVerticalResponsiveness());
-
-				this.oTable._oTable.getAggregation("_noColumnsMessage").getAdditionalContent()[0].firePress();
-				assert.ok(fnOpenSettingsDialogStub.calledOnce);
-				assert.ok(fnOpenSettingsDialogStub.calledWith(this.oTable));
-				fnOpenSettingsDialogStub.restore();
-
-				oNoData.setTitle("Title");
-				oNoData.setDescription("Description");
-
-				assert.equal(this.oTable._oTable.getNoData().getTitle(), this.oTable.getNoData().getTitle());
-				assert.equal(this.oTable._oTable.getNoData().getDescription(), this.oTable.getNoData().getDescription());
-
-				this.oTable.setNoData("CustomText");
-				assert.equal(this.oTable._oTable.getNoData(), this.oTable.getNoData());
-				assert.equal(this.oTable._oTable.getNoData(), "CustomText");
-
-				this.oTable.setNoData(oNoData).setType(TableType.Table);
-				this.oTable.initialized().then(function() {
-					assert.ok(this.oTable._oTable.getNoData().getEnableVerticalResponsiveness());
-					assert.ok(this.oTable._oTable.getAggregation("_noColumnsMessage").getEnableVerticalResponsiveness());
-
-					oNoData.destroy();
-					assert.notOk(this.oTable.getNoData());
-					assert.notOk(this.oTable._oTable.getNoData());
-
-					this.oTable.setNoData("foo");
-					assert.equal(this.oTable._oTable.getNoData(), "foo");
-					this.oTable._oTable = null;
-					this.oTable.destroyNoData();
-					assert.equal(this.oTable.getNoData(), null);
-
-					const oNodata = new Text("foo");
-					this.oTable.setNoData(oNodata);
-					assert.equal(this.oTable.getNoData(), oNodata);
-					this.oTable._oTable = null;
-					const oDestroyNodataSpy = sinon.spy(this.oTable._vNoData, "destroy");
-					this.oTable.destroyNoData();
-					assert.ok(oDestroyNodataSpy.calledOnce);
-					done();
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
-	});
-
 	QUnit.test("Header Visibility and Labelling", function(assert) {
 		const done = assert.async();
 		this.oTable.initialized().then(function() {
@@ -1323,202 +1223,6 @@ sap.ui.define([
 			});
 			assert.ok(!oTable.getFilter());
 		});
-	});
-
-	QUnit.test("noDataText - Table with FilterBar and not bound", function(assert) {
-		this.oTable.setAutoBindOnInit(false);
-
-		return this.oTable.initialized().then(function() {
-			this.oTable.setFilter(new FilterBar());
-			return wait(0);
-		}.bind(this)).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA_WITH_FILTERBAR"), "Correct no data text is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noData aggregation - Table with FilterBar and not bound", function(assert) {
-		this.oTable.setAutoBindOnInit(false);
-		this.oTable.setNoData(new IllustratedMessage());
-
-		return this.oTable.initialized().then(function() {
-			this.oTable.setFilter(new FilterBar());
-			return wait(0);
-		}.bind(this)).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA_WITH_FILTERBAR_TITLE"),
-				"Correct no data title is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_DATA_WITH_FILTERBAR_DESCRIPTION"),
-				"Correct no data description is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.BeforeSearch);
-		}.bind(this));
-	});
-
-	QUnit.test("noDataText - Table without FilterBar and not bound", function(assert) {
-		this.oTable.setAutoBindOnInit(false);
-
-		return this.oTable.initialized().then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "Correct no data text is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataAggregation - Table without FilterBar and not bound", function(assert) {
-		this.oTable.setAutoBindOnInit(false);
-		this.oTable.setNoData(new IllustratedMessage());
-
-		return this.oTable.initialized().then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA_TITLE"), "Correct no data title is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_DATA_DESCRIPTION"),
-				"Correct no data description is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.NoEntries);
-		}.bind(this));
-	});
-
-	QUnit.test("noDataText - Table with FilterBar without any filters and the table is bound", function(assert) {
-		this.oTable.setFilter(new FilterBar());
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "Correct no data text is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataAggregation - Table with FilterBar without any filters and the table is bound", function(assert) {
-		this.oTable.setNoData(new IllustratedMessage());
-		this.oTable.setFilter(new FilterBar());
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA_TITLE"),
-				"Correct no data title is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_DATA_DESCRIPTION"),
-				"Correct no data description is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.NoEntries);
-		}.bind(this));
-	});
-
-	QUnit.test("noDataText - Table with FilterBar with filters and the table is bound", function(assert) {
-		const oFilterBar = new FilterBar("FB1");
-
-		sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: OperatorName.EQ, values: ["Pr"]}]});
-		this.oTable.setFilter(oFilterBar);
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"), "Correct no data text is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataAggregation - Table with FilterBar with filters and the table is bound", function(assert) {
-		const oFilterBar = new FilterBar("FB2");
-
-		sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: OperatorName.EQ, values: ["Pr"]}]});
-		this.oTable.setFilter(oFilterBar);
-		this.oTable.setNoData(new IllustratedMessage());
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_RESULTS_TITLE"),
-				"'No data available.' is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_RESULTS_DESCRIPTION"),
-				"'Try adjusting the filter settings.' is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.NoFilterResults);
-		}.bind(this));
-	});
-
-	QUnit.test("noDataText - Table without FilterBar but with internal filters and the table is bound", function(assert) {
-		this.oTable.setFilterConditions({key: [{operator: OperatorName.EQ, values: ["Pr"]}]});
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "Correct no data text is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataAggregation - Table without FilterBar but with internal filters and the table is bound", function(assert) {
-		this.oTable.setNoData(new IllustratedMessage());
-		this.oTable.setFilterConditions({key: [{operator: OperatorName.EQ, values: ["Pr"]}]});
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA_TITLE"), "Correct no data title is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_DATA_DESCRIPTION"),
-				"Correct no data description is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataText - Table without FilterBar and internal filters and the table is bound", function(assert) {
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "Correct no data text is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataAggregation - Table without FilterBar and internal filters and the table is bound", function(assert) {
-		this.oTable.setNoData(new IllustratedMessage());
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA_TITLE"), "Correct no data title is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(),
-			oRb.getText("table.NO_DATA_DESCRIPTION"), "Correct no data description is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataText - Table with custom external filter control without filters, and the table is bound", function(assert) {
-		this.oTable.setFilter(new CustomFilterControl());
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "Correct no data text is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataAggregation - Table with custom external filter control without filters, and the table is bound", function(assert) {
-		this.oTable.setFilter(new CustomFilterControl());
-		this.oTable.setNoData(new IllustratedMessage());
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA_TITLE"),
-				"Correct no data title is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_DATA_DESCRIPTION"),
-				"Correct no data description is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataText - Table with custom external filter control with search string, and the table is bound", function(assert) {
-		this.oTable.setFilter(new CustomFilterControl({customSearch: "found something?"}));
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"), "Correct no data text is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataAggregation - Table with custom external filter control with search string, and the table is bound", function(assert) {
-		this.oTable.setFilter(new CustomFilterControl({customSearch: "found something?"}));
-		this.oTable.setNoData(new IllustratedMessage());
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_RESULTS_TITLE"),
-				"'No data available.' is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_RESULTS_DESCRIPTION"),
-				"'Try adjusting the filter settings.' is displayed");
-		}.bind(this));
-	});
-
-	QUnit.test("noDataAggregation CustomText - Table with custom external filter control with search string, the table is bound", function(assert) {
-		this.oTable.setFilter(new CustomFilterControl({customSearch: "found something?"}));
-		this.oTable.setNoData(new IllustratedMessage({title: "NoData Title", description: "NoData Description"}));
-
-		return TableQUnitUtils.waitForBindingInfo(this.oTable).then(function() {
-			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), "NoData Title");
-			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), "NoData Description");
-		}.bind(this));
 	});
 
 	QUnit.test("Table with VariantManagement and QuickFilter", function(assert) {
@@ -4553,6 +4257,7 @@ sap.ui.define([
 			this.oBeforeOpenContextMenu = this.spy();
 			this.oBeforeOpenContextMenuParameters = null;
 			this.oTable = new Table({
+				type: new GridTableType(),
 				contextMenu: this.oContextMenu,
 				beforeOpenContextMenu: (oEvent) => {
 					this.oBeforeOpenContextMenuParameters = oEvent.getParameters();
@@ -4589,6 +4294,32 @@ sap.ui.define([
 		assert.strictEqual(this.oTable.getContextMenu(), null, "#getContextMenu after #setContextMenu(null)");
 	});
 
+	QUnit.test("Context menu is available before and after initialization", async function(assert) {
+		assert.strictEqual(this.oTable.getContextMenu(), this.oContextMenu, "Table#getContextMenu returns the value before init");
+
+		await this.oTable.initialized();
+		assert.strictEqual(this.oTable.getContextMenu(), this.oContextMenu, "Table#getContextMenu still returns the value after init");
+	});
+
+	QUnit.test("Setting the context menu is reflected immediately", async function(assert) {
+		await this.oTable.initialized();
+		const oNewMenu = new Menu();
+		const oSetContextMenu = this.spy(this.oTable.getType(), "setContextMenu");
+
+		this.oTable.setContextMenu(oNewMenu);
+		assert.ok(oSetContextMenu.calledOnceWith(oNewMenu), "type#setContextMenu called with the new menu");
+	});
+
+	QUnit.test("Removing the context menu does not destroy it", async function(assert) {
+		await this.oTable.initialized();
+		const oSetContextMenu = this.spy(this.oTable.getType(), "setContextMenu");
+
+		this.oTable.setContextMenu(null);
+		assert.strictEqual(this.oTable.getContextMenu(), null, "Table#getContextMenu returns null");
+		assert.notOk(this.oContextMenu.isDestroyed(), "the removed context menu is not destroyed");
+		assert.ok(oSetContextMenu.calledOnceWith(null), "type#setContextMenu called with null");
+	});
+
 	QUnit.test("Aggregation API after initialization of inner table", async function(assert) {
 		await this.oTable.initialized();
 		assert.equal(this.oTable.getContextMenu(), this.oContextMenu, "#getContextMenu");
@@ -4603,8 +4334,10 @@ sap.ui.define([
 
 		this.oTable.setContextMenu(null);
 		assert.strictEqual(this.oTable.getContextMenu(), null, "#getContextMenu after #setContextMenu(null)");
+	});
 
-		this.oContextMenu = new Menu();
+	QUnit.test("Survives a type switch", async function(assert) {
+		await this.oTable.initialized();
 		this.oTable.setContextMenu(this.oContextMenu);
 		this.oTable.setType(TableType.ResponsiveTable);
 		await this.oTable.initialized();
@@ -4686,6 +4419,343 @@ sap.ui.define([
 			assert.equal(this.oTable.getContextMenuSettingPluginOwner(), this.oTable._oTable,
 				"The inner table is set as plugin owner for ContextMenuSetting");
 		});
+	});
+
+	QUnit.module("Footer", {
+		beforeEach: function() {
+			this.oFooter = new Control();
+			this.oTable = new Table({
+				type: new GridTableType(),
+				footer: this.oFooter
+			});
+			this.oTable.placeAt("qunit-fixture");
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+			this.oFooter.destroy();
+		}
+	});
+
+	QUnit.test("Is available before and after initialization", async function(assert) {
+		const oSetFooter = this.spy(this.oTable.getType(), "setFooter");
+		assert.strictEqual(this.oTable.getFooter(), this.oFooter, "Table#getFooter returns the value before init");
+
+		await this.oTable.initialized();
+		assert.ok(oSetFooter.calledWith(this.oFooter), "type#setFooter called with the footer during init");
+		assert.strictEqual(this.oTable.getFooter(), this.oFooter, "Table#getFooter still returns the value after init");
+	});
+
+	QUnit.test("Setting the footer is reflected immediately", async function(assert) {
+		await this.oTable.initialized();
+		const oSetFooter = this.spy(this.oTable.getType(), "setFooter");
+
+		this.oTable.setFooter(this.oFooter);
+		assert.ok(oSetFooter.calledOnceWith(this.oFooter), "type#setFooter called with the footer control");
+	});
+
+	QUnit.test("Destroy", async function(assert) {
+		await this.oTable.initialized();
+
+		this.oTable.destroyFooter();
+		assert.ok(this.oFooter.isDestroyed(), "footer control is destroyed");
+		assert.strictEqual(this.oTable.getFooter(), null, "Table#getFooter returns null");
+	});
+
+	QUnit.test("Survives a type switch", async function(assert) {
+		await this.oTable.initialized();
+
+		this.oTable.setType(TableType.ResponsiveTable);
+		await this.oTable.initialized();
+		assert.strictEqual(this.oTable.getFooter(), this.oFooter, "footer value retained after switch to ResponsiveTable");
+		assert.notOk(this.oFooter.isDestroyed(), "footer control not destroyed on type switch");
+
+		this.oTable.setType(new GridTableType());
+		await this.oTable.initialized();
+		const oSetFooter = this.spy(this.oTable.getType(), "setFooter");
+		this.oTable.setFooter(this.oFooter);
+		assert.ok(oSetFooter.calledOnceWith(this.oFooter), "new type's setFooter called after switch back to GridTable");
+	});
+
+	QUnit.module("NoData", {
+		beforeEach: function() {
+			this.oTable = new Table({
+				type: new GridTableType(),
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath"
+					}
+				}
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		getRb: function() {
+			return Library.getResourceBundleFor("sap.ui.mdc");
+		}
+	});
+
+	QUnit.test("String: available before and after initialization", async function(assert) {
+		this.oTable.setNoData("Some text");
+		assert.strictEqual(this.oTable.getNoData(), "Some text", "Table#getNoData before init");
+
+		await this.oTable.initialized();
+		assert.strictEqual(this.oTable.getNoData(), "Some text", "Table#getNoData still returns the value after init");
+	});
+
+	QUnit.test("String: setting a string is reflected immediately", async function(assert) {
+		await this.oTable.initialized();
+		const oSetNoData = this.spy(this.oTable.getType(), "setNoData");
+
+		this.oTable.setNoData("Some text");
+		assert.ok(oSetNoData.calledOnce, "type#setNoData called");
+		assert.strictEqual(oSetNoData.firstCall.args[0], this.oTable._getDefaultNoDataText(), "type#setNoData called with the resolved text");
+	});
+
+	QUnit.test("String: clearing falls back to the default no data text", async function(assert) {
+		await this.oTable.initialized();
+		this.oTable.setNoData("Some text");
+		const oSetNoData = this.spy(this.oTable.getType(), "setNoData");
+
+		this.oTable.setNoData();
+		assert.strictEqual(this.oTable.getNoData(), null, "Table#getNoData returns null after clearing");
+		assert.ok(oSetNoData.calledOnce, "type#setNoData called to refresh the text");
+		assert.strictEqual(oSetNoData.firstCall.args[0], this.oTable._getDefaultNoDataText(), "called with the default no data text");
+	});
+
+	QUnit.test("Default text: unbound table with a FilterBar prompts to search", async function(assert) {
+		this.oTable.setAutoBindOnInit(false);
+		await this.oTable.initialized();
+		this.oTable.setFilter(new FilterBar());
+		await wait(0);
+
+		assert.strictEqual(this.oTable._getDefaultNoDataText(), this.getRb().getText("table.NO_DATA_WITH_FILTERBAR"),
+			"the search prompt text is shown");
+	});
+
+	QUnit.test("Default text: unbound table without a FilterBar shows the generic text", async function(assert) {
+		this.oTable.setAutoBindOnInit(false);
+		await this.oTable.initialized();
+
+		assert.strictEqual(this.oTable._getDefaultNoDataText(), this.getRb().getText("table.NO_DATA"), "the generic no data text is shown");
+	});
+
+	QUnit.test("Default text: bound and unfiltered shows the generic text", async function(assert) {
+		this.oTable.setFilter(new FilterBar());
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+
+		assert.strictEqual(this.oTable._getDefaultNoDataText(), this.getRb().getText("table.NO_DATA"), "the generic no data text is shown");
+	});
+
+	QUnit.test("Default text: bound and filtered via FilterBar shows the no results text", async function(assert) {
+		const oFilterBar = new FilterBar("FB1");
+		sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: OperatorName.EQ, values: ["Pr"]}]});
+		this.oTable.setFilter(oFilterBar);
+
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+		assert.strictEqual(this.oTable._getDefaultNoDataText(), this.getRb().getText("table.NO_RESULTS"), "the no results text is shown");
+	});
+
+	QUnit.test("Default text: bound with internal filter conditions still shows the generic text", async function(assert) {
+		this.oTable.setFilterConditions({key: [{operator: OperatorName.EQ, values: ["Pr"]}]});
+
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+		assert.strictEqual(this.oTable._getDefaultNoDataText(), this.getRb().getText("table.NO_DATA"), "the generic no data text is shown");
+	});
+
+	QUnit.test("Default text: bound with a custom filter control and no search shows the generic text", async function(assert) {
+		this.oTable.setFilter(new CustomFilterControl());
+
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+		assert.strictEqual(this.oTable._getDefaultNoDataText(), this.getRb().getText("table.NO_DATA"), "the generic no data text is shown");
+	});
+
+	QUnit.test("Default text: bound with a custom filter control and a search shows the no results text", async function(assert) {
+		this.oTable.setFilter(new CustomFilterControl({customSearch: "found something?"}));
+
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+		assert.strictEqual(this.oTable._getDefaultNoDataText(), this.getRb().getText("table.NO_RESULTS"), "the no results text is shown");
+	});
+
+	QUnit.test("IllustratedMessage: available before and after initialization", async function(assert) {
+		const oNoData = new IllustratedMessage();
+		this.oTable.setNoData(oNoData);
+		assert.strictEqual(this.oTable.getNoData(), oNoData, "Table#getNoData returns the message before init");
+
+		await this.oTable.initialized();
+		assert.strictEqual(this.oTable.getNoData(), oNoData, "Table#getNoData still returns the message after init");
+	});
+
+	QUnit.test("IllustratedMessage: setting a message is reflected immediately", async function(assert) {
+		await this.oTable.initialized();
+		const oNoData = new IllustratedMessage();
+		const oSetNoData = this.spy(this.oTable.getType(), "setNoData");
+
+		this.oTable.setNoData(oNoData);
+		assert.ok(oSetNoData.calledOnceWith(oNoData), "type#setNoData called with the IllustratedMessage");
+	});
+
+	QUnit.test("IllustratedMessage: unbound table with a FilterBar prompts to search", async function(assert) {
+		this.oTable.setAutoBindOnInit(false);
+		this.oTable.setNoData(new IllustratedMessage());
+		await this.oTable.initialized();
+		this.oTable.setFilter(new FilterBar());
+		await wait(0);
+
+		const oNoData = this.oTable.getNoData();
+		assert.strictEqual(oNoData.getTitle(), this.getRb().getText("table.NO_DATA_WITH_FILTERBAR_TITLE"), "search prompt title");
+		assert.strictEqual(oNoData.getDescription(), this.getRb().getText("table.NO_DATA_WITH_FILTERBAR_DESCRIPTION"), "search prompt description");
+		assert.strictEqual(oNoData.getIllustrationType(), IllustratedMessageType.BeforeSearch, "BeforeSearch illustration");
+	});
+
+	QUnit.test("IllustratedMessage: unbound table without a FilterBar shows the generic message", async function(assert) {
+		this.oTable.setAutoBindOnInit(false);
+		this.oTable.setNoData(new IllustratedMessage());
+		await this.oTable.initialized();
+
+		const oNoData = this.oTable.getNoData();
+		assert.strictEqual(oNoData.getTitle(), this.getRb().getText("table.NO_DATA_TITLE"), "generic title");
+		assert.strictEqual(oNoData.getDescription(), this.getRb().getText("table.NO_DATA_DESCRIPTION"), "generic description");
+		assert.strictEqual(oNoData.getIllustrationType(), IllustratedMessageType.NoEntries, "NoEntries illustration");
+	});
+
+	QUnit.test("IllustratedMessage: bound and unfiltered shows the generic message", async function(assert) {
+		this.oTable.setNoData(new IllustratedMessage());
+		this.oTable.setFilter(new FilterBar());
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+
+		const oNoData = this.oTable.getNoData();
+		assert.strictEqual(oNoData.getTitle(), this.getRb().getText("table.NO_DATA_TITLE"), "generic title");
+		assert.strictEqual(oNoData.getDescription(), this.getRb().getText("table.NO_DATA_DESCRIPTION"), "generic description");
+		assert.strictEqual(oNoData.getIllustrationType(), IllustratedMessageType.NoEntries, "NoEntries illustration");
+	});
+
+	QUnit.test("IllustratedMessage: bound and filtered via FilterBar shows the no results message", async function(assert) {
+		const oFilterBar = new FilterBar("FB2");
+		sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: OperatorName.EQ, values: ["Pr"]}]});
+		this.oTable.setFilter(oFilterBar);
+		this.oTable.setNoData(new IllustratedMessage());
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+
+		const oNoData = this.oTable.getNoData();
+		assert.strictEqual(oNoData.getTitle(), this.getRb().getText("table.NO_RESULTS_TITLE"), "no results title");
+		assert.strictEqual(oNoData.getDescription(), this.getRb().getText("table.NO_RESULTS_DESCRIPTION"), "no results description");
+		assert.strictEqual(oNoData.getIllustrationType(), IllustratedMessageType.NoFilterResults, "NoFilterResults illustration");
+	});
+
+	QUnit.test("IllustratedMessage: bound with internal filter conditions shows the generic message", async function(assert) {
+		this.oTable.setNoData(new IllustratedMessage());
+		this.oTable.setFilterConditions({key: [{operator: OperatorName.EQ, values: ["Pr"]}]});
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+
+		const oNoData = this.oTable.getNoData();
+		assert.strictEqual(oNoData.getTitle(), this.getRb().getText("table.NO_DATA_TITLE"), "generic title");
+		assert.strictEqual(oNoData.getDescription(), this.getRb().getText("table.NO_DATA_DESCRIPTION"), "generic description");
+	});
+
+	QUnit.test("IllustratedMessage: bound with a custom filter control and a search shows the no results message", async function(assert) {
+		this.oTable.setFilter(new CustomFilterControl({customSearch: "found something?"}));
+		this.oTable.setNoData(new IllustratedMessage());
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+
+		const oNoData = this.oTable.getNoData();
+		assert.strictEqual(oNoData.getTitle(), this.getRb().getText("table.NO_RESULTS_TITLE"), "no results title");
+		assert.strictEqual(oNoData.getDescription(), this.getRb().getText("table.NO_RESULTS_DESCRIPTION"), "no results description");
+	});
+
+	QUnit.test("IllustratedMessage: title is correct when a filter is provided before initialization", async function(assert) {
+		this.oTable.setAutoBindOnInit(false);
+		this.oTable.setFilter(new FilterBar());
+		this.oTable.setNoData(new IllustratedMessage());
+
+		await this.oTable.initialized();
+		const oNoData = this.oTable.getNoData();
+
+		assert.strictEqual(oNoData.getTitle(), this.getRb().getText("table.NO_DATA_WITH_FILTERBAR_TITLE"),
+			"the search prompt title is derived once the inner table exists");
+		assert.strictEqual(oNoData.getIllustrationType(), IllustratedMessageType.BeforeSearch,
+			"the BeforeSearch illustration is derived once the inner table exists");
+	});
+
+	QUnit.test("Title ownership: the framework fills an untitled message", async function(assert) {
+		const oNoData = new IllustratedMessage();
+		this.oTable.setNoData(oNoData);
+		await this.oTable.initialized();
+
+		assert.strictEqual(oNoData.getTitle(), this.getRb().getText("table.NO_DATA_TITLE"),
+			"the framework fills the empty title");
+	});
+
+	QUnit.test("Title ownership: a title set by the application upfront is preserved", async function(assert) {
+		this.oTable.setFilter(new CustomFilterControl({customSearch: "found something?"}));
+		this.oTable.setNoData(new IllustratedMessage({title: "App Title", description: "App Description"}));
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+
+		const oNoData = this.oTable.getNoData();
+		assert.strictEqual(oNoData.getTitle(), "App Title", "the application title is kept");
+		assert.strictEqual(oNoData.getDescription(), "App Description", "the application description is kept");
+	});
+
+	QUnit.test("Title ownership: a title set by the application after the framework filled it is preserved", async function(assert) {
+		this.oTable.setAutoBindOnInit(false);
+		const oNoData = new IllustratedMessage();
+		this.oTable.setNoData(oNoData);
+		await this.oTable.initialized();
+		assert.strictEqual(oNoData.getTitle(), this.getRb().getText("table.NO_DATA_TITLE"), "the framework filled the title first");
+
+		oNoData.setTitle("App Title");
+		this.oTable.setFilter(new FilterBar());
+		await wait(0);
+
+		assert.strictEqual(this.oTable.getNoData().getTitle(), "App Title",
+			"the framework no longer overrides the application title when the state changes");
+	});
+
+	QUnit.test("Title ownership: replacing the message re-enables framework management", async function(assert) {
+		this.oTable.setAutoBindOnInit(false);
+		this.oTable.setNoData(new IllustratedMessage());
+		await this.oTable.initialized();
+
+		const oReplacement = new IllustratedMessage();
+		this.oTable.setNoData(oReplacement);
+		await wait(0);
+
+		assert.strictEqual(this.oTable.getNoData(), oReplacement, "the replacement message is shown");
+		assert.strictEqual(oReplacement.getTitle(), this.getRb().getText("table.NO_DATA_TITLE"),
+			"the framework fills the replacement's empty title");
+	});
+
+	QUnit.test("Survives a type switch", async function(assert) {
+		this.oTable.setType(TableType.ResponsiveTable);
+		const oNoData = new IllustratedMessage();
+		this.oTable.setNoData(oNoData);
+		await this.oTable.initialized();
+
+		this.oTable.setType(TableType.Table);
+		await this.oTable.initialized();
+
+		assert.notOk(oNoData.isDestroyed(), "the message is not destroyed by the type switch");
+		assert.strictEqual(this.oTable.getNoData(), oNoData, "Table#getNoData still returns the message");
+	});
+
+	QUnit.test("NoData#destroy", async function(assert) {
+		const oNoData = new IllustratedMessage();
+		this.oTable.setNoData(oNoData);
+		await this.oTable.initialized();
+
+		oNoData.destroy();
+		assert.strictEqual(this.oTable.getNoData(), null, "Table#getNoData returns null");
+	});
+
+	QUnit.test("Table#destroyNoData", async function(assert) {
+		await this.oTable.initialized();
+		const oNoData = new Text("foo");
+		this.oTable.setNoData(oNoData);
+
+		this.oTable.destroyNoData();
+		assert.ok(oNoData.isDestroyed(), "the noData control is destroyed");
+		assert.strictEqual(this.oTable.getNoData(), null, "Table#getNoData returns null");
 	});
 
 	QUnit.module("Automatic column width calculation", {

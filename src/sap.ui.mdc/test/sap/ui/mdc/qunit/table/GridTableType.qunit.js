@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/mdc/enums/TableRowCountMode",
 	"sap/m/library",
+	"sap/m/IllustratedMessage",
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/m/Menu",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Boolean",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/mdc/table/utils/Personalization",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler"
 ], function(
 	TableQUnitUtils,
@@ -29,6 +31,7 @@ sap.ui.define([
 	RowActionItem,
 	RowCountMode,
 	MLibrary,
+	IllustratedMessage,
 	Label,
 	Text,
 	Menu,
@@ -37,6 +40,7 @@ sap.ui.define([
 	JSONModel,
 	BooleanType,
 	VariantManagement,
+	PersonalizationUtils,
 	TestModificationHandler
 ) {
 	"use strict";
@@ -1218,5 +1222,134 @@ sap.ui.define([
 			event: oInnerTableEvent,
 			groupLevel: 1
 		});
+	});
+
+	QUnit.module("setContextMenu", {
+		beforeEach: async function() {
+			this.oType = new GridTableType();
+			this.oTable = new Table({type: this.oType});
+			await this.oTable.initialized();
+			this.oInnerTable = this.oTable._oTable;
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Context menu appears on the inner table", function(assert) {
+		const oMenu = new Menu();
+
+		this.oType.setContextMenu(oMenu);
+		assert.strictEqual(this.oInnerTable.getContextMenu(), oMenu);
+		oMenu.destroy();
+	});
+
+	QUnit.test("Context menu can be cleared", function(assert) {
+		const oMenu = new Menu();
+
+		this.oType.setContextMenu(oMenu);
+		this.oType.setContextMenu();
+		assert.strictEqual(this.oInnerTable.getContextMenu(), null);
+		oMenu.destroy();
+	});
+
+	QUnit.test("setContextMenu is safe to call before the inner table is created", function(assert) {
+		assert.expect(0);
+		const oType = new GridTableType();
+
+		oType.setContextMenu(new Menu());
+		oType.destroy();
+	});
+
+	QUnit.module("setFooter", {
+		beforeEach: async function() {
+			this.oType = new GridTableType();
+			this.oTable = new Table({type: this.oType});
+			await this.oTable.initialized();
+			this.oInnerTable = this.oTable._oTable;
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Footer appears on the inner table", function(assert) {
+		const oFooter = new Control();
+
+		this.oType.setFooter(oFooter);
+		assert.strictEqual(this.oInnerTable.getFooter(), oFooter);
+		oFooter.destroy();
+	});
+
+	QUnit.test("Footer can be cleared", function(assert) {
+		const oFooter = new Control();
+
+		this.oType.setFooter(oFooter);
+		this.oType.setFooter();
+		assert.strictEqual(this.oInnerTable.getFooter(), null);
+		oFooter.destroy();
+	});
+
+	QUnit.test("setFooter is safe to call before the inner table is created", function(assert) {
+		assert.expect(0);
+		const oType = new GridTableType();
+
+		oType.setFooter(new Control());
+		oType.destroy();
+	});
+
+	QUnit.module("setNoData", {
+		beforeEach: async function() {
+			this.oType = new GridTableType();
+			this.oTable = new Table({type: this.oType});
+			await this.oTable.initialized();
+			this.oInnerTable = this.oTable._oTable;
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("String noData appears on the inner table", function(assert) {
+		this.oType.setNoData("No data");
+		assert.strictEqual(this.oInnerTable.getNoData(), "No data");
+	});
+
+	QUnit.test("IllustratedMessage appears on the inner table with correct settings", function(assert) {
+		const fnOpenSettingsDialog = sinon.stub(PersonalizationUtils, "openSettingsDialog");
+		const oNoData = new IllustratedMessage();
+
+		this.oType.setNoData(oNoData);
+
+		assert.strictEqual(this.oInnerTable.getNoData(), oNoData, "inner table has the IllustratedMessage");
+		assert.ok(oNoData.getEnableVerticalResponsiveness(), "enableVerticalResponsiveness is true for GridTable");
+
+		const oNoColumnsMessage = this.oInnerTable.getAggregation("_noColumnsMessage");
+		assert.ok(oNoColumnsMessage, "a no-columns message is added");
+		const oButton = oNoColumnsMessage.getAdditionalContent()[0];
+		assert.ok(oButton.isA("sap.m.Button"), "the no-columns message has a settings button");
+		assert.strictEqual(oButton.getIcon(), "sap-icon://action-settings", "button uses the settings icon");
+		oButton.firePress();
+		assert.ok(fnOpenSettingsDialog.calledOnceWith(this.oTable), "pressing the button opens the settings dialog");
+
+		fnOpenSettingsDialog.restore();
+	});
+
+	QUnit.test("No-columns message is only created once even when the IllustratedMessage is replaced", function(assert) {
+		this.oType.setNoData(new IllustratedMessage());
+		this.oType.setNoData(new IllustratedMessage());
+		assert.ok(this.oInnerTable.getAggregation("_noColumnsMessage"), "no-columns message still exists after replacement");
+	});
+
+	QUnit.test("setNoData is safe to call before the inner table is created", function(assert) {
+		assert.expect(0);
+		const oType = new GridTableType();
+
+		oType.setNoData("No data");
+		oType.destroy();
+	});
+
+	QUnit.test("Default no data text is set on the inner table when setNoData is never called", function(assert) {
+		assert.strictEqual(this.oInnerTable.getNoData(), this.oTable._getDefaultNoDataText(), "inner table has the default no data text");
 	});
 });

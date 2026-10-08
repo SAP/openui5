@@ -1429,6 +1429,23 @@ var FrameType = library.FrameType;
 		});
 	});
 
+	QUnit.test("In ScopeActions the .sapMST root has overflow:visible so the remove button is not clipped", function(assert){
+		var done = assert.async();
+		this.applyTheme("sap_horizon", async function() {
+			this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
+			this.oSlideTile.setScope("Actions");
+			await nextUIUpdate();
+			var slideTileDomRef = this.oSlideTile.getDomRef();
+			if (this.oSlideTile && slideTileDomRef && slideTileDomRef.classList && slideTileDomRef.classList.contains("sapMST")){
+				assert.equal(getComputedStyle(slideTileDomRef).overflow, "visible", "sapMST root has overflow:visible in ScopeActions so remove button is not clipped");
+				done();
+			} else {
+				assert.expect(0);
+				done();
+			}
+		});
+	});
+
 	QUnit.test("Focus should not be present on the GenericTile level when rendered as a link", async function(assert){
 		this.oSlideTile = this.createSlideTile(false,true).placeAt("qunit-fixture");
 		await nextUIUpdate();

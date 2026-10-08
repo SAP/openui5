@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Text",
 	"sap/m/library",
-	"sap/ui/test/utils/nextUIUpdate"
-], function(Library, createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Device, Version, Label, Panel, Text, mobileLibrary, nextUIUpdate) {
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/model/json/JSONModel"
+], function(Library, createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Device, Version, Label, Panel, Text, mobileLibrary, nextUIUpdate, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -412,6 +413,16 @@ sap.ui.define([
 		assert.strictEqual(oAccInfo.description, sExpectedDescription, "Description is updated with state's text");
 	});
 
+	QUnit.test("getAccessibilityInfo() uses formatter-resolved unit", function(assert) {
+		const oModel = new JSONModel({ currency: "EUR" });
+		this.oON.setModel(oModel);
+		this.oON.bindProperty("unit", { path: "/currency", formatter: function() { return "custom-unit"; } });
+
+		const oAccInfo = this.oON.getAccessibilityInfo();
+		assert.ok(oAccInfo.description.includes("custom-unit"),
+			"Accessibility description contains the formatter-resolved unit");
+	});
+
 	QUnit.module("EmptyIndicator", {
 		beforeEach : async function() {
 			this.oObjectNumber = new ObjectNumber({
@@ -526,7 +537,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const sUnitText = this.oON.getDomRef().querySelector(".sapMObjectNumberUnit").textContent;
-		assert.strictEqual(sUnitText, ObjectNumber.FIGURE_SPACE + "kg", "Raw unit string is rendered with figure space prefix");
+		assert.strictEqual(sUnitText, "kg", "Raw unit string is rendered without figure space prefix");
 	});
 
 	QUnit.test("Unit mode: number formatted to maxPrecision decimals", async function(assert) {
@@ -535,7 +546,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const sNumberText = this.oON.getDomRef().querySelector(".sapMObjectNumberText").textContent;
-		assert.strictEqual(sNumberText, "5.00", "Number is formatted to 2 decimal places");
+		assert.strictEqual(sNumberText, "5.00" + ObjectNumber.FIGURE_SPACE, "Number is formatted to 2 decimal places");
 	});
 
 	QUnit.test("Unit mode: no decimal padding when maxPrecision is unset", async function(assert) {
@@ -543,7 +554,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const sNumberText = this.oON.getDomRef().querySelector(".sapMObjectNumberText").textContent;
-		assert.strictEqual(sNumberText, "5", "No padding when maxPrecision is unset");
+		assert.strictEqual(sNumberText, "5" + ObjectNumber.FIGURE_SPACE, "Number without decimal padding is rendered as-is");
 	});
 
 	QUnit.test("Unit mode: useSymbol has no effect", async function(assert) {
@@ -552,7 +563,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const sUnitText = this.oON.getDomRef().querySelector(".sapMObjectNumberUnit").textContent;
-		assert.strictEqual(sUnitText, ObjectNumber.FIGURE_SPACE + "kg", "useSymbol is ignored — raw unit string is shown with figure space prefix");
+		assert.strictEqual(sUnitText, "kg", "useSymbol is ignored — raw unit string is shown without figure space prefix");
 	});
 
 	QUnit.test("Currency mode: sapMObjectNumberCurrency class is applied", async function(assert) {
@@ -623,5 +634,89 @@ sap.ui.define([
 
 		assert.strictEqual(this.oON.getDomRef().querySelectorAll(".sapMObjectNumberUnit").length, 1,
 			"Unit span is rendered in Currency mode when unit is empty");
+	});
+
+	QUnit.test("number formatter is respected in Default mode", async function(assert) {
+		const oModel = new JSONModel({ value: "5" });
+		this.oON.setModel(oModel);
+		this.oON.bindProperty("number", { path: "/value", formatter: function(sValue) { return "custom-" + sValue; } });
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oON.getDomRef().querySelector(".sapMObjectNumberText").textContent,
+			"custom-5 ", "number formatter output is rendered verbatim in Default mode");
+	});
+
+	QUnit.test("number formatter is respected in Currency mode", async function(assert) {
+		this.oON.setDisplayMode(ObjectNumberDisplayMode.Currency);
+		this.oON.setUnit("USD");
+		const oModel = new JSONModel({ value: 1234.5678, unit: "USD" });
+		this.oON.setModel(oModel);
+		this.oON.bindProperty("number", {
+			parts: [{ path: "/value" }, { path: "/unit" }],
+			formatter: function() { return "1,234.5678"; }
+		});
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oON.getDomRef().querySelector(".sapMObjectNumberText").textContent,
+			"1,234.5678", "number formatter output is rendered verbatim in Currency mode");
+	});
+
+	QUnit.test("number formatter is respected in Unit mode", async function(assert) {
+		this.oON.setDisplayMode(ObjectNumberDisplayMode.Unit);
+		const oModel = new JSONModel({ value: 5000 });
+		this.oON.setModel(oModel);
+		this.oON.bindProperty("number", { path: "/value", formatter: function() { return "5,000.00"; } });
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oON.getDomRef().querySelector(".sapMObjectNumberText").textContent,
+			"5,000.00" + ObjectNumber.FIGURE_SPACE, "number formatter output is rendered verbatim in Unit mode");
+	});
+
+	QUnit.test("number binding without formatter still uses CLDR formatting in Currency mode", async function(assert) {
+		this.oON.setDisplayMode(ObjectNumberDisplayMode.Currency);
+		this.oON.setUnit("USD");
+		const oModel = new JSONModel({ value: "5" });
+		this.oON.setModel(oModel);
+		this.oON.bindProperty("number", { path: "/value" });
+		await nextUIUpdate();
+
+		const sText = this.oON.getDomRef().querySelector(".sapMObjectNumberText").textContent;
+		assert.ok(sText.startsWith("5"), "CLDR-formatted number starts with '5' when no formatter is set");
+		assert.ok(sText.includes("."), "CLDR formatting applied decimal separator");
+	});
+
+	QUnit.test("unit formatter is respected in Currency mode with useSymbol=true", async function(assert) {
+		this.oON.setDisplayMode(ObjectNumberDisplayMode.Currency);
+		this.oON.setUseSymbol(true);
+		const oModel = new JSONModel({ currency: "EUR" });
+		this.oON.setModel(oModel);
+		this.oON.bindProperty("unit", { path: "/currency", formatter: function() { return "€€"; } });
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oON.getDomRef().querySelector(".sapMObjectNumberUnit").textContent,
+			"€€", "unit formatter output is used directly, CLDR symbol lookup skipped");
+	});
+
+	QUnit.test("unit binding without formatter still resolves CLDR symbol in Currency mode with useSymbol=true", async function(assert) {
+		this.oON.setDisplayMode(ObjectNumberDisplayMode.Currency);
+		this.oON.setUseSymbol(true);
+		const oModel = new JSONModel({ currency: "EUR" });
+		this.oON.setModel(oModel);
+		this.oON.bindProperty("unit", { path: "/currency" });
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oON.getDomRef().querySelector(".sapMObjectNumberUnit").textContent,
+			"€", "CLDR symbol '€' is resolved for EUR when no formatter is set");
+	});
+
+	QUnit.test("unit formatter with figure-space padding is preserved in Unit mode", async function(assert) {
+		this.oON.setDisplayMode(ObjectNumberDisplayMode.Unit);
+		const oModel = new JSONModel({ unit: "km" });
+		this.oON.setModel(oModel);
+		this.oON.bindProperty("unit", { path: "/unit", formatter: function(sUnit) { return "\u2007\u2007" + sUnit; } });
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oON.getDomRef().querySelector(".sapMObjectNumberUnit").textContent,
+			"\u2007\u2007km", "figure-space padded unit string is preserved verbatim");
 	});
 });

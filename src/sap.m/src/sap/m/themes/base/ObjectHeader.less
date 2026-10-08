@@ -65,7 +65,7 @@ html.sap-phone .sapMOH.sapMOHC {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	margin-top: 0.375rem;
 	margin-bottom: 0.625rem;
 	color: var(--sapContent_LabelColor);
@@ -243,18 +243,18 @@ html .sapUiContainer-Narrow .sapMOHTitleArrow .sapUiIcon {
 	padding-left: 0.5rem;
 }
 
-.sapMOHC .sapMOHTitle h6 >.sapMText,
-html.sap-phone .sapMOHC .sapMOHTitle h6 >.sapMText,
-.sapMOHC .sapMOHTitle h5 >.sapMText,
-html.sap-phone .sapMOHC .sapMOHTitle h5 >.sapMText,
-.sapMOHC .sapMOHTitle h4 >.sapMText,
-html.sap-phone .sapMOHC .sapMOHTitle h4 >.sapMText,
-.sapMOHC .sapMOHTitle h3 >.sapMText,
-html.sap-phone .sapMOHC .sapMOHTitle h3 >.sapMText,
-.sapMOHC .sapMOHTitle h2 >.sapMText,
-html.sap-phone .sapMOHC .sapMOHTitle h2 >.sapMText,
-.sapMOHC .sapMOHTitle h1 >.sapMText,
-html.sap-phone .sapMOHC .sapMOHTitle h1 >.sapMText {
+.sapMOHC .sapMOHTitle h6 > .sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h6 > .sapMText,
+.sapMOHC .sapMOHTitle h5 > .sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h5 > .sapMText,
+.sapMOHC .sapMOHTitle h4 > .sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h4 > .sapMText,
+.sapMOHC .sapMOHTitle h3 > .sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h3 > .sapMText,
+.sapMOHC .sapMOHTitle h2 > .sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h2 > .sapMText,
+.sapMOHC .sapMOHTitle h1 > .sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h1 > .sapMText {
 	line-height: 1.8rem;
 	font-size: 1.125rem;
 }
@@ -281,7 +281,7 @@ html.sap-phone .sapMOHNumberWrap {
 
 .sapMOHBottomRow {
 	margin-top: 1rem;
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 }
 
 .sapMOHAttrRow {
@@ -514,7 +514,7 @@ html .sapUiContainer-Narrow .sapMOHRTitleTextWrappable {
 
 .sapMOHRTitleText {
 	margin-top: 0.4rem;
-	text-decoration:none;
+	text-decoration: none;
 }
 
 .sapMOHRTitleTextContainer {
@@ -547,7 +547,7 @@ html .sapUiContainer-Narrow .sapMOHRTitleTextWrappable {
 }
 
 /* overwrite transform for the markers favorite and flag icon */
-html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
+html[dir='rtl'] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	transform: none;
 }
 
@@ -890,7 +890,7 @@ html.sap-phone .sapMOHTitle h1 > .sapMText {
 .sapMOHNumberDiv .sapMObjectNumberText {
 	font-family: var(--sapFontHeaderFamily);
 	font-size: 1.375rem;
-	font-weight: @sapUiFontHeaderWeight;
+	font-weight: normal;
 	white-space: nowrap;
 	line-height: initial;
 }
@@ -938,7 +938,7 @@ html.sap-phone .sapMOHTitle h1 > .sapMText {
 	color: var(--sapContent_IconColor);
 }
 
-.sapMOHIntro.sapMOHIntroActive >.sapMLnk:active {
+.sapMOHIntro.sapMOHIntroActive > .sapMLnk:active {
 	background: none;
 }
 
@@ -956,7 +956,7 @@ html.sap-desktop .sapMOHTitleArrow .sapUiIcon:hover {
 .sapMOHRTitle h1 {
 	font-family: var(--sapFontHeaderFamily);
 	font-size: var(--sapFontHeader2Size);
-	font-weight: @sapUiFontHeaderWeight;
+	font-weight: normal;
 	color: var(--sapGroup_TitleTextColor);
 }
 
@@ -966,7 +966,7 @@ html.sap-desktop .sapMOHTitleArrow .sapUiIcon:hover {
 .sapMOHRTitle h3,
 .sapMOHRTitle h2 {
 	font-family: var(--sapFontHeaderFamily);
-	font-weight: @sapUiFontHeaderWeight;
+	font-weight: normal;
 	color: var(--sapGroup_TitleTextColor);
 }
 
@@ -997,13 +997,13 @@ html.sap-desktop .sapMOHRTitleArrow .sapUiIcon:hover {
 	color: var(--sapButton_Active_TextColor);
 }
 
-.sapMOHR .sapMObjStatusMarker{
+.sapMOHR .sapMObjStatusMarker {
 	color: var(--sapContent_MarkerIconColor);
 }
 
 .sapMOHRIntro {
 	font-family: var(--sapFontFamily);
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	font-weight: normal;
 	color: var(--sapContent_LabelColor);
 }
@@ -1014,14 +1014,14 @@ html.sap-desktop .sapMOHRTitleArrow .sapUiIcon:hover {
 	text-decoration: none;
 }
 
-.sapMOHRIntro.sapMOHRIntroActive >.sapMLnk:active {
+.sapMOHRIntro.sapMOHRIntroActive > .sapMLnk:active {
 	background: none;
 }
 
 .sapMOHR .sapMObjectNumberText {
 	font-family: var(--sapFontHeaderFamily);
 	font-size: 1.375rem;
-	font-weight: @sapUiFontHeaderWeight;
+	font-weight: normal;
 }
 
 .sapMOHR .sapMObjectNumberUnit {
@@ -1033,7 +1033,7 @@ html.sap-desktop .sapMOHRTitleArrow .sapUiIcon:hover {
 .sapMOHR .sapMOHRStatus,
 .sapMOHR .sapMObjStatus {
 	font-family: var(--sapFontFamily);
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	font-weight: normal;
 	color: var(--sapContent_LabelColor);
 }

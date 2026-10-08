@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
 	"sap/ui/core/Shortcut",
+	"sap/ui/Device",
 	"sap/ui/core/routing/Targets",
 	"sap/ui/core/routing/TargetCache",
 	"sap/ui/model/json/JSONModel",
@@ -23,6 +24,7 @@ sap.ui.define([
 	ComponentContainer,
 	Control,
 	Shortcut,
+	Device,
 	Targets,
 	TargetCache,
 	JSONModel,
@@ -395,6 +397,41 @@ sap.ui.define([
 
 		assert.deepEqual(oCommandExecution._getCommandInfo(), oFakeCommand, "Command Info returned properly");
 		oStub.restore();
+	});
+
+	QUnit.test("platform-specific shortcut (object with default/macintosh)", function(assert) {
+		fnInitControlTree();
+		const originalMac = Device.os.macintosh;
+		// command whose shortcut is defined per platform
+		var vPlatformShortcut = { "default": "Ctrl+Alt+N", "macintosh": "Ctrl+Option+N" };
+		oFakeCommand["Create"] = { shortcut: vPlatformShortcut };
+
+		try {
+			// --- non-macOS: the "default" variant is used ---
+			Device.os.macintosh = false;
+			let oCreateCE = new CommandExecution({ command: "Create" });
+			oPanel.addDependent(oCreateCE);
+			assert.deepEqual(oCreateCE._getCommandInfo().shortcut, vPlatformShortcut, "raw shortcut object returned on non-macOS");
+			assert.ok(Shortcut.isRegistered(oPanel, "Ctrl+Alt+N"), "default shortcut registered on non-macOS");
+			oCreateCE.destroy();
+			assert.ok(!Shortcut.isRegistered(oPanel, "Ctrl+Alt+N"), "shortcut unregistered on destroy");
+
+			// --- macOS: the "macintosh" variant is used, interpreted literally ---
+			Device.os.macintosh = true;
+			oCreateCE = new CommandExecution({ command: "Create" });
+			oPanel.addDependent(oCreateCE);
+			assert.deepEqual(oCreateCE._getCommandInfo().shortcut, vPlatformShortcut, "raw shortcut object returned on macOS");
+			assert.ok(Shortcut.isRegistered(oPanel, vPlatformShortcut), "macintosh shortcut registered on macOS");
+			// literal interpretation: Ctrl is the real Control key, NOT remapped to Cmd, so a
+			// Ctrl->Cmd spec ({ctrl:true} => metaKey on macOS) must NOT match.
+			assert.notOk(Shortcut.isRegistered(oPanel, { key: "n", alt: true, ctrl: true }),
+				"macintosh shortcut is not registered as a Ctrl->Cmd (metaKey) combination");
+			oCreateCE.destroy();
+			assert.ok(!Shortcut.isRegistered(oPanel, vPlatformShortcut), "macintosh shortcut unregistered on destroy");
+		} finally {
+			Device.os.macintosh = originalMac;
+			fnCleanup();
+		}
 	});
 
 	QUnit.test("setCommand", function(assert) {

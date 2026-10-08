@@ -290,7 +290,10 @@ sap.ui.define([
 				"description": oRB.getText("SAP_SAVE")
 			},
 			"Create": {
-				"shortcut": "Ctrl+Enter",
+				"shortcut": {
+					"default": "Ctrl+Alt+N",
+					"macintosh": "Ctrl+Option+N"
+				},
 				"description": oRB.getText("SAP_CREATE")
 			}
 		};
@@ -299,9 +302,9 @@ sap.ui.define([
 
 		const mCommands = oManifest.getEntry("/sap.ui5/commands");
 		assert.equal(mCommands["Create"].description, mExpected["Create"].description, "Create Command description resolved correctly.");
-		assert.equal(mCommands["Create"].shortcut, mExpected["Create"].shortcut, "Create Command shortcut resolved correctly.");
+		assert.deepEqual(mCommands["Create"].shortcut, mExpected["Create"].shortcut, "Create Command shortcut resolved correctly.");
 
 		assert.equal(mCommands["Save"].description, mExpected["Save"].description, "Save Command description resolved correctly.");
-		assert.equal(mCommands["Save"].shortcut, mExpected["Save"].shortcut, "Save Command shortcut resolved correctly.");
+		assert.deepEqual(mCommands["Save"].shortcut, mExpected["Save"].shortcut, "Save Command shortcut resolved correctly.");
 	});
 });
