@@ -77,10 +77,10 @@ sap.ui.define([
 		oDetachedType.destroy();
 	});
 
-	QUnit.test("#getInnerList", function(assert) {
-		assert.ok(this.oType.getInnerList(), "getInnerList returns the inner list");
-		assert.ok(this.oType.getInnerList().isA("sap.f.GridList"), "Inner list is a GridList");
-		assert.strictEqual(this.oType.getInnerList(), this.oList._oList, "getInnerList matches _oList");
+	QUnit.test("#getInnerControl", function(assert) {
+		assert.ok(this.oType.getInnerControl(), "getInnerControl returns the inner list");
+		assert.ok(this.oType.getInnerControl().isA("sap.f.GridList"), "Inner list is a GridList");
+		assert.strictEqual(this.oType.getInnerControl(), this.oList._oList, "getInnerControl matches _oList");
 	});
 
 	QUnit.test("#getListSettings", function(assert) {
@@ -130,6 +130,11 @@ sap.ui.define([
 		return this.oType.loadModules().then(function() {
 			assert.ok(true, "loadModules resolves");
 		});
+	});
+
+	QUnit.test("setProperty returns the type for chaining and forwards to the inner list", function(assert) {
+		assert.strictEqual(this.oType.setBoxMinWidth("20rem"), this.oType, "setBoxMinWidth returns the type");
+		assert.strictEqual(this.oType.getBoxMinWidth(), "20rem", "boxMinWidth property is updated");
 	});
 
 	QUnit.module("ListType", {

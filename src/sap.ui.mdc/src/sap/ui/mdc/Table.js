@@ -3,32 +3,22 @@
  */
 
 sap.ui.define([
-	"./Control",
+	"./ListTableBase",
 	"./ActionToolbar",
-	"./util/ToolbarSettings",
+	"./util/TableToolbarFactory",
 	"./table/GridTableType",
 	"./table/TreeTableType",
 	"./table/ResponsiveTableType",
 	"./table/PropertyHelper",
 	"./table/utils/Personalization",
-	"./table/utils/FilterInfoBar",
-	"./util/ExportUtils",
 	"./util/P13nUtils",
-	"./util/Common",
-	"./mixin/FilterIntegrationMixin",
-	"sap/m/Title",
-	"sap/m/table/Title",
 	"sap/m/library",
 	"sap/m/table/Util",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/MessageBox",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
-	"sap/ui/core/format/ListFormat",
 	"sap/ui/core/library",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/model/base/ManagedObjectModel",
-	"sap/ui/model/BindingMode",
 	"sap/base/strings/capitalize",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/InvisibleText",
@@ -58,32 +48,22 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableRowCountMode",
 	"sap/ui/mdc/flexibility/helpers/addKeyOrName"
 ], (
-	Control,
+	ListTableBase,
 	ActionToolbar,
-	ToolbarSettings,
+	TableToolbarFactory,
 	GridTableType,
 	TreeTableType,
 	ResponsiveTableType,
 	PropertyHelper,
 	PersonalizationUtils,
-	FilterInfoBar,
-	ExportUtils,
 	P13nUtils,
-	Common,
-	FilterIntegrationMixin,
-	Title,
-	TableTitle,
 	MLibrary,
 	MTableUtil,
 	ColumnMenu,
 	MessageBox,
 	Element,
 	Library,
-	ListFormat,
 	coreLibrary,
-	KeyCodes,
-	ManagedObjectModel,
-	BindingMode,
 	capitalize,
 	deepEqual,
 	InvisibleText,
@@ -118,15 +98,6 @@ sap.ui.define([
 	const {IllustratedMessageType} = MLibrary;
 	const {TitleLevel} = coreLibrary;
 	const {SortOrder} = coreLibrary;
-	const internalMap = new window.WeakMap();
-	const internal = function(oTable) {
-		if (!internalMap.has(oTable)) {
-			internalMap.set(oTable, {
-				oFilterInfoBar: null
-			});
-		}
-		return internalMap.get(oTable);
-	};
 	const mTypeMap = {
 		"Table": GridTableType,
 		"TreeTable": TreeTableType,
@@ -239,7 +210,7 @@ sap.ui.define([
 	 * <b>Note:</b> Read and write access to internal elements is not permitted. Such elements are, for example, the inner table including its
 	 * children. This is independent of how access was gained. Internal elements and their types are subject to change without notice.
 	 *
-	 * @extends sap.ui.mdc.Control
+	 * @extends sap.ui.mdc.ListTableBase
 	 * @borrows sap.ui.mdc.mixin.FilterIntegrationMixin.rebind as #rebind
 	 * @author SAP SE
 	 * @since 1.58
@@ -248,23 +219,12 @@ sap.ui.define([
 	 * @see {@link topic:3801656db27b4b7a9099b6ed5fa1d769 Table Building Block (OData V4)}
 	 * @public
 	 */
-	const Table = Control.extend("sap.ui.mdc.Table", {
+	const Table = ListTableBase.extend("sap.ui.mdc.Table", {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/table/Table.designtime",
-			interfaces: [
-				"sap.ui.mdc.IFilterSource", "sap.ui.mdc.IxState"
-			],
 			defaultAggregation: "columns",
 			properties: {
-				/**
-				 * Width of the table.
-				 */
-				width: {
-					type: "sap.ui.core.CSSSize",
-					group: "Dimension",
-					defaultValue: null
-				},
 				/**
 				 * This property has no effect and will be removed soon.
 				 * @deprecated As of version 1.115, the concept has been discarded.
@@ -318,54 +278,6 @@ sap.ui.define([
 					bindable: false
 				},
 				/**
-				 * Semantic level of the header. For more information, see {@link sap.m.Title#setLevel}.
-				 *
-				 * @since 1.84
-				 */
-				headerLevel: {
-					type: "sap.ui.core.TitleLevel",
-					group: "Appearance",
-					defaultValue: TitleLevel.Auto
-				},
-				/**
-				 * Defines style of the header. For more information, see {@link sap.m.Title#setTitleStyle}.
-				 *
-				 * @ui5-restricted sap.fe
-				 * @since 1.116
-				 */
-				headerStyle: {
-					type: "sap.ui.core.TitleLevel",
-					group: "Appearance"
-				},
-				/**
-				 * Determines whether to bind the table automatically after the initial creation or re-creation of the table.
-				 */
-				autoBindOnInit: {
-					type: "boolean",
-					group: "Behavior",
-					defaultValue: true
-				},
-				/**
-				 * Header text that is shown in the table. The header must always be set to comply with accessibility standards, even if other
-				 * settings make the header invisible.
-				 */
-				header: {
-					type: "string",
-					group: "Appearance",
-					defaultValue: null
-				},
-				/**
-				 * Determines whether the header text is shown in the table. Regardless of its value, the given header text is used to label the table
-				 * correctly for accessibility purposes.
-				 *
-				 * @since 1.63
-				 */
-				headerVisible: {
-					type: "boolean",
-					group: "Appearance",
-					defaultValue: true
-				},
-				/**
 				 * If no tooltip has been provided for a column, the column header text will automatically be applied as a tooltip for the column.
 				 *
 				 * @since 1.115
@@ -401,67 +313,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Number of records to be requested from the model.
-				 *
-				 * If the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, the threshold defines the number of rows that
-				 * are displayed initially, and the number of rows that are added when the table grows
-				 * ({@link sap.ui.mdc.table.ResponsiveTableType#getGrowingMode growingMode}).
-				 *
-				 * If the table type is {@link sap.ui.mdc.table.GridTableType GridTable}, the threshold defines how many additional (not yet visible)
-				 * data records from the back-end system are pre-fetched. If the <code>threshold</code> is lower than the number of visible rows, the
-				 * number of visible rows is used as the <code>threshold</code>. If the value is 0, thresholding is disabled.
-				 *
-				 * If the value is -1, a type-dependent default value is used.
-				 *
-				 * @since 1.63
-				 */
-				threshold: {
-					type: "int",
-					group: "Behavior",
-					defaultValue: -1
-				},
-
-				/**
-				 * Defines the XML baseline for sort conditions in SAPUI5 flexibility.
-				 *
-				 * <b>Note:</b> This property must not be bound.
-				 * <b>Note:</b> This property must not be changed during runtime.
-				 *
-				 * @since 1.73
-				 */
-				sortConditions: {
-					type: "object",
-					bindable: false
-				},
-
-				/**
-				 * Defines the XML baseline for filter conditions in SAPUI5 flexibility.
-				 *
-				 * <b>Note:</b> This property must not be bound.
-				 * <b>Note:</b> This property must not be changed during runtime.
-				 *
-				 * @since 1.80.0
-				 */
-				filterConditions: {
-					type: "object",
-					defaultValue: {},
-					bindable: false
-				},
-
-				/**
-				 * Defines the XML baseline for group conditions in SAPUI5 flexibility.
-				 *
-				 * <b>Note:</b> This property must not be bound.
-				 * <b>Note:</b> This property must not be changed during runtime.
-				 *
-				 * @since 1.87
-				 */
-				groupConditions: {
-					type: "object",
-					bindable: false
-				},
-
-				/**
 				 * Defines the XML baseline for aggregate conditions in SAPUI5 flexibility.
 				 *
 				 * <b>Note:</b> This property must not be bound.
@@ -474,30 +325,6 @@ sap.ui.define([
 					bindable: false
 				},
 
-				/**
-				 * Determines whether the data export is enabled.
-				 *
-				 * The delegate can customize the export result with the <code>exportSettings</code> field in the
-				 * {@link sap.ui.mdc.table.PropertyInfo PropertyInfo}.
-				 *
-				 * <b>Note:</b> To use the export functionality, the {@link sap.ui.export} library is required, otherwise an error message is
-				 * displayed when the user presses the Export button.
-				 *
-				 * @since 1.75
-				 */
-				enableExport: {
-					type: "boolean",
-					group: "Behavior",
-					defaultValue: false
-				},
-
-				/**
-				 * The delay in milliseconds after which the busy indicator is shown.
-				 */
-				busyIndicatorDelay: {
-					type: "int",
-					defaultValue: 100
-				},
 				/**
 				 * Determines whether column resizing is enabled.
 				 *
@@ -648,11 +475,6 @@ sap.ui.define([
 				}
 			},
 			aggregations: {
-				_content: {
-					type: "sap.ui.core.Control",
-					multiple: false,
-					visibility: "hidden"
-				},
 				/**
 				 * Type of the table.
 				 */
@@ -687,22 +509,6 @@ sap.ui.define([
 					type: "sap.ui.mdc.table.CreationRow",
 					multiple: false,
 					deprecated: true
-				},
-
-				/**
-				 * Additional actions that will be available in the toolbar.
-				 *
-				 * <b>Note:</b> This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not
-				 * bindable. Any changes of the initial aggregation content might result in undesired effects. Changes of the aggregation have to be
-				 * made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
-				 */
-				actions: {
-					type: "sap.ui.core.Control",
-					multiple: true,
-					forwarding: {
-						getter: "_createToolbar",
-						aggregation: "actions"
-					}
 				},
 
 				/**
@@ -749,22 +555,6 @@ sap.ui.define([
 				rowSettings: {type: "sap.ui.mdc.table.RowSettings", multiple: false},
 
 				/**
-				 * Default values shown in the export dialog.
-				 *
-				 * <b>Note:</b> These values are defaults shown to the user in the export dialog. The user can still modify them before export.
-				 * If the user modifies a value in the dialog, the user choice takes precedence and is not overridden by event handlers.
-				 *
-				 * The expected type is <code>sap.ui.export.TableExportSettings</code>. The <code>sap.ui.export</code> library must be loaded
-				 * before setting this aggregation.
-				 *
-				 * @since 1.148
-				 */
-				defaultExportSettings: {
-					type: "sap.ui.core.Element",
-					multiple: false
-				},
-
-				/**
 				 * <code>DataStateIndicator</code> plugin that can be used to show binding-related messages.
 				 *
 				 * @since 1.89
@@ -773,17 +563,6 @@ sap.ui.define([
 					type: "sap.m.plugins.DataStateIndicator",
 					multiple: false
 				},
-
-				/**
-				 * Defines the custom visualization if there is no data to show.
-				 *
-				 * <b>Note:</b> If {@link sap.m.IllustratedMessage} control is set for the <code>noData</code> aggregation and its
-				 * {@link sap.m.IllustratedMessage#getTitle title} property is not set then the table automatically offers a no data text with
-				 * fitting {@link sap.m.IllustratedMessage.IllustratedMessageType illustration}.
-				 *
-				 * @since 1.106
-				 */
-				noData: {type: "sap.ui.core.Control", multiple: false, altTypes: ["string"]},
 
 				/**
 				 * Defines an aggregation for the <code>CopyProvider</code> plugin that provides copy to clipboard capabilities for the selected rows
@@ -801,13 +580,6 @@ sap.ui.define([
 					type: "sap.m.plugins.CopyProvider",
 					multiple: false
 				},
-
-				/**
-				 * Defines the context menu for the rows.
-				 *
-				 * @since 1.118
-				 */
-				contextMenu: {type: "sap.ui.core.IContextMenu", multiple: false},
 
 				/**
 				 * Defines the footer control displayed below the table.
@@ -833,19 +605,6 @@ sap.ui.define([
 					multiple: false
 				}
 			},
-			associations: {
-				/**
-				 * Control or object that enables the table to do filtering, such as {@link sap.ui.mdc.FilterBar}. See also
-				 * {@link sap.ui.mdc.IFilter}.
-				 *
-				 * <b>Note:</b> By default, automatic filter generation only works in combination with a <code>sap.ui.mdc.FilterBar</code>, see also
-				 * {@link module:sap/ui/mdc/TableDelegate.getFilters}.
-				 */
-				filter: {
-					type: "sap.ui.mdc.IFilter",
-					multiple: false
-				}
-			},
 			events: {
 				/**
 				 * This event is fired when a row is pressed.
@@ -861,7 +620,7 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * This event is fired when the selection is changed.
+				 * This event is fired when the selection changes.
 				 */
 				selectionChange: {
 					parameters: {
@@ -870,42 +629,6 @@ sap.ui.define([
 						 */
 						selectAll: {
 							type: "boolean"
-						}
-					}
-				},
-				/**
-				 * This event is fired right before the export is triggered.
-				 *
-				 * For more information about the export settings, see {@link sap.ui.export.Spreadsheet} or
-				 * {@link topic:7e12e6b9154a4607be9d6072c72d609c Spreadsheet Export Configuration}.
-				 *
-				 * @since 1.75
-				 */
-				beforeExport: {
-					allowPreventDefault: true,
-					parameters: {
-						/**
-						 * Contains <code>workbook.columns, dataSource</code>, and other export-related information.
-						 *
-						 * <b>Note:</b> The <code>exportSettings</code> parameter can be modified by the listener. Thus the parameter can be
-						 * different if multiple listeners are registered which manipulate the parameter.
-						 */
-						exportSettings: {
-							type: "object"
-						},
-						/**
-						 * Contains the export settings defined by the user.
-						 */
-						userExportSettings: {
-							type: "object"
-						},
-						/**
-						 * Contains an array of {@link sap.ui.export.util.Filter} objects.
-						 *
-						 * @since 1.110
-						 */
-						filterSettings: {
-							type: "object[]"
 						}
 					}
 				},
@@ -949,7 +672,7 @@ sap.ui.define([
 		},
 		constructor: function() {
 			this._createInitPromises();
-			Control.apply(this, arguments);
+			ListTableBase.apply(this, arguments);
 			this.bCreated = true;
 			this._updateAdaptation();
 			this._initializeContent();
@@ -1018,7 +741,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	Table.prototype.init = function() {
-		Control.prototype.init.apply(this, arguments);
+		ListTableBase.prototype.init.apply(this, arguments);
 
 		// Skip propagation of properties (models and bindingContexts)
 		this.mSkipPropagation = {
@@ -1031,22 +754,15 @@ sap.ui.define([
 		this._setPropertyHelperClass(PropertyHelper);
 		this._setupPropertyInfoStore("propertyInfo");
 
-		this._oManagedObjectModel = new ManagedObjectModel(this, {
-			hasGrandTotal: false,
-			activeP13nModes: createActiveP13nModesMap(this)
-		});
-		this._oManagedObjectModel.setDefaultBindingMode(BindingMode.OneWay);
-		this._oManagedObjectModel.setProperty("/@custom/toolbarButtonType", ToolbarSettings.getToolbarButtonType());
-		this.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table");
+		this._oManagedObjectModel.setProperty("/@custom/hasGrandTotal", false);
+		this._oManagedObjectModel.setProperty("/@custom/activeP13nModes", createActiveP13nModesMap(this));
 	};
 
 	/**
 	 * @inheritDoc
 	 */
 	Table.prototype.applySettings = function(mSettings, oScope) {
-		Common.applySettingsWithEarlyTypeAndDelegate(this, mSettings, oScope, Control.prototype.applySettings);
-		this.initControlDelegate();
-
+		ListTableBase.prototype.applySettings.apply(this, arguments);
 		// onModification is not called if changes are applied during XML preprocessing. For the initial validation, this call leads to duplicate log
 		// entries if changes are applied on runtime (onModification is called).
 		validateStateAgainstPropertyInfo(this);
@@ -1092,7 +808,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.attachEvent = function(sEventId) {
-		Control.prototype.attachEvent.apply(this, arguments);
+		ListTableBase.prototype.attachEvent.apply(this, arguments);
 		if (sEventId === "rowPress") {
 			this._getType().prepareRowPress();
 		}
@@ -1100,7 +816,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.detachEvent = function(sEventId) {
-		Control.prototype.detachEvent.apply(this, arguments);
+		ListTableBase.prototype.detachEvent.apply(this, arguments);
 		if (sEventId === "rowPress") {
 			this._getType().cleanupRowPress();
 		}
@@ -1170,16 +886,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Table.prototype._isOfType = function(sType, bIncludeSubTypes) {
-		const oType = this._getType();
-
-		if (bIncludeSubTypes) {
-			return oType.isA(mTypeMap[sType].getMetadata().getName());
-		} else {
-			return oType.constructor === mTypeMap[sType];
-		}
-	};
-
 	Table.prototype._onBeforeOpenContextMenu = function(mPropertyBag) {
 		const oContextMenu = mPropertyBag.contextMenu;
 		let bPreventDefault = true;
@@ -1293,22 +999,16 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Table.prototype._getType = function() {
-		const vType = this.getType();
-
-		if (!this._oDefaultType && (typeof vType === "string" || vType === null)) {
-			this._oDefaultType = new mTypeMap[vType]();
-			this.addDependent(this._oDefaultType);
-		}
-
-		return this._oDefaultType || this.getType();
+	Table.prototype._getManagedObjectModelName = function() {
+		return "$sap.ui.mdc.Table";
 	};
 
-	Table.prototype._destroyDefaultType = function() {
-		if (this._oDefaultType) {
-			this._oDefaultType.destroy();
-			delete this._oDefaultType;
-		}
+	Table.prototype._getTypeStrategyMap = function() {
+		return mTypeMap;
+	};
+
+	Table.prototype._getToolbarStyle = function() {
+		return this._isOfType(TableType.ResponsiveTable) ? ToolbarStyle.Standard : ToolbarStyle.Clear;
 	};
 
 	Table.prototype.setRowSettings = function(oRowSettings) {
@@ -1323,24 +1023,14 @@ sap.ui.define([
 		return this;
 	};
 
-	Table.prototype.setDefaultExportSettings = function(oExportSettings) {
-		if (oExportSettings && !oExportSettings.isA("sap.ui.export.TableExportSettings")) {
-			throw new Error("The 'defaultExportSettings' aggregation must be of type 'sap.ui.export.TableExportSettings'.");
-		}
-
-		return this.setAggregation("defaultExportSettings", oExportSettings);
-	};
-
 	Table.prototype.setHeaderLevel = function(sLevel) {
-		this.setProperty("headerLevel", sLevel, true);
+		ListTableBase.prototype.setHeaderLevel.apply(this, arguments);
 		this._updateVariantManagementStyle();
 		return this;
 	};
 
 	Table.prototype.setHeaderStyle = function(sStyle) {
-		this.setProperty("headerStyle", sStyle, true);
-		const sHeaderStyle = this.getHeaderStyle() || TitleLevel[ThemeParameters.get({name: "_sap_ui_mdc_Table_HeaderStyle"})];
-		this._oTitle?.setTitleStyle(sHeaderStyle);
+		ListTableBase.prototype.setHeaderStyle.apply(this, arguments);
 		this._updateVariantManagementStyle();
 		return this;
 	};
@@ -1430,7 +1120,7 @@ sap.ui.define([
 		}
 
 		await validateStateAgainstPropertyInfo(this);
-		updateFilterInfoBar(this);
+		this._updateFilterInfoBar();
 	};
 
 	/**
@@ -1519,17 +1209,13 @@ sap.ui.define([
 		return this;
 	};
 
-	Table.prototype._updateAdaptation = function() {
-		const oRegisterConfig = {
-			controller: {}
-		};
-
+	Table.prototype.getEngineControllers = function() {
 		const aStableKeys = [];
 		if (this.getColumns().length > 0 && this._isOfType(TableType.TreeTable)) {
 			aStableKeys.push(this.getColumns()[0].getPropertyKey());
 		}
 
-		const mP13nModeControllers = {
+		const mModeControllers = {
 			Column: new ColumnController({control: this, stableKeys: aStableKeys}),
 			Sort: new SortController({control: this}),
 			Group: new GroupController({control: this}),
@@ -1537,7 +1223,12 @@ sap.ui.define([
 			Aggregate: new AggregateController({control: this})
 		};
 
-		oRegisterConfig.controller["PropertyInfo"] = new DynamicPropertiesController({
+		const mControllers = this.getActiveP13nModes().reduce((mActive, sMode) => {
+			mActive[sMode] = mModeControllers[sMode];
+			return mActive;
+		}, {});
+
+		mControllers.PropertyInfo = new DynamicPropertiesController({
 			control: this,
 			allowedPropertyAttributes: [
 				"isActive",
@@ -1546,23 +1237,19 @@ sap.ui.define([
 			]
 		});
 
-		this.getActiveP13nModes().forEach((sMode) => {
-			oRegisterConfig.controller[sMode] = mP13nModeControllers[sMode];
-		});
-
 		if (this.getEnableColumnResize()) {
-			oRegisterConfig.controller["ColumnWidth"] = new ColumnWidthController({control: this, exposeXConfig: true});
+			mControllers.ColumnWidth = new ColumnWidthController({control: this, exposeXConfig: true});
 		}
 
 		if (this._isOfType(TableType.Table, true) && this._getType().getEnableColumnFreeze()) {
-			oRegisterConfig.controller["ColumnFreeze"] = new ColumnFreezeController({control: this});
+			mControllers.ColumnFreeze = new ColumnFreezeController({control: this});
 		}
 
 		if (this._isOfType(TableType.ResponsiveTable) && this._getType().getShowDetailsButton()) {
-			oRegisterConfig.controller["ShowDetails"] = new ShowDetailsController({control: this});
+			mControllers.ShowDetails = new ShowDetailsController({control: this});
 		}
 
-		this.getEngine().register(this, oRegisterConfig);
+		return mControllers;
 	};
 
 	function updateColumnMenu(oTable) {
@@ -1585,60 +1272,8 @@ sap.ui.define([
 			}
 		}
 
-		updateFilterInfoBar(oTable);
+		oTable._updateFilterInfoBar();
 	}
-
-	Table.prototype.setFilterConditions = function(mConditions) {
-		this.setProperty("filterConditions", mConditions, true);
-		this.getInbuiltFilter()?.setFilterConditions(mConditions);
-		updateFilterInfoBar(this);
-		return this;
-	};
-
-	function updateFilterInfoBar(oTable) {
-		let {oFilterInfoBar} = internal(oTable);
-		const sFilterInfoText = getFilterInfoText(oTable);
-
-		if (oFilterInfoBar?.isDestroyed()) {
-			oFilterInfoBar = null;
-		}
-
-		if (oFilterInfoBar) {
-			oFilterInfoBar.setInfoText(sFilterInfoText);
-		} else if (sFilterInfoText && oTable._oTable) {
-			oFilterInfoBar = new FilterInfoBar({
-				id: oTable.getId() + "-filterInfoBar",
-				infoText: sFilterInfoText,
-				table: oTable
-			});
-			internal(oTable).oFilterInfoBar = oFilterInfoBar;
-			oTable._getType().insertFilterInfoBar(oFilterInfoBar);
-		}
-	}
-
-	function getFilterInfoText(oTable) {
-		if (!oTable.isFilteringEnabled() || !oTable.getPropertyHelper()) {
-			return "";
-		}
-
-		const aFilterLabels = oTable._getLabelsFromFilterConditions(); // FilterIntegrationMixin
-		const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
-
-		if (aFilterLabels.length === 0) {
-			return "";
-		} else if (aFilterLabels.length === 1) {
-			return oResourceBundle.getText("table.ONE_FILTER_ACTIVE", aFilterLabels);
-		} else {
-			return oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [
-				aFilterLabels.length,
-				ListFormat.getInstance().format(aFilterLabels)
-			]);
-		}
-	}
-
-	Table.prototype.setThreshold = function(iThreshold) {
-		return this.setProperty("threshold", iThreshold, true);
-	};
 
 	// Start: FilterIntegrationMixin hooks
 	Table.prototype._onFilterProvided = function(oFilter) {
@@ -1655,9 +1290,6 @@ sap.ui.define([
 		}
 	};
 
-	Table.prototype._onFilterSearch = function(oEvent) {
-		this._bAnnounceTableUpdate = true;
-	};
 	// End: FilterIntegrationMixin hooks
 
 	Table.prototype._updateNoDataContent = function() {
@@ -1850,7 +1482,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.setHeaderVisible = function(bVisible) {
-		this.setProperty("headerVisible", bVisible, true);
+		ListTableBase.prototype.setHeaderVisible.apply(this, arguments);
 		this._updateInvisibleTitle();
 		this._updateVariantManagementStyle();
 		return this;
@@ -1870,12 +1502,6 @@ sap.ui.define([
 		} else if (this._oInvisibleTitle && !this._oTable.getAriaLabelledBy().includes(this.getId() + "-invisibleTitle")) {
 			this._oTable.addAriaLabelledBy(this.getId() + "-invisibleTitle");
 		}
-	};
-
-	Table.prototype.setEnableExport = function(bEnableExport) {
-		this.setProperty("enableExport", bEnableExport, true);
-		this._updateExportButton();
-		return this;
 	};
 
 	Table.prototype.setShowPasteButton = function(bShowPasteButton) {
@@ -1932,21 +1558,10 @@ sap.ui.define([
 		}
 
 		if (!this._oToolbar) {
-			this._oTitle = new Title(this.getId() + "-title", {
-                text: "{$sap.ui.mdc.Table>/header}",
-                level: "{$sap.ui.mdc.Table>/headerLevel}",
-                titleStyle: this.getHeaderStyle() || TitleLevel[ThemeParameters.get({name: "_sap_ui_mdc_Table_HeaderStyle"})]
-            });
-
-            this._oTableTitle = new TableTitle(this.getId() + "-tableTitle", {
-                title: this._oTitle,
-                visible: "{$sap.ui.mdc.Table>/headerVisible}"
-            });
-
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
 				design: ToolbarDesign[ThemeParameters.get({name: "_sap_ui_mdc_Table_ToolbarDesign"})],
 				begin: [
-					this._oTableTitle
+					this._createTitle()
 				],
 				end: [
 					this._getCopyButton(), this._getPasteButton(), this._getP13nButton()
@@ -1957,9 +1572,8 @@ sap.ui.define([
 			this._updateInvisibleTitle();
 		}
 
-		const bResponsiveTable = this._isOfType(TableType.ResponsiveTable);
-		this._oToolbar.setStyle(bResponsiveTable ? ToolbarStyle.Standard : ToolbarStyle.Clear);
-		this._oTableTitle.setShowExtendedView(bResponsiveTable);
+		this._updateToolbarStyle();
+		this._oTableTitle.setShowExtendedView(this._isOfType(TableType.ResponsiveTable));
 
 		return this._oToolbar;
 	};
@@ -1990,11 +1604,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Table.prototype.getConditions = function() {
-		//may only return conditions if the inner FilterBar has already been initialized
-		return this.getInbuiltFilter() ? this.getInbuiltFilter().getConditions() : [];
-	};
-
 	Table.prototype._getSortedProperties = function() {
 		const aSortConditions = this.getSortConditions() ? this.getSortConditions().sorters : [];
 		aSortConditions.forEach((oSortCondition) => {
@@ -2096,10 +1705,6 @@ sap.ui.define([
 	 * @private
 	 * @returns {boolean} Whether filter personalization is enabled
 	 */
-	Table.prototype.isFilteringEnabled = function() {
-		return this.getActiveP13nModes().includes(TableP13nMode.Filter);
-	};
-
 	/**
 	 * Checks whether sort personalization is enabled.
 	 *
@@ -2162,35 +1767,19 @@ sap.ui.define([
 	 * @returns {string[]} The active P13n mode keys
 	 * @private
 	 */
-	Table.prototype.getActiveP13nModes = function() {
-		return P13nUtils.getIntersection(this.getP13nMode(), this.getSupportedP13nModes());
-	};
-
-	Table.prototype._getP13nButton = function() {
-		if (!this._oP13nButton) {
-			this._oP13nButton = ToolbarSettings.createSettingsButton(this.getId(), [function() {
-				PersonalizationUtils.openSettingsDialog(this);
-			}, this], "$sap.ui.mdc.Table");
-		}
-		this._updateP13nButton();
-		return this._oP13nButton;
-	};
-
-	Table.prototype._updateP13nButton = function() {
-		if (this._oP13nButton) {
-			this._oP13nButton.setVisible(this._isP13nSettingVisible());
-		}
-	};
-
 	Table.prototype._getCopyButton = function() {
 		if (window.isSecureContext && this.getCopyProvider()) {
-			return ToolbarSettings.createCopyButton(this.getId(), this.getCopyProvider());
+			return TableToolbarFactory.createCopyButton(this.getId(), this.getCopyProvider());
 		}
+	};
+
+	Table.prototype._getToolbarFactory = function() {
+		return TableToolbarFactory;
 	};
 
 	Table.prototype._getPasteButton = function() {
 		if (this.getShowPasteButton()) {
-			this._oPasteButton ??= ToolbarSettings.createPasteButton(this.getId());
+			this._oPasteButton ??= TableToolbarFactory.createPasteButton(this.getId());
 			return this._oPasteButton;
 		}
 	};
@@ -2199,46 +1788,6 @@ sap.ui.define([
 		return this.getEnableExport() &&
 			this.isControlDelegateInitialized() &&
 			this.getControlDelegate().getSupportedFeatures(this).export;
-	};
-
-	Table.prototype._updateExportButton = function() {
-		const bNeedExportButton = this._oToolbar != null && this._isExportEnabled();
-
-		if (bNeedExportButton && !this._oExportButton) {
-			this._oExportButton = this._createExportButton();
-		}
-
-		if (!this._oExportButton) {
-			return;
-		}
-
-		if (this._oToolbar && !this._oToolbar.getEnd().includes(this._oExportButton)) {
-			this._oToolbar.addEnd(this._oExportButton);
-		}
-
-		this._oExportButton.setEnabled(MTableUtil.isExportable(this.getRowBinding()));
-		this._oExportButton.setVisible(this._isExportEnabled());
-	};
-
-	/**
-	 * Returns the export button if <code>enableExport</code> is <code>true</code>.
-	 *
-	 * @returns {null|sap.m.MenuButton} If <code>enableExport</code> property is set to <code>false</code> then returns null else export button
-	 * @private
-	 */
-	Table.prototype._createExportButton = function() {
-		return ToolbarSettings.createExportButton(this.getId(), {
-			"default": [
-				function() {
-					this._onExport();
-				}, this
-			],
-			"exportAs": [
-				function() {
-					this._onExport(true);
-				}, this
-			]
-		}, "$sap.ui.mdc.Table");
 	};
 
 	/**
@@ -2456,16 +2005,16 @@ sap.ui.define([
 		const {tree: fnTree, node: fnNode, isExpanded: fnIsExpanded} = mConfig;
 
 		if (this.getSelectionMode() === "None" || typeof fnNode !== "function" || typeof fnIsExpanded !== "function") {
-			return ToolbarSettings.createExpandCollapseButton(this.getId(), bIsExpand, () => fnTree(this), "$sap.ui.mdc.Table");
+			return TableToolbarFactory.createExpandCollapseButton(this.getId(), bIsExpand, () => fnTree(this));
 		}
 
-		const oMenuButton = ToolbarSettings.createExpandCollapseMenuButton(this.getId(), bIsExpand, {
+		const oMenuButton = TableToolbarFactory.createExpandCollapseMenuButton(this.getId(), bIsExpand, {
 			"tree": () => fnTree(this),
 			"node": () => {
 				const aContexts = this.getSelectedContexts();
 				return aContexts.length === 1 && fnNode(this, aContexts[0]);
 			}
-		}, "$sap.ui.mdc.Table");
+		});
 
 		oMenuButton.attachBeforeMenuOpen(() => {
 			const aContexts = this.getSelectedContexts();
@@ -2570,109 +2119,6 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Loads the export library and export capabilities in parallel and
-	 * returns an initialized <code>ExportHandler</code> instance. The
-	 * instance will be cached for subsequent calls.
-	 *
-	 * @returns {Promise<sap.ui.export.ExportHandler>} Promise that resolves with an initialized <code>ExportHandler</code> instance
-	 * @private
-	 */
-	Table.prototype._getExportHandler = function() {
-		const that = this;
-
-		if (this._oExportHandler) {
-			return Promise.resolve(this._oExportHandler);
-		}
-
-		return new Promise((fnResolve, fnReject) => {
-			Promise.all([
-				that.getControlDelegate().fetchExportCapabilities(that), Library.load({name: "sap.ui.export"})
-			]).then((aResult) => {
-				const [oExportCapabilities] = aResult;
-
-				sap.ui.require(["sap/ui/export/ExportHandler"], (ExportHandler) => {
-					that._oExportHandler = new ExportHandler(oExportCapabilities);
-					that._oExportHandler.attachBeforeExport(that._onBeforeExport, that);
-					fnResolve(that._oExportHandler);
-				});
-
-			}).catch((vError) => {
-				// If sap.ui.export is not loaded, show an error message and return without exporting
-				if (!Library.all().hasOwnProperty("sap.ui.export")) {
-					MessageBox.error(Library.getResourceBundleFor("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY"));
-				}
-
-				fnReject(vError);
-			});
-		});
-	};
-
-	/**
-	 * Generic event handler for <code>beforeExport</code> event of
-	 * the referenced <code>ExportHandler</code>. The event parameters
-	 * will be enhanced with table specific information and its own
-	 * <code>beforeExport</code> is fired.
-	 *
-	 * @param {sap.ui.base.Event} oEvent <code>beforeExport</code> event of the ExportHandler
-	 * @private
-	 */
-	Table.prototype._onBeforeExport = function(oEvent) {
-		const aFilters = oEvent.getParameter("filterSettings");
-		const oHelper = this.getPropertyHelper();
-
-		aFilters.forEach((oFilter) => {
-			const oProperty = oHelper.getProperties().find((oPropertyInfo) => {
-				return oPropertyInfo.path === oFilter.getProperty();
-			});
-
-			if (oProperty) {
-				oFilter.setLabel(oProperty.label);
-				oFilter.setType(oProperty.typeConfig.typeInstance);
-			}
-		});
-
-		ExportUtils.fireBeforeExport(this, {filterSettings: aFilters}, oEvent);
-	};
-
-	/**
-	 * Event handler for <code>keydown</code>.
-	 * @param {object} oEvent The event object
-	 * @private
-	 */
-	Table.prototype.onkeydown = function(oEvent) {
-		if (oEvent.isMarked()) {
-			return;
-		}
-
-		if (isExportShortcut(oEvent)) {
-			if (this._oExportButton && this._oExportButton.getEnabled() && this._isExportEnabled()) {
-				this._onExport(true);
-				oEvent.setMarked();
-				oEvent.preventDefault();
-			}
-		}
-
-		if (isOpenPersonalizationShortcut(oEvent)) {
-			if (this._oP13nButton && this._oP13nButton.getVisible()) {
-				this._oP13nButton.firePress();
-
-				// Mark the event to ensure that parent handlers (e.g. FLP) can skip their processing if needed. Also prevent potential browser
-				// defaults (e.g. Cmd+, opens browser settings on Mac).
-				oEvent.setMarked();
-				oEvent.preventDefault();
-			}
-		}
-	};
-
-	function isExportShortcut(oEvent) {
-		return (oEvent.metaKey || oEvent.ctrlKey) && oEvent.shiftKey && oEvent.which === KeyCodes.E;
-	}
-
-	function isOpenPersonalizationShortcut(oEvent) {
-		return (oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA;
-	}
-
 	Table.prototype._createTable = function() {
 		const oType = this._getType();
 
@@ -2681,7 +2127,7 @@ sap.ui.define([
 
 		oType.updateTable();
 
-		updateFilterInfoBar(this);
+		this._updateFilterInfoBar();
 		updateColumnMenu(this);
 
 		this._updateInvisibleTitle();
@@ -2867,25 +2313,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Event handler for binding dataRequested
-	 *
-	 * @private
-	 */
-	Table.prototype._onBindingDataRequested = function() {
-		this._bSkipAnnounceTableUpdate = true;
-	};
-
-	/**
-	 * Event handler for binding dataReceived
-	 *
-	 * @private
-	 */
-	Table.prototype._onBindingDataReceived = function() {
-		this._bSkipAnnounceTableUpdate = false;
-		this._updateRowCountForHeader();
-	};
-
-	/**
 	 * Event handler for binding change
 	 *
 	 * @private
@@ -2894,16 +2321,7 @@ sap.ui.define([
 		this.fireEvent("_bindingChange"); // consumed by sap.ui.mdc.valuehelp.content.MDCTable
 		this._updateExpandAllButton();
 		this._updateCollapseAllButton();
-		this._updateExportButton();
-		this._updateRowCountForHeader();
-	};
-
-	Table.prototype._updateRowCountForHeader = function() {
-		if (this._bAnnounceTableUpdate && !this._bSkipAnnounceTableUpdate) {
-			this._bAnnounceTableUpdate = false;
-			const iCount = this.getRowBinding().getCount();
-			MTableUtil.announceTableUpdate(this.getHeader(), (this.getShowRowCount() || iCount === 0) ? iCount : undefined);
-		}
+		ListTableBase.prototype._onBindingChange.apply(this, arguments);
 	};
 
 	Table.prototype._updateColumnsBeforeBinding = function() {
@@ -2939,6 +2357,10 @@ sap.ui.define([
 	 */
 	Table.prototype.getRowBinding = function() {
 		return this._getType().getRowBinding();
+	};
+
+	Table.prototype._isRowCountShown = function() {
+		return this.getShowRowCount();
 	};
 
 	Table.prototype._getRowBinding = function() {
@@ -3030,33 +2452,25 @@ sap.ui.define([
 		// Destroy destructible elements and delete references.
 		[
 			"_oTable",
-			"_oTitle",
-			"_oTableTitle",
 			"_oTableReady",
 			"_oFullInitialize",
 			"_oPasteButton",
-			"_oP13nButton",
 			"_oRowTemplate",
 			"_oToolbar",
-			"_oFilterInfoBarInvisibleText",
 			"_oColumnHeaderMenu",
-			"_oManagedObjectModel",
-			"_oDefaultType",
 			"_oInvisibleTitle"
 		].concat((() => aToolBarBetweenAggregations.map((sAggregationName) => "_o" + capitalize(sAggregationName)))()).forEach((sField) => {
 			this[sField]?.destroy?.();
 			delete this[sField];
 		});
 
-		Control.prototype.exit.apply(this, arguments);
+		ListTableBase.prototype.exit.apply(this, arguments);
 	};
 
 	/**
 	 * Handler for theme changes
 	 */
 	Table.prototype.onThemeChanged = function() {
-		this._oManagedObjectModel.setProperty("/@custom/toolbarButtonType", ToolbarSettings.getToolbarButtonType());
-
 		if (this._oToolbar) {
 			const sToolBarDesign = ToolbarDesign[ThemeParameters.get({name: "_sap_ui_mdc_Table_ToolbarDesign"})];
 			this._oToolbar.setDesign(sToolBarDesign);
@@ -3085,7 +2499,7 @@ sap.ui.define([
 		if (oVariantManagement) {
 			oVariantManagement.setShowAsText(this.getHeaderVisible());
 			oVariantManagement.setHeaderLevel(this.getHeaderLevel());
-			oVariantManagement.setTitleStyle(this.getHeaderStyle() || TitleLevel[ThemeParameters.get({name: "_sap_ui_mdc_Table_HeaderStyle"})]);
+			oVariantManagement.setTitleStyle(this._getEffectiveHeaderStyle());
 		}
 	};
 
@@ -3331,7 +2745,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc, sap.ui.fl
 	 */
 
-	FilterIntegrationMixin.call(Table.prototype);
 	DynamicPropertiesMixin.call(Table.prototype, {aggregation: "columns"});
 	ActionToolbarMixin.call(Table.prototype);
 	DeferredAggregationForwardMixin.call(Table.prototype, [{

@@ -125,6 +125,17 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("autoBindOnInit=false skips the initial items binding", async function(assert) {
+		this.oList = await createMDCList({
+			autoBindOnInit: false,
+			itemTemplate: createGridListTemplate()
+		});
+
+		return waitForInitialized(this.oList).then(function() {
+			assert.notOk(this.oList._oList.isBound("items"), "Inner list is not bound when autoBindOnInit is false");
+		}.bind(this));
+	});
+
 	QUnit.module("Properties", {
 		beforeEach: async function() {
 			this.oList = await createMDCList({
@@ -148,20 +159,16 @@ sap.ui.define([
 		assert.ok(this.oList._oTitle, "Title control exists");
 	});
 
-	QUnit.test("setHeaderVisible toggles title visibility class", function(assert) {
-		const oTitle = this.oList._oTitle;
+	QUnit.test("setHeaderVisible toggles the title visibility", function(assert) {
 		const fnInvalidate = this.spy(this.oList, "invalidate");
 
-		// Default: headerVisible=true → no hidden class
-		assert.notOk(oTitle.hasStyleClass("sapUiMdcListTitleHidden"), "Title is visible by default");
+		assert.ok(this.oList._oTableTitle.getVisible(), "Title is visible by default");
 
-		// Hide header: class is added
 		this.oList.setHeaderVisible(false);
-		assert.ok(oTitle.hasStyleClass("sapUiMdcListTitleHidden"), "Title has hidden class when headerVisible=false");
+		assert.notOk(this.oList._oTableTitle.getVisible(), "Title is hidden when headerVisible=false");
 
-		// Show again: class is removed
 		this.oList.setHeaderVisible(true);
-		assert.notOk(oTitle.hasStyleClass("sapUiMdcListTitleHidden"), "Title has no hidden class when headerVisible=true");
+		assert.ok(this.oList._oTableTitle.getVisible(), "Title is visible when headerVisible=true");
 		assert.ok(fnInvalidate.notCalled, "No invalidation triggered");
 	});
 
@@ -170,6 +177,30 @@ sap.ui.define([
 		assert.ok(oInnerList.getGrowing(), "Growing is forwarded");
 		assert.equal(oInnerList.getGrowingThreshold(), 5, "threshold is forwarded");
 		assert.ok(oInnerList.getGrowingScrollToLoad(), "growingMode Scroll maps to growingScrollToLoad=true");
+	});
+
+	QUnit.test("busyIndicatorDelay is forwarded to the inner list", function(assert) {
+		this.oList.setBusyIndicatorDelay(42);
+		assert.equal(this.oList._oList.getBusyIndicatorDelay(), 42, "busyIndicatorDelay is forwarded to the inner list");
+	});
+
+	QUnit.test("Title uses the List context so the count reads as items", function(assert) {
+		assert.strictEqual(this.oList._oTableTitle.getContext(), "List", "Title context is List");
+		assert.strictEqual(this.oList._oTableTitle.getShowExtendedView(), true, "Title shows the extended count view by default");
+	});
+
+	QUnit.test("Title keeps labelling the inner list when headerVisible is false", async function(assert) {
+		assert.ok(this.oList._oList.getAriaLabelledBy().includes(this.oList._oTitle.getId()),
+			"Inner list is labelled by the title");
+
+		this.oList.setHeaderVisible(false);
+		await nextUIUpdate();
+
+		assert.notOk(this.oList._oTableTitle.getVisible(), "Title is not visible");
+		assert.notEqual(this.oList._oTitle.getDomRef(), null,
+			"Title content is still rendered, so aria-labelledby keeps providing the accessible name");
+		assert.ok(this.oList._oList.getAriaLabelledBy().includes(this.oList._oTitle.getId()),
+			"Inner list is still labelled by the title when the header is hidden");
 	});
 
 	QUnit.test("setHeaderLevel updates property and title level without re-render", function(assert) {
@@ -365,6 +396,10 @@ sap.ui.define([
 
 	QUnit.test("selectionChange event", function(assert) {
 		const done = assert.async();
+
+		const oEventMetadata = this.oList.getMetadata().getEvent("selectionChange");
+		assert.notOk(oEventMetadata.appData?.parameters?.selectAll, "selectionChange does not expose a selectAll parameter");
+
 		this.oList.attachEventOnce("selectionChange", function() {
 			assert.ok(true, "selectionChange event is fired");
 			done();
@@ -395,23 +430,18 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Selected count updates on selection change", function(assert) {
-		const oModel = this.oList._oManagedObjectModel;
-		const oInnerList = this.oList._oList;
-		const aItems = oInnerList.getItems();
+	QUnit.test("Item count is managed by the title provider plugin", function(assert) {
+		const oTitleProvider = this.oList._oList.getDependents().find((o) => o.isA("sap.m.plugins.TitleProvider"));
+		assert.ok(oTitleProvider, "TitleProvider plugin is added to the inner list");
+		assert.strictEqual(oTitleProvider.getTitle(), this.oList.getId() + "-tableTitle", "plugin targets the toolbar title");
+		assert.ok(oTitleProvider.getEnabled(), "plugin is enabled (headerVisible and showItemCount)");
 
-		assert.ok(aItems.length > 0, "Inner list has items");
-		assert.equal(oModel.getProperty("/@custom/selectedCount"), 0, "Initially selectedCount is 0");
+		this.oList.setShowItemCount(false);
+		assert.notOk(oTitleProvider.getEnabled(), "plugin is disabled when showItemCount is false");
 
-		// Select an item on the inner list, then trigger the count update.
-		oInnerList.setSelectedItem(aItems[0], true);
-		this.oList._updateSelectedCount();
-		assert.equal(oModel.getProperty("/@custom/selectedCount"), 1, "One item selected, count is 1");
-
-		// Deselect again — the count returns to 0.
-		oInnerList.setSelectedItem(aItems[0], false);
-		this.oList._updateSelectedCount();
-		assert.equal(oModel.getProperty("/@custom/selectedCount"), 0, "After deselection, count is 0");
+		this.oList.setShowItemCount(true);
+		this.oList.setHeaderVisible(false);
+		assert.notOk(oTitleProvider.getEnabled(), "plugin is disabled when headerVisible is false");
 	});
 
 	QUnit.module("State management", {
@@ -944,7 +974,7 @@ sap.ui.define([
 		assert.notOk("Aggregate" in ListP13nMode, "Aggregate is not part of ListP13nMode");
 	});
 
-	QUnit.module("Delegate getItemTemplate hook", {
+	QUnit.module("itemTemplate", {
 		afterEach: function() {
 			if (this.oList) {
 				this.oList.destroy();
@@ -952,7 +982,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("App-provided itemTemplate is used when delegate returns null", async function(assert) {
+	QUnit.test("App-provided itemTemplate is used for item binding", async function(assert) {
 		const oTemplate = createGridListTemplate();
 		this.oList = await createMDCList({
 			type: new GridListType(),
@@ -964,46 +994,19 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Delegate-provided template takes precedence over app itemTemplate", async function(assert) {
-		const oDelegateTemplate = new VBox();
-		const oDelegate = Object.assign({}, sap.ui.mdc.ListDelegate || {
-			updateBindingInfo: function(oList, oBindingInfo) {
-				oBindingInfo.path = oBindingInfo.path || oList.getPayload().bindingPath;
-			}
-		});
-		oDelegate.getItemTemplate = function() {
-			return oDelegateTemplate;
-		};
-
+	QUnit.test("No itemTemplate means no item binding", async function(assert) {
 		this.oList = await createMDCList({
-			type: new GridListType(),
-			delegate: {
-				name: "sap/ui/mdc/ListDelegate",
-				payload: {bindingPath: "/"}
-			},
-			itemTemplate: createGridListTemplate() // app template should be ignored
+			type: new GridListType()
 		});
 
-		// Stub the delegate on the already-initialized list
-		this.oList.getControlDelegate().getItemTemplate = function() {
-			return oDelegateTemplate;
-		};
-
-		this.oList._bindItems();
-		await nextUIUpdate();
-
-		assert.ok(this.oList._oList.isBound("items"), "Items are bound when delegate provides template");
-
-		// Clean up stub
-		delete this.oList.getControlDelegate().getItemTemplate;
-		oDelegateTemplate.destroy();
+		return waitForInitialized(this.oList).then(function() {
+			assert.notOk(this.oList._oList.isBound("items"), "Items are not bound without an itemTemplate");
+		}.bind(this));
 	});
 
 	QUnit.module("itemTemplate binding propagation", {
 		beforeEach: function() {
 			// Do NOT use createMDCList here — we need the list but don't need items bound.
-			// createMDCList triggers _createContent which calls _bindItems before the
-			// delegate is ready, causing a "getItemTemplate is not a function" error.
 			this.oList = new MDCList({
 				delegate: { name: "sap/ui/mdc/ListDelegate", payload: { bindingPath: "/" } },
 				type: new GridListType(),
@@ -1046,6 +1049,129 @@ sap.ui.define([
 	QUnit.test("itemSettings is also in mSkipPropagation (regression guard)", function(assert) {
 		// Verify itemSettings skip propagation is not accidentally removed.
 		assert.ok(this.oList.mSkipPropagation["itemSettings"], "itemSettings is still in mSkipPropagation");
+	});
+
+	QUnit.module("contextMenu forwarding", {
+		afterEach: function() {
+			this.oList?.destroy();
+		}
+	});
+
+	QUnit.test("set before the inner list exists is forwarded on creation", async function(assert) {
+		const oMenu = new Menu();
+		this.oList = await createMDCList({
+			type: new GridListType(),
+			itemTemplate: createGridListTemplate(),
+			contextMenu: oMenu
+		});
+
+		await waitForInitialized(this.oList);
+		assert.strictEqual(this.oList.getContextMenu(), oMenu, "getContextMenu returns the stored menu");
+		assert.strictEqual(this.oList._oList.getContextMenu(), oMenu, "context menu forwarded to the inner list");
+	});
+
+	QUnit.test("set after the inner list exists is forwarded immediately", async function(assert) {
+		this.oList = await createMDCList({
+			type: new GridListType(),
+			itemTemplate: createGridListTemplate()
+		});
+		await waitForInitialized(this.oList);
+
+		const oMenu = new Menu();
+		this.oList.setContextMenu(oMenu);
+		assert.strictEqual(this.oList._oList.getContextMenu(), oMenu, "context menu forwarded to the inner list");
+	});
+
+	QUnit.test("destroy removes the stored context menu", async function(assert) {
+		const oMenu = new Menu();
+		this.oList = await createMDCList({
+			type: new GridListType(),
+			itemTemplate: createGridListTemplate(),
+			contextMenu: oMenu
+		});
+		await waitForInitialized(this.oList);
+
+		this.oList.destroyContextMenu();
+		assert.strictEqual(this.oList.getContextMenu(), null, "context menu is removed");
+	});
+
+	QUnit.test("type switch re-forwards the context menu to the new inner list", async function(assert) {
+		const oMenu = new Menu();
+		this.oList = await createMDCList({
+			type: new GridListType(),
+			itemTemplate: createGridListTemplate(),
+			contextMenu: oMenu
+		});
+		await waitForInitialized(this.oList);
+		assert.strictEqual(this.oList._oList.getContextMenu(), oMenu, "forwarded to the first inner list");
+
+		this.oList.setType(new ListType());
+		await waitForInitialized(this.oList);
+		assert.strictEqual(this.oList._oList.getContextMenu(), oMenu, "re-forwarded to the new inner list after type switch");
+	});
+
+	QUnit.module("noData forwarding", {
+		afterEach: function() {
+			this.oList?.destroy();
+		}
+	});
+
+	QUnit.test("string noData is forwarded to the inner list", async function(assert) {
+		this.oList = await createMDCList({
+			type: new GridListType(),
+			itemTemplate: createGridListTemplate(),
+			noData: "Nothing here"
+		});
+		await waitForInitialized(this.oList);
+		assert.strictEqual(this.oList._oList.getNoData(), "Nothing here", "noData string forwarded to the inner list");
+	});
+
+	QUnit.test("noData set after creation is forwarded immediately", async function(assert) {
+		this.oList = await createMDCList({
+			type: new GridListType(),
+			itemTemplate: createGridListTemplate()
+		});
+		await waitForInitialized(this.oList);
+
+		this.oList.setNoData("Updated");
+		assert.strictEqual(this.oList._oList.getNoData(), "Updated", "updated noData forwarded to the inner list");
+	});
+
+	QUnit.test("type switch re-forwards noData to the new inner list", async function(assert) {
+		this.oList = await createMDCList({
+			type: new GridListType(),
+			itemTemplate: createGridListTemplate(),
+			noData: "Empty"
+		});
+		await waitForInitialized(this.oList);
+
+		this.oList.setType(new ListType());
+		await waitForInitialized(this.oList);
+		assert.strictEqual(this.oList._oList.getNoData(), "Empty", "re-forwarded to the new inner list after type switch");
+	});
+
+	QUnit.module("Filter info bar", {
+		beforeEach: async function() {
+			this.oList = await createMDCList({
+				type: new GridListType(),
+				itemTemplate: createGridListTemplate()
+			});
+			return waitForInitialized(this.oList);
+		},
+		afterEach: function() {
+			this.oList.destroy();
+		}
+	});
+
+	QUnit.test("shared FilterInfoBar is set on the inner list when filters are active", function(assert) {
+		this.stub(this.oList, "_getFilterInfoText").returns("Filtered (1)");
+
+		this.oList._updateFilterInfoBar();
+
+		const oInfoToolbar = this.oList._oList.getInfoToolbar();
+		assert.ok(oInfoToolbar?.isA("sap.ui.mdc.table.utils.FilterInfoBar"), "inner list uses the shared FilterInfoBar");
+		assert.strictEqual(oInfoToolbar.getInfoText(), "Filtered (1)", "info bar shows the filter text");
+		assert.strictEqual(oInfoToolbar.getTable(), this.oList.getId(), "info bar references the List");
 	});
 
 });

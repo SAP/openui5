@@ -123,6 +123,7 @@ sap.ui.define([
 		"sap.ui.comp.navpopover.SemanticObjectController",
 		"sap.ui.comp.valuehelpdialog.ValueHelpDialog",
 		"sap.ui.mdc.Chart", // destruction fails
+		"sap.ui.mdc.ListTableBase", // abstract base of sap.ui.mdc.List and sap.ui.mdc.Table, cannot be instantiated standalone
 		"sap.chart.Chart",
 		"sap.makit.Chart",
 		"sap.makit.CombinationChart",

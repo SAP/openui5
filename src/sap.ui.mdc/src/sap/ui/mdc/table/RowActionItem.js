@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element",
+	"sap/ui/mdc/table/RowItemActionItemBase",
 	// load for availability
 	"sap/ui/mdc/enums/TableRowActionType"
 ], (
-	Element,
+	RowItemActionItemBase,
 	TableRowActionType
 ) => {
 	"use strict";
@@ -21,15 +21,21 @@ sap.ui.define([
 	 * @class
 	 * The <code>RowActionItem</code> control represents a action for a row.
 	 * This control can only be used in the context of <code>sap.ui.mdc.Table</code> control to define row actions.
-	 * @extends sap.ui.core.Element
+	 *
+	 * <b>Note:</b> A custom <code>text</code> or <code>icon</code> cannot be set when the table type is
+	 * {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}.
+	 *
+	 * <b>Note:</b> If the table type is {@link sap.ui.mdc.table.GridTableType GridTable}, the <code>press</code> event is fired when a row
+	 * action item is pressed. If the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, the <code>press</code> event
+	 * and the table's <code>rowPress</code> event are fired when a row with a row action item is pressed.
+	 * @extends sap.ui.mdc.table.RowItemActionItemBase
 	 * @version ${version}
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.mdc.table.RowActionItem
 	 */
-
-	const RowActionItem = Element.extend("sap.ui.mdc.table.RowActionItem", {
+	const RowActionItem = RowItemActionItemBase.extend("sap.ui.mdc.table.RowActionItem", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -39,53 +45,10 @@ sap.ui.define([
 				 * Setting the type ensures default values for the properties <code>icon</code> and <code>text</code>. If an icon or text is set
 				 * explicitly, this setting is used.
 				 */
-				type: {type: "sap.ui.mdc.enums.TableRowActionType", defaultValue: TableRowActionType.Custom},
-				/**
-				 * Text for the row action item.
-				 *
-				 * <b>Note:</b> A custom text cannot be set when the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}.
-				 */
-				text: {type: "string"},
-				/**
-				 * Icon for the row action item.
-				 *
-				 * <b>Note:</b> A custom icon cannot be set when the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}.
-				 */
-				icon: {type: "sap.ui.core.URI"},
-				/**
-				 * Whether the item should be visible on the screen.
-				 */
-				visible: {type: "boolean", defaultValue: true}
-			},
-			events: {
-				/**
-				 * Fired when the row action item is pressed.
-				 *
-				 * If the table type is {@link sap.ui.mdc.table.GridTableType GridTable}, the <code>press</code> event is fired when a row action
-				 * item is pressed.
-				 *
-				 * If the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, the <code>press</code> event and the table's
-				 * <code>rowPress</code> event are fired when a row with a row action item is pressed.
-				 */
-				press: {
-					parameters: {
-						/**
-						 * The binding context of the pressed row action
-						 */
-						bindingContext: {
-							type: "sap.ui.model.Context"
-						}
-					}
-				}
+				type: {type: "sap.ui.mdc.enums.TableRowActionType", defaultValue: TableRowActionType.Custom}
 			}
 		}
 	});
-
-	RowActionItem.prototype._onPress = function(mPropertyBag) {
-		this.firePress({
-			bindingContext: mPropertyBag.bindingContext
-		});
-	};
 
 	return RowActionItem;
 });

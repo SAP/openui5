@@ -3550,7 +3550,7 @@ sap.ui.define([
 
 			oFilter.fireSearch();
 			assert.ok(true, "Search is triggered.");
-			assert.equal(this.oTable._bAnnounceTableUpdate, true, "Table internal flag _bAnnounceTableUpdate is set to true");
+			assert.equal(this.oTable._bAnnounceContentUpdate, true, "Table internal flag _bAnnounceContentUpdate is set to true");
 			this.stub(oBinding, "getCount").returns(1);
 			oBinding.fireDataReceived(); // invoke event handler manually since we have a JSONModel
 			assert.equal(fnAnnounceTableUpdate.callCount, 1, "MTableUtil.announceTableUpdate call");
@@ -3559,7 +3559,7 @@ sap.ui.define([
 			this.oTable.setShowRowCount(false);
 			oFilter.fireSearch();
 			assert.ok(true, "Search is triggered.");
-			assert.equal(this.oTable._bAnnounceTableUpdate, true, "Table internal flag _bAnnounceTableUpdate is set to true");
+			assert.equal(this.oTable._bAnnounceContentUpdate, true, "Table internal flag _bAnnounceContentUpdate is set to true");
 			oBinding.fireDataReceived(); // invoke event handler manually since we have a JSONModel
 			assert.ok(fnAnnounceTableUpdate.calledOnceWithExactly("Test Table", undefined),
 				"MTableUtil.announceTableUpdate called with correct parameters when showRowCount is false and row count > 0.");
@@ -3568,7 +3568,7 @@ sap.ui.define([
 			oBinding.getCount.returns(0);
 			oFilter.fireSearch();
 			assert.ok(true, "Search is triggered.");
-			assert.equal(this.oTable._bAnnounceTableUpdate, true, "Table internal flag _bAnnounceTableUpdate is set to true");
+			assert.equal(this.oTable._bAnnounceContentUpdate, true, "Table internal flag _bAnnounceContentUpdate is set to true");
 			oBinding.fireDataReceived(); // invoke event handler manually since we have a JSONModel
 			assert.ok(fnAnnounceTableUpdate.calledOnceWithExactly("Test Table", 0),
 				"MTableUtil.announceTableUpdate called with correct parameters when showRowCount is false and row count = 0.");
@@ -3584,7 +3584,7 @@ sap.ui.define([
 			fnAnnounceTableUpdate.resetHistory();
 			oFilter.fireSearch();
 			assert.ok(true, "Search is triggered.");
-			assert.equal(this.oTable._bAnnounceTableUpdate, true, "Table internal flag _bAnnounceTableUpdate is set to true");
+			assert.equal(this.oTable._bAnnounceContentUpdate, true, "Table internal flag _bAnnounceContentUpdate is set to true");
 			oBinding.getCount.returns(3);
 			oBinding.fireEvent("change");
 			// in some cases OData V4 doesn't trigger a data request, but the binding context changes and the item count has to be announced
@@ -3636,7 +3636,7 @@ sap.ui.define([
 		return TableQUnitUtils.waitForBinding(this.oTable).then(function() {
 			this.oTable.getRowBinding().fireDataReceived(); // invoke event handler manually since we have a JSONModel
 			assert.ok(fnOnDataReceived.called, "Event dataReceived is fired.");
-			assert.equal(this.oTable._bAnnounceTableUpdate, undefined, "Table internal flag _bAnnounceTableUpdate is undefined");
+			assert.equal(this.oTable._bAnnounceContentUpdate, undefined, "Table internal flag _bAnnounceContentUpdate is undefined");
 			assert.notOk(fnAnnounceTableUpdate.called, "Function announceTableUpdate is never called.");
 			fnAnnounceTableUpdate.restore();
 		}.bind(this));
@@ -6099,8 +6099,8 @@ sap.ui.define([
 			assert.ok(oCopyButton, "Copy button exists");
 			assert.ok(oExpandButton.isA("sap.m.OverflowToolbarButton"), "Expand button (plain variant) exists");
 			assert.ok(oCollapseMenuButton.isA("sap.m.OverflowToolbarMenuButton"), "Collapse button (menu variant) exists");
-			assert.equal(this.oTable.getModel("$sap.ui.mdc.Table").getProperty("/@custom/toolbarButtonType"),
-				sExpectedButtontype, "Model provides the common overflow type");
+			assert.equal(this.oTable._oP13nButton.getModel("$sap.ui.mdc.ToolbarFactory").getProperty("/buttonType"),
+				sExpectedButtontype, "Shared toolbar factory model provides the common overflow type");
 
 			const types = [
 				this.oTable._oExportButton.getType(),

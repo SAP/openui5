@@ -169,7 +169,7 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype._updateRowCountMode = function() {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 		const sRowCountMode = this.getRowCountMode();
 		let oRowMode = oGridTable?.getRowMode();
 
@@ -205,7 +205,7 @@ sap.ui.define([
 	}
 
 	GridTableType.prototype._updateRowCount = function() {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 		const oRowMode = oGridTable?.getRowMode();
 		const iRowCount = this.getRowCount();
 		const sRowCountMode = this.getRowCountMode();
@@ -337,7 +337,7 @@ sap.ui.define([
 	function onBeforeOpenContextMenu(oEvent) {
 		const mEventParameters = oEvent.getParameters();
 		const oTable = this.getTable();
-		const oInnerTable = this.getInnerTable();
+		const oInnerTable = this.getInnerControl();
 		const oRow = oInnerTable.getRows().find((oRow) => oRow.getIndex() === mEventParameters.rowIndex);
 
 		this.callHook("BeforeOpenContextMenu", oTable, {
@@ -381,7 +381,7 @@ sap.ui.define([
 
 	GridTableType.prototype.enableColumnResize = function() {
 		const oTable = this.getTable();
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 
 		if (!oTable || !oGridTable) {
 			return;
@@ -397,7 +397,7 @@ sap.ui.define([
 
 	GridTableType.prototype.disableColumnResize = function() {
 		const oTable = this.getTable();
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 
 		if (!oTable || !oGridTable) {
 			return;
@@ -412,7 +412,7 @@ sap.ui.define([
 
 	function onColumnResize(oEvent) {
 		const oTable = this.getTable();
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 		const oGridTableColumn = oEvent.getParameter("column");
 		const sWidth = oEvent.getParameter("width");
 		const iIndex = oGridTable.indexOfColumn(oGridTableColumn);
@@ -429,12 +429,12 @@ sap.ui.define([
 
 		await Promise.resolve(); // Make asynchronous to ensure that the inner table property value is set
 		PersonalizationUtils.createFixedColumnCountChange(oTable, {
-			fixedColumnCount: this.getInnerTable().getFixedColumnCount()
+			fixedColumnCount: this.getInnerControl().getFixedColumnCount()
 		});
 	}
 
 	GridTableType.prototype.updateRowSettings = function() {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 
 		if (!oGridTable) {
 			return;
@@ -446,7 +446,7 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.updateRowActions = function() {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 
 		if (!oGridTable) {
 			return;
@@ -499,7 +499,7 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype._removeRowActions = function() {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 		const oInnerRowAction = oGridTable.getRowActionTemplate();
 
 		if (oInnerRowAction) {
@@ -530,14 +530,14 @@ sap.ui.define([
 		oInnerRowActionItem.addDependent(oRowActionItem);
 
 		this.callHook("Press", oRowActionItem, {
-			bindingContext: oEvent.getParameter("row").getBindingContext(this.getInnerTable().getBindingInfo("rows").model)
+			bindingContext: oEvent.getParameter("row").getBindingContext(this.getInnerControl().getBindingInfo("rows").model)
 		});
 
 		oInnerRowActionItem.removeDependent(oRowActionItem);
 	}
 
 	GridTableType.prototype.prepareRowPress = function() {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 		if (oGridTable && !oGridTable.hasListeners("cellClick")) {
 			// Only add cellClick listener, if none has been registered yet
 			oGridTable.attachEvent("cellClick", onCellClick, this);
@@ -548,12 +548,12 @@ sap.ui.define([
 		const oTable = this.getTable();
 		if (!oTable.hasListeners("rowPress")) {
 			// Only detach cellClick listener, if table has no rowPress event listener anymore
-			this.getInnerTable()?.detachEvent("cellClick", onCellClick, this);
+			this.getInnerControl()?.detachEvent("cellClick", onCellClick, this);
 		}
 	};
 
 	GridTableType.prototype.removeToolbar = function() {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 
 		if (oGridTable) {
 			oGridTable.removeExtension(this.getTable()._oToolbar);
@@ -561,7 +561,7 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.scrollToIndex = function(iIndex) {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 
 		if (!oGridTable) {
 			return Promise.reject();
@@ -571,12 +571,12 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.getRowBinding = function() {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 		return oGridTable ? oGridTable.getBinding() : undefined;
 	};
 
 	GridTableType.prototype.bindRows = function(oBindingInfo) {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 
 		if (oGridTable) {
 			oGridTable.bindRows(oBindingInfo);
@@ -584,12 +584,12 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.isTableBound = function() {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 		return oGridTable ? oGridTable.isBound("rows") : false;
 	};
 
 	GridTableType.prototype.insertFilterInfoBar = function(oFilterInfoBar) {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 
 		if (oGridTable) {
 			const sFilterInfoBarAccTextId = oFilterInfoBar.getACCTextId();
@@ -603,11 +603,11 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.setFooter = function(oFooter) {
-		this.getInnerTable()?.setFooter(oFooter);
+		this.getInnerControl()?.setFooter(oFooter);
 	};
 
 	GridTableType.prototype.setContextMenu = function(oContextMenu) {
-		this.getInnerTable()?.setContextMenu(oContextMenu);
+		this.getInnerControl()?.setContextMenu(oContextMenu);
 	};
 
 	GridTableType.prototype.createNoColumnsMessage = function() {
@@ -617,7 +617,7 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.setNoData = function(vNoData) {
-		const oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerControl();
 
 		if (!oGridTable) {
 			return;

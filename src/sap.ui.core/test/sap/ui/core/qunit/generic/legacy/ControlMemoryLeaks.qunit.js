@@ -94,6 +94,7 @@ sap.ui.define([
 		 */
 		"sap.ui.core.tmpl.Template",
 		"sap.m.internal.NumericInput",
+		"sap.ui.mdc.ListTableBase", // abstract base of sap.ui.mdc.List and sap.ui.mdc.Table, cannot be instantiated standalone
 		"sap.m.DateTimeInput",  // setting an invalid type crashes and only leaks a picker control because of this
 		"sap.m.FacetFilterItem",
 		"sap.m.IconTabBarSelectList",

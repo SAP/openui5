@@ -5,11 +5,13 @@
 sap.ui.define([
 	"./AggregationBaseDelegate",
 	"sap/ui/mdc/mixin/delegate/FilterIntegrationDefault",
+	"sap/ui/mdc/util/loadModules",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/Lib"
 ], (
 	AggregationBaseDelegate,
 	FilterIntegrationDefault,
+	loadModules,
 	Sorter,
 	Lib
 ) => {
@@ -55,21 +57,6 @@ sap.ui.define([
 		});
 
 		return aSorters;
-	};
-
-	/**
-	 * Returns the item template to be used for list items.
-	 *
-	 * Override this method in a concrete delegate to provide a custom template. Return <code>null</code>
-	 * to use the template from the list's <code>itemTemplate</code> aggregation instead.
-	 *
-	 * @param {sap.ui.mdc.List} oList Instance of the list
-	 * @param {object} oBindingInfo The current binding info
-	 * @returns {sap.ui.core.Control|null} The item template, or <code>null</code> to fall back to the aggregation template
-	 * @protected
-	 */
-	ListDelegate.getItemTemplate = function(oList, oBindingInfo) {
-		return null;
 	};
 
 	/**
@@ -252,8 +239,19 @@ sap.ui.define([
 	 * @returns {Promise} A <code>Promise</code> that resolves after the content has been initialized
 	 * @private
 	 */
-	ListDelegate.initializeContent = function(oList) {
-		return Promise.resolve();
+	ListDelegate.initializeContent = async function(oList) {
+		const [TitleProvider] = await loadModules("sap/m/plugins/TitleProvider");
+
+		if (oList.isDestroyed()) {
+			return;
+		}
+
+		oList._oList.addDependent(new TitleProvider({
+			id: `${oList.getId()}-titleProvider`,
+			title: `${oList.getId()}-tableTitle`,
+			enabled: "{= ${$sap.ui.mdc.List>/headerVisible} && ${$sap.ui.mdc.List>/showItemCount} }",
+			manageSelectedCount: "{= ${$sap.ui.mdc.List>/selectionMode} === 'Multi' }"
+		}));
 	};
 
 	return ListDelegate;

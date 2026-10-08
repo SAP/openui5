@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper",
+	"../util/ListTablePropertyHelper",
 	"sap/m/table/Util",
 	"sap/ui/base/Object"
 ], (
@@ -29,7 +29,7 @@ sap.ui.define([
 	 * Validates the given properties, sets defaults, and provides utilities to work with these properties.
 	 * The utilities can only be used for properties that are known to the helper. Known properties are all those that are passed to the constructor.
 	 *
-	 * @extends sap.ui.mdc.util.PropertyHelper
+	 * @extends sap.ui.mdc.util.ListTablePropertyHelper
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -41,19 +41,29 @@ sap.ui.define([
 	const PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.table.PropertyHelper", {
 		constructor: function(aProperties, oParent, mExtensionAttributes) {
 			PropertyHelperBase.call(this, aProperties, oParent, Object.assign({
-				// Enable default attributes
-				filterable: true,
-				sortable: true,
+				// Enable additional default attributes
 				propertyInfos: true,
 				isActive: true,
 
-				// Additional attributes
+				// Allow the shared attributes inside complex properties
 				groupable: {
 					type: "boolean",
 					inComplexProperty: {
 						valueIfNotAllowed: false
 					}
 				},
+				exportSettings: {
+					type: "object",
+					"default": {
+						value: {},
+						ignoreIfNull: true
+					},
+					inComplexProperty: {
+						allowed: true
+					}
+				},
+
+				// Additional attributes
 				isKey: {
 					type: "boolean",
 					inComplexProperty: {
@@ -65,16 +75,6 @@ sap.ui.define([
 				},
 				text: {
 					type: "PropertyReference"
-				},
-				exportSettings: {
-					type: "object",
-					"default": {
-						value: {},
-						ignoreIfNull: true
-					},
-					inComplexProperty: {
-						allowed: true
-					}
 				},
 				clipboardSettings: {
 					type: {

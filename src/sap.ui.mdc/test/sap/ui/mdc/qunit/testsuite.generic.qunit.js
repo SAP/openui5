@@ -20,6 +20,9 @@ sap.ui.define([
 					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
 				}
 			},
+			"sap.ui.mdc.ListTableBase": {
+				create: false // abstract base
+			},
 			"sap.ui.mdc.Element": {
 				properties: {
 					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit,

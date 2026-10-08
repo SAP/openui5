@@ -204,6 +204,25 @@ sap.ui.define([
         assert.equal(oTableTitle2CountsDomRef.innerText, "", "Setting counts to undefined, resets to default values.");
     });
 
+    QUnit.test("TableTitle context switches the extended count label between rows and items", async function(assert){
+        const oResourceBundle = Library.getResourceBundleFor("sap.m");
+
+        this.oTableTitle2.setShowExtendedView(true);
+        await nextUIUpdate();
+
+        assert.equal(this.oTableTitle2.getContext(), "Table", "Default context is Table");
+        assert.equal(this.oTableTitle2.getDomRef("tableTitleContent").innerText,
+            "(" + oResourceBundle.getText("TABLETITLE_SELECTED_ROW_COUNT_EXT", ["2", "10"]) + ")",
+            "Default context renders the row count label");
+
+        this.oTableTitle2.setContext("List");
+        await nextUIUpdate();
+
+        assert.equal(this.oTableTitle2.getDomRef("tableTitleContent").innerText,
+            "(" + oResourceBundle.getText("TABLETITLE_SELECTED_ITEM_COUNT_EXT", ["2", "10"]) + ")",
+            "List context renders the item count label");
+    });
+
     QUnit.test("TableTitle should change visibility correctly", async function(assert){
         assert.equal(this.oTableTitle2.getVisible(), true, "TableTitle is visible by default.");
         assert.equal(this.oTableTitle2.getDomRef().style.display, "", "TableTitle displayed is set to '' by default.");

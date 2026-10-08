@@ -37,15 +37,12 @@ sap.ui.define([
 	 */
 	const Title = Control.extend("sap.m.table.Title", /** @lends sap.m.table.Title.prototype */ {
 		metadata : {
-
 			library : "sap.m",
 			interfaces : [
 				"sap.ui.core.ITitle",
 				"sap.ui.core.IShrinkable"
 			],
-
 			properties : {
-
 				/**
 				 * Defines the value that is displayed as the total row count.
 				 *
@@ -76,12 +73,19 @@ sap.ui.define([
 				showExtendedView : {type : "boolean", group : "Appearance", defaultValue : false},
 
 				/**
+				 * Determines whether the count labels of the extended view read as rows (default) or as items.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
+				 */
+				context : {type : "string", group : "Appearance", defaultValue : "Table"},
+
+				/**
 				 * Determines whether the control is visible.
 				 *
 				 * <b>Note:</b> If set to <code>false</code>, the control is hidden but still rendered for accessibility reasons.
 				 */
 				visible : {type : "boolean", group : "Appearance", defaultValue : true}
-
 			},
 			defaultAggregation : "title",
 			aggregations : {
@@ -92,7 +96,6 @@ sap.ui.define([
 				 */
 				title : {type : "sap.m.Title", multiple : false}
 			}
-
 		},
 
 		renderer: TitleRenderer

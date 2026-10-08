@@ -1,10 +1,12 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/mdc/util/Common"
+	"sap/ui/mdc/util/Common",
+	"sap/ui/events/KeyCodes"
 ],
 function(
-	Common
+	Common,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -143,5 +145,22 @@ function(
 
 		Common.cleanup(oTarget, ["_nonExistent"]);
 		assert.strictEqual(oTarget._nonExistent, undefined, "missing field remains undefined");
+	});
+
+	QUnit.module("sap.ui.mdc.util.Common - keyboard shortcuts");
+
+	QUnit.test("isExportShortcut", function(assert) {
+		assert.ok(Common.isExportShortcut({ctrlKey: true, shiftKey: true, which: KeyCodes.E}), "Ctrl+Shift+E matches");
+		assert.ok(Common.isExportShortcut({metaKey: true, shiftKey: true, which: KeyCodes.E}), "Cmd+Shift+E matches");
+		assert.notOk(Common.isExportShortcut({ctrlKey: true, which: KeyCodes.E}), "Ctrl+E without Shift does not match");
+		assert.notOk(Common.isExportShortcut({shiftKey: true, which: KeyCodes.E}), "Shift+E without Ctrl/Cmd does not match");
+		assert.notOk(Common.isExportShortcut({ctrlKey: true, shiftKey: true, which: KeyCodes.A}), "wrong key does not match");
+	});
+
+	QUnit.test("isOpenPersonalizationShortcut", function(assert) {
+		assert.ok(Common.isOpenPersonalizationShortcut({ctrlKey: true, which: KeyCodes.COMMA}), "Ctrl+Comma matches");
+		assert.ok(Common.isOpenPersonalizationShortcut({metaKey: true, which: KeyCodes.COMMA}), "Cmd+Comma matches");
+		assert.notOk(Common.isOpenPersonalizationShortcut({which: KeyCodes.COMMA}), "Comma without Ctrl/Cmd does not match");
+		assert.notOk(Common.isOpenPersonalizationShortcut({ctrlKey: true, which: KeyCodes.E}), "wrong key does not match");
 	});
 });

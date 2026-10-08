@@ -541,7 +541,7 @@ sap.ui.define([
 
 		const fnGetCurrentStateStub = sinon.stub(this.oTable, "_getXConfig");
 		const oType = this.oTable.getType();
-		const oInnerTable = oType.getInnerTable();
+		const oInnerTable = oType.getInnerControl();
 
 		// Initial state
 		await TableQUnitUtils.waitForBinding(this.oTable);
@@ -575,7 +575,7 @@ sap.ui.define([
 
 	QUnit.test("State is applied (emulation)", async function(assert) {
 		const oType = this.oTable.getType();
-		const oInnerTable = oType.getInnerTable();
+		const oInnerTable = oType.getInnerControl();
 		const oVariant = new VariantManagement("mdc_test_vm", {
 			"for": ["table_test"]
 		});
@@ -623,7 +623,7 @@ sap.ui.define([
 		assert.ok(fnOnModificationsSpy.calledTwice, "onModifications is called");
 		assert.ok(fnSetShowDetailsState.calledTwice, "setFixedColumnCount is called");
 		assert.ok(fnSetShowDetailsState.calledWith(0), "setFixedColumnCount is called with 0");
-		assert.equal(oType.getInnerTable().getFixedColumnCount(), 0, "Fixed column count is now 0");
+		assert.equal(oType.getInnerControl().getFixedColumnCount(), 0, "Fixed column count is now 0");
 	});
 
 	QUnit.test("State is applied before the table is initialized", async function(assert) {
@@ -641,12 +641,12 @@ sap.ui.define([
 			}
 		});
 
-		assert.notOk(this.oTable.getType().getInnerTable(), "Inner table is not created yet");
+		assert.notOk(this.oTable.getType().getInnerControl(), "Inner table is not created yet");
 
 		this.oTable._onModifications();
 		await this.oTable.initialized();
 		const oType = this.oTable.getType();
-		const oInnerTable = oType.getInnerTable();
+		const oInnerTable = oType.getInnerControl();
 
 		assert.equal(oInnerTable.getFixedColumnCount(), 2, "Fixed column count is 2");
 	});

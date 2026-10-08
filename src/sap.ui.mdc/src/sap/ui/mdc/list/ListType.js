@@ -105,7 +105,7 @@ sap.ui.define([
 	 */
 	ListType.prototype.applyItemActions = function(oWrapper, oItemSettings) {
 		const mActionsConfig = oItemSettings.getAllActions();
-		const oInnerList = this.getInnerList();
+		const oInnerList = this.getInnerControl();
 
 		// Bound actions path.
 		if ("templateInfo" in mActionsConfig) {
@@ -170,7 +170,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	ListType.prototype.updateItemActions = function() {
-		const oInnerList = this.getInnerList();
+		const oInnerList = this.getInnerControl();
 		const oList = this.getList();
 
 		if (!oInnerList || !oList) {
@@ -211,7 +211,7 @@ sap.ui.define([
 	 */
 	ListType.prototype._onItemActionPress = function(oEvent) {
 		const oList = this.getList();
-		const oInnerList = this.getInnerList();
+		const oInnerList = this.getInnerControl();
 
 		if (!oList || !oInnerList) {
 			return;
