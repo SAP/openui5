@@ -415,7 +415,7 @@ sap.ui.define([
 											oColFieldsOfSubGroup = EditorRenderer.addColFieldsOfSubGroup(oColFieldsOfSubGroup, oSubGroup);
 										}
 										if (oConfig.hint) {
-											var oHint = oControl._createHint(oConfig.hint, oItem.getParameterId());
+											var oHint = oControl.createHint(oConfig.hint, oItem.getParameterId());
 											var oColVBox = new VBox({
 												items: [
 													oHBox,
@@ -433,7 +433,7 @@ sap.ui.define([
 											oColFields = EditorRenderer.addColFields(oColFields, oPanel);
 										}
 										if (oConfig.hint) {
-											var oHint = oControl._createHint(oConfig.hint, oItem.getParameterId());
+											var oHint = oControl.createHint(oConfig.hint, oItem.getParameterId());
 											var oColVBox = new VBox({
 												items: [
 													oHBox,
@@ -491,7 +491,7 @@ sap.ui.define([
 										]
 									});
 									if (oConfig.hint) {
-										var oHint = oControl._createHint(oConfig.hint, oItem.getParameterId());
+										var oHint = oControl.createHint(oConfig.hint, oItem.getParameterId());
 										oColVBox.addItem(oHint.addStyleClass("sapUiIntegrationEditorHint"));
 									}
 									oColVBox.addStyleClass("col1");

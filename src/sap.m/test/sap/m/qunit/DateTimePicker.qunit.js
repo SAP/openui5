@@ -290,6 +290,19 @@ sap.ui.define([
 
 	QUnit.module("Rendering");
 
+	QUnit.test("native browser autocomplete is disabled on the inner input", async function(assert) {
+		// arrange
+		var oDateTimePicker = new DateTimePicker().placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(oDateTimePicker.getFocusDomRef().getAttribute("autocomplete"), "off",
+			"autocomplete='off' is set so the native browser suggestions are not shown");
+
+		// cleanup
+		oDateTimePicker.destroy();
+	});
+
 	QUnit.test("date format", function(assert) {
 		assert.ok(!jQuery("#DTP1").find("input").val(), "DTP1: empty date");
 		assert.equal(jQuery("#DTP2").find("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");

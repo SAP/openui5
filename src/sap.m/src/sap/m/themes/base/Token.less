@@ -3,22 +3,26 @@
 /* Base theme                   */
 /* ============================ */
 
-@_sap_m_Token_TokenPadding: 0.5rem;
-@_sap_m_Token_TokenCompactPadding: 0.25rem;
-@_sap_m_Token_LeftPadding: 0.375rem;
-@_sap_m_Token_IconWidth: @sapMFontMediumSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
-@_sap_m_Token_CompactIconWidth: @sapMFontSmallSize + @_sap_m_Token_TokenCompactPadding;
-@_sap_m_Token_TokenHeight: 1.625rem;
-@_sap_m_Token_TokenCompactHeight: 1.25rem;
+.sapUI5Scope {
+	--_sap_m_Token_TokenPadding: 0.5rem;
+	--_sap_m_Token_TokenCompactPadding: 0.25rem;
+	--_sap_m_Token_LeftPadding: 0.3125rem;
+	--_sap_m_Token_IconWidth: 1.75rem;
+	--_sap_m_Token_CompactIconWidth: 1.5rem;
+	--_sap_m_Token_TokenHeight: 1.625rem;
+	--_sap_m_Token_TokenCompactHeight: 1.25rem;
+	--_sap_m_Token_DeleteIconHeight: 2.25rem;
+	--_sap_m_Token_DeleteIconCompactHeight: 1.625rem;
+}
 
 .sapMToken {
 	display: inline-block;
 	position: relative;
 	overflow: hidden;
 	box-sizing: border-box;
-	font-size: @sapMFontMediumSize;
-	padding-left: @_sap_m_Token_LeftPadding;
-	height: @_sap_m_Token_TokenHeight;
+	font-size: var(--sapFontSize);
+	padding-left: var(--_sap_m_Token_LeftPadding);
+	height: var(--_sap_m_Token_TokenHeight);
 	background: var(--sapButton_TokenBackground);
 	border: var(--sapButton_BorderWidth) solid var(--sapButton_TokenBorderColor);
 	border-radius: var(--sapButton_BorderCornerRadius);
@@ -54,11 +58,10 @@ html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
 	/* at least for Microsoft Surface Tablet we experienced problems when not setting these properties - touches on the Token seemed to be propageted to the Span inside the Token-Div and thereby (part of) the text contained in the Span would appear selected */
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
-	-moz-user-select: none;
 	user-select: none;
 	pointer-events: none;
 	line-height: 1.5rem;
-	max-width: calc(~"100% - " @_sap_m_Token_IconWidth);
+	max-width: ~'calc(100% - var(--_sap_m_Token_IconWidth))';
 	box-sizing: border-box;
 }
 
@@ -67,8 +70,8 @@ html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
 }
 
 .sapUiSizeCompact .sapMTokenText {
-	max-width: calc(~"100%  - " @_sap_m_Token_CompactIconWidth);
-	font-size: @sapMFontMediumSize;
+	max-width: ~'calc(100% - var(--_sap_m_Token_CompactIconWidth))';
+	font-size: var(--sapFontSize);
 }
 
 .sapMTokenReadOnly .sapMTokenText,
@@ -77,6 +80,8 @@ html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
 }
 
 .sapMTokenIcon {
+	height: var(--_sap_m_Token_DeleteIconHeight);
+	width: var(--_sap_m_Token_IconWidth);
 	vertical-align: top;
 	display: inline-block;
 	line-height: 1.625rem;
@@ -85,13 +90,14 @@ html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
 	font-size: 0.75rem;
 	box-sizing: border-box;
 	touch-action: none;
-	right: ~"calc(var(--sapButton_BorderWidth) * -1)";
+	right: ~'calc(var(--sapButton_BorderWidth) * -1)';
+	top: ~'calc((var(--_sap_m_Token_TokenHeight) / 2) - (var(--_sap_m_Token_DeleteIconHeight) / 2) - var(--sapButton_BorderWidth))';
 }
 
 .sapUiSizeCompact .sapMToken {
 	font-size: var(--sapFontSmallSize);
-	padding-left: @_sap_m_Token_TokenCompactPadding;
-	height: @_sap_m_Token_TokenCompactHeight;
+	padding-left: var(--_sap_m_Token_TokenCompactPadding);
+	height: var(--_sap_m_Token_TokenCompactHeight);
 }
 
 .sapUiSizeCompact .sapMToken.sapMTokenReadOnly {
@@ -104,8 +110,11 @@ html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
 
 .sapUiSizeCompact .sapMToken .sapMTokenIcon {
 	font-size: var(--sapFontSmallSize);
+	width: var(--_sap_m_Token_CompactIconWidth);
+	height: var(--_sap_m_Token_DeleteIconCompactHeight);
 	padding: 0 0.25rem;
 	line-height: 1.1875rem;
+	top: ~'calc((var(--_sap_m_Token_TokenCompactHeight) / 2) - (var(--_sap_m_Token_DeleteIconCompactHeight) / 2) - var(--sapButton_BorderWidth))';
 }
 
 html.sap-desktop .sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly):hover {

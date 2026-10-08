@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/integration/Designtime",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/Destinations",
 	"sap/ui/integration/util/DataProviderFactory",
@@ -23,7 +22,6 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
-	"sap/base/util/ObjectPath",
 	"sap/m/MessageStrip",
 	"./Manifest",
 	"./Merger",
@@ -33,7 +31,8 @@ sap.ui.define([
 	"./EditorRenderer",
 	"./EditorFieldManager",
 	"./EditorTranslation",
-	"./EditorContext"
+	"./EditorContext",
+	"./EditorDataLoading"
 ], function(
 	Localization,
 	Control,
@@ -45,7 +44,6 @@ sap.ui.define([
 	Library,
 	Designtime,
 	JSONModel,
-	ODataModel,
 	Utils,
 	Destinations,
 	DataProviderFactory,
@@ -55,7 +53,6 @@ sap.ui.define([
 	includeStylesheet,
 	LoaderExtensions,
 	Parameters,
-	ObjectPath,
 	MessageStrip,
 	Manifest,
 	Merger,
@@ -65,7 +62,8 @@ sap.ui.define([
 	EditorRenderer,
 	EditorFieldManager,
 	EditorTranslation,
-	EditorContext
+	EditorContext,
+	EditorDataLoading
 ) {
 	"use strict";
 
@@ -390,7 +388,7 @@ sap.ui.define([
 				//use the translations
 				this._loadDefaultTranslations();
 				if (this.getMode() === Constants.EDITOR_MODE.TRANSLATION) {
-					await this._loadSpecialTranslations();
+					await EditorTranslation.loadSpecialTranslations(this);
 				}
 				//add a context model
 				EditorContext.createContextModel(this, CONTEXT_ENTRIES, "editor.internal");
@@ -1147,7 +1145,7 @@ sap.ui.define([
 			return EditorContext.loadValueContextInDesigntime(that);
 		}).then(function () {
 			that._applyDesigntimeLayers(); //changes done from admin to content on the dt values
-			return that._requestExtensionData();
+			return EditorDataLoading.requestExtensionData(that);
 		}).then(function () {
 			EditorFieldManager.requireFields().then(function () {
 				// TODO: Editor.Fields is never read anywhere — remove this line
@@ -1527,341 +1525,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * request data via data provider in RT
-	 * @param {object} oConfig
-	 * @param {sap.ui.integration.editor.fields.BaseField} oField
-	 * @returns {Promise} the getData promise of dataProvider
-	 */
-	Editor.prototype._requestData = function (oConfig, oField) {
-		var oDataProvider = this._oDataProviderFactory.create(oConfig.values.data);
-		oDataProvider.bindObject({
-			path: "items>/form/items"
-		});
-		oDataProvider.bindObject({
-			path: "currentSettings>" + oConfig._settingspath
-		});
-		oDataProvider.bindObject({
-			path: "context>/"
-		});
-		return oDataProvider._waitDependencies().then(function () {
-			return oDataProvider.getData();
-		}).then(function (oData) {
-			if (oConfig._cancel) {
-				oConfig._values = [];
-				this._oSettingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-				return;
-			}
-			// filter data for page admin
-			var oPath = oConfig.values.data.path,
-			    aPath,
-			    tResult = [];
-			if (oPath && oPath !== "/") {
-				if (oPath.startsWith("/")) {
-					oPath = oPath.substring(1);
-				}
-				if (oPath.endsWith("/")) {
-					oPath = oPath.substring(0, oPath.length - 1);
-				}
-				aPath = oPath.split("/");
-				tResult = ObjectPath.get(aPath, oData);
-			} else {
-				tResult = oData;
-			}
-			if (oConfig.type === "object" || oConfig.type === "object[]") {
-				tResult.forEach(function (oResult) {
-					oResult._dt = {
-						_editable: false
-					};
-				});
-			}
-			if (this.getMode() === Constants.EDITOR_MODE.CONTENT && oConfig.pageAdminValues && oConfig.pageAdminValues.length > 0) {
-				var paValues = oConfig.pageAdminValues,
-				    selValues = oConfig.value,
-					selValueItems = oConfig.valueItems || [],
-				    results = [],
-					selResults = [],
-					selItemsResults = [];
-				EditorFieldManager.prepareFieldsInKey(this, oConfig);
-				if (paValues.length > 0) {
-					for (var i = 0; i < paValues.length; i++) {
-						for (var j = 0; j < tResult.length; j++) {
-							var keyValue = EditorFieldManager.getKeyFromItem(this, tResult[j]);
-							if (paValues[i] === keyValue) {
-								results.push(tResult[j]);
-							}
-						}
-						if (Array.isArray(selValues)) {
-							for (var k = 0; k < selValues.length; k++) {
-								if (paValues[i] === selValues[k]) {
-									selResults.push(selValues[k]);
-								}
-							}
-							for (var l = 0; l < selValueItems.length; l++) {
-								var kValue = EditorFieldManager.getKeyFromItem(this, selValueItems[l]);
-								if (paValues[i] === kValue) {
-									selItemsResults.push(selValueItems[l]);
-								}
-							}
-						}
-					}
-					if (selResults.length > 0) {
-						oConfig.value = [];
-						oConfig.value = selResults;
-					}
-					if (selItemsResults.length > 0) {
-						oConfig.valueItems = [];
-						oConfig.valueItems = selItemsResults;
-					}
-				}
-				if (oConfig.values.data.path && oConfig.values.data.path !== "/") {
-					delete oData[aPath];
-					ObjectPath.set(aPath, results, oData);
-				} else {
-					oData = [];
-					oData = results;
-				}
-			}
-			//add group property "Selected" to each record for MultiComboBox in StringListField
-			//user configration of the field since its value maybe changed
-			var oFieldConfig = oField.getConfiguration();
-			if (oConfig.type === "string[]") {
-				var sPath = oConfig.values.data.path;
-				if (sPath && sPath !== "/") {
-					if (sPath.startsWith("/")) {
-						sPath = sPath.substring(1);
-					}
-					if (sPath.endsWith("/")) {
-						sPath = sPath.substring(0, sPath.length - 1);
-					}
-					var aPath = sPath.split("/");
-					var oResult = ObjectPath.get(aPath, oData);
-					if (Array.isArray(oResult)) {
-						for (var n in oResult) {
-							var sKey = oField.getKeyFromItem(oResult[n]);
-							if (Array.isArray(oFieldConfig.value) && oFieldConfig.value.length > 0 && oFieldConfig.value.includes(sKey)) {
-								oResult[n].Selected = this._oResourceBundle.getText("EDITOR_ITEM_SELECTED");
-							} else {
-								oResult[n].Selected = this._oResourceBundle.getText("EDITOR_ITEM_UNSELECTED");
-							}
-						}
-						ObjectPath.set(aPath, oResult, oData);
-					}
-				} else if (Array.isArray(oData)) {
-					for (var n in oData) {
-						var sKey = oField.getKeyFromItem(oData[n]);
-						if (Array.isArray(oFieldConfig.value) && oFieldConfig.value.length > 0 && oFieldConfig.value.includes(sKey)) {
-							oData[n].Selected = this._oResourceBundle.getText("EDITOR_ITEM_SELECTED");
-						} else {
-							oData[n].Selected = this._oResourceBundle.getText("EDITOR_ITEM_UNSELECTED");
-						}
-					}
-				}
-			}
-			oConfig._values = oData;
-			var oValueModel = oField.getModel();
-			oValueModel.setData(oData);
-			oValueModel.checkUpdate(true);
-			oValueModel.firePropertyChange();
-			if (oConfig.type === "object" || oConfig.type === "object[]") {
-				oField.mergeValueWithRequestResult(tResult);
-			}
-			this._oSettingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-			oField._hideValueState(true, true);
-		}.bind(this))
-		.catch(function (oError) {
-			var oErrorPromise = new Promise(function (resolve) {
-				var sError = this._oResourceBundle.getText("EDITOR_BAD_REQUEST");
-				if (Array.isArray(oError) && oError.length > 0) {
-					sError = oError[0];
-					var oResponse = oError[1];
-					if (oResponse) {
-						var oErrorInResponse;
-						oResponse.text().then(function (sResponseText) {
-							if (Utils.isJson(sResponseText)) {
-								oErrorInResponse = JSON.parse(sResponseText).error;
-							} else {
-								sError = sResponseText;
-							}
-
-							if (oErrorInResponse) {
-								sError = (oErrorInResponse.code || oErrorInResponse.errorCode || oResponse.status) + ": " + oErrorInResponse.message;
-							}
-
-							resolve(sError);
-						});
-						return;
-					} else {
-						resolve(sError);
-						return;
-					}
-				} else if (typeof (oError) === "string") {
-					sError = oError;
-					resolve(sError);
-					return;
-				} else {
-					resolve(sError);
-					return;
-				}
-			}.bind(this));
-
-			return oErrorPromise.then(function (sError) {
-				var oValueModel = oField.getModel();
-				oValueModel.firePropertyChange();
-				if (oConfig.type === "object" || oConfig.type === "object[]") {
-					oField.mergeValueWithRequestResult();
-				}
-				this._oSettingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-				oField._showValueState("error", sError, true);
-			}.bind(this));
-
-		}.bind(this));
-	};
-
-	Editor.prototype._requestExtensionData = function () {
-		var oExtension = this.getAggregation("_extension");
-		if (!oExtension) {
-			Log.info("sap.ui.integration.editor.Editor: extension is not defined or created, do not load data of it.");
-			return new Promise(function (resolve, reject) {
-				resolve();
-			});
-		}
-		var bHasExtensionData = false;
-		var oExtensionConfig = {};
-		var oExtensionProperty = this._oManifest.get(this.getConfigurationPath() + "/data/extension");
-		var sPath;
-		if (oExtensionProperty) {
-			bHasExtensionData = true;
-			sPath = this._oManifest.get(this.getConfigurationPath() + "/data/path");
-			oExtensionConfig = {
-				"extension": oExtensionProperty
-			};
-			if (sPath) {
-				oExtensionConfig.path = sPath;
-			}
-		} else {
-			oExtensionProperty = this._oManifest.get("/" + this.getSection() + "/data/extension");
-			if (oExtensionProperty) {
-				bHasExtensionData = true;
-				sPath = this._oManifest.get("/" + this.getSection() + "/data/path");
-				oExtensionConfig = {
-					"extension": oExtensionProperty
-				};
-				if (sPath) {
-					oExtensionConfig.path = sPath;
-				}
-			}
-		}
-		if (!bHasExtensionData) {
-			Log.info("sap.ui.integration.editor.Editor: extension data is not defined in manifest, do not load data of it.");
-			return new Promise(function (resolve, reject) {
-				resolve();
-			});
-		}
-		var oDataProvider = this._oDataProviderFactory.create(oExtensionConfig);
-		return oDataProvider._waitDependencies().then(function () {
-			return oDataProvider.getData();
-		}).then(function (oData) {
-			var oValueModel = oExtension.getModel();
-			if (!oValueModel) {
-				oValueModel = new JSONModel(oData || {});
-				oExtension.setModel(oValueModel, undefined);
-			} else {
-				oValueModel.setData(oData);
-			}
-			oValueModel.checkUpdate(true);
-		}).catch(function (oError) {
-			var sError = this._oResourceBundle.getText("EDITOR_BAD_REQUEST");
-			if (Array.isArray(oError) && oError.length > 0) {
-				sError = oError[0];
-				var oResponse = oError[1];
-				if (oResponse) {
-					var oErrorInResponse;
-					oResponse.text().then(function (sResponseText) {
-						if (Utils.isJson(sResponseText)) {
-							oErrorInResponse = JSON.parse(sResponseText).error;
-						} else {
-							sError = sResponseText;
-						}
-
-						if (oErrorInResponse) {
-							sError = (oErrorInResponse.code || oErrorInResponse.errorCode || oResponse.status) + ": " + oErrorInResponse.message;
-						}
-
-						Log.error("sap.ui.integration.editor.Editor: request extension data failed, " + sError);
-					});
-				}
-			} else if (typeof (oError) === "string") {
-				sError = oError;
-				Log.error("sap.ui.integration.editor.Editor: request extension data failed, " + sError);
-			}
-		}.bind(this));
-	};
-
-	/**
 	 * Creates a unnamed model if a values.data section exists in the configuration
 	 * @param {object} oConfig
 	 * @param {sap.ui.integration.editor.fields.BaseField} oField
 	 * @returns {promise} the return promise
 	 */
 	Editor.prototype._addValueListModel = function (oConfig, oField, nTimeout) {
-		if (oConfig.values) {
-			var oValueModel;
-			if (oConfig.values.data) {
-				//we use the binding context to connect the given path from oConfig.values.data.path
-				//with that the result of the data request can be have also other structures.
-				oField.bindObject({
-					path: oConfig.values.data.path || "/"
-				});
-				if (this._oDataProviderFactory) {
-					oValueModel = oField.getModel();
-					if (!oValueModel) {
-						oValueModel = new JSONModel({});
-						oField.setModel(oValueModel, undefined);
-					}
-					this._oSettingsModel.setProperty(oConfig._settingspath + "/_loading", true);
-					if (!nTimeout) {
-						return this._requestData(oConfig, oField);
-					} else {
-						setTimeout(function() {
-							return this._requestData(oConfig, oField);
-						}.bind(this), nTimeout);
-					}
-				}
-			} else if (this.getAggregation("_extension")) {
-				oValueModel = this.getAggregation("_extension").getModel();
-				//filter data for page admin
-				if (oValueModel && this.getMode() === Constants.EDITOR_MODE.CONTENT && oConfig.pageAdminValues && oConfig.pageAdminValues.length > 0) {
-					EditorFieldManager.prepareFieldsInKey(this, oConfig);
-					var ePath = oConfig.values.path;
-					if (ePath.length > 1) {
-						ePath = ePath.substring(1);
-					}
-					var oValueData = ObjectPath.get([ePath], oValueModel.getData()),
-					    paValues = oConfig.pageAdminValues,
-						results = [];
-					for (var m = 0; m < paValues.length; m++) {
-						for (var j = 0; j < oValueData.length; j++) {
-							var keyValue = EditorFieldManager.getKeyFromItem(this, oValueData[j]);
-							if (paValues[m] === keyValue) {
-								results.push(oValueData[j]);
-							}
-						}
-					}
-					delete oValueData[ePath];
-					ObjectPath.set(ePath, results, oValueData);
-					oValueModel.setData(oValueData);
-				}
-				//we use the binding context to connect the given path from oConfig.values.path
-				//with that the result of the data request can be have also other structures.
-				oField.bindObject({
-					path: oConfig.values.path || "/"
-				});
-				//in the designtime the item bindings will not use a named model, therefore we add a unnamed model for the field
-				//to carry the values.
-				oField.setModel(oValueModel, undefined);
-				return Promise.resolve(null);
-			}
-		}
+		return EditorDataLoading.addValueListModel(this, oConfig, oField, nTimeout);
 	};
 
 	/**
@@ -1870,27 +1540,15 @@ sap.ui.define([
 	 * @param {sap.ui.integration.editor.fields.BaseField} oField
 	 */
 	 Editor.prototype._addMetadataModel = function (oConfig, oField) {
-		if (oConfig.values && oConfig.values.metadata) {
-			var oRequestDefaultParameters = merge({}, oConfig.values.metadata.request);
+		EditorDataLoading.addMetadataModel(this, oConfig, oField);
+	};
 
-			var oRequest = {
-				url: oRequestDefaultParameters.serviceUrl
-			};
-			var pRequestChain = Promise.resolve(oRequest);
-			if (this._oDestinations) {
-				pRequestChain = this._oDestinations.process(oRequest);
-			}
-			pRequestChain.then(function(oData) {
-				if (!oData.url.endsWith("/")) {
-					oData.url = oData.url + "/";
-				}
-				oRequestDefaultParameters.serviceUrl = oData.url;
-				var oMetaDataModel = new ODataModel(oRequestDefaultParameters);
-				oMetaDataModel.oMetaModel.fetchData().then(function(oMetaData) {
-					oField.setModel(new JSONModel(oMetaData), "meta");
-				});
-			});
-		}
+	Editor.prototype.prepareFieldsInKey = function (oConfig) {
+		EditorFieldManager.prepareFieldsInKey(this, oConfig);
+	};
+
+	Editor.prototype.getKeyFromItem = function (oItem) {
+		return EditorFieldManager.getKeyFromItem(this, oItem);
 	};
 
 	Editor.prototype.getTranslationValueInTexts = function (sLanguage, sManifestPath) {
@@ -1901,21 +1559,16 @@ sap.ui.define([
 		EditorTranslation.deleteAllTranslationValuesInTexts(this, sManifestPath);
 	};
 
-	Editor.prototype._createHint = function (sHint, sHintIdPrefix) {
+	Editor.prototype.createHint = function (sHint, sHintIdPrefix) {
 		return EditorFieldManager.createHint(sHint, sHintIdPrefix);
 	};
 
 	/**
 	 * Returns the current language specific text for a given key or "" if no translation for the key exists
 	 */
-	Editor.prototype._getCurrentLanguageSpecificText = function (sKey) {
+	Editor.prototype.getCurrentLanguageSpecificText = function (sKey) {
 		return EditorTranslation.getCurrentLanguageSpecificText(this, sKey);
 	};
-
-	Editor.prototype._loadSpecialTranslations = function () {
-		return EditorTranslation.loadSpecialTranslations(this);
-	};
-
 
 	Editor.prototype.setHeight = function(sValue) {
 		if (sValue) {

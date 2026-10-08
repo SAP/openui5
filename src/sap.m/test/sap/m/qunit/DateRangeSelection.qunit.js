@@ -164,6 +164,19 @@ sap.ui.define([
 
 	QUnit.module("Rendering");
 
+	QUnit.test("native browser autocomplete is disabled on the inner input", async function(assert) {
+		// arrange
+		var oDateRangeSelection = new DateRangeSelection().placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(oDateRangeSelection.getFocusDomRef().getAttribute("autocomplete"), "off",
+			"autocomplete='off' is set so the native browser suggestions are not shown");
+
+		// cleanup
+		oDateRangeSelection.destroy();
+	});
+
 	QUnit.test("Styling", function(assert) {
 		assert.equal(jQuery("#DRS1").css("width"), jQuery("body").css("width"), "Default width is 100%");
 		assert.equal(jQuery("#DRS2").css("width"), "250px", "given width used");

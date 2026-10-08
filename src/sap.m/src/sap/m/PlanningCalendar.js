@@ -3433,6 +3433,9 @@ sap.ui.define([
 			return;
 		}
 
+		// Update view switch label visibility in case overflow state changed due to resizing
+		this._getHeader()._updateViewSwitchLabelFor();
+
 		// guard against resize loops
 		// 1870423752
 		if (Math.abs(this.iWidth - oEvent.size.width) < 15) {
@@ -3443,9 +3446,6 @@ sap.ui.define([
 		this._applyContextualSettings({
 			contextualWidth: this.iWidth
 		});
-
-		// Update view switch label visibility in case overflow state changed due to resizing
-		this._getHeader()._updateViewSwitchLabelFor();
 
 		var aRows = this.getRows();
 		var oRow;

@@ -6,12 +6,16 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/model/base/ManagedObjectModel",
-	"sap/ui/mdc/enums/TableP13nMode"
+	"sap/ui/mdc/enums/TableP13nMode",
+	"sap/m/table/Util",
+	"./utils/Personalization"
 ], (
 	Element,
 	DragDropInfo,
 	ManagedObjectModel,
-	TableP13nMode
+	TableP13nMode,
+	MTableUtil,
+	PersonalizationUtils
 ) => {
 	"use strict";
 
@@ -251,9 +255,27 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Creates an <code>IllustratedMessage</code> for the case where the table has no visible columns.
+	 *
+	 * @returns {sap.m.IllustratedMessage} The no-columns illustrated message
+	 * @private
+	 */
+	TableTypeBase.prototype.createNoColumnsMessage = function() {
+		return MTableUtil.getNoColumnsIllustratedMessage(() => {
+			PersonalizationUtils.openSettingsDialog(this.getTable());
+		});
+	};
+
 	TableTypeBase.prototype.loadModules = function() { return Promise.reject(this + " does not implement #loadModules"); };
 	TableTypeBase.prototype.updateTableByProperty = function(sProperty, vValue) {};
 	TableTypeBase.prototype.removeToolbar = function() {};
+	/** @param {sap.ui.core.Control} oFooter The footer control @private */
+	TableTypeBase.prototype.setFooter = function(oFooter) {};
+	/** @param {sap.ui.core.IContextMenu} oContextMenu The context menu @private */
+	TableTypeBase.prototype.setContextMenu = function(oContextMenu) {};
+	/** @param {sap.m.IllustratedMessage|string} vNoData The no-data content @private */
+	TableTypeBase.prototype.setNoData = function(vNoData) {};
 	TableTypeBase.prototype.scrollToIndex = function(iIndex) { return Promise.reject(); };
 	TableTypeBase.prototype.updateRowSettings = function() {};
 	TableTypeBase.prototype.prepareRowPress = function() {};

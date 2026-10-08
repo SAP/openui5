@@ -105,19 +105,88 @@ sap.ui.define([
 		},
 
 		/**
-		 * Parses and normalizes the shortcut being registered
+		 * Resolves a command shortcut definition to the shortcut string for the current platform.
 		 *
-		 * @param {object|string} vShortcut the shortcut to normalize.
+		 * A shortcut may be given as a plain string or as an object with a <code>default</code>
+		 * and an optional <code>macintosh</code> variant. On macOS the <code>macintosh</code>
+		 * variant is used if present, otherwise the <code>default</code>. A string is returned
+		 * unchanged.
 		 *
+		 * @param {string|object} vShortcut The shortcut definition (string or {default, macintosh})
+		 * @returns {string} The platform-specific shortcut string
+		 * @private
+		 */
+		getPlatformShortcut: function(vShortcut) {
+			if (vShortcut && typeof vShortcut === "object") {
+				return (Device.os.macintosh && vShortcut.macintosh) ? vShortcut.macintosh : vShortcut["default"];
+			}
+			return vShortcut;
+		},
+
+		/**
+		 * Whether the given shortcut definition resolves to a macOS-specific ("literal")
+		 * shortcut on the current platform.
+		 *
+		 * Returns <code>true</code> when <code>vShortcut</code> is an object with a
+		 * <code>macintosh</code> variant and the current platform is macOS. In that case
+		 * the shortcut string is interpreted literally (no Ctrl-to-Cmd remapping).
+		 *
+		 * @param {string|object} vShortcut The shortcut definition (string or {default, macintosh})
+		 * @returns {boolean} true if the macintosh variant is selected
+		 * @private
+		 */
+		isPlatformShortcutMacLiteral: function(vShortcut) {
+			return !!(vShortcut && typeof vShortcut === "object" && Device.os.macintosh && vShortcut.macintosh);
+		},
+
+		/**
+		 * Converts macOS-specific modifier names in a shortcut string to their Windows
+		 * equivalents (<code>Option</code> to <code>Alt</code>,
+		 * <code>Cmd</code> to <code>Ctrl</code>). Modifier names are matched
+		 * case-insensitively; the actual key and all other parts are left untouched.
+		 *
+		 * @param {string} sShortcut The shortcut string, e.g. "Ctrl+Option+N"
+		 * @returns {string} The Windows-equivalent shortcut string, e.g. "Ctrl+Alt+N"
+		 * @private
+		 */
+		convertToWindowsShortcutString: function(sShortcut) {
+			var mMacToWindows = { option: "Alt", cmd: "Ctrl" };
+			return sShortcut.split("+").map(function(sPart) {
+				return mMacToWindows[sPart.trim().toLowerCase()] || sPart;
+			}).join("+");
+		},
+
+		/**
+		 * Parses and normalizes the shortcut being registered.
+		 *
+		 * Accepts three forms:
+		 * <ul>
+		 *   <li>A shortcut string, e.g. <code>"Ctrl+Alt+S"</code></li>
+		 *   <li>A spec object with <code>key</code>, <code>ctrl</code>, <code>alt</code>,
+		 *       <code>shift</code> flags</li>
+		 *   <li>A platform object with <code>default</code> and optional <code>macintosh</code>
+		 *       keys – the correct variant for the current platform is resolved internally
+		 *       and the macintosh variant is treated as a literal shortcut (no Ctrl-to-Cmd
+		 *       remapping)</li>
+		 * </ul>
+		 *
+		 * @param {object|string} vShortcut the shortcut to normalize
 		 * @returns {object} normalized shortcut spec
 		 * @private
 		 */
 		getNormalizedShortcutSpec: function(vShortcut) {
 			var oNormalizedShortcutSpec;
+
 			if (typeof vShortcut === "string") {
 				oNormalizedShortcutSpec = oShortcutHelper.parseShortcut(vShortcut);
 
-			} else { // spec object
+			} else if (vShortcut && vShortcut["default"] !== undefined) {
+				// Platform object: { "default": "...", "macintosh": "..." }
+				var bMacLiteral = oShortcutHelper.isPlatformShortcutMacLiteral(vShortcut);
+				var sResolved = oShortcutHelper.getPlatformShortcut(vShortcut);
+				oNormalizedShortcutSpec = oShortcutHelper.parseShortcut(sResolved, bMacLiteral);
+
+			} else { // spec object with { key, ctrl, alt, shift }
 				var key = vShortcut.key;
 				var bValidShortcut = /^([a-z0-9\.,\-\*\/= +]|Tab|Enter|Backspace|Home|Delete|End|Pageup|Pagedown|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|Escape|F[1-9]|F1[0-2])$/i.test(key);
 				if (!bValidShortcut) {
@@ -141,19 +210,31 @@ sap.ui.define([
 		 * e.g.: 'CTRL + S' --> {key:'S', ctrlRequested:true, ...}
 		 *
 		 * @param {string} sShortcut A Shortcut string
+		 * @param {boolean} [bMacLiteral] When <code>true</code> the shortcut is in macOS format
+		 *   (e.g. "Ctrl+Option+N"). It is converted to Windows format before parsing and
+		 *   the Ctrl-to-Cmd remapping is skipped.
 		 * @private
 		 */
-		parseShortcut: function(sShortcut) {
+		parseShortcut: function(sShortcut, bMacLiteral) {
 			this.validateShortcutString(sShortcut);
 
-			var aParts = sShortcut.toLowerCase().split("+");
+			// When bMacLiteral is set the shortcut is in macOS format (e.g. "Ctrl+Option+N").
+			// Convert it to Windows format first ("Ctrl+Alt+N") so that the parsing below
+			// only needs to handle the standard modifier names (Ctrl/Alt/Shift). The
+			// Ctrl-to-Cmd remapping is skipped because "Ctrl" in a macOS shortcut means the
+			// physical Control key.
+			var sNormalized = bMacLiteral ? oShortcutHelper.convertToWindowsShortcutString(sShortcut) : sShortcut;
+			var aParts = sNormalized.toLowerCase().split("+");
+			var sKey = oShortcutHelper.translateRegisteredKeyToStandard(aParts.pop());
+			var bCtrl = aParts.indexOf("ctrl") > -1;
+
 			return {
-				key: oShortcutHelper.translateRegisteredKeyToStandard(aParts.pop()),
-				ctrlKey: Device.os.macintosh ? false : aParts.indexOf("ctrl") > -1,
-				ctrlRequested: aParts.indexOf("ctrl") > -1,
+				key: sKey,
+				ctrlKey: (bMacLiteral || !Device.os.macintosh) ? bCtrl : false,
+				ctrlRequested: bCtrl,
 				altKey: aParts.indexOf("alt") > -1,
 				shiftKey: aParts.indexOf("shift") > -1,
-				metaKey: Device.os.macintosh ? aParts.indexOf("ctrl") > -1 : false
+				metaKey: (!bMacLiteral && Device.os.macintosh) ? bCtrl : false
 			};
 		},
 
@@ -179,7 +260,11 @@ sap.ui.define([
 		 * @private
 		 */
 		validateShortcutString: function(sShortcut) {
-			var bValidShortcut = /^((Ctrl|Shift|Alt)\+){0,3}([a-z0-9\.,\-\*\/=]|Plus|Tab|Space|Enter|Backspace|Home|Delete|End|Pageup|Pagedown|Escape|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|F[1-9]|F1[0-2])$/i.test(sShortcut);
+			// macOS-specific modifier names ("Option", "Cmd") are validated against their
+			// Windows equivalents ("Alt", "Ctrl"), because the shortcut grammar only knows the
+			// modifiers Ctrl/Shift/Alt.
+			var sWindowsShortcut = oShortcutHelper.convertToWindowsShortcutString(sShortcut);
+			var bValidShortcut = /^((Ctrl|Shift|Alt)\+){0,3}([a-z0-9\.,\-\*\/=]|Plus|Tab|Space|Enter|Backspace|Home|Delete|End|Pageup|Pagedown|Escape|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|F[1-9]|F1[0-2])$/i.test(sWindowsShortcut);
 			if (!bValidShortcut) {
 				throw new Error("Shortcut '" + sShortcut + "' is not a valid shortcut string. It must be a '+'-separated list of modifier keys and the actual key, like 'Ctrl+Alt+S'. Or more generally, it must match the expression /^((Ctrl|Shift|Alt)\+){0,3}([a-z0-9\.,\-\*\/=]|Plus|Tab|Space|Enter|Backspace|Home|Delete|End|Pageup|Pagedown|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|Escape|F[1-9]|F1[0-2])$/i.");
 			}
@@ -231,13 +316,21 @@ sap.ui.define([
 		 * and adjusting modifier keys for the current platform (e.g., "Ctrl" to "Cmd" on Mac).
 		 *
 		 * @param {string} sShortcut The shortcut string to normalize, e.g., "ctrl+Alt+s" will be normalized to "Ctrl+Alt+S" on Windows and "Cmd+Option+S" on Mac.
+		 * @param {boolean} [bMacLiteral] When <code>true</code> the shortcut is in macOS format
+		 *   and "Ctrl" is kept as "Ctrl" instead of being remapped to "Cmd".
 		 * @returns {string} Normalized shortcut string
 		 */
-		normalizeShortcutText: function(sShortcut) {
+		normalizeShortcutText: function(sShortcut, bMacLiteral) {
 			const allParts = sShortcut.split('+').map((p) => p.trim());
+
+			// When bMacLiteral is set the shortcut is in macOS format: "Option" stays
+			// "Option" and "Ctrl" stays "Ctrl" (it is not remapped to "Cmd").
+			const bIsMacLiteral = !!bMacLiteral;
 
 			const modifiers = {
 				ctrl: false,
+				cmd: false,
+				option: false,
 				alt: false,
 				shift: false
 			};
@@ -259,7 +352,13 @@ sap.ui.define([
 
 			const result = [];
 			if (modifiers.ctrl) {
-				result.push(Device.os.macintosh ? 'Cmd' : 'Ctrl');
+				result.push(!bIsMacLiteral && Device.os.macintosh ? 'Cmd' : 'Ctrl');
+			}
+			if (modifiers.cmd) {
+				result.push('Cmd');
+			}
+			if (modifiers.option) {
+				result.push('Option');
 			}
 			if (modifiers.alt) {
 				result.push(Device.os.macintosh ? 'Option' : 'Alt');
@@ -347,8 +446,23 @@ sap.ui.define([
 				return;
 			}
 
-			// handle some browser differences regarding reported keys
-			var key = mEventKeyFix.hasOwnProperty(oEvent.key) ? mEventKeyFix[oEvent.key] : oEvent.key;
+			// handle some browser differences regarding reported keys.
+			// On macOS, Ctrl+Option+<letter> produces a "Dead" key (accent composition)
+			// instead of the actual letter. Fall back to event.code which reports the
+			// physical key (e.g. "KeyN" → "n", "Digit5" → "5").
+			var key;
+			if (oEvent.key === "Dead" && oEvent.code) {
+				var sCode = oEvent.code;
+				if (sCode.startsWith("Key")) {
+					key = sCode.slice(3);
+				} else if (sCode.startsWith("Digit")) {
+					key = sCode.slice(5);
+				} else {
+					return; // unknown dead key, cannot resolve
+				}
+			} else {
+				key = mEventKeyFix.hasOwnProperty(oEvent.key) ? mEventKeyFix[oEvent.key] : oEvent.key;
+			}
 			key = key.toLowerCase(); // TODO: validate usage of toLowerCase
 
 			// check whether the shortcut matches

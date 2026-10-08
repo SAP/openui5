@@ -44,8 +44,10 @@ sap.ui.define([
 
 		ShortcutHint.prototype._getShortcutHintFromCommandExecution = function(oControl, sCommandName) {
 			try {
-				const sShortcut = CommandExecution.find(oControl, sCommandName)._getCommandInfo().shortcut;
-				return ShortcutHelper.localizeKeys(ShortcutHelper.normalizeShortcutText(sShortcut));
+				const vShortcut = CommandExecution.find(oControl, sCommandName)._getCommandInfo().shortcut;
+				const bMacLiteral = ShortcutHelper.isPlatformShortcutMacLiteral(vShortcut);
+				const sShortcut = ShortcutHelper.getPlatformShortcut(vShortcut);
+				return ShortcutHelper.localizeKeys(ShortcutHelper.normalizeShortcutText(sShortcut, bMacLiteral));
 			} catch (e) {
 				Log.error("Error on retrieving command shortcut. Command "
 					+ sCommandName + " was not found!");

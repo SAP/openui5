@@ -4,6 +4,7 @@
 /* =================================== */
 
 .sapMObjectNumber.sapMLnkLargeReactiveArea:not(.sapMObjectNumberLarge):not(.sapMObjectNumberInverted) {
+
 	.sapMObjectNumberInner {
 		line-height: 1.5rem;
 	}
@@ -115,71 +116,71 @@ html.sap-desktop .sapMObjectNumberActive:focus,
 }
 
 .objectNumberStatusMixIn(sapMObjectNumberStatusNone,
-	@sapNeutralBackground,
-	@sapTextColor,
-	@sapUiButtonNeutralHoverBackground,
-	@sapUiButtonNeutralHoverTextColor,
-	@sapUiButtonNeutralActiveBackground,
-	@sapUiButtonActiveTextColor,
-	@sapUiContentTextShadow,
-	@sapUiContentTextShadow,
-	@sapNeutralBorderColor,
-	@sapUiButtonNeutralHoverBorderColor,
-	@sapUiButtonNeutralActiveBorderColor
+	var(--sapNeutralBackground),
+	var(--sapTextColor),
+	var(--sapButton_Neutral_Hover_Background),
+	var(--sapButton_Neutral_Hover_TextColor),
+	var(--sapButton_Neutral_Active_Background),
+	var(--sapButton_Active_TextColor),
+	var(--sapContent_TextShadow),
+	var(--sapContent_TextShadow),
+	var(--sapNeutralBorderColor),
+	var(--sapButton_Neutral_Hover_BorderColor),
+	var(--sapButton_Neutral_Active_BorderColor)
 );
 
 .objectNumberStatusMixIn(sapMObjectNumberStatusInformation,
-	@sapUiButtonInformationBackground,
-	@sapUiButtonInformationTextColor,
-	@sapUiButtonInformationHoverBackground,
-	@sapUiButtonInformationHoverTextColor,
-	@sapUiButtonInformationActiveBackground,
-	@sapUiButtonSelectedTextColor,
-	@sapUiContentTextShadow,
-	@sapUiContentTextShadow,
-	@sapUiButtonInformationBorderColor,
-	@sapUiButtonInformationHoverBorderColor,
-	@sapUiButtonInformationActiveBorderColor
+	var(--sapButton_Information_Background),
+	var(--sapButton_Information_TextColor),
+	var(--sapButton_Information_Hover_Background),
+	var(--sapButton_Information_Hover_TextColor),
+	var(--sapButton_Information_Active_Background),
+	var(--sapButton_Selected_TextColor),
+	var(--sapContent_TextShadow),
+	var(--sapContent_TextShadow),
+	var(--sapButton_Information_BorderColor),
+	var(--sapButton_Information_Hover_BorderColor),
+	var(--sapButton_Information_Active_BorderColor)
 );
 
 .objectNumberStatusMixIn(sapMObjectNumberStatusError,
-	@sapUiButtonNegativeBackground,
-	@sapUiButtonNegativeTextColor,
-	@sapUiButtonNegativeHoverBackground,
-	@sapUiButtonNegativeHoverTextColor,
-	@sapUiButtonNegativeActiveBackground,
-	@sapUiButtonRejectSelectedTextColor,
-	@sapUiContentContrastTextShadow,
-	@sapUiContentTextShadow,
-	@sapUiButtonNegativeBorderColor,
-	@sapUiButtonNegativeHoverBorderColor,
-	@sapUiButtonNegativeActiveBorderColor
+	var(--sapButton_Negative_Background),
+	var(--sapButton_Negative_TextColor),
+	var(--sapButton_Negative_Hover_Background),
+	var(--sapButton_Negative_Hover_TextColor),
+	var(--sapButton_Negative_Active_Background),
+	var(--sapButton_Reject_Selected_TextColor),
+	var(--sapContent_ContrastTextShadow),
+	var(--sapContent_TextShadow),
+	var(--sapButton_Negative_BorderColor),
+	var(--sapButton_Negative_Hover_BorderColor),
+	var(--sapButton_Negative_Active_BorderColor)
 );
 
 .objectNumberStatusMixIn(sapMObjectNumberStatusWarning,
-	@sapUiButtonCriticalBackground,
-	@sapUiButtonCriticalTextColor,
-	@sapUiButtonCriticalHoverBackground,
-	@sapUiButtonCriticalHoverTextColor,
-	@sapUiButtonCriticalActiveBackground,
-	@sapUiButtonAttentionSelectedTextColor,
-	@sapUiContentContrastTextShadow,
-	@sapUiContentTextShadow,
-	@sapUiButtonCriticalBorderColor,
-	@sapUiButtonCriticalHoverBorderColor,
-	@sapUiButtonCriticalActiveBorderColor
+	var(--sapButton_Critical_Background),
+	var(--sapButton_Critical_TextColor),
+	var(--sapButton_Critical_Hover_Background),
+	var(--sapButton_Critical_Hover_TextColor),
+	var(--sapButton_Critical_Active_Background),
+	var(--sapButton_Attention_Selected_TextColor),
+	var(--sapContent_ContrastTextShadow),
+	var(--sapContent_TextShadow),
+	var(--sapButton_Critical_BorderColor),
+	var(--sapButton_Critical_Hover_BorderColor),
+	var(--sapButton_Critical_Active_BorderColor)
 );
 
 .objectNumberStatusMixIn(sapMObjectNumberStatusSuccess,
-	@sapUiButtonSuccessBackground,
-	@sapUiButtonSuccessTextColor,
-	@sapUiButtonSuccessHoverBackground,
-	@sapUiButtonSuccessHoverTextColor,
-	@sapUiButtonSuccessActiveBackground,
-	@sapUiButtonAcceptSelectedTextColor,
-	@sapUiContentContrastTextShadow,
-	@sapUiContentTextShadow,
-	@sapUiButtonSuccessBorderColor,
-	@sapUiButtonSuccessHoverBorderColor,
-	@sapUiButtonSuccessActiveBorderColor
+	var(--sapButton_Success_Background),
+	var(--sapButton_Success_TextColor),
+	var(--sapButton_Success_Hover_Background),
+	var(--sapButton_Success_Hover_TextColor),
+	var(--sapButton_Success_Active_Background),
+	var(--sapButton_Accept_Selected_TextColor),
+	var(--sapContent_ContrastTextShadow),
+	var(--sapContent_TextShadow),
+	var(--sapButton_Success_BorderColor),
+	var(--sapButton_Success_Hover_BorderColor),
+	var(--sapButton_Success_Active_BorderColor)
 );

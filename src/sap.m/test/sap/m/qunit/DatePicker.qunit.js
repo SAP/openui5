@@ -261,6 +261,19 @@ sap.ui.define([
 		assert.ok(!jQuery("#DP3-cal")[0], "no calendar rendered");
 	});
 
+	QUnit.test("native browser autocomplete is disabled on the inner input", async function(assert) {
+		// arrange
+		var oDatePicker = new DatePicker().placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(oDatePicker.getFocusDomRef().getAttribute("autocomplete"), "off",
+			"autocomplete='off' is set so the native browser suggestions are not shown");
+
+		// cleanup
+		oDatePicker.destroy();
+	});
+
 	QUnit.test("date format", function(assert) {
 		assert.ok(!jQuery("#DP1").find("input").val(), "DP1 : empty date");
 		assert.equal(jQuery("#DP2").find("input").val(), "01+04+2014", "DP2: defined output format used");

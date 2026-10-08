@@ -590,7 +590,7 @@ sap.ui.define([
 		assert.ok(!oTable.getDomRef().classList.contains("sapUiTableRAct"), "No row action template: No CSS class sapUiTableRAct");
 		assert.ok(!oTable.$("sapUiTableRowActionScr").length, "No row action template: No action area");
 
-		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
 		await nextUIUpdate();
 		assert.ok(oTable.getDomRef().classList.contains("sapUiTableRAct"), "CSS class sapUiTableRAct");
 		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action area exists");
@@ -785,7 +785,7 @@ sap.ui.define([
 
 		// check for row actions
 		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
 		await nextUIUpdate();
 		assert.equal(oTable.$().find(".sapUiTableRowAlternate").length,
 				 oTable.$().find(".sapUiTableRowAlternate").filter(isAlternatingRow).length,
@@ -843,6 +843,93 @@ sap.ui.define([
 		oBinding.getContexts.resetHistory();
 		oTable._getRowContexts();
 		assert.ok(oBinding.getContexts.called, "Table visible, binding not suspended: Contexts requested");
+	});
+
+	QUnit.module("Group header content", {
+		beforeEach: async function() {
+			this.oTable = TableQUnitUtils.createTable({
+				columns: [
+					TableQUnitUtils.createTextColumn().setWidth("100px"),
+					TableQUnitUtils.createTextColumn().setWidth("200px"),
+					TableQUnitUtils.createTextColumn().setWidth("150px")
+				],
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(3)
+			});
+			await this.oTable.qunit.rendered();
+			TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Group);
+			await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.GroupHeader, expandable: true, title: "Group"}]);
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		getGroupHeaderWidth: function() {
+			return this.oTable.getDomRef().querySelector(".sapUiTableGroupIcon").getBoundingClientRect().width;
+		}
+	});
+
+	QUnit.test("Short text", async function(assert) {
+		await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.GroupHeader, expandable: true, title: "A"}]);
+
+		assert.ok(this.getGroupHeaderWidth() < 450, "Group header width is content-sized, not full row width");
+	});
+
+	QUnit.test("Long text", async function(assert) {
+		await this.oTable.qunit.setRowStates([{
+			type: Row.prototype.Type.GroupHeader, expandable: true,
+			title: "Group ".repeat(100)
+		}]);
+
+		assert.ok(450 - this.getGroupHeaderWidth() < 5, "Group header stops at last column right edge");
+	});
+
+	QUnit.test("Long text with fixed columns", async function(assert) {
+		this.oTable.setFixedColumnCount(1);
+		await this.oTable.qunit.setRowStates([{
+			type: Row.prototype.Type.GroupHeader, expandable: true,
+			title: "Group ".repeat(100)
+		}]);
+
+		assert.ok(450 - this.getGroupHeaderWidth() < 5, "Group header stops at last column right edge with fixed columns");
+	});
+
+	QUnit.test("Columns exceeding table width", async function(assert) {
+		for (const oColumn of this.oTable.getColumns()) {
+			oColumn.setWidth("400px");
+		}
+		await this.oTable.qunit.setRowStates([{
+			type: Row.prototype.Type.GroupHeader, expandable: true,
+			title: "Group ".repeat(100)
+		}]);
+
+		const iScrollAreaWidth = this.oTable.getDomRef().querySelector(".sapUiTableCtrlScr:not(.sapUiTableCHA)").getBoundingClientRect().width;
+		assert.ok(iScrollAreaWidth - this.getGroupHeaderWidth() < 5, "Group header stops at scrollable area right edge");
+	});
+
+	QUnit.test("Long text with row actions", async function(assert) {
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+		this.oTable.setRowActionCount(2);
+		await this.oTable.qunit.setRowStates([{
+			type: Row.prototype.Type.GroupHeader, expandable: true,
+			title: "Group ".repeat(100)
+		}]);
+
+		assert.ok(450 - this.getGroupHeaderWidth() < 5, "Group header stops at last column right edge, not at row action column");
+	});
+
+	QUnit.test("Long text with row actions, columns exceeding table width", async function(assert) {
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+		this.oTable.setRowActionCount(2);
+		for (const oColumn of this.oTable.getColumns()) {
+			oColumn.setWidth("400px");
+		}
+		await this.oTable.qunit.setRowStates([{
+			type: Row.prototype.Type.GroupHeader, expandable: true,
+			title: "Group ".repeat(100)
+		}]);
+
+		const iScrollAreaWidth = this.oTable.getDomRef().querySelector(".sapUiTableCtrlScr:not(.sapUiTableCHA)").getBoundingClientRect().width;
+		assert.ok(iScrollAreaWidth - this.getGroupHeaderWidth() < 5, "Group header stops at left edge of row action column");
 	});
 
 	QUnit.module("Column operations", {
@@ -1380,7 +1467,7 @@ sap.ui.define([
 		this.oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
 		this.oTable.setFixedColumnCount(1);
 		this.oTable.setRowActionCount(1);
-		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
 
 		for (const sDensity of aDensities) {
 			await test({
@@ -4630,7 +4717,7 @@ sap.ui.define([
 		this.oTable.addColumn(TableQUnitUtils.createTextColumn());
 		this.oTable.setFixedColumnCount(1);
 		this.oTable.setRowActionCount(1);
-		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
 
 		await this.oTable.qunit.rendered();
 		aRowInfo.forEach((mRowInfo, iIndex) => {

@@ -26,16 +26,16 @@
 	text-overflow: ellipsis;
 	font-family: var(--sapFontFamily);
 	color: var(--sapContent_LabelColor);
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	padding-bottom: 0.75rem;
 }
 
 .sapMText.sapMObjLTitle {
 	vertical-align: top;
-	word-break: break-word;
+	overflow-wrap: break-word;
 	color: var(--sapGroup_TitleTextColor);
 	font-size: var(--sapFontHeader4Size);
-	font-weight: @sapUiFontHeaderWeight;
+	font-weight: normal;
 	line-height: 1.5rem;
 }
 
@@ -45,11 +45,11 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 	word-break: break-all;
 }
 
-/*Object header title must break words, otherwise it may be to wide if used within
+/* Object header title must break words, otherwise it may be to wide if used within
   a layout control with fixed width. */
 .sapMOHTitle:not(.sapMOHRTitleNoWordBreak) > .sapMText {
 	/* to break all words even browser does not know the width */
-	word-break: break-word;
+	overflow-wrap: break-word;
 	hyphens: auto;
 }
 
@@ -70,7 +70,7 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 	font-family: var(--sapFontHeaderFamily);
 	font-size: 1.375rem;
 	line-height: 1.375rem;
-	font-weight: @sapUiFontHeaderWeight;
+	font-weight: normal;
 	white-space: nowrap;
 }
 
@@ -95,7 +95,7 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 	vertical-align: top;
 }
 
-html[dir=rtl] .sapMObjLAttrDiv {
+html[dir='rtl'] .sapMObjLAttrDiv {
 	text-align: right;
 }
 
@@ -148,7 +148,7 @@ html[dir=rtl] .sapMObjLAttrDiv {
 	padding-left: 0.5rem;
 }
 
-html[dir=rtl] .sapMObjLStatusDiv {
+html[dir='rtl'] .sapMObjLStatusDiv {
 	text-align: left;
 	padding-left: 0;
 	padding-right: 0.5rem;
@@ -185,7 +185,7 @@ html[dir=rtl] .sapMObjLStatusDiv {
 }
 
 /* overwrite transform for the markers favorite and flag icon */
-html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
+html[dir='rtl'] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	transform: none;
 }
 

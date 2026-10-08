@@ -219,7 +219,7 @@ sap.ui.define([
 					return iThreshold > -1 ? iThreshold : undefined;
 				}
 			},
-			noData: oTable._getNoDataText(),
+			noData: oTable._getDefaultNoDataText(),
 			headerToolbar: oTable._oToolbar,
 			itemPress: [onItemPress, this],
 			itemActionPress: [onListItemActionPress, this],
@@ -788,6 +788,33 @@ sap.ui.define([
 				oResponsiveTable.addAriaLabelledBy(sFilterInfoBarAccTextId);
 			}
 		}
+	};
+
+	ResponsiveTableType.prototype.setContextMenu = function(oContextMenu) {
+		this.getInnerTable()?.setContextMenu(oContextMenu);
+	};
+
+	ResponsiveTableType.prototype.createNoColumnsMessage = function() {
+		const oMessage = TableTypeBase.prototype.createNoColumnsMessage.apply(this, arguments);
+		oMessage.setEnableVerticalResponsiveness(false);
+		return oMessage;
+	};
+
+	ResponsiveTableType.prototype.setNoData = function(vNoData) {
+		const oResponsiveTable = this.getInnerTable();
+
+		if (!oResponsiveTable) {
+			return;
+		}
+
+		if (vNoData?.isA?.("sap.m.IllustratedMessage")) {
+			vNoData.setEnableVerticalResponsiveness(false);
+			if (!oResponsiveTable.getAggregation("_noColumnsMessage")) {
+				oResponsiveTable.setAggregation("_noColumnsMessage", this.createNoColumnsMessage());
+			}
+		}
+
+		oResponsiveTable.setNoData(vNoData);
 	};
 
 	ResponsiveTableType.prototype.updateSortIndicator = function(oColumn, sSortOrder) {

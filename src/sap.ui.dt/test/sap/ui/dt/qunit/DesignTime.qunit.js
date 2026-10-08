@@ -1129,6 +1129,70 @@ sap.ui.define([
 			}
 		});
 
+		QUnit.test("when a child overlay is stale under the old parent and the child's live parent is NOT the model element (aggregation forwarding, SmartForm Combine case), the overlay is re-parented and survives destruction of the old parent overlay", async function(assert) {
+			// Reproduces incident: after combining two GroupElements, a forwarded field (SmartLink)
+			// overlay is left attached to the OLD GroupElement's aggregation overlay and gets
+			// destroyed when that old overlay is destroyed.
+			//
+			// With aggregation forwarding, ElementUtil.getAggregation(parent, name) returns the field
+			// although field.getParent() points at an inner wrapper, not the parent itself. We emulate
+			// that here by making outerLayout's "content" aggregation report button1 as a child while
+			// button1's live parent stays innerLayout.
+			const oInnerLayoutOverlay = OverlayRegistry.getOverlay(this.oInnerLayout);
+			const oOuterLayoutOverlay = OverlayRegistry.getOverlay(this.oOuterLayout);
+			const oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
+			const oInnerContentAggOverlay = oInnerLayoutOverlay.getAggregationOverlay("content");
+
+			assert.strictEqual(
+				oButton1Overlay.getParent(),
+				oInnerContentAggOverlay,
+				"precondition: button1 overlay is under innerLayout's content aggregation overlay"
+			);
+			assert.notStrictEqual(
+				this.oButton1.getParent(),
+				this.oOuterLayout,
+				"precondition: button1's live parent is innerLayout, not outerLayout (emulated forwarding)"
+			);
+
+			// Emulate forwarding: outerLayout's content getter returns button1 even though button1's
+			// live parent remains innerLayout.
+			const fnOriginalGetAggregation = ElementUtil.getAggregation;
+			sandbox.stub(ElementUtil, "getAggregation").callsFake(function(oElement, sAggregationName) {
+				if (oElement === this.oOuterLayout && sAggregationName === "content") {
+					return [this.oButton1];
+				}
+				return fnOriginalGetAggregation.call(ElementUtil, oElement, sAggregationName);
+			}.bind(this));
+
+			// Detach outerLayout's existing content aggregation overlay so the pass creates a fresh one
+			// without producing a duplicate.
+			const oOldOuterContentAggOverlay = oOuterLayoutOverlay.getAggregationOverlay("content");
+			oOuterLayoutOverlay.removeAggregation("children", oOldOuterContentAggOverlay, true);
+
+			try {
+				await this.oDesignTime._createChildrenOverlays(oOuterLayoutOverlay, {}, ["content"], false, {});
+
+				const oNewOuterContentAggOverlay = oOuterLayoutOverlay.getAggregationOverlay("content");
+				assert.strictEqual(
+					oButton1Overlay.getParent(),
+					oNewOuterContentAggOverlay,
+					"button1 overlay is re-parented to outerLayout's new content aggregation overlay despite the forwarding mismatch"
+				);
+
+				// Now the old parent's aggregation overlay is destroyed (as happens when the old
+				// GroupElement overlay is destroyed after combine). The re-parented overlay must survive.
+				oInnerContentAggOverlay.destroy();
+				assert.ok(
+					!oButton1Overlay.bIsDestroyed,
+					"button1 (SmartLink) overlay survives destruction of the old parent's aggregation overlay"
+				);
+			} catch (oError) {
+				assert.notOk(oError, `no error during _createChildrenOverlays: ${oError && oError.message}`);
+			} finally {
+				oOldOuterContentAggOverlay.destroy();
+			}
+		});
+
 		QUnit.test("when oInnerLayout is extended by new button element without existing overlay", function(assert) {
 			const fnDone = assert.async();
 			let oParentOfNewOverlay;

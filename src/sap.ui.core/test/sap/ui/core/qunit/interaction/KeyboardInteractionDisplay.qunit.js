@@ -11,6 +11,7 @@ sap.ui.define([
 	const annotateAndTranslateKbdTags = KeyboardInteractionDisplay._.annotateAndTranslateKbdTags;
 	const getInteractions = KeyboardInteractionDisplay._.getInteractions;
 	const translateInteractionXML = KeyboardInteractionDisplay._.translateInteractionXML;
+	const getCommandInfosFor = KeyboardInteractionDisplay._.getCommandInfosFor;
 	const getNormalizedShortcutString = ShortcutHelper.normalizeShortcutText;
 	const localizeKeys = ShortcutHelper.localizeKeys;
 
@@ -202,6 +203,35 @@ sap.ui.define([
 		assert.strictEqual(interactions[0].description, "This is a <kbd data-sap-ui-kbd-raw=\"Ctrl+Q\">Strg+Q</kbd> shortcut", "<kbd> node annotated correctly.");
 
 		getResourceBundleForStub.restore();
+	});
+
+	QUnit.test("getCommandInfosFor - resolves platform-specific (object) command shortcut", function (assert) {
+		// A control with a CommandExecution dependent whose command shortcut is defined per platform.
+		function fnCreateControl(vShortcut) {
+			const oCommandExecution = {
+				isA: (sType) => sType === "sap.ui.core.CommandExecution",
+				getVisible: () => true,
+				getCommand: () => "Create",
+				_getCommandInfo: () => ({ shortcut: vShortcut, description: "Create something" })
+			};
+			return {
+				getDependents: () => [oCommandExecution]
+			};
+		}
+
+		const oControl = fnCreateControl({ "default": "Ctrl+Alt+N", "macintosh": "Ctrl+Option+N" });
+
+		// --- Win device: the "default" variant is used ---
+		Device.os.macintosh = false;
+		let aInfos = getCommandInfosFor(oControl);
+		assert.strictEqual(aInfos.length, 1, "one command info returned");
+		assert.strictEqual(aInfos[0].name, "Create", "command name resolved");
+		assert.strictEqual(aInfos[0].kbd[0].raw, "Ctrl+Alt+N", "default variant normalized on Win device");
+
+		// --- Mac device: the "macintosh" variant is used and interpreted literally ---
+		Device.os.macintosh = true;
+		aInfos = getCommandInfosFor(oControl);
+		assert.strictEqual(aInfos[0].kbd[0].raw, "Ctrl+Option+N", "macintosh variant normalized literally on Mac device (Ctrl not remapped to Cmd)");
 	});
 
 	QUnit.module("Caching", {

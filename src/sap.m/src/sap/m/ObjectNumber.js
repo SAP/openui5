@@ -342,13 +342,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectNumber.prototype._getFormattedNumber = function() {
+		const oNumberBinding = this.getBinding("number"),
+			bHasCustomFormatter = oNumberBinding && oNumberBinding.getFormatter();
+
+		if (this.getDisplayMode() === ObjectNumberDisplayMode.Default || bHasCustomFormatter) {
+			return this.getNumber();
+		}
+
 		var sUnit = this.getUnit(),
 			iMaxPrecision = this.getMaxPrecision(),
 			bMaxPrecisionValidValue = !iMaxPrecision && iMaxPrecision !== 0;
-
-		if (sUnit === "*") {
-			return "";
-		}
 
 		if (this.getDisplayMode() === ObjectNumberDisplayMode.Unit) {
 			const iDecimals = bMaxPrecisionValidValue ? 0 : iMaxPrecision;
@@ -359,6 +362,10 @@ sap.ui.define([
 		}
 
 		// Currency mode
+		if (sUnit === "*") {
+			return "";
+		}
+
 		var iPadding, iUnitDigits, sFormattedUnitValue;
 		iUnitDigits = this._oFormat.oLocaleData.getCurrencyDigits(sUnit);
 		if (bMaxPrecisionValidValue) {
@@ -385,6 +392,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the whitespace character to render between the number and unit spans.
+	 * Currency mode handles spacing internally via padding in the formatted number value.
+	 *
+	 * @returns {string} A figure space, a regular space, or an empty string
+	 * @private
+	 */
+	ObjectNumber.prototype._getSpaceSeparator = function() {
+		const sDisplayMode = this.getDisplayMode();
+
+		if (sDisplayMode === ObjectNumberDisplayMode.Currency || !this.getUnit()) {
+			return "";
+		}
+
+		return sDisplayMode === ObjectNumberDisplayMode.Unit ? ObjectNumber.FIGURE_SPACE : " ";
+	};
+
+	/**
 	 * Gets symbol of the currency, if available.
 	 *
 	 * @param {string} sUnit - unit value
@@ -403,7 +427,16 @@ sap.ui.define([
 	ObjectNumber.prototype._getUnit = function () {
 		const sUnit = this.getUnit();
 
-		return this.getUseSymbol() && this.getDisplayMode() === ObjectNumberDisplayMode.Currency ? this._getCurrencySymbol(sUnit) : sUnit;
+		const oUnitBinding = this.getBinding("unit");
+		if (oUnitBinding && oUnitBinding.getFormatter()) {
+			return sUnit;
+		}
+
+		if (this.getDisplayMode() === ObjectNumberDisplayMode.Unit) {
+			return sUnit || "";
+		}
+
+		return this.getUseSymbol() && this.getDisplayMode() === ObjectNumberDisplayMode.Currency ? this._getCurrencySymbol(sUnit) : (sUnit || "");
 	};
 
 	/**

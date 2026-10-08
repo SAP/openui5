@@ -43,6 +43,7 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/DynamicPropertiesController",
 	"sap/ui/mdc/mixin/DynamicPropertiesMixin",
 	"sap/ui/mdc/mixin/ActionToolbarMixin",
+	"sap/ui/mdc/mixin/DeferredAggregationForwardMixin",
 	"sap/ui/mdc/table/menus/QuickActionContainer",
 	"sap/ui/core/theming/Parameters",
 	"sap/base/Log",
@@ -97,6 +98,7 @@ sap.ui.define([
 	DynamicPropertiesController,
 	DynamicPropertiesMixin,
 	ActionToolbarMixin,
+	DeferredAggregationForwardMixin,
 	QuickActionContainer,
 	ThemeParameters,
 	Log,
@@ -812,6 +814,17 @@ sap.ui.define([
 				contextMenu: {type: "sap.ui.core.IContextMenu", multiple: false},
 
 				/**
+				 * Defines the footer control displayed below the table.
+				 *
+				 * <b>Note:</b> Setting a footer has no effect if the {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTableType} is used.
+				 * The footer is retained and applied automatically if the table type is switched to a type that supports a footer. More table types
+				 * might support a footer in the future and will then automatically display it.
+				 *
+				 * @since 1.154
+				 */
+				footer: {type: "sap.ui.core.Control", multiple: false},
+
+				/**
 				 * Defines an aggregation for the <code>CellSelector</code> plugin that provides cell selection capabilities.
 				 *
 				 * <b>Note:</b> The <code>CellSelector</code> is currently only available in combination with the
@@ -1171,26 +1184,6 @@ sap.ui.define([
 		}
 	};
 
-	Table.prototype.setContextMenu = function(oContextMenu) {
-		this._oContextMenu = this.validateAggregation("contextMenu", oContextMenu, false);
-		this._oTable?.setAggregation("contextMenu", oContextMenu, true);
-		return this;
-	};
-
-	Table.prototype.getContextMenu = function() {
-		return (this._oContextMenu && !this._oContextMenu.isDestroyed()) ? this._oContextMenu : null;
-	};
-
-	Table.prototype.destroyContextMenu = function() {
-		if (this._oTable) {
-			this._oTable.destroyContextMenu();
-		} else if (this._oContextMenu) {
-			this._oContextMenu.destroy();
-		}
-		this._oContextMenu = null;
-		return this;
-	};
-
 	Table.prototype._onBeforeOpenContextMenu = function(mPropertyBag) {
 		const oContextMenu = mPropertyBag.contextMenu;
 		let bPreventDefault = true;
@@ -1281,16 +1274,6 @@ sap.ui.define([
 			if (this._oToolbar) {
 				this._getType().removeToolbar();
 			}
-
-			// store and remove the noData otherwise it gets destroyed
-			const vNoData = this.getNoData();
-			this.setNoData();
-			this._vNoData = vNoData;
-
-			// store and remove the contextMenu otherwise it gets destroyed
-			const oContextMenu = this.getContextMenu();
-			this.setContextMenu();
-			this._oContextMenu = oContextMenu;
 
 			this._oTable.destroy("KeepDom");
 			this._oTable = null;
@@ -1663,11 +1646,11 @@ sap.ui.define([
 
 	// Start: FilterIntegrationMixin hooks
 	Table.prototype._onFilterProvided = function(oFilter) {
-		this._updateInnerTableNoData();
+		this._updateNoDataContent();
 	};
 
 	Table.prototype._onFilterRemoved = function(oFilter) {
-		this._updateInnerTableNoData();
+		this._updateNoDataContent();
 	};
 
 	Table.prototype._onFiltersChanged = function(oEvent) {
@@ -1681,53 +1664,18 @@ sap.ui.define([
 	};
 	// End: FilterIntegrationMixin hooks
 
-	Table.prototype.setNoData = function(vNoData) {
-		this._vNoData = this.validateAggregation("noData", vNoData, false);
-		if (!this._oTable) {
-			return this;
-		}
-
-		if (vNoData && vNoData.isA && vNoData.isA("sap.m.IllustratedMessage")) {
-			this._sLastNoDataTitle = "";
-			vNoData.setEnableVerticalResponsiveness(!this._isOfType(TableType.ResponsiveTable));
-
-			let oNoColumnsMessage = this._oTable.getAggregation("_noColumnsMessage");
-			if (!oNoColumnsMessage) {
-				oNoColumnsMessage = MTableUtil.getNoColumnsIllustratedMessage(() => {
-					PersonalizationUtils.openSettingsDialog(this);
-				});
-				oNoColumnsMessage.setEnableVerticalResponsiveness(!this._isOfType(TableType.ResponsiveTable));
-				this._oTable.setAggregation("_noColumnsMessage", oNoColumnsMessage);
-			}
-		}
-
-		this._oTable.setNoData(vNoData);
-		this._updateInnerTableNoData();
-		return this;
-	};
-
-	Table.prototype.getNoData = function() {
-		return (this._vNoData && !this._vNoData.isDestroyed?.()) ? this._vNoData : null;
-	};
-
-	Table.prototype.destroyNoData = function() {
-		if (this._oTable) {
-			this._oTable.destroyNoData(true);
-		} else if (this._vNoData) {
-			this._vNoData.destroy?.();
-		}
-
-		this._vNoData = null;
-		return this;
-	};
-
-	Table.prototype._updateInnerTableNoData = function() {
+	Table.prototype._updateNoDataContent = function() {
 		const vNoData = this.getNoData();
+
 		if (!vNoData || typeof vNoData === "string") {
-			return this._updateInnerTableNoDataText();
+			return this._getType().setNoData(this._getDefaultNoDataText());
 		}
 
-		if (!vNoData.isA("sap.m.IllustratedMessage") || this._sLastNoDataTitle !== vNoData.getTitle()) {
+		if (!vNoData.isA("sap.m.IllustratedMessage")) {
+			return;
+		}
+
+		if (this._sLastNoDataTitle !== vNoData.getTitle()) {
 			return;
 		}
 
@@ -1754,13 +1702,7 @@ sap.ui.define([
 		this._sLastNoDataTitle = vNoData.getTitle();
 	};
 
-	Table.prototype._updateInnerTableNoDataText = function() {
-		if (this._oTable) {
-			this._oTable.setNoData(this._getNoDataText());
-		}
-	};
-
-	Table.prototype._getNoDataText = function() {
+	Table.prototype._getDefaultNoDataText = function() {
 		const vNoData = this.getNoData();
 		if (vNoData && typeof vNoData === "string") {
 			return vNoData;
@@ -2726,19 +2668,11 @@ sap.ui.define([
 
 		oType.updateTable();
 
-		// let the inner table get the nodata aggregation from the mdc table
-		if (this.getNoData()) {
-			this.setNoData(this.getNoData());
-		}
-
-		if (this.getContextMenu()) {
-			this.setContextMenu(this.getContextMenu());
-		}
-
 		updateFilterInfoBar(this);
 		updateColumnMenu(this);
 
 		this._updateInvisibleTitle();
+		this._registerForwardingTarget(this._oTable);
 	};
 
 	Table.prototype._createColumnHeaderMenu = function() {
@@ -3043,7 +2977,7 @@ sap.ui.define([
 		this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding(), {
 			forceRefresh: bForceRefresh || this._bForceRefreshBinding || false
 		});
-		this._updateInnerTableNoData();
+		this._updateNoDataContent();
 		this._bForceRebind = false;
 		this._bForceRefreshBinding = false;
 	};
@@ -3085,8 +3019,6 @@ sap.ui.define([
 			"_oTable",
 			"_oTitle",
 			"_oTableTitle",
-			"_vNoData",
-			"_oContextMenu",
 			"_oTableReady",
 			"_oFullInitialize",
 			"_oPasteButton",
@@ -3389,6 +3321,24 @@ sap.ui.define([
 	FilterIntegrationMixin.call(Table.prototype);
 	DynamicPropertiesMixin.call(Table.prototype, {aggregation: "columns"});
 	ActionToolbarMixin.call(Table.prototype);
+	DeferredAggregationForwardMixin.call(Table.prototype, [{
+		aggregation: "footer",
+		applyToTarget: function(oFooter) { this._getType().setFooter(oFooter); }
+	}, {
+		aggregation: "contextMenu",
+		applyToTarget: function(oContextMenu) { this._getType().setContextMenu(oContextMenu); }
+	}, {
+		aggregation: "noData",
+		applyToTarget: function(vNoData) {
+			if (vNoData?.isA?.("sap.m.IllustratedMessage")) {
+				this._sLastNoDataTitle = "";
+				this._getType().setNoData(vNoData);
+				this._updateNoDataContent();
+			} else {
+				this._getType().setNoData(this._getDefaultNoDataText());
+			}
+		}
+	}]);
 
 	return Table;
 });

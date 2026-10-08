@@ -1186,6 +1186,10 @@ sap.ui.define([
 			rm.openStart("div", oRow.getId() + "-groupHeader");
 			rm.class("sapUiTableGroupIcon");
 			rm.openEnd();
+			rm.openStart("span");
+			rm.class("sapUiTableGroupHeaderText");
+			rm.openEnd();
+			rm.close("span");
 			rm.close("div");
 		}
 	};

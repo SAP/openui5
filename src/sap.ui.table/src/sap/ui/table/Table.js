@@ -1350,6 +1350,24 @@ sap.ui.define([
 		setMinColWidths(this);
 
 		const oTableSizes = this._collectTableSizes();
+		const bNeedsColumnsWidth =
+			TableUtils.Grouping.isInGroupMode(this)
+			|| TableUtils.hasRowActions(this)
+			|| TableUtils.hasRowNavigationIndicators(this);
+		const iFixedColumnsCount = this.getComputedFixedColumnCount();
+		const iScrollableColumnsWidth = bNeedsColumnsWidth ? this.getColumns().reduce((iWidth, oColumn) => {
+			const oColumnDomRef = oColumn.getDomRef();
+			if (oColumnDomRef && oColumn.getIndex() >= iFixedColumnsCount) {
+				iWidth += oColumnDomRef.offsetWidth;
+			}
+			return iWidth;
+		}, 0) : 0;
+
+		if (TableUtils.Grouping.isInGroupMode(this)) {
+			const iGroupHeaderMaxWidth = oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth
+				+ Math.min(iScrollableColumnsWidth, oTableSizes.tableCtrlScrWidth);
+			oDomRef.style.setProperty("--_sap_ui_table_GroupHeaderMaxWidth", iGroupHeaderMaxWidth + "px");
+		}
 
 		// Manipulation of UI Sizes
 		this._updateRowHeights(this._aRowHeights, false);
@@ -1373,14 +1391,7 @@ sap.ui.define([
 				const bDummyColumnHasWidth = oDummyColumn.clientWidth > 2;
 
 				if (!bHasFlexibleRowActions && bDummyColumnHasWidth) {
-					const iColumnsWidth = this.getColumns().reduce((iColumnsWidth, oColumn) => {
-						const oDomRef = oColumn.getDomRef();
-						if (oDomRef && oColumn.getIndex() >= this.getComputedFixedColumnCount()) {
-							iColumnsWidth += oDomRef.offsetWidth;
-						}
-						return iColumnsWidth;
-					}, 0);
-					let iRowActionPos = iColumnsWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth;
+					let iRowActionPos = iScrollableColumnsWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth;
 					const oRowActionStyles = {};
 					if (!TableUtils.hasRowActions(this)) {
 						iRowActionPos = iRowActionPos - TableUtils.ThemeParameters.navIndicatorWidth + TableUtils.BaseBorderWidth;

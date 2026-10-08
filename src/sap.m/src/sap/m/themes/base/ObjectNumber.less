@@ -3,8 +3,6 @@
 /* Base theme                          */
 /* =================================== */
 
-@sapMONInformativeElement: var(--sapInformativeElementColor);
-
 .sapMObjectNumberLarge .sapMObjectNumberText,
 .sapMObjectNumberLarge .sapMObjectNumberUnit {
 	font-size: 1.5rem;
@@ -308,43 +306,43 @@ html.sap-desktop .sapMObjectNumberActive:focus,
 }
 
 .objectNumberStatusMixIn(sapMObjectNumberStatusError,
-	@sapUiButtonNegativeBackground,
-	@sapUiButtonNegativeTextColor,
-	@sapUiButtonNegativeHoverBackground,
-	@sapUiButtonNegativeHoverTextColor,
-	@sapUiButtonNegativeActiveBackground
+	var(--sapButton_Negative_Background),
+	var(--sapButton_Negative_TextColor),
+	var(--sapButton_Negative_Hover_Background),
+	var(--sapButton_Negative_Hover_TextColor),
+	var(--sapButton_Negative_Active_Background)
 );
 
 .objectNumberStatusMixIn(sapMObjectNumberStatusWarning,
-	@sapUiButtonCriticalBackground,
-	@sapUiButtonCriticalTextColor,
-	@sapUiButtonCriticalHoverBackground,
-	@sapUiButtonCriticalHoverTextColor,
-	@sapUiButtonCriticalActiveBackground
+	var(--sapButton_Critical_Background),
+	var(--sapButton_Critical_TextColor),
+	var(--sapButton_Critical_Hover_Background),
+	var(--sapButton_Critical_Hover_TextColor),
+	var(--sapButton_Critical_Active_Background)
 );
 
 .objectNumberStatusMixIn(sapMObjectNumberStatusSuccess,
-	@sapUiButtonSuccessBackground,
-	@sapUiButtonSuccessTextColor,
-	@sapUiButtonSuccessHoverBackground,
-	@sapUiButtonSuccessHoverTextColor,
-	@sapUiButtonSuccessActiveBackground
+	var(--sapButton_Success_Background),
+	var(--sapButton_Success_TextColor),
+	var(--sapButton_Success_Hover_Background),
+	var(--sapButton_Success_Hover_TextColor),
+	var(--sapButton_Success_Active_Background)
 );
 
 .objectNumberStatusMixIn(sapMObjectNumberStatusInformation,
-	@sapMONInformativeElement,
-	@sapUiButtonInformationTextColor,
-	@sapUiButtonInformationHoverBackground,
-	@sapUiButtonInformationHoverTextColor,
-	@sapUiButtonInformationActiveBackground
+	var(--sapInformationBackground),
+	var(--sapButton_Information_TextColor),
+	var(--sapButton_Information_Hover_Background),
+	var(--sapButton_Information_Hover_TextColor),
+	var(--sapButton_Information_Active_Background)
 );
 
 .objectNumberStatusMixIn(sapMObjectNumberStatusNone,
-	@sapUiButtonNeutralBackground,
-	@sapUiButtonNeutralTextColor,
-	@sapUiButtonNeutralHoverBackground,
-	@sapUiButtonNeutralHoverTextColor,
-	@sapUiButtonNeutralActiveBackground
+	var(--sapButton_Neutral_Background),
+	var(--sapButton_Neutral_TextColor),
+	var(--sapButton_Neutral_Hover_Background),
+	var(--sapButton_Neutral_Hover_TextColor),
+	var(--sapButton_Neutral_Active_Background)
 );
 
 .sapMObjectNumberCurrency,

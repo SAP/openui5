@@ -221,7 +221,7 @@ sap.ui.define([
 				$RowHdr.css(bRTL ? "right" : "left", "");
 				$Shield.css("width", "").css(bRTL ? "margin-right" : "margin-left", "");
 				$FirstCellContentInRow.css(bRTL ? "padding-right" : "padding-left", "");
-				$Row.css("--CalculatedGroupIndent", "0");
+				$Row.css("--CalculatedGroupIndent", "0px");
 			} else {
 				// Apply indent on table row
 				$RowHdr.css(bRTL ? "right" : "left", iIndent + "px");
@@ -269,7 +269,7 @@ sap.ui.define([
 				oRow.$("groupHeader")
 					.toggleClass("sapUiTableGroupIconOpen", bIsExpandable && bIsExpanded)
 					.toggleClass("sapUiTableGroupIconClosed", bIsExpandable && !bIsExpanded)
-					.text(sTitle);
+					.find(".sapUiTableGroupHeaderText").text(sTitle);
 				GroupingUtils._setGroupIndent(oRow, iIndent);
 				$Row.toggleClass("sapUiTableRowIndented", iIndent > 0)
 					.toggleClass("sapUiTableGroupHeaderRow", oRow.isGroupHeader());
@@ -307,7 +307,7 @@ sap.ui.define([
 				oRow.$("groupHeader")
 					.removeClass("sapUiTableGroupIconOpen", "sapUiTableGroupIconClosed")
 					.attr("title", "")
-					.text("");
+					.find(".sapUiTableGroupHeaderText").text("");
 				GroupingUtils._setGroupIndent(oRow, 0);
 			}
 
