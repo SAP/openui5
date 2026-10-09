@@ -1430,6 +1430,12 @@ sap.ui.define([
 		};
 
 		Popover.prototype._resetResizeValues = function () {
+			// This can run on the close path (see the overridden oPopup.close) while the Popover
+			// is being destroyed, after exit() has already destroyed and nulled _oResize. In that
+			// case there is nothing left to reset.
+			if (!this._oResize) {
+				return;
+			}
 			return this._oResize._reset();
 		};
 

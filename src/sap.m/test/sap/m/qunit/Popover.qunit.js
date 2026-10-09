@@ -187,6 +187,26 @@ sap.ui.define([
 		clock.restore();
 	}
 
+	/**
+	 * Temporarily hides QUnit's report DOM so the documentElement vertical-scrollbar state is
+	 * driven only by the test's own content, not by the ambient page height (which overflows the
+	 * viewport once the report grows). Keeps the "no vertical scrollbar" precondition deterministic.
+	 *
+	 * @returns {function} A cleanup function that restores the QUnit report's display style.
+	 */
+	function suppressAmbientVerticalScrollbar() {
+		const oReport = document.getElementById("qunit");
+		const sDisplay = oReport ? oReport.style.display : "";
+		if (oReport) {
+			oReport.style.display = "none";
+		}
+		return function () {
+			if (oReport) {
+				oReport.style.display = sDisplay;
+			}
+		};
+	}
+
 	function nextAfterOpenEvent(oPopover) {
 		return new Promise(function (resolve) {
 			oPopover.attachEventOnce("afterOpen", resolve);
@@ -890,6 +910,7 @@ sap.ui.define([
 		await nextUIUpdate();
 		// Ensure there is no vertical scrollbar
 		oDomRenderLocation.style.height = "";
+		const fnRestoreAmbientScrollbar = suppressAmbientVerticalScrollbar();
 
 		// Assert
 		assert.ok(document.documentElement.scrollHeight <= document.documentElement.clientHeight, "The documentElement should NOT have a scrollbar");
@@ -907,6 +928,7 @@ sap.ui.define([
 			assert.ok(document.documentElement.scrollHeight <= document.documentElement.clientHeight, "The documentElement should NOT have a scrollbar");
 
 			// Clean up
+			fnRestoreAmbientScrollbar();
 			oPopover.destroy();
 			oOpener.destroy();
 			oDomRenderLocation.style.height = sCurrentRenderLocationHeight;
@@ -974,6 +996,7 @@ sap.ui.define([
 		oDomRenderLocation.style.height = "100px";
 		// Ensure there is horizontal scrollbar
 		oDomRenderLocation.style.width = "10000px";
+		const fnRestoreAmbientScrollbar = suppressAmbientVerticalScrollbar();
 
 		// Assert
 		assert.ok(document.documentElement.scrollHeight <= document.documentElement.clientHeight, "The documentElement should NOT have a vertical scrollbar");
@@ -990,6 +1013,7 @@ sap.ui.define([
 			assert.ok(document.documentElement.scrollWidth > document.documentElement.clientWidth, "The documentElement should have a horizontal scrollbar");
 
 			// Clean up
+			fnRestoreAmbientScrollbar();
 			oPopover.destroy();
 			oOpener.destroy();
 			oDomRenderLocation.style.height = sCurrentRenderLocationHeight;
