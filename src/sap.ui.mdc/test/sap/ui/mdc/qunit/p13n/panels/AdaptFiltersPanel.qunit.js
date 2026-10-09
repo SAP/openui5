@@ -528,6 +528,9 @@ sap.ui.define([
 			} else {
 				oItem.visibleInDialog = true;
 			}
+			// All items are set as visible so they pass the row-presence pre-filter;
+			// the test verifies that visibleInDialog=false still excludes key2 from the list.
+			oItem.visible = true;
 			return oItem;
 		}, true);
 
@@ -2447,7 +2450,9 @@ sap.ui.define([
 			this.oAFPanel.setItemFactory(function(oContext){
 				iFilterFieldCounter++;
 				const oItem = oContext.getObject();
-				const oFilterField = new FilterField("FF" + iFilterFieldCounter);
+				const oFilterField = new FilterField("FF" + iFilterFieldCounter, {
+					propertyKey: oItem.name
+				});
 
 				// Mock conditions based on item
 				if (oItem.name === "booleanField" && oItem.isFiltered) {
@@ -2573,5 +2578,195 @@ sap.ui.define([
 		assert.equal(oBooleanItem.hadInitialFilterValue, true, "hadInitialFilterValue flag should still be true");
 		assert.equal(oBooleanItem.isFiltered, false, "isFiltered should now be false");
 		assert.equal(oBooleanItem.visible, false, "visible (in FilterBar) should remain false");
+	});
+
+	// ===========================================================================================
+	// Module 15: itemFactory call count (performance regression tests)
+	// These tests validate that the itemFactory is called only for fields that actually need
+	// a row in the dialog (visible, filtered, required), not for all fields in the model.
+	// Without Fix 1 (_bindList pre-filter) all 1000 rows would trigger factory calls;
+	// with the fix only ~N visible/filtered fields do.
+	// ===========================================================================================
+	QUnit.module("itemFactory call count - performance regression", {
+		beforeEach: async function() {
+			this.iFactoryCallCount = 0;
+			this.aFactoryInstances = [];
+			this.oAFPanel = new AdaptFiltersPanel({
+				defaultView: "list"
+			});
+
+			this.oAFPanel.setItemFactory(() => {
+				this.iFactoryCallCount++;
+				const oFilterField = new FilterField("PerfFF" + this.iFactoryCallCount);
+				oFilterField.getConditions = function() { return []; };
+				const oFGL = new FilterGroupLayout("PerfFGL" + this.iFactoryCallCount);
+				oFGL.setFilterField(oFilterField);
+				this.aFactoryInstances.push(oFilterField, oFGL);
+				return oFGL;
+			});
+
+			this.oAFPanel.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oAFPanel.destroy();
+			this.aFactoryInstances.forEach(function(oCtrl) {
+				if (!oCtrl.bIsDestroyed) {
+					oCtrl.destroy();
+				}
+			});
+			this.aFactoryInstances = [];
+			this.iFactoryCallCount = 0;
+		}
+	});
+
+	/**
+	 * Creates p13n data with `nTotal` items of which `nVisible` are visible
+	 * and `nFiltered` are invisible but have a filter value (isFiltered=true).
+	 * @param {int} nTotal Total number of fields
+	 * @param {int} nVisible Number of fields that are visible in the filter bar
+	 * @param {int} nFiltered Number of fields that are not visible but have an active filter value
+	 * @returns {object} p13n adaptation data object
+	 */
+	function createLargeP13nData(nTotal, nVisible, nFiltered) {
+		const aInfo = [];
+		for (let i = 0; i < nTotal; i++) {
+			aInfo.push({ key: "perfKey" + i, label: "Field " + i, dataType: "String" });
+		}
+		return P13nBuilder.prepareAdaptationData(aInfo, function(mItem, oProperty) {
+			const iIdx = parseInt(oProperty.key.replace("perfKey", ""));
+			mItem.visibleInDialog = true;
+			mItem.visible = iIdx < nVisible;
+			mItem.isFiltered = !mItem.visible && iIdx < nVisible + nFiltered;
+			return true;
+		}, true);
+	}
+
+	QUnit.test("itemFactory called only for visible fields, not all 1000 fields", async function(assert) {
+		const N_TOTAL = 1000;
+		const N_VISIBLE = 11;
+		const oP13nData = createLargeP13nData(N_TOTAL, N_VISIBLE, 0);
+
+		this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
+		await nextUIUpdate();
+
+		// Without Fix 1 the factory would be called ~2000 times (2× per item × 1000 items).
+		// With Fix 1 only visible items reach the factory — once per item in _createFilterControl
+		// plus once per item in _createVisibilityAction = 2× N_VISIBLE without Fix 2 as well.
+		// With both Fix 1 and Fix 2 the count should equal N_VISIBLE (one call per row).
+		assert.ok(
+			this.iFactoryCallCount <= N_VISIBLE,
+			"itemFactory called at most " + N_VISIBLE + " times (once per visible field), got " + this.iFactoryCallCount
+		);
+		assert.ok(
+			this.iFactoryCallCount > 0,
+			"itemFactory called at least once (visible fields do get rows)"
+		);
+		assert.ok(
+			this.iFactoryCallCount < N_TOTAL,
+			"itemFactory called far fewer than " + N_TOTAL + " times — invisible fields skipped"
+		);
+	});
+
+	QUnit.test("itemFactory not called for invisible non-filtered fields", async function(assert) {
+		const N_TOTAL = 100;
+		const N_VISIBLE = 5;
+		const oP13nData = createLargeP13nData(N_TOTAL, N_VISIBLE, 0);
+
+		this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
+		await nextUIUpdate();
+
+		// Exactly N_VISIBLE rows should have been created; invisible fields should be skipped.
+		assert.strictEqual(
+			this.iFactoryCallCount, N_VISIBLE,
+			"itemFactory called exactly " + N_VISIBLE + " times — once per visible field"
+		);
+	});
+
+	QUnit.test("itemFactory called for filtered invisible fields (they show in dialog)", async function(assert) {
+		const N_TOTAL = 50;
+		const N_VISIBLE = 3;
+		const N_FILTERED = 2; // invisible but have a value → must appear in dialog
+		const oP13nData = createLargeP13nData(N_TOTAL, N_VISIBLE, N_FILTERED);
+
+		this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
+		await nextUIUpdate();
+
+		// N_VISIBLE + N_FILTERED fields need rows.
+		const iExpected = N_VISIBLE + N_FILTERED;
+		assert.strictEqual(
+			this.iFactoryCallCount, iExpected,
+			"itemFactory called " + iExpected + " times — visible fields + filtered-invisible fields"
+		);
+	});
+
+	QUnit.test("adding a field via ComboBox does not call itemFactory for all fields", async function(assert) {
+		const N_TOTAL = 50;
+		const N_VISIBLE = 3;
+		const oP13nData = createLargeP13nData(N_TOTAL, N_VISIBLE, 0);
+
+		this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
+		this.oAFPanel.switchView("list");
+		await nextUIUpdate();
+
+		const iCallsAfterOpen = this.iFactoryCallCount;
+
+		// Simulate selecting a new field via the ComboBox (key "perfKey3" is the first invisible one)
+		const oViewContent = this.oAFPanel.getCurrentViewContent();
+		const oComboBox = oViewContent._oKeySelect;
+
+		// Select "perfKey3" in the ComboBox
+		oComboBox.setSelectedKey("perfKey3");
+		oComboBox.fireChange({ value: "Field 3", newValue: "Field 3" });
+		await nextUIUpdate();
+		await new Promise((r) => { setTimeout(r, 150); });
+
+		const iNewCalls = this.iFactoryCallCount - iCallsAfterOpen;
+		// UI5 factory bindings destroy and recreate all visible items on model change, so
+		// iNewCalls will be N_VISIBLE+1 at most (not 1). The key assertion is that
+		// factory is NOT called for all N_TOTAL items — only for visible ones.
+		assert.ok(
+			iNewCalls <= N_VISIBLE + 1,
+			"Factory called at most N_VISIBLE+1 times after adding a field (actual=" + iNewCalls + "), not for all " + N_TOTAL + " fields"
+		);
+		assert.ok(
+			iNewCalls < N_TOTAL,
+			"Factory NOT called for all " + N_TOTAL + " fields (actual=" + iNewCalls + ")"
+		);
+	});
+
+	QUnit.test("factory call count stays low after view switch (list → group)", async function(assert) {
+		const N_TOTAL = 200;
+		const N_VISIBLE = 7;
+		const oP13nData = createLargeP13nData(N_TOTAL, N_VISIBLE, 0);
+
+		this.oAFPanel.setP13nModel(new JSONModel(oP13nData));
+		this.oAFPanel.switchView("list");
+		await nextUIUpdate();
+
+		const iCallsListView = this.iFactoryCallCount;
+		// setP13nModel + switchView("list") may each call _bindList once, so up to 2×N_VISIBLE
+		assert.ok(
+			iCallsListView <= 2 * N_VISIBLE,
+			"List view setup: factory called at most 2×N_VISIBLE=" + (2 * N_VISIBLE) + " times, got " + iCallsListView
+		);
+		assert.ok(
+			iCallsListView < N_TOTAL,
+			"List view setup: factory NOT called for all " + N_TOTAL + " fields (got " + iCallsListView + ")"
+		);
+
+		// Switch to group view — triggers a lazy second panel initialization
+		this.oAFPanel.switchView("group");
+		await nextUIUpdate();
+
+		const iCallsGroupView = this.iFactoryCallCount - iCallsListView;
+		assert.ok(
+			iCallsGroupView <= N_VISIBLE,
+			"Group view init: factory called at most " + N_VISIBLE + " additional times, got " + iCallsGroupView
+		);
+		assert.ok(
+			iCallsGroupView < N_TOTAL,
+			"Group view: factory NOT called for all " + N_TOTAL + " fields (got " + iCallsGroupView + ")"
+		);
 	});
 });

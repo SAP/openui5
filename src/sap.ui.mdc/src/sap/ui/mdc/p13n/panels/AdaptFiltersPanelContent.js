@@ -381,10 +381,8 @@ sap.ui.define([
 				} else if (sMode === MODE_EDIT) {
 					if (oControl.isA("sap.ui.mdc.FilterField")) {
 						oControl.setEditMode("Editable");
-					} else {
-						if (!oControl._bDefaultDisabled) {
-							oControl.setEnabled?.(true);
-						}
+					} else if (!oControl._bDefaultDisabled) {
+						oControl.setEnabled?.(true);
 					}
 				}
 			}
@@ -480,13 +478,44 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the pre-filter that limits list rows to items that need a UI row on initial load:
+	 * items that are visibleInDialog AND (visible, have a filter value, are required, or have an
+	 * explicit position).  Used in the _bindList binding info so the factory is not called for
+	 * items that would have no visible row.  Any subsequent filter change via _filterByModeAndSearch
+	 * replaces this pre-filter with the full search/mode filter.
+	 * @returns {sap.ui.model.Filter} pre-filter (AND of visibleInDialog with OR of presence conditions)
+	 * @private
+	 */
+	AdaptFiltersPanelContent.prototype._getRowPresenceFilter = function() {
+		return new Filter([
+			new Filter("visibleInDialog", "EQ", true),
+			new Filter([
+				new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true),
+				new Filter("isFiltered", "EQ", true),
+				new Filter("required", "EQ", true),
+				new Filter("position", "GE", 0)
+			], false /* OR */)
+		], true /* AND */);
+	};
+
+	/**
 	 * Binds the list to the p13n model, depending on the current view mode.
+	 * The binding info includes a row-presence pre-filter so the factory is only called for
+	 * items that need a row (visible, filtered, required, or at an explicit position).  A flag
+	 * (_bJustBound) prevents _filterByModeAndSearch from immediately replacing this pre-filter
+	 * with a broader one and triggering a second round of factory calls.  Any subsequent filter
+	 * change (search, mode) will replace the pre-filter via _filterByModeAndSearch, which is
+	 * correct — the search case must include all matching items regardless of visibility.
 	 */
 	AdaptFiltersPanelContent.prototype._bindList = function() {
 		const oBindingInfo = {
 			path: `${this.P13N_MODEL}>/items`,
 			factory: this._getItemFactory.bind(this),
-			templateShareable: false
+			templateShareable: false,
+			// Row-presence pre-filter: limits factory calls to items that actually need a row
+			// on initial load.  _filterByModeAndSearch skips its filter() call when _bJustBound
+			// is true, preventing a second destroy+recreate of the same items.
+			filters: this._getRowPresenceFilter()
 		};
 
 		const bIsGrouped = this._oViewModel.getProperty("/grouped");
@@ -522,6 +551,9 @@ sap.ui.define([
 		}
 		this._oListControl.destroyItems();
 		this._oListControl.bindItems(oBindingInfo);
+		// Signal that the filter was already applied during bindItems so _filterByModeAndSearch
+		// can skip the redundant filter() call that would destroy and recreate all just-created items.
+		this._bJustBound = true;
 	};
 
 	AdaptFiltersPanelContent.prototype._getGroup = function(oContext) {
@@ -856,7 +888,10 @@ sap.ui.define([
 			oLabel.setLabelFor(oFilterField);
 		}
 
-		const oActionContainer = this._createActionContainer(oContext, oLabel);
+		// Pass oFilterControl to _createActionContainer so _createVisibilityAction can read
+		// the initial conditions from the already-created control instead of invoking the
+		// itemFactory a second time (Fix 2 for the itemFactory double-call performance issue).
+		const oActionContainer = this._createActionContainer(oContext, oLabel, oFilterControl);
 		oLabel.setLayoutData(new GridData({
 			span: "XL4 L4 M4 S12",
 			linebreakS: true
@@ -886,13 +921,16 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.ContextBinding} oContext context of the item
 	 * @param {sap.m.Label} oLabel the label associated with the item, used for aria labeling of action buttons
+	 * @param {sap.ui.core.Control} [oFilterControl] the already-created filter control for this item;
+	 *   when provided, the visibility action reads its initial conditions from this control instead of
+	 *   invoking the itemFactory a second time
 	 * @returns {sap.ui.layout.Grid} the grid containing action buttons
 	 * @private
 	 */
-	AdaptFiltersPanelContent.prototype._createActionContainer = function(oContext, oLabel) {
+	AdaptFiltersPanelContent.prototype._createActionContainer = function(oContext, oLabel, oFilterControl) {
 		const oDeleteButton = this._createDeleteAction(oLabel);
 		const oSortButton = this._createSortAction();
-		const oVisibleButton = this._createVisibilityAction(oContext, oLabel);
+		const oVisibleButton = this._createVisibilityAction(oContext, oLabel, oFilterControl);
 
 		const sIdSuffix = _getIdSuffixFromContext(oContext);
 		const oGrid = new Grid(this.getId() + "-actionContainer-" + sIdSuffix, {
@@ -960,8 +998,16 @@ sap.ui.define([
 		}).addStyleClass("sapUiMDCAdaptFiltersContentSortIcon");
 	};
 
-	AdaptFiltersPanelContent.prototype._createVisibilityAction = function(oContext, oLabel) {
-		const oFilterField = this._getFilterFieldFromItem(oContext);
+	AdaptFiltersPanelContent.prototype._createVisibilityAction = function(oContext, oLabel, oFilterControl) {
+		// Extract the actual filter field from the already-created control when provided,
+		// avoiding a second itemFactory call (Fix 2 for the double factory-call performance issue).
+		// Fall back to _getFilterFieldFromItem only when no control is available.
+		let oFilterField;
+		if (oFilterControl) {
+			oFilterField = oFilterControl.getFilterField?.() || oFilterControl;
+		} else {
+			oFilterField = this._getFilterFieldFromItem(oContext);
+		}
 		const oItem = oContext.getObject();
 		const bHasConditions = oFilterField?.isA("sap.ui.mdc.FilterField") ? oFilterField.getConditions().length != 0 : oFilterField?._bHasConditions;
 
@@ -1014,7 +1060,12 @@ sap.ui.define([
 				});
 
 				setTimeout(() => {
-					const oErrorText = this._getFilterFieldFromItem(oContext).getValueStateText();
+					// Extract the filter field from the already-rendered grid instead of
+					// calling the factory again (part of Fix 2).
+					const oMainGrid = oListItem.getContent()?.[0];
+					const oRenderedFilterControl = oMainGrid?.getContent()?.[1];
+					const oRenderedField = oRenderedFilterControl?.getFilterField?.() || oRenderedFilterControl;
+					const oErrorText = oRenderedField?.getValueStateText?.() ?? "";
 					this.oInvisibleMessage.announce(oErrorText, InvisibleMessageMode.Assertive);
 				}, RENDERING_DELAY_MS);
 
@@ -1419,7 +1470,13 @@ sap.ui.define([
 
 		const oBinding = this._oListControl?.getBinding("items");
 		if (oBinding) {
-			oBinding.filter(aFilters, true);
+			if (this._bJustBound) {
+				// _bindList already applied this exact filter in the binding info; skip the
+				// redundant filter() call that would destroy and recreate all items.
+				this._bJustBound = false;
+			} else {
+				oBinding.filter(aFilters, true);
+			}
 		}
 
 		return aFilters;
