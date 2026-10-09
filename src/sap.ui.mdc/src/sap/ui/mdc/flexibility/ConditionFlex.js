@@ -2,14 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/base/util/merge',
 	'sap/base/Log',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/flexibility/Util',
 	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/changeHandler/common/ChangeCategories",
 	"./helpers/addKeyOrName"
-], (merge, Log, FilterOperatorUtil, Util, ChangeClassification, ChangeCategories, addKeyOrName) => {
+], (Log, FilterOperatorUtil, Util, ChangeClassification, ChangeCategories, addKeyOrName) => {
 	"use strict";
 
 	/**
@@ -41,12 +40,13 @@ sap.ui.define([
 		return fnQueueChange(oControl, () => {
 			return oModifier.getProperty(oControl, "filterConditions")
 				.then((mFilterConditions) => {
-					// 'filterConditions' property needs to be updated for change selector
-					mConditionsData = merge({}, mFilterConditions);
+					// Shallow-copy the outer map and only copy the target field's array to avoid
+					// an O(n) deep-copy of all conditions on every per-condition apply (see O(n²) issue).
+					mConditionsData = Object.assign({}, mFilterConditions);
 					if (mConditionsData) {
 						for (const sFieldPath in mConditionsData) {
 							if (sFieldPath === oChangeContent.key) {
-								aConditions = mConditionsData[sFieldPath];
+								aConditions = mConditionsData[sFieldPath] = mConditionsData[sFieldPath].slice();
 								break;
 							}
 						}
@@ -112,13 +112,14 @@ sap.ui.define([
 		return fnQueueChange(oControl, () => {
 			return oModifier.getProperty(oControl, "filterConditions")
 				.then((mFilterConditions) => {
-					// 'filterConditions' property needs to be updated for change selector
-					mConditionsData = merge({}, mFilterConditions);
+					// Shallow-copy the outer map and only copy the target field's array to avoid
+					// an O(n) deep-copy of all conditions on every per-condition revert (see O(n²) issue).
+					mConditionsData = Object.assign({}, mFilterConditions);
 
 					if (mConditionsData) {
 						for (const sFieldPath in mConditionsData) {
 							if (sFieldPath === oChangeContent.key) {
-								aConditions = mConditionsData[sFieldPath];
+								aConditions = mConditionsData[sFieldPath] = mConditionsData[sFieldPath].slice();
 								break;
 							}
 						}
