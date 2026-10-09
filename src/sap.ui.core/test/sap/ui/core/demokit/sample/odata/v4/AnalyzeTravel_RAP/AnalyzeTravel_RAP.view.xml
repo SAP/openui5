@@ -125,22 +125,31 @@
 		<Column filterProperty="FlightPrice" sortProperty="FlightPrice" hAlign="End" width="7em">
 			<m:Label text="Flight Price"/>
 			<template>
-				<m:Input editable="{= !%{@$ui5.node.isTotal} }" value="{
-						mode: 'TwoWay',
-						parts : ['FlightPrice', 'CurrencyCode', {
-							mode : 'OneTime',
-							path : '/##@@requestCurrencyCodes',
-							targetType : 'any'
-						}],
-						type : 'Currency',
-						formatOptions : { showMeasure : false }
-					}"/>
+				<m:HBox>
+					<m:Input editable="{= !%{@$ui5.node.isTotal} }" value="{
+							mode: 'TwoWay',
+							parts : ['FlightPrice', 'CurrencyCode', {
+								mode : 'OneTime',
+								path : '/##@@requestCurrencyCodes',
+								targetType : 'any'
+							}],
+							type : 'Currency',
+							formatOptions : { showMeasure : false }
+						}" visible="{= !%{@$ui5.context.isOutdated} }"/>
+					<m:Text text="---" tooltip="Content may be outdated - refresh needed"
+						visible="{= !!%{@$ui5.context.isOutdated} }"/>
+				</m:HBox>
 			</template>
 		</Column>
 		<Column filterProperty="CurrencyCode" sortProperty="CurrencyCode" width="6em">
 			<m:Label text="Currency"/>
 			<template>
-				<demo:ValueHelp enabled="{= !%{@$ui5.node.isTotal} }" value="{CurrencyCode}"/>
+				<m:HBox>
+					<demo:ValueHelp enabled="{= !%{@$ui5.node.isTotal} }" value="{CurrencyCode}"
+						visible="{= !%{@$ui5.context.isOutdated} }"/>
+					<m:Text text="---" tooltip="Content may be outdated - refresh needed"
+						visible="{= !!%{@$ui5.context.isOutdated} }"/>
+				</m:HBox>
 			</template>
 		</Column>
 		<Column hAlign="Center" width="6em">
@@ -150,10 +159,9 @@
 					color="{= %{@$ui5.context.isOutdated} === true ? 'Critical' : 'Positive' }"
 					src="{= %{@$ui5.context.isOutdated} === true
 						? 'sap-icon://disconnected' : 'sap-icon://connected' }"
-					tooltip="Grand Total {= (%{@$ui5.context.isOutdated}
+					tooltip="Content {= (%{@$ui5.context.isOutdated}
 						? 'may be outdated' : 'is up to date') }"
-					visible="{= %{@$ui5.node.isTotal}
-						&amp;&amp; %{@$ui5.context.isOutdated} !== undefined }"/>
+					visible="{= %{@$ui5.context.isOutdated} !== undefined }"/>
 			</template>
 		</Column>
 		<Column hAlign="Center" width="4em">

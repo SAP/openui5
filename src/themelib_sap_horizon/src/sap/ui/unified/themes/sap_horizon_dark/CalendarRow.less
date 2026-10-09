@@ -102,7 +102,7 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active) > .sap
 }
 
 .sapUiCalendarAppTitle {
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	color: var(--sapTextColor);
 }
 
@@ -115,10 +115,10 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active) > .sap
 }
 
 .sapUiAppCreate.sapUiCalendarApp.sapUiCalendarAppType01 {
-	border-top-color: darken(@sapUiListBorderColor, 15);
-	border-right-color: darken(@sapUiListBorderColor, 15);
-	border-bottom-color: darken(@sapUiListBorderColor, 15);
-	background-color: lighten(@sapUiAccent1, 50);
+	border-top-color: ~'hsl(from var(--sapList_BorderColor) h s calc(l - 15))';
+	border-right-color: ~'hsl(from var(--sapList_BorderColor) h s calc(l - 15))';
+	border-bottom-color: ~'hsl(from var(--sapList_BorderColor) h s calc(l - 15))';
+	background-color: ~'hsl(from var(--sapAccentColor1) h s calc(l + 50))';
 	color: var(--sapList_TextColor);
 }
 

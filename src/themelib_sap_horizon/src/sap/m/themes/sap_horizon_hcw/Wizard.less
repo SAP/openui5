@@ -5,14 +5,6 @@
 
 .sapMWizard {
 
-	.sapMWizardStepContainer {
-		margin-top: @_sap_m_Wizard_NavHeight;
-	}
-
-	&.sapMWizardBgSolid .sapMWizardStepContainer {
-		background-color: var(--sapBackgroundColor);
-	}
-
 	&.sapMWizardBgList .sapMWizardStepContainer {
 		background-color: var(--sapBackgroundColor);
 	}
@@ -20,10 +12,6 @@
 	&.sapMWizardBgTransparent .sapMWizardStepContainer {
 		background-color: var(--sapBackgroundColor);
 	}
-}
-
-.sapMWizard .sapMWizardProgressNav {
-	box-shadow: @sapUiShadowHeader;
 }
 
 .sapMWizard {
@@ -35,7 +23,7 @@
 }
 
 .sapMWizard:not(.sapMWizardModePage) .sapMWizardLastActivatedStep {
-	min-height: ~"calc(100% - 3rem)";
+	min-height: ~'calc(100% - 3rem)';
 }
 
 html.sap-phone .sapMWizard .sapMWizardNextButtonVisible {

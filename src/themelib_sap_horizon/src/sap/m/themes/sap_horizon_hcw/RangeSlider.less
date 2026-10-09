@@ -31,7 +31,7 @@
 
 	.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
 
-		&:hover {
+		html.sap-desktop &:hover {
 			background-color: var(--sapSlider_Hover_HandleBackground);
 			border-color: var(--sapSlider_Hover_HandleBorderColor);
 		}
@@ -47,10 +47,14 @@
 		}
 
 		&:focus {
-			background: var(--sapSlider_Active_RangeHandleBackground);
-			border: 0.125rem solid var(--sapContent_FocusColor);
 			outline: none;
 			box-shadow: none;
+		}
+
+		html.sap-desktop &:focus,
+		&:focus-visible {
+			background: var(--sapSlider_Active_RangeHandleBackground);
+			border: 0.125rem solid var(--sapContent_FocusColor);
 		}
 	}
 
@@ -91,10 +95,14 @@
 	}
 
 	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
-		background: var(--sapSlider_Active_RangeHandleBackground);
-		border: 0.125rem solid var(--sapContent_FocusColor);
 		outline: none;
 		box-shadow: none;
+	}
+
+	html.sap-desktop .sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus,
+	.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus-visible {
+		background: var(--sapSlider_Active_RangeHandleBackground);
+		border: 0.125rem solid var(--sapContent_FocusColor);
 	}
 
 	.sapMRangeSlider.sapMSlider .sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus)::after {
@@ -107,7 +115,8 @@
 	}
 }
 
-html.sap-desktop .sapMSliderProgress:focus::before {
+html.sap-desktop .sapMSliderProgress:focus::before,
+.sapMSliderProgress:focus-visible::before {
 	border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	border-radius: 0.5rem;
 	content: '';
@@ -119,7 +128,8 @@ html.sap-desktop .sapMSliderProgress:focus::before {
 	left: ~"calc(-1 * ((@{_sap_m_RangeSlider_Handle_Width} / 2) + 0.3125rem))";
 }
 
-html.sap-desktop .sapUiSizeCompact .sapMSliderProgress:focus:before {
+html.sap-desktop .sapUiSizeCompact .sapMSliderProgress:focus:before,
+.sapUiSizeCompact .sapMSliderProgress:focus-visible:before {
 	height: ~"calc(@{_sap_m_RangeSlider_Handle_Height_Compact} + 0.375rem)";
 	width: ~"calc(100% + ((@{_sap_m_RangeSlider_Handle_Width_Compact}) + 0.375rem))";
 	top: ~"calc(-1 * ((@{_sap_m_RangeSlider_Handle_Height_Compact} / 2) + 0.1875rem))";

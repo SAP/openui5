@@ -136,7 +136,8 @@
 	border-bottom-right-radius: 1rem;
 	border-bottom-left-radius: 1rem;
 
-	&:focus::before {
+	html.sap-desktop &:focus::before,
+	&:focus-visible::before {
 		content: '';
 		position: absolute;
 		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);

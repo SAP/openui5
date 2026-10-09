@@ -803,7 +803,7 @@ sap.ui.define([
 				? _AggregationCache.calculateKeyPredicateLevels.bind(null, oAggregation, aGroupBy,
 					aAllProperties, bTotal, oSubtotalUnits)
 				: _AggregationCache.calculateKeyPredicate.bind(null, oGroupNode, aGroupBy,
-					aAllProperties, bLeaf, bTotal, this.sMetaPath);
+					aAllProperties, bLeaf, bTotal, this);
 		if (sParentFilter) {
 			oCache.$parentFilter = sParentFilter;
 		}
@@ -835,6 +835,7 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.doReset = function (oAggregation, bHasGrandTotal, oFirstLevel) {
 		this.oAggregation = oAggregation;
+		this.bSubtotalsOutdated = undefined;
 		// early call of _AggregationHelper.buildApply to determine $NodeProperty etc.
 		this.sToString = this.getDownloadUrl("");
 
@@ -962,6 +963,7 @@ sap.ui.define([
 						that.turnIntoPlaceholder(oElement, sPredicate);
 					} else {
 						that.aElements.$byPredicate[sPredicate] = oElement;
+						that.updateSubtotalsOutdatedAnnotation(oElement);
 						const sTransientPredicate
 							= _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 						if (sTransientPredicate) {
@@ -1050,6 +1052,7 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oSubtotals, "predicate",
 					_Helper.getPrivateAnnotation(oGroupNode, "predicate").slice(0, -1)
 						+ ",$isTotal=true)");
+				that.updateSubtotalsOutdatedAnnotation(oSubtotals);
 				that.addElements(oSubtotals, iIndex + iCount - 1);
 			}
 
@@ -2848,6 +2851,7 @@ sap.ui.define([
 			this.oBackup.oFirstLevel = this.oFirstLevel;
 			this.oBackup.oGrandTotalPromise = this.oGrandTotalPromise;
 			this.oBackup.mKeptElements = {};
+			this.oBackup.bSubtotalsOutdated = this.bSubtotalsOutdated;
 			this.oBackup.bUnifiedCache = this.bUnifiedCache;
 			this.bUnifiedCache = bUseMultiLevelExpand || this.bKeptFirstLevel
 				|| !!oAggregation.hierarchyQualifier;
@@ -2912,6 +2916,7 @@ sap.ui.define([
 				this.oFirstLevel.restore(bReally);
 			}
 			this.oGrandTotalPromise = this.oBackup.oGrandTotalPromise;
+			this.bSubtotalsOutdated = this.oBackup.bSubtotalsOutdated;
 			this.bUnifiedCache = this.oBackup.bUnifiedCache;
 			for (const sPredicate in this.oBackup.mKeptElements) {
 				const oKeptElement = this.aElements.$byPredicate[sPredicate];
@@ -2932,7 +2937,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bOutdated - Whether the grand total row is outdated
 	 *
-	 * @private
+	 * @public
 	 */
 	_AggregationCache.prototype.setGrandTotalOutdated = function (bOutdated) {
 		const oGrandTotal = this.aElements.$byPredicate["()"];
@@ -2957,6 +2962,22 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.setInactive = function (sPath, bInactive) {
 		this.oFirstLevel.setInactive(sPath, bInactive, this.mChangeListeners);
+	};
+
+	/**
+	 * Sets the outdated state of all available subtotals. All subtotals that are added afterwards,
+	 * e.g. by scrolling or expanding a group node, are considered outdated until {@link #doReset}
+	 * is called.
+	 *
+	 * @public
+	 */
+	_AggregationCache.prototype.setSubtotalsOutdated = function () {
+		this.bSubtotalsOutdated = true;
+		// #expand and #calculateKeyPredicate take care to set the outdated state of subtotals
+		// coming later into the view
+		this.aElements.forEach((oElement) => {
+			this.updateSubtotalsOutdatedAnnotation(oElement);
+		});
 	};
 
 	/**
@@ -3080,6 +3101,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Updates the "@$ui5.context.isOutdated" annotation if the given element is a subtotal and all
+	 * subtotals have to be marked as outdated. All change listeners are informed.
+	 *
+	 * @param {object} oElement - The element to be updated
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.updateSubtotalsOutdatedAnnotation = function (oElement) {
+		if (this.bSubtotalsOutdated && oElement["@$ui5.node.isTotal"]
+				&& oElement["@$ui5.node.level"]) {
+			_Helper.updateAll(this.mChangeListeners,
+				_Helper.getPrivateAnnotation(oElement, "predicate"), oElement,
+				{"@$ui5.context.isOutdated" : true});
+		}
+	};
+
+	/**
 	 * Validates for all nodes which contribute to the ExpandLevels parameter whether they are a
 	 * descendant of the given node. If a node is a descendant, its expand info is deleted.
 	 *
@@ -3150,15 +3188,16 @@ sap.ui.define([
 	 *   Whether this element is a leaf
 	 * @param {boolean} bTotal
 	 *   Whether this element is a (sub)total
-	 * @param {string} sRootMetaPath
-	 *   The meta path for the aggregation cache's collection of elements
+	 * @param {sap.ui.model.odata.v4.lib._AggregationCache} oAggregationCache
+	 *   The aggregation cache instance, used to get the meta path for the aggregation cache's
+	 *   collection of elements and the current outdated state of the subtotals
 	 * @param {object} oElement
 	 *   The element for which to calculate the key predicate
 	 * @param {object} mTypeForMetaPath
 	 *   A map from meta paths to entity types (as delivered by {@link #fetchTypes})
 	 * @param {string} sMetaPath
-	 *   The meta path for the given element; it differs from <code>sRootMetaPath</code> in case of
-	 *   nested objects
+	 *   The meta path for the given element; it differs from the aggregation cache's meta path in
+	 *   case of nested objects
 	 * @returns {string|undefined}
 	 *   The key predicate or <code>undefined</code>, if key predicate cannot be determined
 	 *
@@ -3166,8 +3205,8 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#calculateKeyPredicate
 	_AggregationCache.calculateKeyPredicate = function (oGroupNode, aGroupBy, aAllProperties, bLeaf,
-			bTotal, sRootMetaPath, oElement, mTypeForMetaPath, sMetaPath) {
-		if (sRootMetaPath !== sMetaPath) { // nested object
+			bTotal, oAggregationCache, oElement, mTypeForMetaPath, sMetaPath) {
+		if (oAggregationCache.sMetaPath !== sMetaPath) { // nested object
 			const sPredicate = sMetaPath in mTypeForMetaPath
 				? _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath)
 				: undefined; // complex type
@@ -3189,6 +3228,9 @@ sap.ui.define([
 					oElement[vProperty] = oGroupNode[vProperty];
 				}
 			});
+		} else if (oElement["@$ui5.context.isTransient"] === false) { // creation with groupLevels
+			bLeaf = true;
+			bTotal = false;
 		}
 		// prefer real key predicate for leaf
 		const sPredicate = bLeaf && _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath)
@@ -3202,6 +3244,7 @@ sap.ui.define([
 		_AggregationHelper.setAnnotations(oElement, bLeaf ? undefined : false, bTotal,
 			oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1,
 			oGroupNode ? null : aAllProperties);
+		oAggregationCache.updateSubtotalsOutdatedAnnotation(oElement);
 
 		return sPredicate;
 	};

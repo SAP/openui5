@@ -1076,7 +1076,9 @@ function(
 			if (oTouch.target !== oNearestHandleDomRef) {
 
 				// set the focus to the nearest slider handle
-				setTimeout(oNearestHandleDomRef["focus"].bind(oNearestHandleDomRef), 0);
+				setTimeout(function () {
+					oNearestHandleDomRef.focus();
+				}, 0);
 			}
 
 			// recalculate some styles,
@@ -1188,7 +1190,13 @@ function(
 			// removes the registered event listeners
 			jQuery(document).off(sEventNamespace);
 
-			var fValue = this.getValue();
+			var fValue = this.getValue(),
+				oHandleDomRef = this.getDomRef("handle");
+
+			if (oHandleDomRef && document.activeElement === oHandleDomRef &&
+				(oEvent.type === "touchend" || oEvent.type === "touchcancel")) {
+				oHandleDomRef.blur();
+			}
 
 			// remove the active state
 			this.setProperty("handlePressed", false);

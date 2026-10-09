@@ -649,8 +649,9 @@ sap.ui.define([
 			this.mock(_AggregationCache).expects("calculateKeyPredicate").exactly(bExpandTo ? 0 : 1)
 				.on(null)
 				.withExactArgs(sinon.match.same(oPICT.oParentGroupNode), aGroupBy,
-					sinon.match.same(aAllProperties), oPICT.bLeaf, oPICT.bSubtotals, "/Foo",
-					"~oElement~", "~mTypeForMetaPath~", "~metapath~")
+					sinon.match.same(aAllProperties), oPICT.bLeaf, oPICT.bSubtotals,
+					sinon.match.same(oAggregationCache), "~oElement~", "~mTypeForMetaPath~",
+					"~metapath~")
 				.returns("~sPredicate~");
 			// This must be done before calling createGroupLevelCache, so that bind grabs the mock
 			this.mock(_AggregationCache).expects("calculateKeyPredicateLevels")
@@ -804,6 +805,7 @@ sap.ui.define([
 			});
 			oCache.oCountPromise = "~oOldCountPromise~";
 			oCache.oFirstLevel = bHasFirstLevel ? "~oOldFirstLevel~" : null;
+			oCache.bSubtotalsOutdated = "~bSubtotalsOutdated~";
 			this.mock(oCache).expects("getDownloadUrl").withExactArgs("").returns("~sDownloadUrl~");
 			this.mock(oCache).expects("createCountPromise").exactly(bCount && i === 1 ? 1 : 0)
 				.withExactArgs()
@@ -848,6 +850,7 @@ sap.ui.define([
 			oCache.doReset(oNewAggregation, bHasGrandTotal, "~oFirstLevel~");
 
 			assert.strictEqual(oCache.oAggregation, oNewAggregation);
+			assert.strictEqual(oCache.bSubtotalsOutdated, undefined);
 			assert.strictEqual(oCache.sToString, "~sDownloadUrl~");
 			assert.strictEqual(oCache.toString(), "~sDownloadUrl~"); // <-- code under test
 			assert.strictEqual(oCache.oFirstLevel,
@@ -907,7 +910,11 @@ sap.ui.define([
 				}
 
 		QUnit.test(sTitle, function (assert) {
-			var aAllProperties = ["p1", "p2", ["a", "b"], "p3", "p4", ["c", "d"]],
+			var oAggregationCache = {
+					sMetaPath : "/meta/path",
+					updateSubtotalsOutdatedAnnotation : mustBeMocked
+				},
+				aAllProperties = ["p1", "p2", ["a", "b"], "p3", "p4", ["c", "d"]],
 				oElement = {
 					p2 : "v2",
 					p4 : "v4"
@@ -930,6 +937,11 @@ sap.ui.define([
 				oHelperMock = this.mock(_Helper),
 				mTypeForMetaPath = {"/meta/path" : {}};
 
+			if (bParent) {
+				// must not influence bLeaf/bTotal, new entities are always created in oFirstLevel
+				oElement["@$ui5.context.isTransient"] = false;
+			}
+
 			oHelperMock.expects("inheritPathValue").exactly(bParent ? 1 : 0)
 				.withExactArgs(["a", "b"], sinon.match.same(oGroupNode), sinon.match.same(oElement));
 			oHelperMock.expects("inheritPathValue").exactly(bParent ? 1 : 0)
@@ -940,7 +952,7 @@ sap.ui.define([
 			oHelperMock.expects("getKeyPredicate").exactly(bHasRealKeyPredicate ? 0 : 1)
 				.withExactArgs(oElementMatcher, "/meta/path", sinon.match.same(mTypeForMetaPath),
 					sinon.match.same(aGroupBy), true).returns("~predicate~");
-			oHelperMock.expects("setPrivateAnnotation")
+			const oSetPredicateExpectation = oHelperMock.expects("setPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oElement), "predicate", "~predicate~");
 			oHelperMock.expects("getKeyFilter").exactly(bLeaf ? 0 : 1)
 				.withExactArgs(oElementMatcher, "/meta/path", sinon.match.same(mTypeForMetaPath),
@@ -948,23 +960,29 @@ sap.ui.define([
 				.returns("~filter~");
 			oHelperMock.expects("setPrivateAnnotation").exactly(bLeaf ? 0 : 1)
 				.withExactArgs(sinon.match.same(oElement), "filter", "~filter~");
-			this.mock(_AggregationHelper).expects("setAnnotations")
+			const oSetAnnotationsExpectation = this.mock(_AggregationHelper).expects("setAnnotations")
 				.withExactArgs(sinon.match.same(oElement), bLeaf ? undefined : false, "~bTotal~",
 					bParent ? 3 : 1, bParent ? null : aAllProperties);
+			const oUpdateSubtotalsOutdatedAnnotationExpectation = this.mock(oAggregationCache)
+				.expects("updateSubtotalsOutdatedAnnotation")
+				.withExactArgs(sinon.match.same(oElement));
 
 			assert.strictEqual(
 				// code under test
 				_AggregationCache.calculateKeyPredicate(bParent ? oGroupNode : undefined, aGroupBy,
-					aAllProperties, bLeaf, "~bTotal~", "/meta/path", oElement, mTypeForMetaPath,
+					aAllProperties, bLeaf, "~bTotal~", oAggregationCache, oElement, mTypeForMetaPath,
 					"/meta/path"),
 				"~predicate~");
 
+			sinon.assert.callOrder(oSetPredicateExpectation, oSetAnnotationsExpectation,
+				oUpdateSubtotalsOutdatedAnnotationExpectation);
 			assert.deepEqual(oElement, bParent ? {
 				p1 : "v1",
 				p2 : "v2",
 				p3 : "v3",
 				"p3@$ui5.noData" : true,
-				p4 : "v4"
+				p4 : "v4",
+				"@$ui5.context.isTransient" : false
 			} : {
 				p2 : "v2",
 				p4 : "v4"
@@ -972,6 +990,34 @@ sap.ui.define([
 		});
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("calculateKeyPredicate: creation with groupLevels", function (assert) {
+		const oElement = {"@$ui5.context.isTransient" : false};
+
+		this.mock(_Helper).expects("inheritPathValue").never();
+		this.mock(_Helper).expects("getKeyPredicate")
+			.withExactArgs(sinon.match.same(oElement), "/meta/path", "~mTypeForMetaPath~")
+			.returns("~predicate~");
+		this.mock(_Helper).expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "predicate", "~predicate~");
+		this.mock(_Helper).expects("getKeyFilter").never();
+		this.mock(_AggregationHelper).expects("setAnnotations")
+			.withExactArgs(sinon.match.same(oElement), undefined, false, 1, "~aAllProperties~");
+		const oAggregationCache = {
+			sMetaPath : "/meta/path",
+			updateSubtotalsOutdatedAnnotation : mustBeMocked
+		};
+		this.mock(oAggregationCache).expects("updateSubtotalsOutdatedAnnotation")
+			.withExactArgs(sinon.match.same(oElement));
+
+		assert.strictEqual(
+			// code under test
+			_AggregationCache.calculateKeyPredicate(/*oGroupNode*/undefined, "~aGroupBy~",
+				"~aAllProperties~", /*bLeaf*/false, /*bTotal*/true, oAggregationCache, oElement,
+				"~mTypeForMetaPath~", "/meta/path"),
+			"~predicate~");
 	});
 
 	//*********************************************************************************************
@@ -1193,7 +1239,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("calculateKeyPredicate: nested complex type", function (assert) {
-		var mTypeForMetaPath = {"/Artists" : {}};
+		var oAggregationCache = {sMetaPath : "/Artists"},
+			mTypeForMetaPath = {"/Artists" : {}};
 
 		this.mock(_Helper).expects("inheritPathValue").never();
 		this.mock(_Helper).expects("getKeyPredicate").never();
@@ -1204,7 +1251,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			_AggregationCache.calculateKeyPredicate(null, null, null, undefined, undefined,
-				"/Artists", null, mTypeForMetaPath, "/Artists/Address"),
+				oAggregationCache, null, mTypeForMetaPath, "/Artists/Address"),
 			undefined);
 	});
 
@@ -1213,7 +1260,8 @@ sap.ui.define([
 		const sTitle = "calculateKeyPredicate: nested entity, key predicate = " + sPredicate;
 
 		QUnit.test(sTitle, function (assert) {
-			var mTypeForMetaPath = {"/Artists" : {}, "/Artists/BestFriend" : {}};
+			var oAggregationCache = {sMetaPath : "/Artists"},
+				mTypeForMetaPath = {"/Artists" : {}, "/Artists/BestFriend" : {}};
 
 			this.mock(_Helper).expects("getKeyPredicate")
 				.withExactArgs("~oElement~", "/Artists/BestFriend", sinon.match.same(mTypeForMetaPath))
@@ -1227,7 +1275,7 @@ sap.ui.define([
 			assert.strictEqual(
 				// code under test
 				_AggregationCache.calculateKeyPredicate(null, null, null, undefined, undefined,
-					"/Artists", "~oElement~", mTypeForMetaPath, "/Artists/BestFriend"),
+					oAggregationCache, "~oElement~", mTypeForMetaPath, "/Artists/BestFriend"),
 				sPredicate);
 		});
 	});
@@ -3258,8 +3306,11 @@ sap.ui.define([
 				vGroupNodeOrPath = vHasCache === "expanding" ? oGroupNode : "~path~",
 				oHelperMock = this.mock(_Helper),
 				oPromise,
+				oSetAnnotationsExpectation,
+				oSetPredicateExpectation,
 				bSubtotalsAtBottom = bSubtotals && bSubtotalsAtBottomOnly !== undefined,
 				oUpdateAllExpectation,
+				oUpdateSubtotalsOutdatedAnnotationExpectation,
 				that = this;
 
 			if (bSubtotals) {
@@ -3326,10 +3377,12 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oAggregation),
 						sinon.match.same(oCache.mQueryOptions), false)
 					.returns("~aAllProperties~");
-				oAggregationHelperMock.expects("setAnnotations")
+				oSetAnnotationsExpectation = oAggregationHelperMock.expects("setAnnotations")
 					.withExactArgs("~oSubtotals~", undefined, true, 23, "~aAllProperties~");
-				oHelperMock.expects("setPrivateAnnotation")
+				oSetPredicateExpectation = oHelperMock.expects("setPrivateAnnotation")
 					.withExactArgs("~oSubtotals~", "predicate", "(~predicate~,$isTotal=true)");
+				oUpdateSubtotalsOutdatedAnnotationExpectation = oCacheMock
+					.expects("updateSubtotalsOutdatedAnnotation").withExactArgs("~oSubtotals~");
 				oCacheMock.expects("addElements").withExactArgs("~oSubtotals~", 8)
 					.callsFake(addElements); // so that oCache.aElements is actually filled
 			} else {
@@ -3364,6 +3417,8 @@ sap.ui.define([
 				if (bSubtotalsAtBottom) {
 					assert.strictEqual(oCache.aElements[9], aElements[1]);
 					assert.strictEqual(oCache.aElements[10], aElements[2]);
+					sinon.assert.callOrder(oSetAnnotationsExpectation, oSetPredicateExpectation,
+						oUpdateSubtotalsOutdatedAnnotationExpectation);
 				} else {
 					assert.strictEqual(oCache.aElements[8], aElements[1]);
 					assert.strictEqual(oCache.aElements[9], aElements[2]);
@@ -3427,6 +3482,7 @@ sap.ui.define([
 			oCache.aElements = aElements.slice();
 			oCache.aElements.$byPredicate = {};
 
+			this.mock(oCache).expects("updateSubtotalsOutdatedAnnotation").never();
 			this.mock(oCache).expects("getValue").withExactArgs("~path~").returns(oGroupNode);
 			this.mock(_AggregationHelper).expects("getOrCreateExpandedObject")
 				.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(oGroupNode))
@@ -3584,6 +3640,16 @@ sap.ui.define([
 			this.mock(oGroupLevelCache).expects("read").never();
 			oCacheMock.expects("addElements").never();
 			this.mock(_AggregationHelper).expects("createPlaceholder").never();
+			oCacheMock.expects("updateSubtotalsOutdatedAnnotation").exactly(bStale ? 0 : 1)
+				.withExactArgs(sinon.match.same(aSpliced[2]));
+			oCacheMock.expects("updateSubtotalsOutdatedAnnotation").exactly(bStale ? 0 : 1)
+				.withExactArgs(sinon.match.same(aSpliced[3]));
+			oCacheMock.expects("updateSubtotalsOutdatedAnnotation").exactly(bStale ? 0 : 1)
+				.withExactArgs(sinon.match.same(aSpliced[4]));
+			oCacheMock.expects("updateSubtotalsOutdatedAnnotation")
+				.withExactArgs(sinon.match.same(aSpliced[5]));
+			oCacheMock.expects("updateSubtotalsOutdatedAnnotation").exactly(bStale ? 0 : 1)
+				.withExactArgs(sinon.match.same(aSpliced[200000]));
 			oCacheMock.expects("expand")
 				.withExactArgs(sinon.match.same(oGroupLock), "~path~", "~iLevels~",
 					sinon.match.same(mKeptElementPredicates), bSilent)
@@ -3673,6 +3739,7 @@ sap.ui.define([
 
 		// ensure the collection cache cannot read data
 		_Helper.setPrivateAnnotation(oGroupNode, "cache", "~oGroupLevelCache~");
+		this.mock(oCache).expects("updateSubtotalsOutdatedAnnotation").never();
 		this.mock(oCache).expects("getValue").twice().withExactArgs("~path~").returns(oGroupNode);
 		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("updateAll")
@@ -3708,6 +3775,7 @@ sap.ui.define([
 		});
 		const oGroupNode = {"@$ui5.node.level" : 4};
 
+		this.mock(oCache).expects("updateSubtotalsOutdatedAnnotation").never();
 		// Note: no cache in private annotation "parent"
 		this.mock(oCache).expects("getValue").twice().withExactArgs("~path~").returns(oGroupNode);
 		const oHelperMock = this.mock(_Helper);
@@ -3745,6 +3813,7 @@ sap.ui.define([
 			const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
 				hierarchyQualifier : "X"
 			});
+			this.mock(oCache).expects("updateSubtotalsOutdatedAnnotation").never();
 			this.mock(oCache).expects("getValue").twice().withExactArgs("~path~")
 				.returns("~oGroupNode~");
 			const oHelperMock = this.mock(_Helper);
@@ -3817,6 +3886,7 @@ sap.ui.define([
 			oCache.aElements = aElements.slice();
 			oCache.aElements.$byPredicate = {};
 
+			this.mock(oCache).expects("updateSubtotalsOutdatedAnnotation").never();
 			this.mock(oCache).expects("getValue").withExactArgs("~path~").returns(oGroupNode);
 			oUpdateAllExpectation = this.mock(_Helper).expects("updateAll")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
@@ -3880,6 +3950,7 @@ sap.ui.define([
 			},
 			that = this;
 
+		this.mock(oCache).expects("updateSubtotalsOutdatedAnnotation").never();
 		this.mock(oCache).expects("getValue").withExactArgs("~path~").returns(oGroupNode);
 		this.mock(oCache).expects("createGroupLevelCache")
 			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
@@ -3917,6 +3988,7 @@ sap.ui.define([
 			group : {},
 			groupLevels : ["foo"]
 		});
+		this.mock(oCache).expects("updateSubtotalsOutdatedAnnotation").never();
 		this.mock(oCache).expects("getValue").withExactArgs("~path~").returns("~oGroupNode~");
 		this.mock(_Helper).expects("getPrivateAnnotation")
 			.withExactArgs("~oGroupNode~", "spliced").returns(undefined);
@@ -3949,6 +4021,7 @@ sap.ui.define([
 			};
 
 		oCache.aElements = [oGroupNode];
+		this.mock(oCache).expects("updateSubtotalsOutdatedAnnotation").never();
 		this.mock(oCache).expects("getValue").never();
 		this.mock(_Helper).expects("updateAll").never();
 		this.mock(oCache).expects("createGroupLevelCache").never();
@@ -5222,6 +5295,56 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setSubtotalsOutdated", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {},
+			{groupLevels : ["foo"]});
+		// sparse array; avoid calling updateSubtotalsOutdatedAnnotation for empty slots
+		oCache.aElements = ["~oElement0~", "~oElement1~",,, "~oElement2~"];
+		oCache.bSubtotalsOutdated = "~bSubtotalsOutdated~";
+		const oCacheMock = this.mock(oCache);
+		oCacheMock.expects("updateSubtotalsOutdatedAnnotation").withExactArgs("~oElement0~")
+			.callsFake(() => {
+				assert.strictEqual(oCache.bSubtotalsOutdated, true,
+					"bSubtotalsOutdated updated before calling updateSubtotalsOutdatedAnnotation");
+			});
+		oCacheMock.expects("updateSubtotalsOutdatedAnnotation").withExactArgs("~oElement1~");
+		oCacheMock.expects("updateSubtotalsOutdatedAnnotation").withExactArgs("~oElement2~");
+
+		// code under test
+		oCache.setSubtotalsOutdated();
+
+		assert.strictEqual(oCache.bSubtotalsOutdated, true);
+	});
+
+	//*********************************************************************************************
+	[undefined, true].forEach((bSubtotalsOutdated) => {
+		[undefined, false, true].forEach((bIsTotal) => {
+			[undefined, /*grand total*/0, 1, 42].forEach((iLevel) => {
+		const sTitle = "updateSubtotalsOutdatedAnnotation: bSubtotalsOutdated = " + bSubtotalsOutdated
+			+ ", is total = " + bIsTotal + ", level = " + iLevel;
+
+		QUnit.test(sTitle, function () {
+			const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {},
+				{groupLevels : ["foo"]});
+			oCache.bSubtotalsOutdated = bSubtotalsOutdated;
+			const iExpectedCallCount = bSubtotalsOutdated && bIsTotal && iLevel ? 1 : 0;
+			const oElement = {
+				...(bIsTotal !== undefined && {"@$ui5.node.isTotal" : bIsTotal}),
+				...(iLevel !== undefined && {"@$ui5.node.level" : iLevel})
+			};
+			this.mock(_Helper).expects("getPrivateAnnotation").exactly(iExpectedCallCount)
+				.withExactArgs(sinon.match.same(oElement), "predicate").returns("~sPredicate~");
+			this.mock(_Helper).expects("updateAll").exactly(iExpectedCallCount)
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~sPredicate~",
+					sinon.match.same(oElement), {"@$ui5.context.isOutdated" : true});
+
+			// code under test
+			oCache.updateSubtotalsOutdatedAnnotation(oElement);
+		});
+			});
+		});
+	});
+	//*********************************************************************************************
 	[false, true].forEach((bUsedForGrandTotal) => {
 		const sTitle = "update: property used for grand total = " + bUsedForGrandTotal;
 
@@ -5605,6 +5728,7 @@ sap.ui.define([
 			oCache.bUnifiedCache = "~bUnifiedCache~";
 			oCache.bKeptFirstLevel = bKeptFirstLevel;
 			oCache.oGrandTotalPromise = "~oGrandTotalPromise~";
+			oCache.bSubtotalsOutdated = "~bSubtotalsOutdated~";
 			assert.strictEqual(oCache.aElements.$created, 0);
 			const oFirstLevelMock = this.mock(oCache.oFirstLevel);
 			oFirstLevelMock.expects("getCreated").exactly(bDataAggregation ? 1 : 0).withExactArgs()
@@ -5718,6 +5842,7 @@ sap.ui.define([
 					oCountPromise : "~oCountPromise~",
 					oFirstLevel : oExpectedBackupFirstLevel,
 					oGrandTotalPromise : "~oGrandTotalPromise~",
+					bSubtotalsOutdated : "~bSubtotalsOutdated~",
 					bUnifiedCache : "~bUnifiedCache~"
 				});
 				assert.strictEqual(oCache.oBackup.oFirstLevel, oExpectedBackupFirstLevel);
@@ -5823,11 +5948,13 @@ sap.ui.define([
 							foo : "n/a"
 						}
 					},
+					bSubtotalsOutdated : "~bSubtotalsOutdated~",
 					bUnifiedCache : "~bNewUnifiedCache~"
 				}
 				: null;
 			oCache.oCountPromise = "~oOldCountPromise~";
 			oCache.oGrandTotalPromise = "~oOldGrandTotalPromise~";
+			oCache.bSubtotalsOutdated = "~bOldSubtotalsOutdated~";
 			oResultingFirstLevelMock.expects("restore").on(oResultingFirstLevel)
 				.exactly(bCallRestore ? 1 : 0)
 				.withExactArgs(bReally);
@@ -5845,6 +5972,8 @@ sap.ui.define([
 			assert.strictEqual(oCache.oFirstLevel, oResultingFirstLevel);
 			assert.strictEqual(oCache.oGrandTotalPromise,
 				bReally ? "~oNewGrandTotalPromise~" : "~oOldGrandTotalPromise~");
+			assert.strictEqual(oCache.bSubtotalsOutdated,
+				bReally ? "~bSubtotalsOutdated~" : "~bOldSubtotalsOutdated~");
 			assert.strictEqual(oCache.bUnifiedCache,
 				bReally ? "~bNewUnifiedCache~" : "~bOldUnifiedCache~");
 			assert.deepEqual(oCache.aElements.$byPredicate, {

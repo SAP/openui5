@@ -4,7 +4,7 @@
 /* =================================== */
 
 .sapMObjStatus {
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	color: var(--sapNeutralTextColor);
 	display: inline-block;
 	overflow: visible;
@@ -39,7 +39,7 @@
 		height: inherit;
 	}
 
-	&.sapMObjectStatusLongText{
+	&.sapMObjectStatusLongText {
 
 		&.sapMObjectStatusLarge {
 
@@ -59,7 +59,7 @@
 		white-space: pre;
 	}
 
-	.sapMEmptyIndicator{
+	.sapMEmptyIndicator {
 		line-height: normal;
 	}
 }
@@ -138,7 +138,7 @@
 	color: var(--sapCriticalTextColor);
 }
 
-.sapMObjStatusSuccess .sapMObjStatusText{
+.sapMObjStatusSuccess .sapMObjStatusText {
 	color: var(--sapPositiveTextColor);
 }
 
@@ -349,7 +349,7 @@
 }
 
 .sapMObjStatusInverted.sapMObjStatusInformation .sapMObjStatusWrapper {
-	background-color: var(--sapInformativeElementColor);
+	background-color: var(--sapButton_Information_Background);
 }
 
 .sapMObjStatusInverted.sapMObjStatusInformation .sapMObjStatusText,
@@ -419,7 +419,7 @@
 
 .sapUiTableCell .sapMObjStatusWrapper,
 .sapUiTableCell .sapMObjStatus {
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
@@ -522,7 +522,7 @@ html[data-sap-ui-browser*='ff'] {
 /* Condensed size */
 .sapUiSizeCondensed .sapUiTableCell .sapMObjStatus > .sapMObjStatusText {
 	vertical-align: middle;
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 }
 
 html.sap-desktop .sapMObjStatusActive:focus {
@@ -1127,6 +1127,7 @@ html:lang(ko) .sapMListTblCell .sapMObjStatus.sapMObjStatusInverted,
 html:lang(ja) .sapMListTblCell .sapMObjStatus.sapMObjStatusInverted,
 html:lang(zh-CN) .sapMListTblCell .sapMObjStatus.sapMObjStatusInverted,
 html:lang(zh-TW) .sapMListTblCell .sapMObjStatus.sapMObjStatusInverted {
+
 	&:not(.sapMObjectStatusLongText):not(:has(.sapMObjStatusIcon)) {
 		width: auto;
 	}

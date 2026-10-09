@@ -14,9 +14,10 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/core/LabelEnablement'
+	'sap/ui/core/LabelEnablement',
+	"sap/ui/core/tooltip/TooltipEnablement"
 ],
-	function(library, Localization, Control, Library, StaticArea, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, LabelEnablement) {
+	function(library, Localization, Control, Library, StaticArea, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, LabelEnablement, TooltipEnablement) {
 	"use strict";
 
 
@@ -198,6 +199,40 @@ sap.ui.define([
 		this._fHoverValue = 0;
 
 		this._oResourceBundle = Library.getResourceBundleFor('sap.m');
+
+		if (TooltipEnablement.isEnhancedTooltipEnabled()) {
+			this._oTooltipEnablement = new TooltipEnablement(this, {
+				textProvider: () => this._buildTooltipText()
+			});
+		}
+	};
+
+	/**
+	 * Builds the text shown in the enhanced tooltip.
+	 *
+	 * If a <code>tooltip</code> is set on the control, its text is used. Otherwise a default
+	 * translatable text is returned: <code>Rate</code> when the control is editable, or the
+	 * current value as <code>{value} of {maxValue}</code> when it is in display-only or read-only mode.
+	 *
+	 * @returns {string} The tooltip text
+	 * @private
+	 */
+	RatingIndicator.prototype._buildTooltipText = function () {
+		var sTooltip = this.getTooltip_AsString();
+
+		if (sTooltip) {
+			return sTooltip;
+		}
+
+		if (!this.getDisplayOnly() && this.getEnabled() && this.getEditable()) {
+			return this._oResourceBundle.getText("RATING_TOOLTIP_RATE");
+		}
+
+		if (!this.getEnabled()) {
+			return "";
+		}
+
+		return this._oResourceBundle.getText("RATING_TOOLTIP_VALUE", [this.getValue(), this.getMaxValue()]);
 	};
 
 	/**
@@ -386,6 +421,11 @@ sap.ui.define([
 		this._fHoverValue = null;
 
 		this._oResourceBundle = null;
+
+		if (this._oTooltipEnablement) {
+			this._oTooltipEnablement.destroy();
+			this._oTooltipEnablement = null;
+		}
 	};
 
 	/* =========================================================== */

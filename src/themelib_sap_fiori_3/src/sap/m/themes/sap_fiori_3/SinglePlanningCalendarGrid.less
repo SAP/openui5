@@ -1,6 +1,6 @@
 /* ================================================= */
 /* CSS for control sap.m/SinglePlanningCalendarGrid  */
-/* Fiori 3 theme                                     */
+/* Quartz Light theme                                */
 /* ================================================= */
 
 .sapUiSizeCompact .sapMSinglePCGrid {
@@ -15,16 +15,17 @@
 }
 
 .sapMSinglePC .sapUiCalendarAppCont {
-	border-left: 0.0625rem solid darken(@sapUiListBorderColor, 15);
+	border-left: 0.0625rem solid ~'hsl(from var(--sapList_BorderColor) h s calc(l - 15))';
 	border-radius: 0 0.125rem 0.125rem 0.125rem;
 }
 
 html.sap-desktop .sapMSinglePC {
+
 	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
 
 		&:focus {
 
-			.sapUiCalendarAppSel>.sapUiCalendarAppCont::after {
+			.sapUiCalendarAppSel> .sapUiCalendarAppCont::after {
 				border: 0.0625rem dotted var(--sapContent_ContrastFocusColor);
 			}
 		}
@@ -36,11 +37,12 @@ html.sap-desktop .sapMSinglePC {
 }
 
 .sapMSinglePC {
+
 	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
 
 		&:focus-visible {
 
-			.sapUiCalendarAppSel>.sapUiCalendarAppCont::after {
+			.sapUiCalendarAppSel> .sapUiCalendarAppCont::after {
 				border: 0.0625rem dotted var(--sapContent_ContrastFocusColor);
 			}
 		}
@@ -118,6 +120,7 @@ html.sap-desktop .sapMSinglePC {
 }
 
 html.sap-desktop .sapUiSizeCompact .sapMSinglePC {
+
 	.sapMSinglePCColumnHeader {
 
 		.sapUiCalItem.sapUiCalItemNow:focus {
@@ -128,6 +131,7 @@ html.sap-desktop .sapUiSizeCompact .sapMSinglePC {
 }
 
 .sapUiSizeCompact .sapMSinglePC {
+
 	.sapMSinglePCColumnHeader {
 
 		.sapUiCalItem:not(.sapUiCalItemFocusFromTouch).sapUiCalItemNow:focus-visible {
