@@ -572,6 +572,66 @@ sap.ui.define([
 		assert.strictEqual(oHeaderAfter.getTitle(), "Title After", "Title is correct after manifest changes");
 	});
 
+	QUnit.test("Opening/closing slide is driven by transform, not left/top", async function (assert) {
+		// Arrange - a List child so the ShowCard animation is enabled.
+		this.oChildManifest = {
+			"sap.app": {
+				id: "test.card.slideAnimation"
+			},
+			"sap.card": {
+				type: "List",
+				data: {
+					json: [
+						{ "title": "Item 1" }
+					]
+				},
+				header: {
+					title: "Slide animation card"
+				},
+				content: {
+					item: {
+						title: "{title}"
+					}
+				}
+			}
+		};
+
+		// Act
+		const oDialog = openCardDialog(
+			this.oCard,
+			{
+				childCardKey: "childCard"
+			}
+		);
+
+		await nextDialogAfterOpenEvent(oDialog);
+		await nextUIUpdate();
+
+		const oDialogRef = oDialog.getDomRef();
+
+		// Capture left/top (which sap.m.Dialog rewrites to re-center the settling child) so we can
+		// prove the slide does not touch them - otherwise re-centers would drift the slide.
+		const sLeftBeforeClose = oDialogRef.style.left;
+		const sTopBeforeClose = oDialogRef.style.top;
+
+		// Act - closing synchronously arms the slide back to the parent card.
+		oDialog.close();
+
+		// Assert - the slide is produced via a transform translate...
+		assert.ok(
+			oDialogRef.classList.contains("sapUiIntCardDialogAnimate"),
+			"Animation class is added for the slide"
+		);
+		assert.ok(
+			/translate\(/.test(oDialogRef.style.transform),
+			"The slide is driven by a transform translate"
+		);
+
+		// ...and left/top are left untouched, so re-centering cannot restart the slide.
+		assert.strictEqual(oDialogRef.style.left, sLeftBeforeClose, "The slide does not rewrite 'left'");
+		assert.strictEqual(oDialogRef.style.top, sTopBeforeClose, "The slide does not rewrite 'top'");
+	});
+
 	QUnit.test("Component Card", async function (assert) {
 		// Arrange
 		this.oChildManifest = {
