@@ -1266,6 +1266,7 @@ sap.ui.define([
 			if (sAction === MessageBox.Action.OK) {
 				return activate.call(this, sVersionTitle);
 			}
+			return undefined;
 		}
 		return activate.call(this, sVersionTitle);
 	}
