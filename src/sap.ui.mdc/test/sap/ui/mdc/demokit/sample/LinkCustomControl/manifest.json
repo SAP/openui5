@@ -1,0 +1,68 @@
+{
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "sap.ui.mdc.demokit.sample.LinkCustomControl",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "MDC Link - Custom Control",
+		"description": "MDC Link opened from custom controls",
+		"dataSources": {
+			"processes": {
+				"uri": "model/data.json",
+				"type": "JSON"
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
+					"manifest.json",
+					"Component.js",
+					"controller/App.controller.js",
+					"delegate/CustomLinkDelegate.js",
+					"model/data.json",
+					"view/App.view.xml"
+				]
+			}
+		},
+		"flexEnabled": false,
+		"resourceRoots": {
+			"mdc.sample": "./"
+		},
+		"dependencies": {
+			"minUI5Version": "2.0.0",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.fl": {},
+				"sap.ui.mdc": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"processes": {
+				"type": "sap.ui.model.json.JSONModel",
+				"dataSource": "processes"
+			}
+		},
+		"rootView": {
+			"viewName": "mdc.sample.view.App",
+			"id": "sample"
+		}
+	}
+}

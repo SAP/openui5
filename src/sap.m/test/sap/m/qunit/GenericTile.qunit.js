@@ -1890,6 +1890,42 @@ sap.ui.define([
 		assert.equal(sAriaAndTooltipText, "", "Expected empty string for ARIA-label and tooltip generated");
 	});
 
+	QUnit.test("_getAriaAndTooltipText includes appShortcut and systemInfo at the end", function(assert) {
+		var sBase = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+
+		// Only appShortcut set
+		this.oGenericTile.setAppShortcut("F1234");
+		assert.equal(this.oGenericTile._getAriaAndTooltipText(), sBase + "\nF1234",
+			"appShortcut is appended at the end when only appShortcut is set");
+
+		// Only systemInfo set
+		this.oGenericTile.setAppShortcut(null);
+		this.oGenericTile.setSystemInfo("CRM");
+		assert.equal(this.oGenericTile._getAriaAndTooltipText(), sBase + "\nCRM",
+			"systemInfo is appended at the end when only systemInfo is set");
+
+		// Both set — systemInfo first, then appShortcut
+		this.oGenericTile.setAppShortcut("F1234");
+		assert.equal(this.oGenericTile._getAriaAndTooltipText(), sBase + "\nCRM\nF1234",
+			"systemInfo appears before appShortcut when both are set");
+
+		// Neither set — no trailing newline or extra text
+		this.oGenericTile.setAppShortcut(null);
+		this.oGenericTile.setSystemInfo(null);
+		assert.equal(this.oGenericTile._getAriaAndTooltipText(), sBase,
+			"No info text appended when neither appShortcut nor systemInfo is set");
+	});
+
+	QUnit.test("_getAriaText reflects appShortcut and systemInfo via _getAriaAndTooltipText", function(assert) {
+		this.oGenericTile.setAppShortcut("F1234");
+		this.oGenericTile.setSystemInfo("CRM");
+
+		var sAriaText = this.oGenericTile._getAriaText(true /* bHideSizeAnnouncement */);
+		assert.ok(sAriaText.indexOf("F1234") !== -1, "appShortcut appears in aria-label text");
+		assert.ok(sAriaText.indexOf("CRM") !== -1, "systemInfo appears in aria-label text");
+		assert.ok(sAriaText.indexOf("CRM") < sAriaText.indexOf("F1234"), "systemInfo appears before appShortcut in aria-label text");
+	});
+
 	QUnit.test("Internal method _getAriaText", async function(assert) {
 		//Arrange
 		var sAriaText;

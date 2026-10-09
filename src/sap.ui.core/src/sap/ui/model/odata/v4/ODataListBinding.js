@@ -775,7 +775,8 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.collapse = function (oContext, bAll, bSilent, iCount) {
 		this.checkSuspended();
-		if (this.aContexts[oContext.iIndex] !== oContext) {
+		const iModelIndex = this.getModelIndex(oContext);
+		if (this.aContexts[iModelIndex] !== oContext) {
 			throw new Error("Not currently part of the hierarchy: " + oContext);
 		}
 
@@ -789,7 +790,6 @@ sap.ui.define([
 
 		if (iCount > 0) {
 			const aContexts = this.aContexts;
-			const iModelIndex = this.getModelIndex(oContext);
 			aContexts.splice(iModelIndex + 1, iCount).forEach((oContext0) => {
 				oContext0.iIndex = undefined; // "outside the collection"
 				// Note: created (even persisted) is also kept inside "context" annotation
@@ -797,7 +797,7 @@ sap.ui.define([
 			});
 			for (let i = iModelIndex + 1; i < aContexts.length; i += 1) {
 				if (aContexts[i]) {
-					aContexts[i].iIndex = i;
+					aContexts[i].iIndex = i - this.iCreatedContexts;
 				}
 			}
 			this.iMaxLength -= iCount;
@@ -915,9 +915,10 @@ sap.ui.define([
 	 *     {@link #getKeepAliveContext}.
 	 * </ul>
 	 *
-	 * When using data aggregation without <code>groupLevels</code> and without
-	 * <code>"grandTotal like 1.84"</code> (see {@link #setAggregation}), single entities can be
-	 * created (since 1.151.0, see {@link sap.ui.model.odata.v4.Context#isAggregated}).
+	 * When using data aggregation without <code>"grandTotal like 1.84"</code> (see
+	 * {@link #setAggregation}), single entities can be created (since 1.151.0, see
+	 * {@link sap.ui.model.odata.v4.Context#isAggregated}). Since 1.154.0, creating single entities
+	 * is also supported with visual grouping (@experimental as of version 1.154.0).
 	 *
 	 * @param {Object<any>} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -951,8 +952,9 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> the binding's root binding is suspended,
 	 *     <li> a relative binding is unresolved,
-	 *     <li> data aggregation is used with <code>groupLevels</code> or with
-	 *       <code>"grandTotal like 1.84"</code> or without a grand total,
+	 *     <li> data aggregation is used with <code>groupLevels</code> and the first entity is
+	 *       created at the end, or with <code>"grandTotal like 1.84"</code>, or without a grand
+	 *       total and without <code>groupLevels</code>,
 	 *     <li> aggregated data instead of a single entity instance is about to be created,
 	 *     <li> "@$ui5.node.parent" is given without a recursive hierarchy,
 	 *     <li> entities are created first at the end and then at the start,
@@ -1005,15 +1007,17 @@ sap.ui.define([
 		if (oAggregation?.["grandTotal like 1.84"]) {
 			throw new Error('"grandTotal like 1.84" not supported: ' + this);
 		}
-		if (oAggregation?.groupLevels?.length) {
-			throw new Error("Unsupported for data aggregation with groupLevels: " + this);
-		}
 		if (oAggregation?.$leafLevelAggregated) {
 			throw new Error("Unsupported on aggregated data: " + this);
 		}
 		if (_Helper.isDataAggregation(this.mParameters)) {
+			if (oAggregation.groupLevels.length && this.bFirstCreateAtEnd === undefined && bAtEnd) {
+				throw new Error("Must not create at end when using groupLevels: " + this);
+			}
 			if (!_AggregationHelper.hasGrandTotal(oAggregation.aggregate)) {
-				throw new Error("No use for data aggregation: " + this);
+				if (!oAggregation.groupLevels.length) {
+					throw new Error("No use for data aggregation: " + this);
+				}
 			} else if (!this.getLength()) {
 				bGrandTotalAdded = true;
 			}
@@ -1861,7 +1865,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.expand = function (oContext, iLevels, bSilent) {
 		this.checkSuspended();
-		if (this.aContexts[oContext.iIndex] !== oContext) {
+		if (this.aContexts[this.getModelIndex(oContext)] !== oContext) {
 			throw new Error("Not currently part of the hierarchy: " + oContext);
 		}
 		if (iLevels > 1 && !this.mParameters.$$aggregation?.hierarchyQualifier) {
@@ -5472,9 +5476,10 @@ sap.ui.define([
 					|| this.mParameters.$search || oAggregation.search
 					|| Object.keys(this.mParameters).some((sKey) => sKey[0] !== "$")
 					|| this.isFilteredBy(aPaths);
-			const bHeaderContextOutdated = sForce === "delete"
-				? oAggregation.groupLevels?.length > 0
-				: bGrandTotalOutdated || sForce === "header" || this.isSortedBy(aPaths);
+			const bHeaderContextOutdated = oAggregation.groupLevels.length > 0
+				|| (sForce === "delete"
+					? false
+					: bGrandTotalOutdated || sForce === "header" || this.isSortedBy(aPaths));
 			if (bNoRequest
 					&& (bHeaderContextOutdated
 					|| _AggregationHelper.isUsedForGrandTotal(aPaths, oAggregation.aggregate))) {
@@ -5485,6 +5490,7 @@ sap.ui.define([
 			}
 			if (bHeaderContextOutdated) {
 				this.oHeaderContext.setOutdated(true);
+				this.oCache.setSubtotalsOutdated?.();
 			}
 		}
 	};

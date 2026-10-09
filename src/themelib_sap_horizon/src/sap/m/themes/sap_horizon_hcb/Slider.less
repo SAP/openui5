@@ -37,8 +37,8 @@
 	}
 }
 
-.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderProgress:hover ~ .sapMSliderHandle,
-.sapMSliderHandle:hover {
+html.sap-desktop .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderProgress:hover ~ .sapMSliderHandle,
+html.sap-desktop .sapMSliderHandle:hover {
 	background: var(--sapSlider_Hover_HandleBackground);
 	border-color: var(--sapSlider_Hover_HandleBorderColor);
 }
@@ -53,7 +53,8 @@
 	margin-left: -1rem;
 	top: (@_sap_m_Slider_Track_Total_Height - 1.5rem) / 2 - @_sap_m_Slider_Progress_Border;
 
-	&:focus::before {
+	html.sap-desktop &:focus::before,
+	&:focus-visible::before {
 		content: '';
 		position: absolute;
 		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
@@ -64,34 +65,44 @@
 		left: -0.3125rem;
 		right: -0.3125rem;
 	}
+
+	&::after {
+		font-family: var(--sapContent_IconFontFamily);
+		content: '\e29c';
+		position: absolute;
+		top: 0.25rem;
+		right: 0.5rem;
+		overflow: hidden;
+		vertical-align: middle;
+		font-size: 0.875rem;
+		line-height: 0.875rem;
+		color: var(--sapContent_Selected_ForegroundColor);
+	}
 }
 
-.sapMSliderInner .sapMSliderHandle:not(:focus):not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus)::after {
-	font-family: var(--sapContent_IconFontFamily);
-	content: '\e29c';
-	position: absolute;
-	top: 0.25rem;
-	right: 0.5rem;
-	overflow: hidden;
-	vertical-align: middle;
-	font-size: 0.875rem;
-	line-height: 0.875rem;
-	color: var(--sapContent_Selected_ForegroundColor);
+.sapMSliderHandle.sapMSliderHandlePressed::after,
+html.sap-desktop .sapMSliderHandle:focus::after,
+.sapMSliderHandle:focus-visible::after {
+	content: none;
 }
 
 .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
 
-	&:hover {
+	html.sap-desktop &:hover {
 		background: var(--sapSlider_Hover_HandleBackground);
 		border-color: var(--sapSlider_Hover_HandleBorderColor);
 	}
 }
 
 .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
-	background: var(--sapSlider_Active_RangeHandleBackground);
-	border: var(--sapContent_FocusWidth) solid var(--sapContent_FocusColor);
 	outline: none;
 
+}
+
+html.sap-desktop .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus,
+.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus-visible {
+	background: var(--sapSlider_Active_RangeHandleBackground);
+	border: var(--sapContent_FocusWidth) solid var(--sapContent_FocusColor);
 }
 
 .sapMSliderTickLabel .sapMSliderLabel {
@@ -196,7 +207,7 @@
 		padding-top: 0.375rem;
 	}
 
-	.sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover > .sapMSliderHandle):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus)::after {
+	.sapMSliderHandle::after {
 		top: 0.125rem;
 		right: 0.25rem;
 	}

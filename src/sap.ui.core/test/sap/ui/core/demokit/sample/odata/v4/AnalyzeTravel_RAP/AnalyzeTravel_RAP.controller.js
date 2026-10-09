@@ -45,8 +45,13 @@ sap.ui.define([
 			}
 		},
 
-		onBookingStatusChanged : function (oEvent) {
-			oEvent.getSource().getBindingContext().requestSideEffects(["BookingStatusText"]);
+		onBookingStatusChanged : async function (oEvent) {
+			try {
+				await oEvent.getSource().getBindingContext()
+					.requestSideEffects(["BookingStatusText"]);
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			}
 		},
 
 		onChangeGrandTotal : function (vEventOrSelectedKey) {
@@ -322,20 +327,36 @@ sap.ui.define([
 			this.byId("table").getBinding("rows").refresh();
 		},
 
-		onRefreshBooking : function () {
-			this.byId("details").getBindingContext().refresh();
+		onRefreshBooking : async function () {
+			try {
+				await this.byId("details").getBindingContext().requestRefresh();
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			}
 		},
 
-		onRefreshBookingViaSideEffects : function () {
-			this.byId("details").getBindingContext().requestSideEffects([""]);
+		onRefreshBookingViaSideEffects : async function () {
+			try {
+				await this.byId("details").getBindingContext().requestSideEffects([""]);
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			}
 		},
 
-		onRefreshFlightDate : function () {
-			this.byId("details").getBindingContext().requestSideEffects(["FlightDate"]);
+		onRefreshFlightDate : async function () {
+			try {
+				await this.byId("details").getBindingContext().requestSideEffects(["FlightDate"]);
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			}
 		},
 
-		onRefreshFlightPrice : function () {
-			this.byId("details").getBindingContext().requestSideEffects(["FlightPrice"]);
+		onRefreshFlightPrice : async function () {
+			try {
+				await this.byId("details").getBindingContext().requestSideEffects(["FlightPrice"]);
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			}
 		},
 
 		onSearch : function () {

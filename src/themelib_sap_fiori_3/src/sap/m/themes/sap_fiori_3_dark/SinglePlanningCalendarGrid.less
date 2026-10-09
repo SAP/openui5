@@ -15,11 +15,12 @@
 }
 
 .sapMSinglePC .sapUiCalendarAppCont {
-	border-left: 0.0625rem solid lighten(@sapUiListBorderColor, 15);
+	border-left: 0.0625rem solid ~'hsl(from var(--sapList_BorderColor) h s calc(l + 15))';
 	border-radius: 0 0.125rem 0.125rem 0.125rem;
 }
 
 html.sap-desktop .sapMSinglePC {
+
 	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
 
 		&:focus {
@@ -36,6 +37,7 @@ html.sap-desktop .sapMSinglePC {
 }
 
 .sapMSinglePC {
+
 	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
 
 		&:focus-visible {
@@ -118,7 +120,9 @@ html.sap-desktop .sapMSinglePC {
 }
 
 html.sap-desktop .sapUiSizeCompact .sapMSinglePC {
+
 	.sapMSinglePCColumnHeader {
+
 		.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText {
 			border: transparent;
 		}
@@ -130,7 +134,9 @@ html.sap-desktop .sapUiSizeCompact .sapMSinglePC {
 }
 
 .sapUiSizeCompact .sapMSinglePC {
+
 	.sapMSinglePCColumnHeader {
+
 		.sapUiCalItem:not(.sapUiCalItemFocusFromTouch).sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus-visible > .sapUiCalItemText {
 			border: transparent;
 		}

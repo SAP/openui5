@@ -70,7 +70,8 @@
 				"category": "Metadata-Driven Controls (sap.ui.mdc)",
 				"since": "1.116",
 				"samples": [
-					"sap.ui.mdc.demokit.sample.LinkPayloadJson"
+					"sap.ui.mdc.demokit.sample.LinkPayloadJson",
+					"sap.ui.mdc.demokit.sample.LinkCustomControl"
 				]
 			},
 			{
@@ -230,6 +231,11 @@
 				"id": "sap.ui.mdc.demokit.sample.LinkPayloadJson",
 				"name": "Link - with JSON model",
 				"description": "A link using a delegate payload"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.LinkCustomControl",
+				"name": "Link - with custom control (freestyle)",
+				"description": "Opens a navigation popover from custom controls using Link.open() programmatically"
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.FieldTypes",

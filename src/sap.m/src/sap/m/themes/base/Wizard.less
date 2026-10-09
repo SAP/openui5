@@ -3,8 +3,10 @@
 /* Base theme                    */
 /* ============================= */
 
-@_sap_m_Wizard_NavHeight: 4rem;
-@_sap_m_WizardStep_Animation_Duration: 0.4s;
+.sapUI5Scope {
+	--_sap_m_Wizard_NavHeight: 4rem;
+	--_sap_m_WizardStep_Animation_Duration: 0.4s;
+}
 
 .sapMWizard {
 	height: 100%;
@@ -15,9 +17,15 @@
 
 	.sapMWizardStepContainer {
 		position: relative;
-		height: ~"calc(100% - 4rem)"; /* 4rem is the height of the Progress Navigator*/
+		height: ~'calc(100% - var(--_sap_m_Wizard_NavHeight))';
+		/* 4rem is the height of the Progress Navigator */
 		box-sizing: border-box;
 		padding: 0 1rem 1rem 1rem;
+		margin-top: var(--_sap_m_Wizard_NavHeight);
+	}
+
+	.sapMWizardProgressNav {
+		box-shadow: var(--sapContent_HeaderShadow);
 	}
 
 	.sapMWizardStep:first-child {
@@ -61,16 +69,18 @@
 }
 
 .sapMWizard:not(.sapMWizardModePage) .sapMWizardLastActivatedStep {
-	min-height: ~"calc(100% - 1rem)"; /* 1rem is the margin from the top of the container*/
+	min-height: ~'calc(100% - 1rem)';
+	/* 1rem is the margin from the top of the container */
 }
 
 html.sap-desktop .sapMWizard .sapMWizardNextButton,
 html.sap-tablet .sapMWizard .sapMWizardNextButton {
+
 	& {
 		display: block;
 		opacity: 0;
 		transform: translateY(3rem);
-		transition: opacity @_sap_m_WizardStep_Animation_Duration ease, transform @_sap_m_WizardStep_Animation_Duration ease;
+		transition: opacity var(--_sap_m_WizardStep_Animation_Duration) ease, transform var(--_sap_m_WizardStep_Animation_Duration) ease;
 	}
 
 	&.sapMWizardNextButtonAnimated {
@@ -81,4 +91,4 @@ html.sap-tablet .sapMWizard .sapMWizardNextButton {
 
 html .sapMWizard .sapMWizardNextButton.sapMWizardNextButtonHidden {
 	display: none;
-  }
+}

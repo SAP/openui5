@@ -1,0 +1,34 @@
+{
+	"order": {
+		"id": "ORD-4711",
+		"title": "Order Created",
+		"detail": "Order ORD-4711 created on 2024-01-15. Total: EUR 1,250.00",
+		"links": [
+			{ "key": "orderFactSheet", "text": "Order Fact Sheet", "href": "#order-displayFactSheet?orderId=ORD-4711" },
+			{ "key": "orderDetails", "text": "Display Order Details", "href": "#order-display?orderId=ORD-4711" },
+			{ "key": "changeOrder", "text": "Change Order", "href": "#order-change?orderId=ORD-4711" }
+		]
+	},
+	"payment": {
+		"id": "PAY-9921",
+		"title": "Payment Approved",
+		"detail": "Payment PAY-9921 approved on 2024-01-16. Method: Credit Card",
+		"links": [
+			{ "key": "paymentFactSheet", "text": "Payment Fact Sheet", "href": "#payment-displayFactSheet?paymentId=PAY-9921" },
+			{ "key": "approvePayment", "text": "Approve Payment", "href": "#payment-approve?paymentId=PAY-9921" }
+		]
+	},
+	"shipment": {
+		"id": "SHP-3344",
+		"title": "Goods Shipped",
+		"detail": "Shipment SHP-3344 dispatched on 2024-01-17. Carrier: Express Logistics",
+		"links": [
+			{ "key": "shipmentFactSheet", "text": "Shipment Fact Sheet", "href": "#shipment-displayFactSheet?shipmentId=SHP-3344" },
+			{ "key": "trackShipment", "text": "Track Shipment", "href": "#shipment-track?shipmentId=SHP-3344" }
+		]
+	},
+	"unknown": {
+		"title": "Unknown Step",
+		"detail": ""
+	}
+}

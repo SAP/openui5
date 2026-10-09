@@ -768,7 +768,11 @@ sap.ui.define([
 
             if (aHandles.length === 2) {
                 setTimeout(function () {
-                    this.getDomRef("progress").focus();
+                    var oProgress = this.getDomRef("progress");
+
+                    if (oProgress) {
+                        oProgress.focus({ focusVisible: false });
+                    }
                 }.bind(this), 0);
             }
         };

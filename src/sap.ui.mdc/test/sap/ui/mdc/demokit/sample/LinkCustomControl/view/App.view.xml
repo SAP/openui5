@@ -1,0 +1,57 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:l="sap.ui.layout"
+	controllerName="mdc.sample.controller.App">
+
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<l:content>
+
+			<l:VerticalLayout width="100%">
+				<l:content>
+					<Text class="sapUiSmallMarginTop sapUiLargeMarginBottom"
+						  text="This sample demonstrates how to open an MDC Link navigation popover from custom controls (buttons). The Link is not placed inside an mdc:Field - instead, it is opened programmatically via link.open(oControl). A custom LinkDelegate provides the navigation targets and additional content based on which button was pressed."/>
+				</l:content>
+			</l:VerticalLayout>
+
+			<l:VerticalLayout class="sapUiContentPadding" width="100%">
+				<l:content>
+					<Title text="Process Steps" class="sapUiSmallMarginTop"/>
+					<Text class="sapUiTinyMarginBottom"
+						  text="Click on a process step button to open the navigation popover with targets specific to that step."/>
+				</l:content>
+			</l:VerticalLayout>
+
+			<HBox class="sapUiSmallMarginTop">
+				<items>
+					<Button id="IDButtonOrder"
+							text="Order Created"
+							icon="sap-icon://cart"
+							type="Emphasized"
+							class="sapUiTinyMarginEnd"
+							press=".onButtonPress"/>
+					<Button id="IDButtonPayment"
+							text="Payment Approved"
+							icon="sap-icon://payment-approval"
+							type="Accept"
+							class="sapUiTinyMarginEnd"
+							press=".onButtonPress"/>
+					<Button id="IDButtonShipment"
+							text="Goods Shipped"
+							icon="sap-icon://shipping-status"
+							type="Accept"
+							class="sapUiTinyMarginEnd"
+							press=".onButtonPress"/>
+					<Button id="IDButtonNoTargets"
+							text="Unknown Step"
+							icon="sap-icon://question-mark"
+							type="Neutral"
+							press=".onButtonPress"/>
+				</items>
+			</HBox>
+
+		</l:content>
+	</l:VerticalLayout>
+
+</mvc:View>

@@ -13,9 +13,10 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/dom/includeStylesheet',
+	'sap/ui/core/tooltip/TooltipEnablement',
 	'sap/ui/thirdparty/jquery',
 	'require'
-], function(Element, Library, qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, nextUIUpdate, IconPool, mobileLibrary, KeyCodes, includeStylesheet, jQuery, require) {
+], function(Element, Library, qutils, createAndAppendDiv, App, Label, Page, RatingIndicator, nextUIUpdate, IconPool, mobileLibrary, KeyCodes, includeStylesheet, TooltipEnablement, jQuery, require) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -1020,6 +1021,157 @@ sap.ui.define([
 
 		assert.ok(this.fnLiveChangeEventSpy.callCount >= 1, "LiveChange event should be fired during dragging");
 		assert.strictEqual(this.fnChangeEventSpy.callCount, 1, "Change event should be fired at the end of dragging");
+	});
+
+	QUnit.module("Enhanced Tooltip (TooltipEnablement)", {
+		beforeEach: function () {
+			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
+		},
+		afterEach: function () {
+			if (this.oRating) {
+				this.oRating.destroy();
+				this.oRating = null;
+			}
+		}
+	});
+
+	QUnit.test("A TooltipEnablement instance is created when the feature is enabled", function (assert) {
+		// Arrange
+		this.stub(TooltipEnablement, "isEnhancedTooltipEnabled").returns(true);
+
+		// Act
+		this.oRating = new RatingIndicator({ value: 3 });
+
+		// Assert
+		assert.ok(this.oRating._oTooltipEnablement instanceof TooltipEnablement, "A TooltipEnablement instance is created when the flag is on");
+	});
+
+	QUnit.test("_buildTooltipText returns the tooltip property text when one is set", function (assert) {
+		// Arrange
+		this.oRating = new RatingIndicator({ value: 3, tooltip: "My custom tooltip" });
+
+		// Assert
+		assert.strictEqual(this.oRating._buildTooltipText(), "My custom tooltip",
+			"The text set via the tooltip property takes priority");
+	});
+
+	QUnit.test("_buildTooltipText returns the default 'Rate' text when editable and no tooltip is set", function (assert) {
+		// Arrange
+		this.oRating = new RatingIndicator({ value: 3 });
+
+		// Assert
+		assert.strictEqual(this.oRating._buildTooltipText(), this.oResourceBundle.getText("RATING_TOOLTIP_RATE"),
+			"An editable rating without a tooltip shows the default 'Rate' text");
+	});
+
+	QUnit.test("_buildTooltipText returns the value text when read-only and no tooltip is set", function (assert) {
+		// Arrange
+		this.oRating = new RatingIndicator({ value: 3, editable: false });
+
+		// Assert
+		assert.strictEqual(this.oRating._buildTooltipText(), this.oResourceBundle.getText("RATING_TOOLTIP_VALUE", [3, 5]),
+			"A read-only rating without a tooltip shows the '{value} of {maxValue}' text");
+	});
+
+	QUnit.test("_buildTooltipText returns the value text when display-only and no tooltip is set", function (assert) {
+		// Arrange
+		this.oRating = new RatingIndicator({ value: 3, displayOnly: true });
+
+		// Assert
+		assert.strictEqual(this.oRating._buildTooltipText(), this.oResourceBundle.getText("RATING_TOOLTIP_VALUE", [3, 5]),
+			"A display-only rating without a tooltip shows the '{value} of {maxValue}' text");
+	});
+
+	QUnit.test("_buildTooltipText returns the value text when disabled and no tooltip is set", function (assert) {
+		// Arrange
+		this.oRating = new RatingIndicator({ value: 3, enabled: false });
+
+		// Assert
+		assert.strictEqual(this.oRating._buildTooltipText(), "", "A disabled rating without a tooltip property does not show a text");
+	});
+
+	QUnit.test("_buildTooltipText reflects the current value and maxValue", function (assert) {
+		// Arrange
+		this.oRating = new RatingIndicator({ value: 4, maxValue: 7, editable: false });
+
+		// Assert
+		assert.strictEqual(this.oRating._buildTooltipText(), this.oResourceBundle.getText("RATING_TOOLTIP_VALUE", [4, 7]),
+			"The value text reflects the control's value and maxValue");
+	});
+
+	QUnit.test("_buildTooltipText prefers the tooltip property even in display-only mode", function (assert) {
+		// Arrange
+		this.oRating = new RatingIndicator({ value: 3, displayOnly: true, tooltip: "Fixed tooltip" });
+
+		// Assert
+		assert.strictEqual(this.oRating._buildTooltipText(), "Fixed tooltip",
+			"The tooltip property wins over the default value text");
+	});
+
+	QUnit.test("exit destroys the TooltipEnablement instance and clears the reference", function (assert) {
+		// Arrange
+		this.stub(TooltipEnablement, "isEnhancedTooltipEnabled").returns(true);
+		this.oRating = new RatingIndicator({ value: 3 });
+		var oDestroySpy = this.spy(this.oRating._oTooltipEnablement, "destroy");
+
+		// Act
+		this.oRating.destroy();
+
+		// Assert
+		assert.ok(oDestroySpy.calledOnce, "destroy() is called on the TooltipEnablement instance");
+		assert.strictEqual(this.oRating._oTooltipEnablement, null, "The reference is cleared");
+
+		// Already destroyed - prevent double destroy in afterEach
+		this.oRating = null;
+	});
+
+	QUnit.test("DOM: an invisible ARIA anchor is rendered and no native title is present", async function (assert) {
+		// Arrange
+		this.stub(TooltipEnablement, "isEnhancedTooltipEnabled").returns(true);
+		this.oRating = new RatingIndicator({ value: 3, tooltip: "Rate this product" });
+		this.oRating.placeAt("content");
+		await nextUIUpdate();
+
+		var oDomRef = this.oRating.getDomRef();
+		var sAnchorId = this.oRating._oTooltipEnablement.getInvisibleTooltipId();
+		var oAnchor = document.getElementById(sAnchorId);
+
+		// Assert
+		assert.notOk(oDomRef.getAttribute("title"), "No native 'title' attribute is rendered");
+		assert.strictEqual(oAnchor.textContent, "Rate this product", "The anchor holds the tooltip text");
+		var aDescribedBy = (oDomRef.getAttribute("aria-describedby") || "").split(/\s+/);
+		assert.ok(aDescribedBy.indexOf(sAnchorId) > -1, "aria-describedby references the invisible tooltip anchor");
+	});
+
+	QUnit.test("DOM: the invisible anchor holds the default 'Rate' text when no tooltip is set", async function (assert) {
+		// Arrange
+		this.stub(TooltipEnablement, "isEnhancedTooltipEnabled").returns(true);
+		this.oRating = new RatingIndicator({ value: 3 });
+		this.oRating.placeAt("content");
+		await nextUIUpdate();
+
+		var sAnchorId = this.oRating._oTooltipEnablement.getInvisibleTooltipId();
+		var oAnchor = document.getElementById(sAnchorId);
+
+		// Assert
+		assert.ok(oAnchor, "The invisible tooltip anchor is rendered");
+		assert.strictEqual(oAnchor.textContent, this.oResourceBundle.getText("RATING_TOOLTIP_RATE"),
+			"The anchor holds the default 'Rate' text");
+	});
+
+	QUnit.test("DOM: native 'title' is rendered and no anchor exists when the feature is disabled", async function (assert) {
+		// Arrange
+		this.stub(TooltipEnablement, "isEnhancedTooltipEnabled").returns(false);
+		this.oRating = new RatingIndicator({ value: 3, tooltip: "Rate this product" });
+		this.oRating.placeAt("content");
+		await nextUIUpdate();
+
+		var oDomRef = this.oRating.getDomRef();
+
+		// Assert
+		assert.strictEqual(oDomRef.getAttribute("title"), "Rate this product", "The native 'title' attribute is rendered");
+		assert.notOk(this.oRating._oTooltipEnablement, "No TooltipEnablement instance is created");
+		assert.notOk(document.getElementById(this.oRating.getId() + "-invisibleTooltip"), "No invisible tooltip anchor is rendered");
 	});
 
 	return pStyleLoaded;

@@ -3,28 +3,30 @@
 /* Base theme                                     */
 /* ============================================== */
 
-@_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendWorkingDay: lighten(@sapUiContentForegroundColor, 7);
-@_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendNonWorkingDay: darken(@sapUiContentForegroundColor, 3);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType01: var(--sapLegendColor1);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType02: var(--sapLegendColor2);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType03: var(--sapLegendColor3);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType04: var(--sapLegendColor4);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType05: var(--sapLegendColor5);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType06: var(--sapLegendColor6);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType07: var(--sapLegendColor7);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType08: var(--sapLegendColor8);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType09: var(--sapLegendColor9);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType10: var(--sapLegendColor10);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType11: var(--sapLegendColor11);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType12: var(--sapLegendColor12);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType13: var(--sapLegendColor13);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType14: var(--sapLegendColor14);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType15: var(--sapLegendColor15);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType16: var(--sapLegendColor16);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType17: var(--sapLegendColor17);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType18: var(--sapLegendColor18);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType19: var(--sapLegendColor19);
-@_sap_ui_unified_CalendarLegend_sapUiCalLegDayType20: var(--sapLegendColor20);
+.sapUI5Scope {
+	--_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendWorkingDay: ~'hsl(from var(--sapContent_ForegroundColor) h s calc(l + 7%))';
+	--_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendNonWorkingDay: ~'hsl(from var(--sapContent_ForegroundColor) h s calc(l - 3%))';
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType01: var(--sapLegendColor1);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType02: var(--sapLegendColor2);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType03: var(--sapLegendColor3);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType04: var(--sapLegendColor4);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType05: var(--sapLegendColor5);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType06: var(--sapLegendColor6);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType07: var(--sapLegendColor7);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType08: var(--sapLegendColor8);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType09: var(--sapLegendColor9);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType10: var(--sapLegendColor10);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType11: var(--sapLegendColor11);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType12: var(--sapLegendColor12);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType13: var(--sapLegendColor13);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType14: var(--sapLegendColor14);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType15: var(--sapLegendColor15);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType16: var(--sapLegendColor16);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType17: var(--sapLegendColor17);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType18: var(--sapLegendColor18);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType19: var(--sapLegendColor19);
+	--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType20: var(--sapLegendColor20);
+}
 
 .sapUiUnifiedLegend {
 	color: var(--sapContent_LabelColor);
@@ -61,7 +63,7 @@
 	height: 0.875rem;
 	width: 0.875rem;
 	margin: 0.125rem;
-	background: lighten(@sapUiContentForegroundColor, 5);
+	background: ~'hsl(from var(--sapContent_ForegroundColor) h s calc(l + 5%))';
 	border: 0.0625rem solid var(--sapContent_ForegroundBorderColor);
 	box-sizing: content-box;
 	border-radius: 0.125rem;
@@ -129,11 +131,11 @@
 }
 
 .sapUiUnifiedLegendWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendWorkingDay;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendWorkingDay);
 }
 
 .sapUiUnifiedLegendNonWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendNonWorkingDay;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendNonWorkingDay);
 }
 
 .sapUiUnifiedLegend hr {
@@ -155,81 +157,81 @@
 }
 
 .sapUiCalLegDayType01 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType01;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType01);
 }
 
 .sapUiCalLegDayType02 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType02;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType02);
 }
 
 .sapUiCalLegDayType03 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType03;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType03);
 }
 
 .sapUiCalLegDayType04 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType04;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType04);
 }
 
 .sapUiCalLegDayType05 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType05;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType05);
 }
 
 .sapUiCalLegDayType06 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType06;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType06);
 }
 
 .sapUiCalLegDayType07 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType07;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType07);
 }
 
 .sapUiCalLegDayType08 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType08;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType08);
 }
 
 .sapUiCalLegDayType09 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType09;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType09);
 }
 
 .sapUiCalLegDayType10 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType10;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType10);
 }
 
 .sapUiCalLegDayType11 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor{
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType11;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType11);
 }
 
 .sapUiCalLegDayType12 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType12;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType12);
 }
 
 .sapUiCalLegDayType13 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType13;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType13);
 }
 
 .sapUiCalLegDayType14 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType14;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType14);
 }
 
 .sapUiCalLegDayType15 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType15;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType15);
 }
 
 .sapUiCalLegDayType16 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType16;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType16);
 }
 
 .sapUiCalLegDayType17 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType17;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType17);
 }
 
 .sapUiCalLegDayType18 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType18;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType18);
 }
 
 .sapUiCalLegDayType19 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType19;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType19);
 }
 
 .sapUiCalLegDayType20 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @_sap_ui_unified_CalendarLegend_sapUiCalLegDayType20;
+	background: var(--_sap_ui_unified_CalendarLegend_sapUiCalLegDayType20);
 }

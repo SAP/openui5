@@ -14,8 +14,8 @@
 	}
 }
 
-.sapMSinglePC .sapUiCalendarAppCont{
-	border-left: 0.0625rem solid darken(@sapUiListBorderColor, 15);
+.sapMSinglePC .sapUiCalendarAppCont {
+	border-left: 0.0625rem solid ~'hsl(from var(--sapList_BorderColor) h s calc(l - 15))';
 }
 
 html.sap-desktop {
@@ -32,6 +32,7 @@ html.sap-desktop {
 }
 
 html.sap-desktop .sapMSinglePC {
+
 	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
 
 		&:focus {
@@ -59,7 +60,7 @@ html.sap-desktop .sapMSinglePC {
 			border: 0.125rem dotted var(--sapContent_ContrastFocusColor);
 		}
 
-		.sapUiCalendarAppSel>.sapUiCalendarAppCont::after {
+		.sapUiCalendarAppSel> .sapUiCalendarAppCont::after {
 			border: 0.125rem dotted var(--sapContent_ContrastFocusColor);
 		}
 	}
@@ -102,7 +103,7 @@ html.sap-desktop .sapMSinglePC {
 
 	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
 
-		.sapUiCalendarAppSel{
+		.sapUiCalendarAppSel {
 			border: 0.0625rem solid var(--sapList_SelectionBorderColor);
 
 			.sapUiCalendarAppCont {
@@ -146,7 +147,9 @@ html.sap-desktop .sapMSinglePC {
 }
 
 html.sap-desktop .sapUiSizeCompact .sapMSinglePC {
+
 	.sapMSinglePCColumnHeader {
+
 		.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText {
 			border: 1px solid transparent;
 		}
@@ -158,7 +161,9 @@ html.sap-desktop .sapUiSizeCompact .sapMSinglePC {
 }
 
 .sapUiSizeCompact .sapMSinglePC {
+
 	.sapMSinglePCColumnHeader {
+
 		.sapUiCalItem:not(.sapUiCalItemFocusFromTouch).sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus-visible > .sapUiCalItemText {
 			border: 1px solid transparent;
 		}

@@ -107,7 +107,7 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps {
 
 .sapMListTblRow:not(.sapMLIBSelected) .sapUiCalendarRowAppsNoWork,
 .sapMListTblSubRow:not(.sapMLIBSelected) .sapUiCalendarRowAppsNoWork {
-	background-color: darken(@sapUiListBackground, 3);
+	background-color: ~'hsl(from var(--sapList_Background) h s calc(l - 3))';
 }
 
 .sapUiCalendarRowAppsIntHead {
@@ -132,7 +132,7 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps {
 
 .sapUiCalendarRowAppsIntHeadFirst {
 	border: 0.0625rem solid var(--sapContent_ForegroundBorderColor);
-	border-left: 0.25rem solid darken(@sapUiListBorderColor, 15);
+	border-left: 0.25rem solid ~'hsl(from var(--sapList_BorderColor) h s calc(l - 15))';
 }
 
 .sapUiCalendarRowAppsIntHeadIcon {
@@ -172,7 +172,7 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps {
 	height: 3rem;
 	color: var(--sapTextColor);
 	background-color: var(--sapList_Background);
-	border-left: 0.25rem solid darken(@sapUiListBorderColor, 15);
+	border-left: 0.25rem solid ~'hsl(from var(--sapList_BorderColor) h s calc(l - 15))';
 	outline: none;
 	cursor: pointer;
 	overflow: hidden;
@@ -230,7 +230,7 @@ Use it only if there's one appointment per day for a row that doesn't have inter
 .sapUiCalendarAppCont {
 	box-sizing: border-box;
 	position: relative;
-	border: 0.0625rem solid darken(@sapUiListBorderColor, 15);
+	border: 0.0625rem solid ~'hsl(from var(--sapList_BorderColor) h s calc(l - 15))';
 	border-left: none;
 	/* don't use padding here, because the DIV can't be smaller than the min size of it's paddings.... */
 	height: 100%;
@@ -260,7 +260,7 @@ html.sap-desktop .sapUiCalendarApp:hover:not(:active) > .sapUiCalendarAppCont {
 html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active),
 html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sapUiCalendarAppCont,
 .sapUiCalendarApp.sapUiCalendarAppSel:not(.sapUiCalItemFocusFromTouch):focus-visible:not(:active) > .sapUiCalendarAppCont {
-	background-color: darken(@sapUiSelected, 10);
+	background-color: ~'hsl(from var(--sapSelectedColor) h s calc(l - 10))';
 }
 
 .sapUiCalendarApp.sapUiCalendarAppTent > .sapUiCalendarAppCont {

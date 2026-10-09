@@ -6034,18 +6034,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create: groupLevels", function (assert) {
+	QUnit.test("create: bFirstCreateAtEnd must not be true with groupLevels", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		// internal data structure, not valid for #setAggregation!
 		oBinding.mParameters.$$aggregation = {
-			groupLevels : ["LifecycleStatus"],
-			$leafLevelAggregated : true
+			groupLevels : ["LifecycleStatus"]
 		};
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(true);
 
 		assert.throws(function () {
 			// code under test
-			oBinding.create();
-		}, new Error("Unsupported for data aggregation with groupLevels: " + oBinding));
+			oBinding.create(undefined, undefined, /*bAtEnd*/true);
+		}, new Error("Must not create at end when using groupLevels: " + oBinding));
 	});
 
 	//*********************************************************************************************
@@ -6064,11 +6065,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create: data aggregation w/o grand total", function (assert) {
+	QUnit.test("create: data aggregation w/o grand total and w/o groupLevels", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		// internal data structure, not valid for #setAggregation!
 		oBinding.mParameters.$$aggregation = {
-			aggregate : "~aggregate~"
+			aggregate : "~aggregate~",
+			groupLevels : []
 		};
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(true);
@@ -6086,7 +6088,8 @@ sap.ui.define([
 		const oBinding = this.bindList("/EMPLOYEES");
 		// internal data structure, not valid for #setAggregation!
 		oBinding.mParameters.$$aggregation = {
-			aggregate : "~aggregate~"
+			aggregate : "~aggregate~",
+			groupLevels : []
 		};
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(true);
@@ -6556,12 +6559,16 @@ sap.ui.define([
 		[false, true].forEach((bAtEnd) => {
 			[false, true].forEach((bSkipRefresh) => {
 				[false, true].forEach((bEmptyList) => {
+					[false, true].forEach((bGrandTotal) => {
 	const sTitle = "create: " + (bRecursiveHierarchy
 		? "recursive hierarchy, root #" + i
 		: "data aggregation, bAtEnd=" + bAtEnd + ", bSkipRefresh=" + bSkipRefresh
-			+ ", bEmptyList=" + bEmptyList);
+			+ ", bEmptyList=" + bEmptyList + ", bGrandTotal=" + bGrandTotal);
 
 	if (bRecursiveHierarchy ? bAtEnd || !bSkipRefresh : oInitialData) {
+		return;
+	}
+	if (bRecursiveHierarchy && bGrandTotal) { // grand total is only applicable for data aggregation
 		return;
 	}
 
@@ -6575,7 +6582,7 @@ sap.ui.define([
 				aggregate : {
 					foo : {grandTotal : true}
 				},
-				groupLevels : [] /* data aggregation always has groupLevels */
+				groupLevels : bGrandTotal ? [] : ["~groupLevel~"]
 			};
 		if (bAtEnd) {
 			oBinding.bFirstCreateAtEnd = false;
@@ -6590,8 +6597,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(!bRecursiveHierarchy);
 		this.mock(_AggregationHelper).expects("hasGrandTotal").exactly(bRecursiveHierarchy ? 0 : 1)
 			.withExactArgs(sinon.match.same(oBinding.mParameters.$$aggregation.aggregate))
-			.returns(true);
-		this.mock(oBinding).expects("getLength").exactly(bRecursiveHierarchy ? 0 : 1)
+			.returns(bGrandTotal);
+		this.mock(oBinding).expects("getLength")
+			.exactly(bRecursiveHierarchy || !bGrandTotal ? 0 : 1)
 			.withExactArgs().returns(bEmptyList ? 0 : 10);
 		this.mock(_Helper).expects("uid").withExactArgs().returns("id-1-23");
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
@@ -6634,7 +6642,7 @@ sap.ui.define([
 			oFireEventExpectation = this.mock(oBinding).expects("fireEvent")
 				.withExactArgs("createCompleted", {context : oContext, success : true});
 			oFireChangeExpectation = this.mock(oBinding).expects("_fireChange")
-				.exactly(!bRecursiveHierarchy && bEmptyList ? 1 : 0)
+				.exactly(!bRecursiveHierarchy && bGrandTotal && bEmptyList ? 1 : 0)
 				.withExactArgs({reason : ChangeReason.Add});
 			this.mock(oContext).expects("updateAfterCreate").exactly(bSkipRefresh ? 1 : 0)
 				.withExactArgs(true, "$auto");
@@ -6661,6 +6669,7 @@ sap.ui.define([
 			}
 		});
 	});
+					});
 				});
 			});
 		});
@@ -11068,7 +11077,7 @@ sap.ui.define([
 			}].forEach((oFixture) => {
 				[false, true].forEach((bWithPath) => {
 					[undefined, false, true].forEach((bNoRequest) => {
-						[undefined, [], ["X"]].forEach((aGroupLevels) => {
+						[[], ["X"]].forEach((aGroupLevels) => {
 	const sTitle = "setOutdated: bDataAggregation=" + bDataAggregation
 		+ ", bWithAggregationCache=" + bWithAggregationCache + ", sForce=" + sForce
 		+ ", bWithPath=" + bWithPath + ", bNoRequest=" + bNoRequest
@@ -11094,10 +11103,9 @@ sap.ui.define([
 				&& sForce !== "delete" ? 1 : 0)
 			.withExactArgs(bWithPath ? "~aPaths~" : undefined)
 			.returns(oFixture.isFilteredByResult);
-		const bForceHeader = sForce === "header" || bForce
-			|| sForce === "delete" && aGroupLevels?.length > 0;
+		const bForceHeader = sForce === "header" || bForce || aGroupLevels.length;
 		this.mock(oBinding).expects("isSortedBy")
-			.exactly(bDataAggregation && !bForce && sForce !== "delete" && sForce !== "header"
+			.exactly(bDataAggregation && !bForceHeader && sForce !== "delete"
 				&& "isSortedByResult" in oFixture ? 1 : 0)
 			.withExactArgs(bWithPath ? "~aPaths~" : undefined)
 			.returns(oFixture.isSortedByResult);
@@ -11120,6 +11128,11 @@ sap.ui.define([
 					.exactly(bDataAggregation && (bForce || oFixture.grandTotal) && !bNoRequest
 						&& sForce !== "delete" ? 1 : 0)
 					.withExactArgs(true);
+				oBinding.oCache.setSubtotalsOutdated = mustBeMocked;
+				this.mock(oBinding.oCache).expects("setSubtotalsOutdated")
+					.exactly(bDataAggregation && !bNoRequest
+						&& (bForceHeader || sForce !== "delete" && oFixture.headerContext) ? 1 : 0)
+					.withExactArgs();
 			}
 			this.mock(oBinding.oHeaderContext).expects("setOutdated")
 				.exactly(bDataAggregation && !bNoRequest
@@ -11495,8 +11508,8 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
 			oContext = {
-				iIndex : "~iIndex~",
 				getPath : function () {},
 				toString : function () { return "~context~"; }
 			},
@@ -11520,14 +11533,16 @@ sap.ui.define([
 			oBinding.mParameters = {$$aggregation : {hierarchyQualifier : "X"}};
 		}
 
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
+		oBindingMock.expects("checkSuspended").withExactArgs();
+		oBindingMock.expects("getModelIndex").withExactArgs(sinon.match.same(oContext))
+			.returns("~iIndex~");
+		oBindingMock.expects("lockGroup").withExactArgs().returns(oGroupLock);
 		this.mock(oContext).expects("getPath").withExactArgs().returns("~contextpath~");
 		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
 			.returns("~bindingpath~");
 		this.mock(_Helper).expects("getRelativePath")
 			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
-		this.mock(oBinding).expects("getKeepAlivePredicates").withExactArgs()
+		oBindingMock.expects("getKeepAlivePredicates").withExactArgs()
 			.returns("~mKeepAlivePredicates~");
 
 		oExpectation = this.mock(oBinding.oCache).expects("expand")
@@ -11535,30 +11550,32 @@ sap.ui.define([
 				"~mKeepAlivePredicates~", bSilent, sinon.match.func)
 			.returns(Promise.resolve().then(function () {
 				if (bSuccess) {
-					that.mock(oBinding).expects("getGroupId")
+					oBindingMock.expects("getGroupId")
 						.exactly(iCount < 0 ? 1 : 0)
 						.withExactArgs().returns("~group~");
-					that.mock(oBinding).expects("requestSideEffects")
+					oBindingMock.expects("requestSideEffects")
 						.exactly(iCount < 0 ? 1 : 0)
 						.withExactArgs("~group~", [""], null, true)
 						.resolves("~requestSideEffects~");
-					that.mock(oBinding).expects("getModelIndex").exactly(iCount > 0 ? 1 : 0)
+					// #getModelIndex should be called again because the index could have changed in
+					// the meantime, e.g. by a synchronous collapse while waiting for the expand
+					oBindingMock.expects("getModelIndex").exactly(iCount > 0 ? 1 : 0)
 						.withExactArgs(sinon.match.same(oContext)).returns("~iModelIndex~");
-					oGapCall = that.mock(oBinding).expects("insertGap").exactly(iCount > 0 ? 1 : 0)
+					oGapCall = oBindingMock.expects("insertGap").exactly(iCount > 0 ? 1 : 0)
 						.withExactArgs("~iModelIndex~", iCount);
 					that.mock(_Helper).expects("isDataAggregation")
 						.exactly(!bSilent && !iCount ? 1 : 0)
 						.withExactArgs(sinon.match.same(oBinding.mParameters))
 						.returns(!bHierarchy);
-					oChangeCall = that.mock(oBinding).expects("_fireChange")
+					oChangeCall = oBindingMock.expects("_fireChange")
 						.exactly(!bSilent && (iCount > 0 || !iCount && !bHierarchy) ? 1 : 0)
 						.withExactArgs({reason : ChangeReason.Change});
-					oDataReceivedCall = that.mock(oBinding).expects("fireDataReceived")
+					oDataReceivedCall = oBindingMock.expects("fireDataReceived")
 						.exactly(bDataRequested ? 1 : 0).withExactArgs({});
 
 					return iCount;
 				}
-				that.mock(oBinding).expects("fireDataReceived").exactly(bDataRequested ? 1 : 0)
+				oBindingMock.expects("fireDataReceived").exactly(bDataRequested ? 1 : 0)
 					.withExactArgs({error : sinon.match.same(oError)});
 
 				throw oError;
@@ -11582,7 +11599,7 @@ sap.ui.define([
 			assert.strictEqual(oResult, oError);
 		});
 
-		that.mock(oBinding).expects("fireDataRequested").exactly(bDataRequested ? 1 : 0)
+		oBindingMock.expects("fireDataRequested").exactly(bDataRequested ? 1 : 0)
 			.withExactArgs();
 		if (bDataRequested) {
 			oExpectation.args[0][5]();
@@ -11599,37 +11616,31 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("expand: Not currently part of the hierarchy", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
-		const oContext = {
-			iIndex : 0,
-			toString : () => "~oContext~"
-		};
-
-		oBinding.aContexts = [, oContext];
+		oBinding.aContexts = [, "~oContext~"];
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("getModelIndex").withExactArgs("~oContext~").returns(0);
 		this.mock(oBinding).expects("getKeepAlivePredicates").never();
 
 		assert.throws(function () {
 			// code under test
-			oBinding.expand(oContext);
+			oBinding.expand("~oContext~");
 		}, new Error("Not currently part of the hierarchy: ~oContext~"));
 	});
 
 	//*********************************************************************************************
 	QUnit.test("expand: Missing recursive hierarchy", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
-		const oContext = {
-			iIndex : 0
-		};
-		oBinding.aContexts = [oContext];
+		oBinding.aContexts = ["~oContext~"];
 
 		this.mock(oBinding).expects("checkSuspended").twice().withExactArgs();
+		this.mock(oBinding).expects("getModelIndex").twice().withExactArgs("~oContext~").returns(0);
 		this.mock(oBinding).expects("getKeepAlivePredicates").never();
 
 		[2, 42].forEach((iLevels) => {
 			assert.throws(function () {
 				// code under test
-				oBinding.expand(oContext, iLevels);
+				oBinding.expand("~oContext~", iLevels);
 			}, new Error("Missing recursive hierarchy"));
 		});
 	});
@@ -11691,10 +11702,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCollapseExpectation,
-			oContext = {
-				iIndex : "~iIndex~",
-				getPath : function () {}
-			},
+			oContext,
 			aContextsBefore,
 			oFireChangeExpectation;
 
@@ -11723,17 +11731,17 @@ sap.ui.define([
 			// with gap at 6
 			oBinding.aContexts.push(i === 6 ? undefined : createContextDummy(i));
 		}
-		oBinding.aContexts["~iIndex~"] = oContext;
+		oContext = oBinding.aContexts[1];
 		oBinding.iMaxLength = 8;
 		aContextsBefore = oBinding.aContexts.slice();
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("getPath").exactly(bCountGiven ? 0 : 1).withExactArgs()
-			.returns("~contextpath~");
+		this.mock(oBinding).expects("getModelIndex").withExactArgs(sinon.match.same(oContext))
+			.returns(1);
 		this.mock(oBinding.oHeaderContext).expects("getPath").exactly(bCountGiven ? 0 : 1)
 			.withExactArgs().returns("~bindingpath~");
 		this.mock(_Helper).expects("getRelativePath").exactly(bCountGiven ? 0 : 1)
-			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
+			.withExactArgs("/EMPLOYEES/1", "~bindingpath~").returns("~cachepath~");
 		this.mock(oBinding).expects("lockGroup").exactly(bAll && !bCountGiven ? 1 : 0)
 			.withExactArgs()
 			.returns("~oGroupLock~");
@@ -11744,8 +11752,6 @@ sap.ui.define([
 			.withExactArgs("~cachepath~", "~predicates~", bSilent,
 				bAll ? "~oGroupLock~" : undefined, false)
 			.returns(iCount);
-		this.mock(oBinding).expects("getModelIndex").exactly(iCount ? 1 : 0)
-			.withExactArgs(sinon.match.same(oContext)).returns(1);
 		this.mock(_Helper).expects("isDataAggregation").exactly(iCount || bSilent ? 0 : 1)
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(bDataAggregation);
 		oFireChangeExpectation = this.mock(oBinding).expects("_fireChange")
@@ -11797,20 +11803,63 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("collapse: iCreatedContexts", function (assert) {
+		function createContextDummy(i) {
+			return {
+				iIndex : i,
+				getPath : function () {
+					return "/EMPLOYEES/" + i;
+				}
+			};
+		}
+
+		const oBinding = this.bindList("/EMPLOYEES");
+		oBinding.oCache = {collapse : mustBeMocked};
+		oBinding.iCreatedContexts = 2;
+		oBinding.iMaxLength = 3;
+		oBinding.aContexts = [createContextDummy(-2), createContextDummy(-1), createContextDummy(0),
+			createContextDummy(1), createContextDummy(2)];
+		const oContext = oBinding.aContexts[2];
+		const aContextsBefore = oBinding.aContexts.slice();
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("getModelIndex").withExactArgs(sinon.match.same(oContext))
+			.returns(2); // iIndex + iCreatedContexts
+		this.mock(oContext).expects("getPath").withExactArgs().returns("~contextpath~");
+		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
+			.returns("~bindingpath~");
+		this.mock(_Helper).expects("getRelativePath")
+			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
+		this.mock(oBinding).expects("getKeepAlivePredicates").withExactArgs()
+			.returns("~predicates~");
+		this.mock(oBinding.oCache).expects("collapse")
+			.withExactArgs("~cachepath~", "~predicates~", undefined, undefined, false)
+			.returns(1);
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.collapse(oContext);
+
+		assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0]);
+		assert.strictEqual(oBinding.aContexts[1], aContextsBefore[1]);
+		assert.strictEqual(oBinding.aContexts[2], aContextsBefore[2]);
+		assert.strictEqual(oBinding.aContexts[3], aContextsBefore[4]);
+		assert.strictEqual(oBinding.aContexts.length, 4);
+		assert.strictEqual(oBinding.iMaxLength, 2);
+		assert.strictEqual(aContextsBefore[3].iIndex, undefined);
+		assert.deepEqual(oBinding.aContexts.map((oContext0) => oContext0.iIndex), [-2, -1, 0, 1]);
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {"/EMPLOYEES/1" : aContextsBefore[3]});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("collapse: Not currently part of the hierarchy", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
-		const oContext = {
-			iIndex : 0,
-			toString : () => "~oContext~"
-		};
-
-		oBinding.aContexts = [, oContext];
-
+		oBinding.aContexts = ["~oContext~"];
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("getModelIndex").withExactArgs("~oContext~").returns(undefined);
 
 		assert.throws(function () {
 			// code under test
-			oBinding.collapse(oContext);
+			oBinding.collapse("~oContext~");
 		}, new Error("Not currently part of the hierarchy: ~oContext~"));
 	});
 
@@ -11820,21 +11869,17 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
-		const oContext = {
-			iIndex : 0
-		};
-
+		oBinding.aContexts = ["~oContext~"];
 		if (bAggregation) {
 			oBinding.mParameters = {$$aggregation : {}};
 		}
 
-		oBinding.aContexts = [oContext];
-
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("getModelIndex").withExactArgs("~oContext~").returns(0);
 
 		assert.throws(function () {
 			// code under test
-			oBinding.collapse(oContext, true);
+			oBinding.collapse("~oContext~", true);
 		}, new Error("Missing recursive hierarchy"));
 	});
 });

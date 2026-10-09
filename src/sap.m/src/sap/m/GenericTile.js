@@ -1739,7 +1739,10 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._getAriaAndTooltipText = function () {
 		var sBadgeText = this.getBadge()?.getText();
-		var sAriaText = ((sBadgeText) ? sBadgeText + " " + this._oRb.getText("GENERICTILE_BADGE_APP") + "\n" : "") + this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText();
+		var sAppShortcut = this.getAppShortcut();
+		var sSystemInfo = this.getSystemInfo();
+		var sInfoText = [sSystemInfo, sAppShortcut].filter(Boolean).join("\n");
+		var sAriaText = ((sBadgeText) ? sBadgeText + " " + this._oRb.getText("GENERICTILE_BADGE_APP") + "\n" : "") + this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText() + (sInfoText ? "\n" + sInfoText : "");
 		switch (this.getState()) {
 			case LoadState.Disabled:
 				return "";
