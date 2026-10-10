@@ -29,6 +29,22 @@ sap.ui.define([
 
 	const oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
+	// Allowlist of SAC render APIs that a card manifest is permitted to invoke
+	// through the generic "content/render" descriptor. The manifest references
+	// these by their dotted path under sap.sac.api; anything not listed here is
+	// rejected, so a manifest can never invoke an arbitrary function.
+	const mAllowedRenderApis = {
+		"widget.renderWidget": true,
+		"widget.renderWidgetForJustAsk": true,
+		"metrics.renderMetric": true
+	};
+
+	// Completion modes a render descriptor may request.
+	// "widgetInfo" runs the sap.sac.api.widget.getWidgetInfo flow afterwards;
+	// "none" completes without requesting widget metadata (e.g. for metrics).
+	const WIDGET_INFO_COMPLETION = "widgetInfo";
+	const NO_COMPLETION = "none";
+
 	/**
 	 * Constructor for a new <code>AnalyticsCloudContent</code>.
 	 *
@@ -114,7 +130,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates Widgets' chart inside the card content.
+	 * Creates Analytics Cloud content inside the card.
 	 */
 	AnalyticsCloudContent.prototype._renderWidget = function () {
 		if (this._bIsBeingDestroyed) {
@@ -142,8 +158,6 @@ sap.ui.define([
 		}
 
 		const sContainerId = this._oWidgetContainer.getId();
-		const oWidget = oConfig?.widget;
-		const vInterpretation = oConfig?.interpretation;
 		const oOptions = this._getOptions(oConfig);
 
 		// Check if the configuration has changed
@@ -154,24 +168,112 @@ sap.ui.define([
 
 		this._oLastConfig = oConfig;
 
-		if (oWidget) {
-			sap.sac.api.widget.renderWidget(
-				sContainerId,
-				{ proxy: oConfig.sacTenantDestination },
-				oWidget.storyId,
-				oWidget.widgetId,
-				oOptions
-			);
-		} else if (vInterpretation) {
-			sap.sac.api.widget.renderWidgetForJustAsk(
-				sContainerId,
-				{ proxy: oConfig.sacTenantDestination },
-				vInterpretation,
-				oOptions
-			);
-		} else {
-			this._showError("Required configuration /sap.card/content/widget or /sap.card/content/interpretation was not found or is empty.");
+		// Normalize whatever the manifest provided (a generic "render" descriptor
+		// or one of the legacy named keys) into a single generic descriptor, then
+		// dispatch it. Adding a new artifact type is a manifest-only change: it just
+		// supplies a different "render" descriptor and needs no change here.
+		const oDescriptor = this._getRenderDescriptor(oConfig);
+		if (!oDescriptor) {
+			this._showError("Required configuration /sap.card/content/render, /sap.card/content/widget, /sap.card/content/metric, or /sap.card/content/interpretation was not found or is empty.");
+			return;
 		}
+
+		this._dispatchRender(oDescriptor, oConfig, sContainerId, oOptions);
+	};
+
+	/**
+	 * Builds a generic render descriptor from the content configuration.
+	 *
+	 * Prefers an explicit generic <code>content/render</code> descriptor. For
+	 * backward compatibility, the legacy <code>widget</code>, <code>metric</code>,
+	 * and <code>interpretation</code> keys are mapped onto the same descriptor
+	 * shape so existing manifests keep working unchanged.
+	 *
+	 * @param {Object} oConfig The resolved content config.
+	 * @returns {{api: string, args: Array, completion: string}|null} The descriptor, or null if none is present.
+	 */
+	AnalyticsCloudContent.prototype._getRenderDescriptor = function (oConfig) {
+		if (oConfig.render) {
+			return oConfig.render;
+		}
+
+		// Legacy shims — equivalent descriptors for the named keys.
+		if (oConfig.widget) {
+			return {
+				api: "widget.renderWidget",
+				args: ["$container", "$destination", oConfig.widget.storyId, oConfig.widget.widgetId, "$options"],
+				completion: WIDGET_INFO_COMPLETION
+			};
+		}
+
+		if (oConfig.metric) {
+			return {
+				api: "metrics.renderMetric",
+				args: ["$container", "$destination", oConfig.metric.metricId, "$options"],
+				completion: NO_COMPLETION
+			};
+		}
+
+		if (oConfig.interpretation) {
+			return {
+				api: "widget.renderWidgetForJustAsk",
+				args: ["$container", "$destination", oConfig.interpretation, "$options"],
+				completion: WIDGET_INFO_COMPLETION
+			};
+		}
+
+		return null;
+	};
+
+	/**
+	 * Dispatches a generic render descriptor to the referenced SAC API.
+	 *
+	 * The descriptor's <code>api</code> is resolved against an allowlist on
+	 * <code>sap.sac.api</code>; its <code>args</code> are built by substituting the
+	 * card-owned placeholders <code>$container</code>, <code>$destination</code>,
+	 * and <code>$options</code>; and completion is driven by <code>completion</code>.
+	 *
+	 * @param {{api: string, args: Array, completion: string}} oDescriptor The render descriptor.
+	 * @param {Object} oConfig The resolved content config.
+	 * @param {string} sContainerId The widget container id.
+	 * @param {Object} oOptions The merged options (including renderComplete).
+	 */
+	AnalyticsCloudContent.prototype._dispatchRender = function (oDescriptor, oConfig, sContainerId, oOptions) {
+		const sApi = oDescriptor.api;
+
+		if (!mAllowedRenderApis[sApi]) {
+			this._showError(`Render API '${sApi}' is not allowed. Allowed APIs: ${Object.keys(mAllowedRenderApis).join(", ")}.`);
+			return;
+		}
+
+		const fnRender = this._resolveRenderApi(sApi);
+		if (typeof fnRender !== "function") {
+			this._showError(`Object sap.sac.api.${sApi} not found on the page.`);
+			return;
+		}
+
+		const oPlaceholders = {
+			$container: sContainerId,
+			$destination: { proxy: oConfig.sacTenantDestination },
+			$options: oOptions
+		};
+		const aArgs = (oDescriptor.args || []).map((vArg) => {
+			return Object.hasOwn(oPlaceholders, vArg) ? oPlaceholders[vArg] : vArg;
+		});
+
+		fnRender.apply(null, aArgs);
+	};
+
+	/**
+	 * Resolves a dotted API path (e.g. "metrics.renderMetric") against sap.sac.api.
+	 * Only paths present in the allowlist reach this method.
+	 * @param {string} sApi The dotted API path under sap.sac.api.
+	 * @returns {Function|undefined} The resolved function, or undefined.
+	 */
+	AnalyticsCloudContent.prototype._resolveRenderApi = function (sApi) {
+		return sApi.split(".").reduce((oTarget, sKey) => {
+			return oTarget == null ? oTarget : oTarget[sKey];
+		}, sap?.sac?.api);
 	};
 
 	/**
@@ -203,7 +305,15 @@ sap.ui.define([
 
 		oOptions.attributes = Object.assign({}, oDefaultAttributes, oOptions.attributes);
 
-		oOptions.renderComplete = {
+		// Completion is driven by the render descriptor's "completion" mode.
+		// "none" completes without requesting widget metadata; anything else
+		// (default) runs the getWidgetInfo flow after rendering.
+		const sCompletion = this._getRenderDescriptor(oConfig)?.completion;
+
+		oOptions.renderComplete = sCompletion === NO_COMPLETION ? {
+			onSuccess: this._onRenderSuccess.bind(this),
+			onFailure: this._onRenderFailure.bind(this)
+		} : {
 			onSuccess: this._onWidgetSuccess.bind(this),
 			onFailure: this._onWidgetFailure.bind(this)
 		};
@@ -244,6 +354,45 @@ sap.ui.define([
 		Log.error(sError, this);
 
 		this._updateWidgetInfo();
+	};
+
+	/**
+	 * Handles successful rendering for descriptors that complete without widget metadata.
+	 */
+	AnalyticsCloudContent.prototype._onRenderSuccess = function () {
+		const sApi = this._getRenderDescriptor(this._getResolvedConfiguration())?.api;
+
+		Log.info(`Analytics Cloud content rendered successfully via sap.sac.api.${sApi}.`, this);
+		this._completeRendering();
+	};
+
+	/**
+	 * Handles failed rendering for descriptors that complete without widget metadata.
+	 * @param {Error|Object|string|null} vError The error returned by the renderer.
+	 */
+	AnalyticsCloudContent.prototype._onRenderFailure = function (vError) {
+		const sApi = this._getRenderDescriptor(this._getResolvedConfiguration())?.api;
+		let sError = `There was a failure in sap.sac.api.${sApi}.`;
+
+		if (vError instanceof Error) {
+			sError += " " + vError.toString();
+			Log.error(vError.stack);
+		} else if (typeof vError === "object") {
+			sError += " " + JSON.stringify(vError);
+		} else if (vError) {
+			sError += " " + vError;
+		}
+
+		Log.error(sError, this);
+		this._completeRendering();
+	};
+
+	/**
+	 * Completes rendering without requesting widget metadata.
+	 */
+	AnalyticsCloudContent.prototype._completeRendering = function () {
+		this._oLastConfig = null;
+		this.getCardInstance().scheduleFireStateChanged();
 	};
 
 	/**
