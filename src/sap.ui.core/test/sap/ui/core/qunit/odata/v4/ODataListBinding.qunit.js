@@ -9326,21 +9326,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshSingle: data aggregation with groupLevels", function (assert) {
-		const oBinding = this.bindList("/EMPLOYEES");
-		const oContext = {
-			getPath : function () { return "n/a"; }
-		};
-
-		oBinding.mParameters.$$aggregation = {groupLevels : ["Foo"]};
-
-		assert.throws(function () {
-			// code under test
-			oBinding.refreshSingle(oContext);
-		}, new Error("Unsupported for data aggregation with groupLevels: " + oBinding));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("refreshSingle: bAllowRemoval && bWithMessages", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext = {
@@ -10144,27 +10129,6 @@ sap.ui.define([
 	});
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("requestSideEffects: data aggregation with groupLevels", function (assert) {
-		const oBinding = this.bindList("/Set");
-		oBinding.mParameters.$$aggregation = {groupLevels : ["Foo"]};
-		this.mock(_Helper).expects("isDataAggregation")
-			.withExactArgs(sinon.match.same(oBinding.mParameters))
-			.returns(true);
-		const oContext = Context.create({/*oModel*/}, oBinding, "/Set('42')");
-		this.mock(oContext).expects("isAggregated").never();
-		this.mock(oBinding).expects("refreshSingle").never();
-		this.mock(oBinding).expects("setOutdated").never();
-		this.mock(oBinding.oCache).expects("requestSideEffects").never();
-		this.mock(oBinding).expects("refreshInternal").never();
-		this.mock(_AggregationHelper).expects("isAffected").never();
-
-		assert.throws(function () {
-			// code under test
-			oBinding.requestSideEffects("group", [/*aPaths*/], oContext);
-		}, new Error("Unsupported for data aggregation with groupLevels: " + oBinding));
-	});
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: on aggregated data", function (assert) {

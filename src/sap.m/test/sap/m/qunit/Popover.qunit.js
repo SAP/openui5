@@ -36,7 +36,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/test/utils/nextUIUpdate",
-	"sap/m/dialogUtils/PreventKeyboardEvents"
+	"sap/m/dialogUtils/PreventKeyboardEvents",
+	"sap/m/Dialog"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -74,7 +75,8 @@ sap.ui.define([
 	KeyCodes,
 	containsOrEquals,
 	nextUIUpdate,
-	PreventKeyboardEvents
+	PreventKeyboardEvents,
+	Dialog
 ) {
 	"use strict";
 
@@ -2484,6 +2486,39 @@ sap.ui.define([
 		assert.equal(this.oPopover.$().attr('role'), 'dialog', 'Popover has role dialog');
 		assert.equal(this.oPopover.$("firstfe").attr('role'), 'presentation', "Popover' hidden focusable span has role presentation");
 		assert.equal(this.oPopover.$("lastfe").attr('role'), 'presentation', "Popovers' hidden focusable span has role presentation");
+	});
+
+	QUnit.test("aria-owns links the Popover to its opener's modal Dialog", async function (assert) {
+		// Arrange: a Button that opens the Popover lives inside a modal Dialog.
+		// The Popover renders to the static area as a sibling of the Dialog, so without
+		// aria-owns JAWS treats closing the Popover as re-entering the Dialog's modal region.
+		var oOpenerButton = new Button({ text: "Open Popover" }),
+			oDialog = new Dialog({ content: [oOpenerButton] });
+
+		oDialog.open();
+		this.clock.tick(500);
+
+		// Act: open the Popover from the button inside the Dialog.
+		this.oPopover.openBy(oOpenerButton);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
+
+		// Assert: the Dialog (the opener's aria-modal ancestor) owns the Popover.
+		var aOwns = (oDialog.getDomRef().getAttribute("aria-owns") || "").split(/\s+/);
+		assert.ok(aOwns.indexOf(this.oPopover.getId()) !== -1,
+			"Dialog's aria-owns references the Popover while it is open");
+
+		// Act: close the Popover.
+		this.oPopover.close();
+		this.clock.tick(500);
+
+		// Assert: the reference is removed again so it does not linger on the Dialog.
+		aOwns = (oDialog.getDomRef().getAttribute("aria-owns") || "").split(/\s+/);
+		assert.strictEqual(aOwns.indexOf(this.oPopover.getId()), -1,
+			"Dialog's aria-owns no longer references the Popover after it closes");
+
+		// Clean up
+		oDialog.destroy();
 	});
 
 	QUnit.test("ARIA labeledby attribute", async function (assert){

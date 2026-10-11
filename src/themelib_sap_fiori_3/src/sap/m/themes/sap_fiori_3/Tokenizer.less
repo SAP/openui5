@@ -1,9 +1,7 @@
 /* ================================ */
 /* CSS for control sap.m/Tokenizer  */
-/* Fiori 3 theme                    */
+/* Quartz Light theme               */
 /* ================================ */
-
-@_sap_m_Tokenizer_OutlineOffset: -0.1875rem;
 
 .sapMTokenizer {
 	padding-left: 0.3125rem;
@@ -16,13 +14,8 @@
 
 .sapMTokenizer .sapMToken {
 	margin-right: 0.3125rem;
-	max-width: calc(~"100% - 0.3125rem");
+	max-width: ~'calc(100% - 0.3125rem)';
 	margin-top: 0.25rem;
-}
-
-html.sap-desktop .sapMTokenizer:focus {
-	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
-	outline-offset: @_sap_m_Tokenizer_OutlineOffset;
 }
 
 .sapUiSizeCompact {
@@ -40,11 +33,11 @@ html.sap-desktop .sapMTokenizer:focus {
 	&.sapMToken:focus,
 	&.sapMTokenSelected,
 	&.sapMToken.sapMTokenSelected:hover {
-		background: darken(@sapUiButtonBackground, 2);
+		background: ~'hsl(from var(--sapButton_Background) h s calc(l - .02))';
 		cursor: default;
 		color: var(--sapTextColor);
 		outline: none;
-		border: 1px solid darken(@sapUiButtonBackground, 24);
+		border: 1px solid ~'hsl(from var(--sapButton_Background) h s calc(l - .24))';
 	}
 
 	&.sapMTokenSelected .sapMTokenText {

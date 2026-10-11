@@ -917,8 +917,8 @@ sap.ui.define([
 	 *
 	 * When using data aggregation without <code>"grandTotal like 1.84"</code> (see
 	 * {@link #setAggregation}), single entities can be created (since 1.151.0, see
-	 * {@link sap.ui.model.odata.v4.Context#isAggregated}). Since 1.154.0, creating single entities
-	 * is also supported with visual grouping (@experimental as of version 1.154.0).
+	 * {@link sap.ui.model.odata.v4.Context#isAggregated}). Single entities can also be created with
+	 * visual grouping (@experimental as of version 1.154.0).
 	 *
 	 * @param {Object<any>} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -4454,8 +4454,6 @@ sap.ui.define([
 	 *       {@link #getHeaderContext}),
 	 *     <li> the context is not effectively kept alive and currently not part of the recursive
 	 *       hierarchy,
-	 *     <li> data aggregation with <code>groupLevels</code> (see {@link #setAggregation}) is
-	 *       used,
 	 *     <li> <code>bAllowRemoval</code> is either combined with <code>bWithMessages</code> or
 	 *       with "$$aggregation".
 	 *   </ul>
@@ -4482,9 +4480,6 @@ sap.ui.define([
 		if (oAggregation?.hierarchyQualifier && !oContext.isEffectivelyKeptAlive()
 				&& this.aContexts[oContext.iIndex] !== oContext) {
 			throw new Error("Not currently part of the hierarchy: " + oContext);
-		}
-		if (oAggregation?.groupLevels?.length) {
-			throw new Error("Unsupported for data aggregation with groupLevels: " + this);
 		}
 
 		return this.withCache(function (oCache, sPath, oBinding) {
@@ -4918,9 +4913,6 @@ sap.ui.define([
 					: SyncPromise.resolve();
 			}
 
-			if (this.mParameters.$$aggregation.groupLevels.length) {
-				throw new Error("Unsupported for data aggregation with groupLevels: " + this);
-			}
 			if (oContext.isAggregated()) {
 				throw new Error("Unsupported on aggregated data: " + oContext);
 			}

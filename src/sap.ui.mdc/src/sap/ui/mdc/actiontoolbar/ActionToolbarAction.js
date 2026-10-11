@@ -125,7 +125,14 @@ sap.ui.define([
 	};
 
 	ActionToolbarAction.prototype.getEnabled = function() {
-		// return the enabled state of the inner Action, so that the ActionToolbar can handle the focus correctly
+		// If the toolbar (or any ancestor) is disabled, honour that first.
+		// We must check the parent directly instead of relying on EnabledPropagator's hasDisabledAncestor,
+		// because ActionToolbarAction itself now has getEnabled — so inner controls using EnabledPropagator
+		// would stop their ancestor walk here and never reach the disabled toolbar.
+		const oParent = this.getParent();
+		if (oParent?.getEnabled && !oParent.getEnabled()) {
+			return false;
+		}
 		// First check for usage of EnabledPropagator. If used, we need to get the enabled Property directly to prevent stack overflow
 		if (this.getAction()?._bUseEnabledPropagator) {
 			return this.getAction()?.getProperty("enabled");

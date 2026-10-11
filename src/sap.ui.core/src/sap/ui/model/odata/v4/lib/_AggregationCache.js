@@ -2167,8 +2167,12 @@ sap.ui.define([
 				+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, false,
 					bSortSystemQueryOptions);
 
-			return this.oRequestor.request("GET", sResourcePathWithQuery,
-					oGroupLock.getUnlockedCopy())
+			const sGroupId = oGroupLock.getGroupId();
+			const oGroupLock4Request = sGroupId.startsWith("$inactive.")
+				? this.oRequestor.lockGroup(sGroupId.slice(10), oGroupLock.getOwner())
+				: oGroupLock.getUnlockedCopy();
+
+			return this.oRequestor.request("GET", sResourcePathWithQuery, oGroupLock4Request)
 				.then((iCount) => { // Note: iCount is already of type number here
 					fnResolve(iCount);
 					_Helper.fireChange(this.mChangeListeners, "./$count", iCount);

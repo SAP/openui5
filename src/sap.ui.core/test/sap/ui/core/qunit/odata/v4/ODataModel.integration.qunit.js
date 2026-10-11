@@ -29574,12 +29574,14 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 	// Scenario: Data aggregation with visual grouping and a grand total shown at the bottom only. A
 	// new entity is created at the start of the list. The created entity is shown as a groupless
 	// leaf at the very top of the table, above the group levels. The grand total is updated after
-	// the create. Creating another entity at the end of start also works. After expanding and
-	// collapsing a group, the indices of all contexts are still correct.
+	// the create. Creating another (inactive) entity at the end of start also works. The $count is
+	// increased when created entities are persisted. After expanding and collapsing a group, the
+	// indices of all contexts are still correct.
 	// JIRA: CPOUI5ODATAV4-3683
 	QUnit.test("Data Aggregation: create with visual grouping", async function (assert) {
 		const oModel = this.createAggregationModel({autoExpandSelect : true});
 		const sView = `
+<Text id="count" text="{$count}"/>
 <Text id="isOutdatedHeader" text="{= %{@$ui5.context.isOutdated} }"/>
 <t:Table id="table" rows="{
 			path : '/BusinessPartners',
@@ -29590,7 +29592,8 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 					},
 					grandTotalAtBottomOnly : true,
 					groupLevels : ['Country', 'Id']
-				}
+				},
+				$count : true
 			}
 		}" threshold="0" visibleRowCount="5">
 	<Text text="{= %{@$ui5.node.isTotal} }"/>
@@ -29601,21 +29604,25 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 </t:Table>`;
 
 		this.expectRequest("BusinessPartners?"
-				+ "$apply=concat(aggregate(SalesNumber),groupby((Country),aggregate(SalesNumber))"
+				+ "$apply=concat(groupby((Country,Id))/aggregate($count as UI5__leaves),"
+				+ "aggregate(SalesNumber),groupby((Country),aggregate(SalesNumber))"
 				+ "/concat(aggregate($count as UI5__count),top(5)))", {
 				value : [
+					{UI5__leaves : "2"},
 					{SalesNumber : 30},
-					{UI5__count : "2", "UI5__count@odata.type" : "#Decimal"},
+					{UI5__count : "2"},
 					{Country : "A", SalesNumber : 10},
 					{Country : "B", SalesNumber : 20}
 				]
 			})
+			.expectChange("count")
 			.expectChange("isOutdatedHeader");
 
 		await this.createView(assert, sView, oModel);
 
 		const oTable = this.oView.byId("table");
 		const oListBinding = oTable.getBinding("rows");
+		const oHeaderContext = oListBinding.getHeaderContext();
 		checkTable("initial state", assert, oTable, [
 			"/BusinessPartners(Country='A')",
 			"/BusinessPartners(Country='B')",
@@ -29626,9 +29633,11 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			[true, 0, "", "", "30"]
 		]);
 
-		this.expectChange("isOutdatedHeader", undefined);
+		this.expectChange("count", "2")
+			.expectChange("isOutdatedHeader", undefined);
 
-		this.oView.byId("isOutdatedHeader").setBindingContext(oListBinding.getHeaderContext());
+		this.oView.byId("count").setBindingContext(oHeaderContext);
+		this.oView.byId("isOutdatedHeader").setBindingContext(oHeaderContext);
 
 		await this.waitForChanges(assert, "set header context");
 
@@ -29645,9 +29654,11 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 				Id : 3, // Edm.Int16
 				SalesNumber : 5
 			})
+			.expectRequest("#0 BusinessPartners/$count", 3)
 			.expectRequest("#0 BusinessPartners?$apply=aggregate(SalesNumber)", {
 				value : [{SalesNumber : 35}]
-			});
+			})
+			.expectChange("count", "3");
 
 		// code under test
 		const oCreatedContext0 = oListBinding.create({Id : 3}, /*bSkipRefresh*/true);
@@ -29670,6 +29681,26 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 		]);
 		assert.strictEqual(oCreatedContext0.getPath(), "/BusinessPartners(3)", "check predicate");
 
+		// code under test
+		const oCreatedContext1 = oListBinding.create({}, /*bSkipRefresh*/true, /*bAtEnd*/true,
+			/*bInactive*/true);
+
+		await this.waitForChanges(assert, "create inactive at end of start");
+
+		checkTable("after create inactive at end of start", assert, oTable, [
+			oCreatedContext0,
+			oCreatedContext1,
+			"/BusinessPartners(Country='A')",
+			"/BusinessPartners(Country='B')",
+			"/BusinessPartners()"
+		], [ // isTotal|level|Country|Id|SalesNumber
+			[false, 1, "A", "3", "5"],
+			[false, 1, "", "", ""],
+			[true, 1, "A", "", "10"],
+			[true, 1, "B", "", "20"],
+			[true, 0, "", "", "35"]
+		]);
+
 		this.expectRequest("#0 POST BusinessPartners", {
 				payload : {Id : 4}
 			}, {
@@ -29677,20 +29708,20 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 				Id : 4, // Edm.Int16
 				SalesNumber : 7
 			})
+			.expectRequest("#0 BusinessPartners/$count", 4)
 			.expectRequest("#0 BusinessPartners?$apply=aggregate(SalesNumber)", {
 				value : [{SalesNumber : 42}]
-			});
-
-		// code under test
-		const oCreatedContext1 = oListBinding.create({Id : 4}, /*bSkipRefresh*/true,
-			/*bAtEnd*/true);
+			})
+			.expectChange("count", "4");
 
 		await Promise.all([
+			// code under test
+			oCreatedContext1.setProperty("Id", 4),
 			oCreatedContext1.created(),
-			this.waitForChanges(assert, "create at end of start")
+			this.waitForChanges(assert, "persist inactive entry")
 		]);
 
-		checkTable("after create at end of start", assert, oTable, [
+		checkTable("after persist inactive entry", assert, oTable, [
 			oCreatedContext0,
 			oCreatedContext1,
 			"/BusinessPartners(Country='A')",
@@ -30707,12 +30738,9 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 	//
 	// A context can still be expanded after a side-effects refresh (JIRA: CPOUI5ODATAV4-3284)
 	//
-	// Context#refresh of a single entity is still not allowed if visual grouping is used.
-	// JIRA: CPOUI5ODATAV4-3257
-	//
-	// Context#requestSideEffects for a single entity is still not allowed if visual grouping is
-	// used.
-	// JIRA: CPOUI5ODATAV4-3258
+	// Context#refresh and Context#requestSideEffects for a single entity are allowed if visual
+	// grouping is used. As a result, all subtotals are marked as outdated.
+	// JIRA: CPOUI5ODATAV4-3697
 	//
 	// Test #setKeepAlive w/ messages (JIRA: CPOUI5ODATAV4-3390)
 	// ODM/ODLB#getKeepAlive (w/ messages) (JIRA: CPOUI5ODATAV4-3259)
@@ -30741,6 +30769,7 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 				$select : 'LocalCurrency'
 			}
 		}" threshold="0" visibleRowCount="3">
+	<Text id="isOutdated" text="{= %{@$ui5.context.isOutdated} }"/>
 	<Text id="country" text="{Country}"/>
 	<Text id="id" text="{Id}"/>
 	<Text id="name" text="{Name}"/>
@@ -30762,6 +30791,7 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 					{Country : "C", Currency : "EUR", SalesAmount : "3"}
 				]
 			})
+			.expectChange("isOutdated", [undefined, undefined, undefined])
 			.expectChange("country", ["A", "B", "C"])
 			.expectChange("id", [null, null, null])
 			.expectChange("name", [null, null, null])
@@ -30881,6 +30911,7 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 		assert.strictEqual(oContext26.getProperty("Name"), "Foo", "data still available");
 
 		this.expectChange("region", "Modified")
+			.expectChange("isOutdated", [true, true, true])
 			.expectRequest("PATCH BusinessPartners(26)", {
 				payload : {Region : "Modified"}
 			}, oNO_CONTENT);
@@ -30924,6 +30955,7 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 				]
 			})
 			.expectChange("region", "Refreshed")
+			.expectChange("isOutdated", [undefined, undefined, undefined])
 			.expectChange("country", ["A refreshed", "B refreshed", "C refreshed"])
 			.expectChange("salesAmount", ["11", "22", "33"]);
 
@@ -31074,18 +31106,99 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 
 		await this.waitForChanges(assert, "load more items of Country 'A'");
 
-		const sErrorMessage = "Unsupported for data aggregation with groupLevels: " + sODLB
-			+ ": /BusinessPartners";
-		assert.throws(() => {
-			// code under test (JIRA: CPOUI5ODATAV4-3257)
-			oContext26.refresh();
-		}, new Error(sErrorMessage));
+		this.expectChange("id", [null, "26", "24"])
+			.expectChange("name", [null, "Foo", "Baz"])
+			.expectChange("salesAmount", ["1", "61", "20"])
+			.expectChange("currency", []);
 
-		// code under test (JIRA: CPOUI5ODATAV4-3258)
-		await oContext26.requestSideEffects([""]).then(mustFail(assert),
-			function (oError) {
-				assert.strictEqual(oError.message, sErrorMessage);
-			});
+		// code under test
+		this.oView.byId("table").setFirstVisibleRow(0);
+
+		await Promise.all([
+			resolveLater(), // table update takes a moment
+			this.waitForChanges(assert, "scroll to top")
+		]);
+
+		const oContext26Data = {Country : "A", Currency : "EUR", Id : 26,
+			LocalCurrency : "DEM", Name : "Foo", Region : "Region", SalesAmount : "60",
+			myMessages : []};
+		const refresh = (bFirst) => {
+			this.expectRequest("#0 BusinessPartners?"
+					+ "$select=Country,Currency,Id,LocalCurrency,Name,Region,SalesAmount,myMessages"
+					+ "&$filter=Id eq 26", {
+					value : [{...oContext26Data}]
+				})
+				.expectRequest("#0 BusinessPartners"
+					+ "?$apply=groupby((Country),aggregate(SalesAmount,Currency))"
+					+ "&$count=true&$skip=0&$top=3", {
+					"@odata.count" : "26",
+					value : [
+						{Country : "A", Currency : "EUR", SalesAmount : "11"},
+						{Country : "B", Currency : "EUR", SalesAmount : "22"},
+						{Country : "C", Currency : "EUR", SalesAmount : "33"}
+					]
+				});
+			if (bFirst) {
+				// kept-alive element is updated before table is refreshed
+				this.expectChange("region", "Region")
+					.expectChange("salesAmount", [, "60"])
+					.expectChange("country", [, "B", "C"])
+					.expectChange("id", [, null, null])
+					.expectChange("name", [, null, null])
+					.expectChange("salesAmount", ["11", "22", "33"]);
+			} else {
+				this.expectChange("isOutdated", [undefined, undefined, undefined]);
+			}
+
+			return Promise.all([
+				// code under test
+				oListBinding.requestRefresh(),
+				this.waitForChanges(assert, "refresh list")
+			]);
+		};
+
+		await refresh(true);
+
+		this.expectChange("isOutdated", [true, true, true])
+			.expectRequest("BusinessPartners(26)"
+				+ "?$select=Country,Currency,Id,LocalCurrency,Name,Region,SalesAmount"
+				+ ",myMessages",
+				{...oContext26Data});
+
+		await Promise.all([
+			// code under test (JIRA: CPOUI5ODATAV4-3697)
+			oContext26.requestRefresh(),
+			this.waitForChanges(assert, "requestRefresh for Id 26 -> subtotals get outdated")
+		]);
+
+		await refresh();
+
+		this.expectChange("isOutdated", [true, true, true])
+			.expectRequest("BusinessPartners(26)"
+				+ "?$select=Country,Currency,Id,LocalCurrency,Name,Region,SalesAmount"
+				+ ",myMessages",
+				{...oContext26Data});
+
+		await Promise.all([
+			// code under test (JIRA: CPOUI5ODATAV4-3697)
+			oContext26.requestSideEffects([""]),
+			this.waitForChanges(assert, "requestSideEffects for Id 26 -> subtotals get outdated")
+		]);
+
+		await refresh();
+
+		this.expectChange("isOutdated", [true, true, true])
+			.expectRequest("BusinessPartners(26)?$select=Region", {
+				Region : "Region by requestSideEffects"
+			})
+			.expectChange("region", "Region by requestSideEffects");
+
+		await Promise.all([
+			// code under test (JIRA: CPOUI5ODATAV4-3697)
+			oContext26.requestSideEffects(["Region"]),
+			this.waitForChanges(assert,
+				"requestSideEffects (Region) for Id 26 -> subtotals get outdated")
+		]);
 	});
 
 	//*********************************************************************************************
