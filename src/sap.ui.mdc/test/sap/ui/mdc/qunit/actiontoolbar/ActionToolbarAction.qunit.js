@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/m/Button", "sap/m/Input", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/m/OverflowToolbarLayoutData", "sap/ui/core/Control", "sap/ui/test/utils/nextUIUpdate"
-], function (Button, Input, ActionToolbarAction, OverflowToolbarLayoutData, Control, nextUIUpdate) {
+	"sap/m/Button", "sap/m/Input", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/ui/mdc/ActionToolbar", "sap/m/OverflowToolbarLayoutData", "sap/ui/core/Control", "sap/ui/test/utils/nextUIUpdate"
+], function (Button, Input, ActionToolbarAction, ActionToolbar, OverflowToolbarLayoutData, Control, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("sap.ui.mdc.actiontoolbar.ActionToolbarAction", {
@@ -137,6 +137,52 @@ sap.ui.define([
 			"Wrapper reports enabled when inner control has no enabled-state");
 
 		oPlain.destroy();
+	});
+
+	QUnit.module("getEnabled - disabled parent toolbar", {
+		beforeEach: function () {
+			this.oToolbar = new ActionToolbar("testToolbarId");
+			this.oActionToolbarAction = new ActionToolbarAction("testActionId");
+			this.oToolbar.addAction(this.oActionToolbarAction);
+		},
+		afterEach: function () {
+			this.oToolbar.destroy();
+		}
+	});
+
+	QUnit.test("disabled toolbar disables wrapped button with explicit enabled:true", function (assert) {
+		const oButton = new Button({ text: "Create", enabled: true });
+		this.oActionToolbarAction.setAction(oButton);
+
+		this.oToolbar.setEnabled(false);
+
+		assert.strictEqual(this.oActionToolbarAction.getEnabled(), false,
+			"ActionToolbarAction reports disabled when toolbar is disabled");
+		assert.strictEqual(oButton.getEnabled(), false,
+			"Inner button also reports disabled via EnabledPropagator ancestor walk");
+	});
+
+	QUnit.test("enabled toolbar with explicitly enabled:true button reports enabled", function (assert) {
+		const oButton = new Button({ text: "Create", enabled: true });
+		this.oActionToolbarAction.setAction(oButton);
+
+		this.oToolbar.setEnabled(true);
+
+		assert.strictEqual(this.oActionToolbarAction.getEnabled(), true,
+			"ActionToolbarAction reports enabled when toolbar is enabled");
+	});
+
+	QUnit.test("disabled toolbar overrides explicitly enabled inner action without EnabledPropagator", function (assert) {
+		const oCustom = new Control();
+		oCustom.getEnabled = sinon.stub().returns(true);
+		this.oActionToolbarAction.setAction(oCustom);
+
+		this.oToolbar.setEnabled(false);
+
+		assert.strictEqual(this.oActionToolbarAction.getEnabled(), false,
+			"Disabled toolbar takes precedence over inner control's own getEnabled");
+
+		oCustom.destroy();
 	});
 
 });

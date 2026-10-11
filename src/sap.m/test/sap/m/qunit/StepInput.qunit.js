@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/layout/GridData",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/type/Float",
-	"sap/base/i18n/Localization"
+	"sap/base/i18n/Localization",
+	"sap/ui/model/odata/type/Decimal"
 ], function(
 	Library,
 	qutils,
@@ -40,7 +41,8 @@ sap.ui.define([
 	GridData,
 	KeyCodes,
 	TypeFloat,
-	Localization
+	Localization,
+	ODataDecimal
 ) {
 	"use strict";
 
@@ -2536,6 +2538,35 @@ sap.ui.define([
 		assert.strictEqual(this.stepInput.getValue(), 6, "Value is set correctly");
 		assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 3, "Value precision is set correctly");
 		assert.strictEqual(this.stepInput._getNumericInput()._getInput()._getInputValue(), "6.000", "The input is set and formatted correctly");
+	});
+
+	QUnit.test("_getDisplayValuePrecision uses scale from OData Decimal type constraint", function (assert) {
+		// Decimal(29,10): precision=29, scale=10 — only scale (digits after decimal) is relevant for display
+		this.oModel.setData({ vValue: 10.5 });
+		this.stepInput.setModel(this.oModel);
+		this.stepInput.bindProperty("value", {
+			path: "/vValue",
+			type: new ODataDecimal(null, { precision: 29, scale: 10 })
+		});
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		const oNumericInput = this.stepInput._getNumericInput();
+		assert.strictEqual(oNumericInput._getDisplayValuePrecision(), 10,
+			"_getDisplayValuePrecision returns scale (10), not precision (29)");
+		assert.strictEqual(oNumericInput._getFormattedValue(10.5), "10.5000000000",
+			"value is formatted to scale (10) decimal places");
+	});
+
+	QUnit.test("_getDisplayValuePrecision falls back to displayValuePrecision when OData Decimal scale is 'variable'", function (assert) {
+		this.stepInput.setModel(new JSONModel({ value: 10.5 }));
+		this.stepInput.bindProperty("value", {
+			path: "/value",
+			type: new ODataDecimal(null, { precision: 29, scale: "variable" })
+		});
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		assert.strictEqual(this.stepInput._getNumericInput()._getDisplayValuePrecision(), this.stepInput.getDisplayValuePrecision(),
+			"_getDisplayValuePrecision falls back to displayValuePrecision when scale is 'variable'");
 	});
 
 	QUnit.test("less than Min value set via binding", function (assert) {

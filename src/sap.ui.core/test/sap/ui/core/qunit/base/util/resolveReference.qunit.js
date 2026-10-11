@@ -359,6 +359,20 @@ sap.ui.define([
 			"jQuery.globalEval from variables should not be resolved");
 	});
 
+	QUnit.test("jQuery.getScript and jQuery._evalUrl should not be resolved", function(assert) {
+		assert.strictEqual(resolveReference("jQuery.getScript"), undefined,
+			"jQuery.getScript should not be resolved");
+		assert.strictEqual(resolveReference("jQuery._evalUrl"), undefined,
+			"jQuery._evalUrl should not be resolved");
+
+		// jQuery.getScript provided via variables should also be blocked
+		var oModule = {
+			loadScript: jQuery.getScript
+		};
+		assert.strictEqual(resolveReference("module.loadScript", {"module": oModule}), undefined,
+			"jQuery.getScript from variables should not be resolved");
+	});
+
 	QUnit.test("resolve value from loaded module", async function(assert) {
 		var sModulePath = "util/testdata/MyModule";
 		await new Promise(function(resolve, reject) {

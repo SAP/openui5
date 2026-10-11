@@ -798,6 +798,8 @@ sap.ui.define([
 
 			InstanceManager.removePopoverInstance(this);
 
+			this._removeAriaOwnsFromModalAncestor();
+
 			PreventKeyboardEvents.restore(this.getDomRef());
 			this._bDuringOpenCalled = false;
 
@@ -1196,6 +1198,10 @@ sap.ui.define([
 			}
 			this.fireAfterOpen({openBy: this._oOpenBy});
 
+			// Link the Popover into the accessibility subtree of its opener's modal ancestor (if any),
+			// so screen readers do not re-read the modal region when the Popover closes.
+			this._addAriaOwnsToModalAncestor();
+
 			// Restore keyboard events after opening is complete
 			PreventKeyboardEvents.restore(this.getDomRef());
 		};
@@ -1209,6 +1215,8 @@ sap.ui.define([
 			Device.resize.detachHandler(this._fnOrientationChange);
 
 			InstanceManager.removePopoverInstance(this);
+
+			this._removeAriaOwnsFromModalAncestor();
 
 			// If the popover is closed, the focused element has to be blurred on mobile device to close the on
 			// screen keyboard when the element isn't visible
@@ -2229,6 +2237,59 @@ sap.ui.define([
 			return oContainer.findAggregatedObjects(true, function(oObject) {
 				return oObject.isA("sap.m.Title");
 			});
+		};
+
+		/**
+		 * Links the Popover to the modal container (e.g. a {@link sap.m.Dialog}) that holds its opener,
+		 * so assistive technologies treat the Popover as part of that modal's accessibility subtree.
+		 *
+		 * @private
+		 */
+		Popover.prototype._addAriaOwnsToModalAncestor = function () {
+			var oOpenerDomRef = this._getOpenByDomRef(),
+				oModalAncestor = oOpenerDomRef && oOpenerDomRef.closest && oOpenerDomRef.closest('[aria-modal="true"]');
+
+			if (!oModalAncestor) {
+				return;
+			}
+
+			var sPopoverId = this.getId(),
+				aOwns = (oModalAncestor.getAttribute("aria-owns") || "").split(/\s+/).filter(Boolean);
+
+			if (aOwns.indexOf(sPopoverId) === -1) {
+				aOwns.push(sPopoverId);
+				oModalAncestor.setAttribute("aria-owns", aOwns.join(" "));
+			}
+
+			// Remember the exact element so the reference can be removed later even if the opener's
+			// DOM has changed or been removed by the time the Popover closes.
+			this._oAriaOwnsModalAncestor = oModalAncestor;
+		};
+
+		/**
+		 * Removes the <code>aria-owns</code> reference added by {@link #_addAriaOwnsToModalAncestor}.
+		 *
+		 * @private
+		 */
+		Popover.prototype._removeAriaOwnsFromModalAncestor = function () {
+			var oModalAncestor = this._oAriaOwnsModalAncestor;
+
+			if (!oModalAncestor) {
+				return;
+			}
+
+			var sPopoverId = this.getId(),
+				aOwns = (oModalAncestor.getAttribute("aria-owns") || "").split(/\s+/).filter(function (sId) {
+					return sId && sId !== sPopoverId;
+				});
+
+			if (aOwns.length) {
+				oModalAncestor.setAttribute("aria-owns", aOwns.join(" "));
+			} else {
+				oModalAncestor.removeAttribute("aria-owns");
+			}
+
+			this._oAriaOwnsModalAncestor = null;
 		};
 
 		/**

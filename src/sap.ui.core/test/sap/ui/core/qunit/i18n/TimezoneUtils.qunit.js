@@ -10,27 +10,12 @@ sap.ui.define([
 ], function (timezones, Log, TimezoneUtils, Locale, LocaleData, UI5Date) {
 		"use strict";
 
-		/**
-		 * keys from en.json
-		 * @type {string[]}
-		 */
-		var aTimezoneIDs = Object.keys(LocaleData.getInstance(new Locale("en")).getTimezoneTranslations());
-
 		QUnit.module("sap/base/i18n/date/TimezoneUtils", {
 			beforeEach : function () {
 				this.oLogMock = this.mock(Log);
 				this.oLogMock.expects("error").never();
 				this.oLogMock.expects("warning").never();
 			}
-		});
-
-		QUnit.test("valid timezones (UI5 json data)", function (assert) {
-			aTimezoneIDs.forEach(function (sTimezone) {
-				if (!timezones.aUnsupportedBrowserTimezoneIDs.includes(sTimezone)) {
-					assert.ok(TimezoneUtils.isValidTimezone(sTimezone), sTimezone
-						+ " should be a valid timezone (UI5 json data).");
-				}
-			});
 		});
 
 		QUnit.test("valid timezones (CLDR)", function (assert) {
@@ -581,7 +566,7 @@ sap.ui.define([
 
 		QUnit.test("convertToTimezone + calculateOffset + isValidTimezone", function (assert) {
 			var oDate = UI5Date.getInstance(Date.UTC(2018, 9, 7, 2, 30));
-			aTimezoneIDs.forEach(function (sTimezone) {
+			timezones.aABAPTimezoneIDs.forEach(function (sTimezone) {
 
 				assert.ok(TimezoneUtils.isValidTimezone(sTimezone), "timezone is valid: " + sTimezone);
 

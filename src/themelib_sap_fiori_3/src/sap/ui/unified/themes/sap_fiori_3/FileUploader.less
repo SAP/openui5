@@ -15,6 +15,7 @@
 
 .sapMFocus.sapMInputBase.sapUiFupButtonOnly .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) {
 	border-radius: var(--sapButton_BorderCornerRadius);
+
 	&::before {
 		border: 1px dotted var(--sapContent_FocusColor);
 	}
@@ -29,13 +30,16 @@
 }
 
 .sapUiFup {
+
 	&.sapUiFupButtonOnly.sapMInputBase:not(.sapMFocus) .sapMInputBaseContentWrapper:not(.sapMInputBaseReadonlyWrapper):not(.sapMInputBaseContentWrapperState) {
+
 		&:not(.sapMInputBaseDisabledWrapper):hover {
 			border-color: var(--sapButton_BorderColor);
 		}
 	}
 
 	.sapMInputBaseContentWrapper {
+
 		.sapUiFupBrowseIcon,
 		.sapUiFupClearIcon {
 			line-height: 1.25rem;
@@ -56,7 +60,8 @@
 	}
 }
 
-.sapUiSizeCompact{
+.sapUiSizeCompact {
+
 	.sapUiFup,
 	.sapUiFup.sapMBarChild {
 		height: 2rem;
@@ -67,6 +72,7 @@
 	}
 
 	.sapUiFup {
+
 		.sapMInputBaseContentWrapper {
 			height: var(--sapElement_Compact_Height);
 

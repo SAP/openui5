@@ -35,7 +35,7 @@ sap.ui.define(["sap/base/util/ObjectPath"], function(ObjectPath) {
 		return vValue === eval || vValue === setTimeout || vValue === setInterval
 			|| (globalThis.document && (vValue === globalThis.document.write || vValue === globalThis.document.writeln))
 			|| (globalThis.location && (vValue === globalThis.location.assign || vValue === globalThis.location.replace))
-			|| (oJQuery && (vValue === oJQuery.globalEval));
+			|| (oJQuery && (vValue === oJQuery.globalEval || vValue === oJQuery.getScript || vValue === oJQuery._evalUrl));
 	}
 
 	/**

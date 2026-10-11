@@ -1605,7 +1605,7 @@ sap.ui.define([
 	 * <code>"grandTotal like 1.84"</code> (see
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}), single entities (see
 	 * {@link #isAggregated}) can be refreshed and the grand total is updated accordingly
-	 * (@experimental as of version 1.145.0).
+	 * (@experimental as of version 1.145.0). Since 1.154.0, <code>groupLevels</code> are supported.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the refresh; if not specified, the group ID for the context's
@@ -1633,7 +1633,7 @@ sap.ui.define([
 	 *         <li> is not effectively kept alive and currently not part of the recursive hierarchy,
 	 *       </ul>
 	 *     <li> the context's binding is a list binding with data aggregation which has
-	 *       <code>groupLevels</code> or <code>"grandTotal like 1.84"</code>,
+	 *       <code>"grandTotal like 1.84"</code>,
 	 *     <li> the binding's root binding is suspended,
 	 *     <li> the <code>bAllowRemoval</code> parameter is set for a context belonging to a context
 	 *       binding or to a list binding with "$$aggregation".
@@ -1977,7 +1977,8 @@ sap.ui.define([
 	 * When using data aggregation but no recursive hierarchy, and without <code>groupLevels</code>
 	 * or <code>"grandTotal like 1.84"</code> (see
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}), this context can also
-	 * represent a single entity (see {@link #isAggregated}, since 1.151.0).
+	 * represent a single entity (see {@link #isAggregated}, since 1.151.0). Since 1.154.0,
+	 * <code>groupLevels</code> are supported.
 	 *
 	 * @param {Array<sap.ui.model.odata.v4.ts.NavigationPropertyPathExpression|sap.ui.model.odata.v4.ts.PropertyPathExpression|string>} aPathExpressions
 	 *   The "14.4.1.5 Expression edm:NavigationPropertyPath" or
@@ -2024,7 +2025,7 @@ sap.ui.define([
 	 *       absolute path) while the deletion of a row context (see {@link #delete}) is pending
 	 *       with a different group ID,
 	 *     <li> this is the row context of a list binding with data aggregation which has
-	 *       <code>groupLevels</code> or <code>"grandTotal like 1.84"</code>, or
+	 *       <code>"grandTotal like 1.84"</code>, or
 	 *     <li> this context does not represent a single entity
 	 *   </ul>
 	 * @throws {Error} If

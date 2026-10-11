@@ -95,7 +95,6 @@
                 <module>sap/m/FeedContent</module>
                 <module>sap/m/NewsContent</module>
                 <module>sap/m/NumericContent</module>
-                <module>sap/m/NumericInput</module>
                 <module>sap/m/ImageContent</module>
                 <module>sap/m/HeaderContainer</module>
                 <module>sap/m/GenericTileMode</module>

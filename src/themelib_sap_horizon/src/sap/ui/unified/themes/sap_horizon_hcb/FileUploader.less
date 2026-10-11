@@ -14,7 +14,9 @@
 }
 
 .sapUiFup {
+
 	.sapMInputBaseContentWrapper {
+
 		.sapUiFupBrowseIcon,
 		.sapUiFupClearIcon {
 			line-height: 1.25rem;
@@ -32,6 +34,7 @@
 	}
 
 	&.sapUiFupButtonOnly {
+
 		&.sapMInputBase .sapMInputBaseContentWrapper:not(.sapMInputBaseReadonlyWrapper):not(.sapMInputBaseContentWrapperState):not(.sapMInputBaseDisabledWrapper),
 		&.sapMInputBase:not(.sapMFocus) .sapMInputBaseContentWrapper:not(.sapMInputBaseReadonlyWrapper):not(.sapMInputBaseContentWrapperState):not(.sapMInputBaseDisabledWrapper):hover {
 			border-color: initial;
@@ -41,6 +44,7 @@
 }
 
 .sapMFocus.sapMInputBase.sapUiFupButtonOnly .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper) {
+
 	&::before {
 		border: 0.125rem dotted var(--sapContent_FocusColor);
 		border-radius: 0.25rem;
@@ -55,14 +59,18 @@
 }
 
 .sapUiSizeCompact {
+
 	.sapUiFup,
 	.sapUiFup.sapMBarChild {
 		height: 2rem;
 	}
+
 	.sapUiFup.sapMInputBase.sapUiFupButtonOnly > .sapMInputBaseContentWrapper {
 		height: var(--sapElement_Compact_Height);
 	}
+
 	.sapUiFup {
+
 		.sapMInputBaseContentWrapper {
 			height: var(--sapElement_Compact_Height);
 

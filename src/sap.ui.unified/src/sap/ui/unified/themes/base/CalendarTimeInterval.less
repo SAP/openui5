@@ -1,3 +1,8 @@
+/* ==================================================== */
+/* CSS for control sap.ui.unified/CalendarTimeInterval  */
+/* Base theme                                           */
+/* ==================================================== */
+
 .sapUiCalTimeInt {
 	min-width: 320px;
 
@@ -17,11 +22,11 @@
 		font-size: 0.735rem;
 	}
 
-	.sapUiCalItem:focus.sapUiCalItemSel .sapUiCalItemText:after,
-	.sapUiCalItem:focus.sapUiCalItemSelStart .sapUiCalItemText:after,
-	.sapUiCalItem:focus.sapUiCalItemSelEnd .sapUiCalItemText:after,
-	.sapUiCalItem:focus:not(.sapUiCalItemNow):not(.sapUiCalItemSel) .sapUiCalItemText:after {
-		content: "";
+	.sapUiCalItem:focus.sapUiCalItemSel .sapUiCalItemText::after,
+	.sapUiCalItem:focus.sapUiCalItemSelStart .sapUiCalItemText::after,
+	.sapUiCalItem:focus.sapUiCalItemSelEnd .sapUiCalItemText::after,
+	.sapUiCalItem:focus:not(.sapUiCalItemNow):not(.sapUiCalItemSel) .sapUiCalItemText::after {
+		content: '';
 		position: absolute;
 		top: 0.125rem;
 		left: 0.125rem;
@@ -31,8 +36,8 @@
 		font-size: 0.625rem;
 	}
 
-	.sapUiCalItem:focus.sapUiCalItemNow .sapUiCalItemText:after {
-		content: "";
+	.sapUiCalItem:focus.sapUiCalItemNow .sapUiCalItemText::after {
+		content: '';
 		position: absolute;
 		top: 0.15rem;
 		left: 0.15rem;
@@ -52,15 +57,16 @@
 		font-size: 0.525rem;
 	}
 
-	.sapUiCalMonthPicker, .sapUiCalYearPicker {
+	.sapUiCalMonthPicker,
+	.sapUiCalYearPicker {
 		flex-direction: row;
 	}
 }
 
-
-// Compact mode
+/* Compact mode */
 
 .sapUiSizeCompact .sapUiCalTimeInt {
+
 	.sapUiCalItemTextAmPm,
 	.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemText > .sapUiCalItemTextAmPm,
 	.sapUiCalItemNow > .sapUiCalItemText > .sapUiCalItemTextAmPm {
@@ -78,11 +84,11 @@
 		line-height: 1.925rem;
 	}
 
-	.sapUiCalItem:focus.sapUiCalItemSel .sapUiCalItemText:after,
-	.sapUiCalItem:focus.sapUiCalItemSelStart .sapUiCalItemText:after,
-	.sapUiCalItem:focus.sapUiCalItemSelEnd .sapUiCalItemText:after,
-	.sapUiCalItem:focus:not(.sapUiCalItemNow):not(.sapUiCalItemSel) .sapUiCalItemText:after {
-		content: "";
+	.sapUiCalItem:focus.sapUiCalItemSel .sapUiCalItemText::after,
+	.sapUiCalItem:focus.sapUiCalItemSelStart .sapUiCalItemText::after,
+	.sapUiCalItem:focus.sapUiCalItemSelEnd .sapUiCalItemText::after,
+	.sapUiCalItem:focus:not(.sapUiCalItemNow):not(.sapUiCalItemSel) .sapUiCalItemText::after {
+		content: '';
 		position: absolute;
 		top: 0.125rem;
 		left: 0.125rem;

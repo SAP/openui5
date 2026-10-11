@@ -1967,18 +1967,14 @@ sap.ui.define([
 			var oAggregation = {
 					hierarchyQualifier : "X"
 				},
-				oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
-				oGroupLock = {
-					getUnlockedCopy : function () {}
-				};
+				oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation);
 
 			oCache.oCountPromise = oCountPromise;
-			this.mock(oGroupLock).expects("getUnlockedCopy").never();
 			this.mock(this.oRequestor).expects("request").never();
 			this.mock(_Helper).expects("fireChange").never();
 
 			// code under test
-			assert.strictEqual(oCache.readCount(oGroupLock), undefined);
+			assert.strictEqual(oCache.readCount("~oGroupLock~"), undefined);
 		});
 	});
 
@@ -1988,10 +1984,7 @@ sap.ui.define([
 				$leafLevelAggregated : true,
 				groupLevels : ["X"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
-			oGroupLock = {
-				getUnlockedCopy : mustBeMocked
-			};
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation);
 
 		oCache.oCountPromise = {
 			$resolve : "~fnResolve~", // will not be called :-)
@@ -2002,7 +1995,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oCache.readCount(oGroupLock);
+			oCache.readCount("~oGroupLock~");
 		}, new Error("Unsupported on aggregated data"));
 	});
 
@@ -2018,7 +2011,8 @@ sap.ui.define([
 				oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
 				oError = new Error(),
 				oGroupLock = {
-					getUnlockedCopy : function () {}
+					getGroupId : mustBeMocked,
+					getUnlockedCopy : mustBeMocked
 				};
 
 			oCache.oCountPromise = {
@@ -2032,6 +2026,7 @@ sap.ui.define([
 			}
 			this.mock(this.oRequestor).expects("buildQueryString")
 				.withExactArgs("/~", {}, false, false, false).returns("?~query~");
+			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("~sGroupId~");
 			this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 				.returns("~oGroupLockCopy~");
 			this.mock(this.oRequestor).expects("request")
@@ -2094,11 +2089,13 @@ sap.ui.define([
 		}
 	}].forEach(function (oFixture, i) {
 		[false, true].forEach((bDataAggregation) => {
-			if (bDataAggregation && oFixture.$filter) {
-				return; // avoid "Unsupported system query option: $filter"
-			}
+			[false, true].forEach((bInactive) => {
+		const sTitle = "readCount: #" + i + ", D.A.: " + bDataAggregation + ", bInactive: " + bInactive;
+		if (bDataAggregation && oFixture.$filter) {
+			return; // avoid "Unsupported system query option: $filter"
+		}
 
-		QUnit.test("readCount: #" + i + ", D.A.: " + bDataAggregation, function (assert) {
+		QUnit.test(sTitle, function (assert) {
 			var oAggregation = bDataAggregation ? {
 					aggregate : {},
 					group : {},
@@ -2110,7 +2107,9 @@ sap.ui.define([
 				},
 				oCache,
 				oGroupLock = {
-					getUnlockedCopy : function () {}
+					getGroupId : mustBeMocked,
+					getOwner : mustBeMocked,
+					getUnlockedCopy : mustBeMocked
 				},
 				mQueryOptions = {
 					$apply : "A.P.P.L.E",
@@ -2140,10 +2139,16 @@ sap.ui.define([
 			this.mock(this.oRequestor).expects("buildQueryString")
 				.withExactArgs("/~", oFixture.mExpectedQueryOptions, false, false, bDataAggregation)
 				.returns("?~query~");
-			this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
-				.returns("~oGroupLockCopy~");
+			this.mock(oGroupLock).expects("getGroupId").withExactArgs()
+				.returns(bInactive ? "$inactive.$auto" : "~sGroupId~");
+			this.mock(oGroupLock).expects("getOwner").exactly(bInactive ? 1 : 0).withExactArgs()
+				.returns("~owner~");
+			this.mock(this.oRequestor).expects("lockGroup").exactly(bInactive ? 1 : 0)
+				.withExactArgs("$auto", "~owner~").returns("~oGroupLock4Request~");
+			this.mock(oGroupLock).expects("getUnlockedCopy").exactly(bInactive ? 0 : 1).withExactArgs()
+				.returns("~oGroupLock4Request~");
 			this.mock(this.oRequestor).expects("request")
-				.withExactArgs("GET", "~/$count?~query~", "~oGroupLockCopy~").resolves(42);
+				.withExactArgs("GET", "~/$count?~query~", "~oGroupLock4Request~").resolves(42);
 
 			// code under test
 			oResult = oCache.readCount(oGroupLock);
@@ -2161,6 +2166,7 @@ sap.ui.define([
 				assert.strictEqual(fnResolve.args[0][0], 42);
 			});
 		});
+			});
 		});
 	});
 

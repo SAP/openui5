@@ -923,8 +923,10 @@ function(
 		};
 
 		NumericInput.prototype._getNumberFormatter = function(bReset) {
-			if (!this._formatter || bReset) {
-				this._formatter = NumberFormat.getFloatInstance({ decimals: this._getDisplayValuePrecision() });
+			const iCurrentPrecision = this._getDisplayValuePrecision();
+			if (!this._formatter || bReset || this._iFormatterPrecision !== iCurrentPrecision) {
+				this._formatter = NumberFormat.getFloatInstance({ decimals: iCurrentPrecision });
+				this._iFormatterPrecision = iCurrentPrecision;
 			}
 
 			return this._formatter;
@@ -1626,9 +1628,10 @@ function(
 		NumericInput.prototype._getDisplayValuePrecision = function() {
 			const oBinding = this.getBinding("value"),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
-				sBindingConstraintPrecision = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.precision;
+				sBindingConstraintScale = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.scale;
 
-			return sBindingConstraintPrecision !== undefined ? parseInt(sBindingConstraintPrecision) : this.getDisplayValuePrecision();
+			const iParsed = parseInt(sBindingConstraintScale);
+			return sBindingConstraintScale !== undefined && !isNaN(iParsed) ? iParsed : this.getDisplayValuePrecision();
 		};
 
 		NumericInput.prototype._getMin = function() {

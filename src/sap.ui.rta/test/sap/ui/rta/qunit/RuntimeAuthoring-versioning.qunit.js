@@ -372,6 +372,30 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when onActivate is called on an older version with backend draft and the dialog is cancelled", async function(assert) {
+			const sVersionTitle = "aVersionTitle";
+
+			sandbox.stub(VersionsAPI, "isOldVersionDisplayed").returns(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+			const oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
+
+			this.oRta.getToolbar().fireActivate({
+				versionTitle: sVersionTitle
+			});
+
+			// wait for the message box promise and the onActivate continuation after the await to settle
+			await oShowMessageBoxStub.returnValues[0];
+
+			assert.strictEqual(oShowMessageBoxStub.callCount, 1, "then the message box was shown and click on CANCEL");
+			assert.strictEqual(
+				oShowMessageBoxStub.lastCall.args[1],
+				"MSG_DRAFT_DISCARD_ON_REACTIVATE_DIALOG",
+				"then the discard-on-reactivate message is shown"
+			);
+			assert.strictEqual(this.oSaveStub.callCount, 0, "then serializeAndSave is not called");
+			assert.strictEqual(this.oActivateStub.callCount, 0, "then the activate() method is not called");
+		});
+
 		QUnit.test("when the draft activation fails", function(assert) {
 			const done = assert.async();
 			this.oActivateStub.reset();

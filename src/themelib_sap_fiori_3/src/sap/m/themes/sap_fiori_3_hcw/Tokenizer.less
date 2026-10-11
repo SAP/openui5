@@ -3,8 +3,6 @@
 /* Quartz High Contrast White theme  */
 /* ================================= */
 
-@_sap_m_Tokenizer_OutlineOffset: -0.1875rem;
-
 .sapMTokenizer {
 	padding-left: 0.3125rem;
 	position: relative;
@@ -16,14 +14,9 @@
 
 .sapMTokenizer .sapMToken {
 	margin-right: 0.3125rem;
-	max-width: calc(~"100% - 0.3125rem");
+	max-width: ~'calc(100% - 0.3125rem)';
 	margin-top: 0.1875rem;
 	margin-bottom: 0.1875rem;
-}
-
-html.sap-desktop .sapMTokenizer:focus {
-	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
-	outline-offset: @_sap_m_Tokenizer_OutlineOffset;
 }
 
 .sapUiSizeCompact {
@@ -45,7 +38,7 @@ html.sap-desktop .sapMTokenizer:focus {
 
 /* Disabled */
 
-.sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
+.sapMTokenizer.sapMTokenizerDisabled .sapMToken {
 	border-color: @sapUiHcReducedAltForeground;
 
 	&.sapMToken:hover,
