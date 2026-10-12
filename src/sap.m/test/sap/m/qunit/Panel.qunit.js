@@ -162,6 +162,15 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel.$().attr("role"), "complementary", "should set the role attribute in the DOM to complementary");
 	});
 
+	QUnit.test("Call to setAccessibleRole() with None value", async function (assert) {
+		this.oPanel.setAccessibleRole(PanelAccessibleRole.None);
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oPanel.getAccessibleRole(), PanelAccessibleRole.None, "should set the accessibleRole property to None");
+		assert.strictEqual(this.oPanel.$().attr("role"), undefined, "should not render a role attribute in the DOM");
+		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), undefined, "should not render aria-labelledby in the DOM");
+	});
+
 	QUnit.test("Default Panel stickyHeader", function (assert) {
 		assert.strictEqual(this.oPanel.getStickyHeader(), false, "should be false");
 	});
