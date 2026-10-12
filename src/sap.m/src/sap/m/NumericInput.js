@@ -753,7 +753,7 @@ function(
 				sValue = oInput.getValue(),
 				value = this._parseNumber(oInput.getValue()),
 				oCoreMessageBundle = Library.getResourceBundleFor("sap.ui.core"),
-				oBinding = this.getBinding("value"),
+				oBinding = this._getBindingValue(),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
 				sBindingConstraintMax = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.maximum,
 				sBindingConstraintMin = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.minimum,
@@ -849,9 +849,10 @@ function(
 		 * correct value.
 		 * @param {object} oValue The value to be set
 		 */
-		NumericInput.prototype.setValue = function (oValue) {
+		NumericInput.prototype.setValue = function (oValue, bSuppressModelUpdate) {
 			let oResult;
 			const oInput = this._getInput();
+			const bNullish = oValue == null;
 
 			this._iValuePrecision = this._getNumberPrecision(oValue);
 
@@ -873,8 +874,13 @@ function(
 			if (oValue !== this._fOldValue) {
 				// save current value (for ESC restoring)
 				this._fOldValue = oValue;
-				this.setProperty("value", oValue, false);
-				this.fireEvent("propertyChanged", { name: "value", value: oValue });
+				// Suppress the model update when the incoming value was null/undefined —
+				// the normalised default (0) must not be written back to the model, as
+				// that breaks OData v4 bindings that have not yet been read.
+				this.setProperty("value", oValue, bSuppressModelUpdate || bNullish);
+				// bNullish signals that the value was normalised from null/undefined — StepInput
+				// uses this to avoid overwriting its own stored null with the normalised 0.
+				this.fireEvent("propertyChanged", { name: "value", value: oValue, nullish: bNullish });
 				oResult = this;
 			} else {
 				oResult = this;
@@ -1625,8 +1631,12 @@ function(
 			}
 		};
 
+		NumericInput.prototype._getBindingValue = function() {
+			return (this._fnGetValueBinding ? this._fnGetValueBinding() : null) || this.getBinding("value");
+		};
+
 		NumericInput.prototype._getDisplayValuePrecision = function() {
-			const oBinding = this.getBinding("value"),
+			const oBinding = this._getBindingValue(),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
 				sBindingConstraintScale = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.scale;
 
@@ -1635,7 +1645,7 @@ function(
 		};
 
 		NumericInput.prototype._getMin = function() {
-			const oBinding = this.getBinding("value"),
+			const oBinding = this._getBindingValue(),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
 				sBindingConstraintMin = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.minimum;
 
@@ -1643,7 +1653,7 @@ function(
 		};
 
 		NumericInput.prototype._getMax = function() {
-			const oBinding = this.getBinding("value"),
+			const oBinding = this._getBindingValue(),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
 				sBindingConstraintMax = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.maximum;
 
