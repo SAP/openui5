@@ -262,7 +262,10 @@ sap.ui.define([
 		if (oParentOverlay && !oParentOverlay._bIsBeingDestroyed) {
 			const aRelevantElements = this._getRelevantOverlays(oParentOverlay)
 			.filter(function(oOverlay) {
-				return oOverlay.getElement();
+				// Exclude overlays that are already being torn down in the same destroy cascade:
+				// they still return an element here but are no longer in the OverlayRegistry, so
+				// resolving their id later would yield undefined.
+				return oOverlay.getElement() && !oOverlay.bIsDestroyed && !oOverlay._bIsBeingDestroyed;
 			});
 			aNewStretchCandidates = this._getNewStretchCandidates(aRelevantElements);
 		}
@@ -423,6 +426,11 @@ sap.ui.define([
 		}
 		aStretchCandidates.forEach((sElementId) => {
 			const oOverlay = OverlayRegistry.getOverlay(sElementId);
+			// The overlay might already be destroyed by the time this runs, e.g. when a candidate id
+			// stems from a sibling overlay that is torn down in the same synchronous destroy cascade.
+			if (!oOverlay) {
+				return;
+			}
 			const aChildOverlays = OverlayUtil.getAllChildOverlays(oOverlay);
 			const bAddClass = oOverlay.getEditable() && atLeastOneDescendantEditable(oOverlay, aChildOverlays);
 
