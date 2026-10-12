@@ -3,6 +3,11 @@
     "date": "October 2026",
     "notes": [
       {
+        "id": "186419d8862c128dcb7634852d8ddc22fb4adb94",
+        "type": "FIX",
+        "text": " We've now fixed the visual clipping of the remove button in the ScopeActions scope on the sap_horizon and sap_horizon_dark themes in the slide tile control"
+      },
+      {
         "id": "ea237cfde91c1d8088b38e578da2763a4217b91b",
         "type": "FEATURE",
         "text": " sap.m.NumericInput - Introduce sap.m.NumericInput"

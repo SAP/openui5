@@ -3,6 +3,16 @@
     "date": "October 2026",
     "notes": [
       {
+        "id": "664a73128ec7387422082fabd5b985ed6ea9efb4",
+        "type": "FIX",
+        "text": " mdc.ActionToolbarAction: restore disabled-toolbar propagation"
+      },
+      {
+        "id": "c3acde3070bfea33ef28817bc2eb4423a54428bd",
+        "type": "FEATURE",
+        "text": " mdc.Table: Footer aggregation added"
+      },
+      {
         "id": "c9420596ab018738b11c7fb2af43201b2fd3ffff",
         "type": "FIX",
         "text": " FilterField: TAB in typeahead dropdown"

@@ -3,6 +3,11 @@
     "date": "October 2026",
     "notes": [
       {
+        "id": "63da70ff55eedb27a8772059bbb7d3662c49896d",
+        "type": "FIX",
+        "text": " sap.f.HeroBanner - icons in actions slot are visible now"
+      },
+      {
         "id": "d39cbcd72dbc972ec7e917078bb4f422b4d490e2",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Title visibility issue fixed"

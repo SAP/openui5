@@ -3,6 +3,56 @@
     "date": "October 2026",
     "notes": [
       {
+        "id": "555f82bbbfaf70a05566adf9546d372cfc4bf66a",
+        "type": "FIX",
+        "text": " sap.m.NumericInput has correct Application Component now"
+      },
+      {
+        "id": "9f1131831e451379556f1765e5afacced9c981f1",
+        "type": "FIX",
+        "text": " sap.m.NumericInput: NumericInputValidationMode and NumericInputStepModeType have correct since tags now"
+      },
+      {
+        "id": "2030fc5285c2eaf4e1e1b366e2b8b47207de0d39",
+        "type": "FIX",
+        "text": " sap.m.StepInput: displayValuePrecision is correct when there is odata binding with Decimal"
+      },
+      {
+        "id": "1730d4a9d8a638b25c389debd3561b1be4e08e64",
+        "type": "FIX",
+        "text": " sap.m.IconTabFilter: fix invalid role=\"separator\" inside role=\"tab\""
+      },
+      {
+        "id": "17f6cb928378bb7ae4e09fef370abb3a62dc8c9c",
+        "type": "FEATURE",
+        "text": " sap.m.RatingIndicator: Custom tooltip can be enabeled for the control"
+      },
+      {
+        "id": "186419d8862c128dcb7634852d8ddc22fb4adb94",
+        "type": "FIX",
+        "text": " We've now fixed the visual clipping of the remove button in the ScopeActions scope on the sap_horizon and sap_horizon_dark themes in the slide tile control"
+      },
+      {
+        "id": "6df7e3a0f4dc0682da1d2d4d520261dd77eb2a86",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: binding formatters now honored in all modes"
+      },
+      {
+        "id": "4dea2c915f084111de2222d87853d4c1f19ff3e5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: buttons in header overflow correctly"
+      },
+      {
+        "id": "faf27f0eb6ecd08343e8210f6b02dd35dbe15c03",
+        "type": "FIX",
+        "text": " sap.m.Popover: avoid screen reader re-reading parent Dialog on close"
+      },
+      {
+        "id": "aed2f4808b821a139940fde07b2ad17ae3b33457",
+        "type": "FIX",
+        "text": " We've now fixed the displacement of action buttons when they are incorrectly placed inside the content wrapper in generic tile"
+      },
+      {
         "id": "19f667c15dba37ee288e61917444a89c80586a79",
         "type": "FEATURE",
         "text": " sap.m.Popover: keyboard resizing is now implemented"

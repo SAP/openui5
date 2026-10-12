@@ -3,6 +3,11 @@
     "date": "October 2026",
     "notes": [
       {
+        "id": "2e9ceeab531a6e334854d156b1852ed2f5d0f2b9",
+        "type": "FIX",
+        "text": " sap.ui.integration: reject inline manifest objects in childCards config"
+      },
+      {
         "id": "cb9efd2fe80b6fd3723b424ecf98ccf2c8805ec7",
         "type": "FIX",
         "text": " sap.ui.integration: Return all items and maxItems in resolved manifest"
