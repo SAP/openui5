@@ -2196,5 +2196,15 @@
         "text": " sap.m.ComboBox: adjust failing tests in FF"
       }
     ]
+  },
+  "1.96.49": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "09eb40de53e4f5f77fcf55f5f6d9b52df125e4fe",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Dialog opens when tapping on mobile"
+      }
+    ]
   }
 }
