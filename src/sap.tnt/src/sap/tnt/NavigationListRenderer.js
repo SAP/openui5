@@ -25,7 +25,8 @@ sap.ui.define([
 	 * @param {sap.tnt.NavigationList} oControl An object representation of the control that should be rendered
 	 */
 	NavigationListRenderer.render = function (oRM, oControl) {
-		const bExpanded = oControl.getExpanded(),
+		const oResourceBundle = Lib.getResourceBundleFor("sap.tnt"),
+			bExpanded = oControl.getExpanded(),
 			bHasItemWithIcon = oControl._containsIcon(),
 			aVisibleItems = oControl._getVisibleItems();
 
@@ -46,25 +47,30 @@ sap.ui.define([
 		}
 
 		// ARIA
-		const sRole = !bExpanded && !oControl.hasStyleClass("sapTntNLPopup") ? "menubar" : "tree";
 		const oParent = oControl.getParent();
 		const bIsFixed = oParent.getAggregation("fixedItem") && oParent.getAggregation("fixedItem") === oControl;
+		const bIsMenubar = !bExpanded && !oControl.hasStyleClass("sapTntNLPopup");
+		let sListLabelKey;
+		if (bIsFixed) {
+			sListLabelKey = "SIDE_NAVIGATION_FIXED_LIST_LABEL";
+		} else if (bIsMenubar) {
+			// Collapsed flexible list renders as a menubar and uses a dedicated label.
+			sListLabelKey = "SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL_COLLAPSED";
+		} else {
+			sListLabelKey = "SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL";
+		}
+		const sListLabel = oResourceBundle.getText(sListLabelKey);
+
+		const sRole = bIsMenubar ? "menubar" : "tree";
 		oRM.accessibilityState(oControl, {
 			role: sRole,
 			orientation: sRole === "menubar" ? "vertical" : undefined,
-			roledescription: Lib.getResourceBundleFor("sap.tnt").getText(
-				sRole === "menubar" ?
-					"NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUBAR" :
-					"NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE"),
-			label: Lib.getResourceBundleFor("sap.tnt").getText(
-				bIsFixed ?
-					"SIDE_NAVIGATION_FIXED_LIST_LABEL" :
-					"SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL")
+			label: sListLabel
 		});
 
 		oRM.openEnd();
 
-		if (!aVisibleItems.length && oControl.getHighlightedText() && oControl.getExpanded()) {
+		if (!aVisibleItems.length && oControl.getHighlightedText() && bExpanded) {
 			NavigationListRenderer.renderNoData(oRM, oControl);
 		} else {
 			const oFirstGroup = aVisibleItems.find((oItem) => oItem.isA("sap.tnt.NavigationListGroup"));

@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/m/MenuItem',
 	'sap/ui/core/library',
 	'sap/ui/core/Icon',
+	'sap/ui/core/Lib',
 	"sap/ui/util/defaultLinkTypes",
 	"sap/ui/util/openWindow",
 	"sap/ui/events/KeyCodes",
@@ -18,6 +19,7 @@ sap.ui.define([
 		MenuItem,
 		coreLibrary,
 		Icon,
+		Lib,
 		defaultLinkTypes,
 		openWindow,
 		KeyCodes
@@ -211,7 +213,8 @@ sap.ui.define([
 
 		if (!oIcon) {
 			oIcon = new Icon({
-				src: EXTERNAL_LINK_ICON
+				src: EXTERNAL_LINK_ICON,
+				tooltip: Lib.getResourceBundleFor("sap.tnt").getText("NAVIGATION_LIST_EXTERNAL_LINK_TOOLTIP")
 			}).addStyleClass(`sapTntNLIExternalLinkIcon`);
 			this.setAggregation("_externalLinkIcon", oIcon);
 		}
