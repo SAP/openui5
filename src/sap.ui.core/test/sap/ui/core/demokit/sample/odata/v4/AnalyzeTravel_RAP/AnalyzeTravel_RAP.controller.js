@@ -221,6 +221,7 @@ sap.ui.define([
 				oJsonModel = new JSONModel({
 					// NO @$ui5.context.isOutdated
 					bBookingID : bBookingID,
+					bGrouped : false,
 					iMessages : 0,
 					sSearch : "",
 					iVisibleRowCount : parseInt(sVisibleRowCount) || 20
@@ -295,6 +296,8 @@ sap.ui.define([
 					this._oAggregation.subtotalsAtBottomOnly = sSubtotalsAtBottomOnly === "true";
 				}
 				oRowsBinding.setAggregation(this._oAggregation);
+				this._aGroupLevels = this._oAggregation.groupLevels ?? [];
+				this.getView().getModel("ui").setProperty("/bGrouped", !!this._aGroupLevels.length);
 				if (sFilter) { // e.g. "status EQ B,Distance BT 1000 5000"
 					oRowsBinding.filter(sFilter.split(",").map(function (sSingleFilter) {
 						var aPieces = sSingleFilter.split(" ");
@@ -397,6 +400,12 @@ sap.ui.define([
 			const bCount = oEvent.getSource().getSelected();
 			const oListBinding = this.byId("table").getBinding("rows");
 			oListBinding.changeParameters({$count : bCount});
+		},
+
+		onToggleGrouping : function () {
+			const bGrouped = this.getView().getModel("ui").getProperty("/bGrouped");
+			this._oAggregation.groupLevels = bGrouped ? this._aGroupLevels : [];
+			this.byId("table").getBinding("rows").setAggregation(this._oAggregation);
 		}
 	});
 });

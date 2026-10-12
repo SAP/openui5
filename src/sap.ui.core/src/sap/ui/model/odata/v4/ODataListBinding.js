@@ -5291,7 +5291,10 @@ sap.ui.define([
 	 *       context when switching the use case of data aggregation (recursive hierarchy, pure data
 	 *       aggregation, or none at all),
 	 *     <li> there are pending changes (unless the aggregation is unchanged), including created
-	 *       contexts (since 1.147.0) unless only <code>search</code> is changed,
+	 *       contexts (since 1.147.0), unless only <code>search</code> (since 1.147.0) or
+	 *       <code>groupLevels</code> (since 1.154.0) are changed,
+	 *     <li> <code>groupLevels</code> is changed while there are inactive contexts at the end of
+	 *       the list,
 	 *     <li> a recursive hierarchy is requested, but the model does not use the
 	 *       <code>autoExpandSelect</code> parameter,
 	 *     <li> the binding is part of a {@link #create deep create} because it is relative to a
@@ -5347,9 +5350,16 @@ sap.ui.define([
 			throw new Error("Cannot combine Filter.NONE with $$aggregation");
 		}
 		if (this.iCreatedContexts
-				&& !this.isUnchangedParameter("$$aggregation", oAggregation, ["search"])
+				&& !this.isUnchangedParameter("$$aggregation", oAggregation,
+					["groupLevels", "search"])
 			|| this.hasPendingChanges()) {
 			throw new Error("Cannot set $$aggregation due to pending changes");
+		}
+		if (oAggregation?.groupLevels?.length && this.bFirstCreateAtEnd
+				&& this.aContexts.slice(0, this.iCreatedContexts)
+					.some((oContext) => oContext.isInactive())) {
+			throw new Error("Must not set groupLevels when having inactive contexts at the end: "
+				+ this);
 		}
 		const bOldUseCase = useCase(this.mParameters.$$aggregation);
 		const bNewUseCase = useCase(oAggregation);
