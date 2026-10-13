@@ -89700,4 +89700,78 @@ make root = ${bMakeRoot}`;
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: When refreshing the list binding while having kept-alive elements, the predicate
+	// behind a navigation property changes.
+	// SNOW: DINC1030483
+[false, true].forEach((bSelected) => {
+	const sTitle = "Refresh: nested entity key property changes (selected=" + bSelected + ")";
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/EMPLOYEES}">
+	<Text id="name" text="{Name}"/>
+	<Text id="teamId" text="{EMPLOYEE_2_TEAM/Team_Id}"/>
+	<Text id="teamName" text="{EMPLOYEE_2_TEAM/Name}"/>
+</Table>`;
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$skip=0&$top=100", {
+				value : [{
+					ID : "1",
+					Name : "Jonathan Smith",
+					EMPLOYEE_2_TEAM : {
+						Name : "Team Alpha",
+						Team_Id : "TEAM_01"
+					}
+				}]
+			})
+			.expectChange("name", ["Jonathan Smith"])
+			.expectChange("teamId", ["TEAM_01"])
+			.expectChange("teamName", ["Team Alpha"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oContext = oTable.getItems()[0].getBindingContext();
+
+		if (bSelected) {
+			oContext.setSelected(true);
+		} else {
+			oContext.setKeepAlive(true);
+		}
+
+		this.expectRequest("EMPLOYEES?$select=ID,Name"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$filter=ID eq '1'", {
+				value : [{
+					ID : "1",
+					Name : "Jonathan Smith",
+					EMPLOYEE_2_TEAM : {
+						Name : "Team Beta",
+						Team_Id : "TEAM_02"
+					}
+				}]
+			})
+			.expectRequest("EMPLOYEES?$select=ID,Name"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$skip=0&$top=100", {
+				value : [{
+					ID : "1",
+					Name : "Jonathan Smith",
+					EMPLOYEE_2_TEAM : {
+						Name : "Team Beta",
+						Team_Id : "TEAM_02"
+					}
+				}]
+			})
+			.expectChange("teamId", ["TEAM_02"])
+			.expectChange("teamName", ["Team Beta"]);
+
+		await Promise.all([
+			// code under test
+			oContext.getBinding().requestRefresh(),
+			this.waitForChanges(assert)
+		]);
+	});
+});
 });
