@@ -28,18 +28,15 @@ html.sap-desktop {
 		left: 0.0625rem;
 		bottom: 0.375rem;
 		right: 0.0625rem;
-		border: 0.125rem solid var(--sapContent_FocusColor);
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 		border-radius: 1rem;
 		pointer-events: none;
 	}
 
-	.sapUiSizeCompact {
-
-		.sapMSwtCont:focus::after {
-			border-radius: 0.875rem;
-			top: 0.125rem;
-			bottom: 0.125rem;
-		}
+	.sapUiSizeCompact .sapMSwtCont:focus::after {
+		border-radius: 0.875rem;
+		top: 0.125rem;
+		bottom: 0.125rem;
 	}
 }
 
@@ -56,44 +53,10 @@ html.sap-desktop {
 	pointer-events: none;
 }
 
-.sapUiSizeCompact {
-
-	.sapMSwtCont:focus-visible::after {
-		border-radius: 0.875rem;
-		top: 0.125rem;
-		bottom: 0.125rem;
-	}
-}
-
-/* Switch */
-.sapMSwt {
-	width: 2.875rem;
-	height: 1.5rem;
-	overflow: visible;
-	border: none;
-	margin: 0;
-	border-radius: 0.75rem;
-
-	&.sapMSwtNoLabel,
-	&.sapMSwtAcceptReject {
-		width: 2.5rem;
-		height: 1.5rem;
-
-		.sapMSwtText {
-
-			&.sapMSwtTextOn {
-				left: 1.8rem;
-			}
-
-			&.sapMSwtTextOff {
-				left: 2rem;
-			}
-		}
-
-		&.sapMSwtOn .sapMSwtHandle {
-			left: 1.5rem;
-		}
-	}
+.sapUiSizeCompact .sapMSwtCont:focus-visible::after {
+	border-radius: 0.875rem;
+	top: 0.125rem;
+	bottom: 0.125rem;
 }
 
 /* disabled */
@@ -119,24 +82,190 @@ html.sap-desktop {
 	}
 
 	.sapMSwtLabel {
-		height: 1.5rem;
-		line-height: 1.375rem;
+		height: 1.375rem;
+		line-height: 1.25rem;
 		padding: 0;
 		font-family: var(--sapFontSemiboldDuplexFamily);
 	}
 }
 
-/* Switch handler */
-.sapMSwt .sapMSwtHandle {
-	height: 1.25rem;
-	width: 1.75rem;
-	border-radius: 1rem;
-	border: var(--sapButton_BorderWidth) solid;
-	left: 2.0625rem;
-}
+/* Switch */
+.sapMSwt {
+	width: 2.875rem;
+	height: 1.5rem;
+	overflow: visible;
+	border: none;
+	margin: 0;
+	border-radius: 0.75rem;
 
-.sapMSwt.sapMSwtOn .sapMSwtHandle {
-	left: 2.1875rem;
+	/* handle */
+	.sapMSwtHandle {
+		height: 1.25rem;
+		width: 1.75rem;
+		border-radius: 1rem;
+		border: var(--sapButton_BorderWidth) solid;
+		left: 2.0625rem;
+	}
+
+	&.sapMSwtOn .sapMSwtHandle {
+		left: 2.1875rem;
+	}
+
+	/* non-text variants */
+	&.sapMSwtNoLabel,
+	&.sapMSwtAcceptReject {
+		width: 2.5rem;
+		height: 1.5rem;
+
+		.sapMSwtHandle {
+			width: 1.5rem;
+		}
+
+		.sapMSwtText {
+
+			&.sapMSwtTextOn {
+				left: 1.8rem;
+			}
+
+			&.sapMSwtTextOff {
+				left: 2rem;
+			}
+
+			.sapMSwtLabel {
+				height: 1.375rem;
+				line-height: 1.25rem;
+			}
+		}
+
+		&.sapMSwtOn .sapMSwtHandle {
+			left: 1.5rem;
+		}
+	}
+
+	/* on */
+	&.sapMSwtOn:not(.sapMSwtAcceptReject) {
+		background: var(--sapButton_Track_Selected_Background);
+		border: 0.0625rem solid var(--sapButton_Track_Selected_BorderColor);
+		box-sizing: border-box;
+
+		.sapMSwtHandle {
+			background: var(--sapButton_Handle_Selected_Background);
+			border: 0.125rem solid var(--sapButton_Handle_Selected_BorderColor);
+		}
+
+		&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+			background: var(--sapButton_Track_Selected_Hover_Background);
+			border: 0.0625rem solid var(--sapButton_Track_Selected_Hover_BorderColor);
+
+			.sapMSwtHandle {
+				background: var(--sapButton_Handle_Selected_Hover_Background);
+				box-shadow: 0 0 0 0.125rem var(--sapButton_Handle_Selected_Hover_BorderColor);
+			}
+		}
+	}
+
+	/* off */
+	&.sapMSwtOff:not(.sapMSwtAcceptReject) {
+		background: var(--sapButton_Track_Background);
+		border: 0.0625rem solid var(--sapButton_Track_BorderColor);
+		box-sizing: border-box;
+
+		.sapMSwtHandle {
+			background: var(--sapButton_Handle_Background);
+			border: 0.125rem solid var(--sapButton_Handle_BorderColor);
+		}
+
+		&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+			background: var(--sapButton_Track_Hover_Background);
+			border: 0.0625rem solid var(--sapButton_Track_Hover_BorderColor);
+
+			.sapMSwtHandle {
+				background: var(--sapButton_Handle_Hover_Background);
+				box-shadow: 0 0 0 0.125rem var(--sapButton_Handle_Hover_BorderColor);
+			}
+		}
+	}
+
+	/* AcceptReject */
+	&.sapMSwtAcceptReject {
+
+		.sapMSwtWebKit537-35.sapMSwtHandle {
+			border: none;
+		}
+
+		/* on */
+		&.sapMSwtOn {
+			background: var(--sapButton_Track_Positive_Background);
+			border: 0.0625rem solid var(--sapButton_Track_Positive_BorderColor);
+			box-sizing: border-box;
+
+			.sapMSwtHandle {
+				background: var(--sapButton_Handle_Positive_Background);
+				border: 2px solid var(--sapButton_Handle_Positive_BorderColor);
+			}
+
+			.sapMSwtLabel {
+				color: var(--sapPositiveTextColor);
+			}
+
+			&.sapMSwtHoverable:hover {
+				background: var(--sapButton_Track_Positive_Hover_Background);
+				border: 0.0625rem solid var(--sapButton_Track_Positive_Hover_BorderColor);
+
+				.sapMSwtHandle {
+					background: var(--sapButton_Handle_Positive_Hover_Background);
+					box-shadow: 0 0 0 0.125rem var(--sapButton_Handle_Positive_Hover_BorderColor);
+				}
+			}
+		}
+
+		/* off */
+		&.sapMSwtOff {
+			background: var(--sapButton_Track_Negative_Background);
+			border: 0.0625rem solid var(--sapButton_Track_Negative_BorderColor);
+			box-sizing: border-box;
+
+			.sapMSwtHandle {
+				background: var(--sapButton_Handle_Negative_Background);
+				border: 2px solid var(--sapButton_Handle_Negative_BorderColor);
+			}
+
+			.sapMSwtLabel {
+				color: var(--sapNegativeTextColor);
+			}
+
+			&.sapMSwtHoverable:hover {
+				background: var(--sapButton_Track_Negative_Hover_Background);
+				border: 0.0625rem solid var(--sapButton_Track_Negative_Hover_BorderColor);
+
+				.sapMSwtHandle {
+					background: var(--sapButton_Handle_Negative_Hover_Background);
+					box-shadow: 0 0 0 0.125rem var(--sapButton_Handle_Negative_Hover_BorderColor);
+				}
+			}
+		}
+	}
+
+	/* read only */
+	&.sapMSwtReadOnly {
+		&.sapMSwtOn:not(.sapMSwtAcceptReject),
+		&.sapMSwtOff:not(.sapMSwtAcceptReject),
+		&.sapMSwtAcceptReject.sapMSwtOn,
+		&.sapMSwtAcceptReject.sapMSwtOff {
+			background: var(--sapField_ReadOnly_Background);
+			border: 0.0625rem dashed var(--sapField_ReadOnly_BorderColor);
+
+			.sapMSwtHandle {
+				background: var(--sapField_ReadOnly_Background);
+				border: 0.0625rem solid var(--sapField_ReadOnly_BorderColor);
+				box-shadow: none;
+			}
+		}
+
+		&.sapMSwtOn.sapMSwtNoLabel .sapMSwtLabelOn::before {
+			color: var(--sapButton_Handle_TextColor);
+		}
+	}
 }
 
 .sapUiSizeCompact .sapMSwt .sapMSwtHandle,
@@ -145,117 +274,13 @@ html.sap-desktop {
 	left: 2.0625rem;
 }
 
-.sapMSwt.sapMSwtNoLabel .sapMSwtHandle,
-.sapMSwt.sapMSwtAcceptReject .sapMSwtHandle {
-	width: 1.5rem;
+.sapMSwtOn > .sapMSwtInner {
+	left: -1.25rem;
 }
 
-/* on */
-.sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject) {
-	background: var(--sapButton_Track_Selected_Background);
-	border: 0.0625rem solid var(--sapButton_Track_Selected_BorderColor);
-	box-sizing: border-box;
-
-	.sapMSwtHandle {
-		background: var(--sapButton_Handle_Selected_Background);
-		border: 0.125rem solid var(--sapButton_Handle_Selected_BorderColor);
-	}
-
-	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
-		background: var(--sapButton_Track_Selected_Hover_Background);
-		border: 0.0625rem solid var(--sapButton_Track_Selected_Hover_BorderColor);
-
-		.sapMSwtHandle {
-			background: var(--sapButton_Handle_Selected_Hover_Background);
-			box-shadow: 0 0 0 0.125rem var(--sapButton_Handle_Selected_Hover_BorderColor);
-		}
-	}
-}
-
-/* off */
-.sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject) {
-	background: var(--sapButton_Track_Background);
-	border: 0.0625rem solid var(--sapButton_Track_BorderColor);
-	box-sizing: border-box;
-
-	.sapMSwtHandle {
-		background: var(--sapButton_Handle_Background);
-		border: 0.125rem solid var(--sapButton_Handle_BorderColor);
-	}
-
-	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
-		background: var(--sapButton_Track_Hover_Background);
-		border: 0.0625rem solid var(--sapButton_Track_Hover_BorderColor);
-
-		.sapMSwtHandle {
-			background: var(--sapButton_Handle_Hover_Background);
-			box-shadow: 0 0 0 0.125rem var(--sapButton_Handle_Hover_BorderColor);
-		}
-	}
-}
-
-/* Switch type "AcceptReject" */
-
-/* Switch */
-
-.sapMSwtAcceptReject.sapMSwt {
-
-	/* on */
-	&.sapMSwtOn {
-		background: var(--sapButton_Track_Positive_Background);
-		border: 0.0625rem solid var(--sapButton_Track_Positive_BorderColor);
-		box-sizing: border-box;
-
-		.sapMSwtHandle {
-			background: var(--sapButton_Handle_Positive_Background);
-			border: 2px solid var(--sapButton_Handle_Positive_BorderColor);
-		}
-
-		&.sapMSwtHoverable:hover {
-			background: var(--sapButton_Track_Positive_Hover_Background);
-			border: 0.0625rem solid var(--sapButton_Track_Positive_Hover_BorderColor);
-
-			.sapMSwtHandle {
-				background: var(--sapButton_Handle_Positive_Hover_Background);
-				box-shadow: 0 0 0 0.125rem var(--sapButton_Handle_Positive_Hover_BorderColor);
-			}
-		}
-	}
-
-	/* off */
-	&.sapMSwtOff {
-		background: var(--sapButton_Track_Negative_Background);
-		border: 0.0625rem solid var(--sapButton_Track_Negative_BorderColor);
-		box-sizing: border-box;
-
-		.sapMSwtHandle {
-			background: var(--sapButton_Handle_Negative_Background);
-			border: 2px solid var(--sapButton_Handle_Negative_BorderColor);
-		}
-
-		&.sapMSwtHoverable:hover {
-			background: var(--sapButton_Track_Negative_Hover_Background);
-			border: 0.0625rem solid var(--sapButton_Track_Negative_Hover_BorderColor);
-
-			.sapMSwtHandle {
-				background: var(--sapButton_Handle_Negative_Hover_Background);
-				box-shadow: 0 0 0 0.125rem var(--sapButton_Handle_Negative_Hover_BorderColor);
-			}
-		}
-	}
-}
-
-/* Switch handler */
-.sapMSwtAcceptReject .sapMSwtWebKit537-35.sapMSwtHandle {
-	border: none;
-}
-
-.sapMSwt.sapMSwtAcceptReject.sapMSwtOn .sapMSwtLabel {
-	color: var(--sapPositiveTextColor);
-}
-
-.sapMSwt.sapMSwtAcceptReject.sapMSwtOff .sapMSwtLabel {
-	color: var(--sapNegativeTextColor);
+.sapMSwtOn .sapMSwtTextOff,
+.sapMSwtOff .sapMSwtTextOn {
+	display: none;
 }
 
 .sapMSwtOn.sapMSwtNoLabel .sapMSwtLabelOn::before {
@@ -296,18 +321,6 @@ html.sap-desktop {
 	color: var(--sapNegativeElementColor);
 }
 
-.sapMSwtOn > .sapMSwtInner {
-	left: -1.25rem;
-}
-
-.sapMSwtOn .sapMSwtTextOff {
-	display: none;
-}
-
-.sapMSwtOff .sapMSwtTextOn {
-	display: none;
-}
-
 /* Compact mode */
 .sapUiSizeCompact {
 
@@ -338,6 +351,7 @@ html.sap-desktop {
 
 				.sapMSwtLabel {
 					width: 1.75rem;
+					height: 1.125rem;
 					line-height: 1.125rem;
 				}
 			}
@@ -355,18 +369,19 @@ html.sap-desktop {
 					width: 1.25rem;
 				}
 
-				&.sapMSwtOn .sapMSwtHandle {
-					left: 1.88rem;
-				}
-
 				.sapMSwtText {
 
 					&.sapMSwtTextOn {
-						left: 1.325rem;
+						left: 1.375rem;
 					}
 
 					&.sapMSwtTextOff {
 						left: 1.625rem;
+					}
+
+					.sapMSwtLabel {
+						height: 1.25rem;
+						line-height: 1.25rem;
 					}
 				}
 
