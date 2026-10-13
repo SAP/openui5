@@ -957,6 +957,24 @@ sap.ui.define([
 		}
 	});
 	//******************************************
+	var oMultiInputGrouped = new MultiInput("mi-grouped", {
+		width: "300px",
+		showSuggestion: true,
+		suggest: function (oEvent) {
+			var sValue = (oEvent.getParameter("suggestValue") || "").toLowerCase();
+			oMultiInputGrouped.destroySuggestionItems();
+			oMultiInputGrouped.addSuggestionItem(new SeparatorItem({ text: "Group A" }));
+			["Apple", "Apricot", "Avocado"].filter(function (s) { return s.toLowerCase().indexOf(sValue) === 0; })
+				.forEach(function (s) { oMultiInputGrouped.addSuggestionItem(new Item({ text: s })); });
+			oMultiInputGrouped.addSuggestionItem(new SeparatorItem({ text: "Group B" }));
+			["Almond", "Apple pie", "Anise"].filter(function (s) { return s.toLowerCase().indexOf(sValue) === 0; })
+				.forEach(function (s) { oMultiInputGrouped.addSuggestionItem(new Item({ text: s })); });
+			oMultiInputGrouped.addSuggestionItem(new SeparatorItem({ text: "Group C" }));
+			["Apron", "Amber", "Arrow"].filter(function (s) { return s.toLowerCase().indexOf(sValue) === 0; })
+				.forEach(function (s) { oMultiInputGrouped.addSuggestionItem(new Item({ text: s })); });
+		}
+	});
+	//******************************************
 	var oPage = new Page("page1", {
 		headerContent: [
 			new ToolbarSpacer({
@@ -1021,7 +1039,9 @@ sap.ui.define([
 			new Label("wrappingLabel", { text: "MultiInput with suggestions wrapping", width: "100%", labelFor: "mi-wrapping" }),
 			oMultiInputWrapping,
 			new Label("clearIconLabel", { text: "MultiInput with Clear Icon", width: "100%", labelFor: "mi-clear-icon" }),
-			oMultiInputWithClearIcon
+			oMultiInputWithClearIcon,
+			new Label("groupedLabel", { text: "MultiInput with Grouped Suggestions", width: "100%", labelFor: "mi-grouped" }),
+			oMultiInputGrouped
 		]
 	}).addStyleClass("sapUiContentPadding");
 

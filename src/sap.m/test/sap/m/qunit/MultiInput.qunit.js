@@ -4603,7 +4603,9 @@ sap.ui.define([
 			return oItem.getVisible();
 		});
 		oGroupHeader = aVisibleItems[0];
-		var sInvisibleTextId = oMultiInput._getSuggestionsList().getItems()[0].getId();
+		// Group headers are skipped in keyboard navigation
+		// The first selectable descendant is the first suggestion item, not the group header.
+		var sFirstSelectableItemId = aVisibleItems[1].getId();
 
 		// Assert
 		assert.ok(oGroupHeader.isA("sap.m.GroupHeaderListItem"), "The first visible item is a group header");
@@ -4612,8 +4614,16 @@ sap.ui.define([
 		qutils.triggerKeydown(oMultiInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(10); // Allow setTimeout in updateAriaActiveDescendant to execute
 
+		// Assert - arrow down skips the group header and lands on the first suggestion item
+		assert.strictEqual(oMultiInput.getFocusDomRef().getAttribute('aria-activedescendant'), sFirstSelectableItemId, "Input has aria-activedescendant set to the first selectable item (group header skipped)");
+		assert.notOk(oGroupHeader.hasStyleClass("sapMLIBFocused"), "The group header is not focused");
+
+		// Act - second arrow down moves to the next suggestion item
+		qutils.triggerKeydown(oMultiInput.getDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(10);
+
 		// Assert
-		assert.strictEqual(oMultiInput.getFocusDomRef().getAttribute('aria-activedescendant'), sInvisibleTextId, "Input has aria-activedescendant attribute set");
+		assert.strictEqual(oMultiInput.getFocusDomRef().getAttribute('aria-activedescendant'), aVisibleItems[2].getId(), "Navigation continues to the next selectable item");
 
 		// Act
 		oGroupHeader.focus();

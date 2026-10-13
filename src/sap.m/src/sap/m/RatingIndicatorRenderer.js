@@ -219,6 +219,10 @@ sap.ui.define(
 
 			const aClasses = [this.getIconClass(iconType)];
 
+			if (!IconPool.isIconURI(sIconURI)) {
+				aClasses.push("sapMImg");
+			}
+
 			if (iValue >= Math.ceil(oControl.getValue())) {
 				aClasses.push("sapMRIunratedIcon");
 			}

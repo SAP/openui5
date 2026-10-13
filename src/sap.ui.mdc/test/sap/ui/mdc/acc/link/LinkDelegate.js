@@ -143,16 +143,18 @@ sap.ui.define([
 		return Promise.resolve(aAdditionalContent);
 	};
 	SampleLinkDelegate._getLabelledByControl = function(oPanel) {
-		const aAdditionalContent = oPanel._getAdditionalContentArea().getItems();
-		return aAdditionalContent[0].getAggregation("_content").getItems()[0].getContent()[0];
+		const oContactDetails = oPanel?._getAdditionalContentArea()?.getItems()[0];
+		// ContactDetails -> hidden _content VBox -> first SimpleForm -> inner Form -> rendered sap.m.Title
+		const oSimpleForm = oContactDetails?.getAggregation("_content")?.getItems()[0];
+		const oForm = oSimpleForm?.getAggregation("form");
+		return oForm?.getAggregation("_renderingTitle");
 	};
 	SampleLinkDelegate.fetchPopoverTitle = function(oLink, oPanel) {
 		if (!oLink) {
-			const sTitle = "";
-			return Promise.resolve({ sTitle, undefined });
+			return Promise.resolve({ sTitle: "", oLabelledByControl: undefined });
 		}
 		const sTitle = oLink.getParent()?.getValue();
-		const oLabelledByControl = this._getLabelledByControl(oPanel);
+		const oLabelledByControl = SampleLinkDelegate._getLabelledByControl(oPanel);
 
 		return Promise.resolve({ sTitle, oLabelledByControl });
 	};

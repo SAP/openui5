@@ -115,10 +115,10 @@ sap.ui.define([
 			const oSimpleForm = new SimpleForm({
 				editable: false,
 				layout: "ColumnLayout",
+				title: oTitle,
 				content: [
-					oTitle, oLabelImage, oImage, oLabelName, oTextName, oLabelRole, oTextRole, oLabelTitle, oTextTitle, oLabelOrg, oTextOrg
-				],
-				ariaLabelledBy: oTitle
+					oLabelImage, oImage, oLabelName, oTextName, oLabelRole, oTextRole, oLabelTitle, oTextTitle, oLabelOrg, oTextOrg
+				]
 			});
 			this._addEmailsToSimpleForm(oContactDetailsItem, oSimpleForm, oRB);
 			this._addPhonesToSimpleForm(oContactDetailsItem, oSimpleForm, oRB);

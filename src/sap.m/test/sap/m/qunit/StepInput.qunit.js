@@ -2593,6 +2593,56 @@ sap.ui.define([
 		assert.equal(this.stepInput._getNumericInput()._getInput()._getInputValue(), "0", "The input is set correctly");
 	});
 
+	QUnit.test("null value from binding: getValue returns default (0), display shows default", function (assert) {
+		this.oModel.setData({ vValue: null });
+		this.stepInput.setModel(this.oModel);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		assert.strictEqual(this.stepInput.getValue(), 0,
+			"getValue() returns the default (0) when binding value is null");
+		assert.strictEqual(this.stepInput._getNumericInput()._getInput()._getInputValue(), "0",
+			"inner input displays the default value");
+	});
+
+	QUnit.test("null value from binding: model is not written back", function (assert) {
+		this.oModel.setData({ vValue: 42 });
+		this.stepInput.setModel(this.oModel);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		this.oModel.setProperty("/vValue", null);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		assert.strictEqual(this.oModel.getProperty("/vValue"), null,
+			"model value remains null — StepInput did not write back the normalised default");
+		assert.strictEqual(this.stepInput.getValue(), 0,
+			"getValue() returns the default (0) when model value is null");
+	});
+
+	QUnit.test("null value from binding followed by real data: getValue returns new value", function (assert) {
+		this.oModel.setData({ vValue: null });
+		this.stepInput.setModel(this.oModel);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		this.oModel.setProperty("/vValue", 7);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		assert.strictEqual(this.stepInput.getValue(), 7,
+			"getValue() returns the real value once data arrives after null");
+		assert.strictEqual(this.stepInput._getNumericInput()._getInput()._getInputValue(), "7",
+			"inner input displays the real value");
+	});
+
+	QUnit.test("undefined value from binding behaves the same as null", function (assert) {
+		this.oModel.setData({});
+		this.stepInput.setModel(this.oModel);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		assert.strictEqual(this.stepInput.getValue(), 0,
+			"getValue() returns the default (0) when binding value is undefined");
+		assert.strictEqual(this.oModel.getProperty("/vValue"), undefined,
+			"model value is still undefined — not overwritten by StepInput");
+	});
+
 
 	QUnit.module("calculate decimals", {
 		beforeEach: function () {

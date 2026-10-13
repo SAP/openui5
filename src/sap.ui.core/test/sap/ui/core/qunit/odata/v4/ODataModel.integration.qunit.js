@@ -26046,6 +26046,7 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 	// JIRA: CPOUI5ODATAV4-3482
 	//
 	// Test side effect for messages (JIRA: CPOUI5ODATAV4-3390)
+	// Must not change groupLevels when inactive contexts are at bottom (JIRA: CPOUI5ODATAV4-3683)
 	[
 		"context refresh",
 		"requestSideEffects-combine calls and request grand total once",
@@ -26521,6 +26522,14 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 					oBinding.create({GrossAmount : "13"}, true, /*bAtEnd*/true).created(),
 					this.waitForChanges(assert, sScenario)
 				]);
+
+				oBinding.suspend(); // avoid requests, just verify no error is thrown
+				const oAggregation = oBinding.getAggregation();
+				// code under test (JIRA: CPOUI5ODATAV4-3683)
+				oBinding.setAggregation({
+					...oAggregation,
+					groupLevels : ["LifecycleStatus", "SalesOrderID"]
+				});
 			} else if (sScenario === "create-inactive") {
 				this.expectChange("isOutdated", [,,,, undefined])
 					.expectChange("isSelected", [,,,, undefined])
@@ -26539,6 +26548,16 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 					/*bInactive*/true);
 
 				await this.waitForChanges(assert, "create inactive entity");
+
+				const oAggregation = oBinding.getAggregation();
+				assert.throws(function () {
+					// code under test (JIRA: CPOUI5ODATAV4-3683)
+					oBinding.setAggregation({
+						...oAggregation,
+						groupLevels : ["LifecycleStatus", "SalesOrderID"]
+					});
+				}, new Error("Must not set groupLevels when having inactive contexts at the end: "
+					+ oBinding));
 
 				this.expectChange("lifecycleStatus", [,,, "B"])
 					.expectChange("isOutdatedHeader", true)
@@ -29576,7 +29595,9 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 	// leaf at the very top of the table, above the group levels. The grand total is updated after
 	// the create. Creating another (inactive) entity at the end of start also works. The $count is
 	// increased when created entities are persisted. After expanding and collapsing a group, the
-	// indices of all contexts are still correct.
+	// indices of all contexts are still correct. When changing the groupLevels via #setAggregation,
+	// an inactive element remains in the creation area on top while the created persisted entries
+	// are moved into their server positions.
 	// JIRA: CPOUI5ODATAV4-3683
 	QUnit.test("Data Aggregation: create with visual grouping", async function (assert) {
 		const oModel = this.createAggregationModel({autoExpandSelect : true});
@@ -29787,6 +29808,66 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			[true, 0, "", "", "42"]
 		]);
 		assertIndices(assert, oListBinding.getCurrentContexts(), [-2, -1, 0, 1, 2]);
+
+		// code under test
+		const oCreatedContext2 = oListBinding.create({Country : "C"}, /*bSkipRefresh*/true,
+			/*bAtEnd*/true, /*bInactive*/true);
+
+		await Promise.all([
+			resolveLater(), // table update takes a moment
+			this.waitForChanges(assert, "create inactive at end of start #2")
+		]);
+
+		checkTable("after create inactive at end of start #2", assert, oTable, [
+			oCreatedContext0,
+			oCreatedContext1,
+			oCreatedContext2,
+			"/BusinessPartners(Country='A')",
+			"/BusinessPartners(Country='B')",
+			"/BusinessPartners()"
+		], [ // isTotal|level|Country|Id|SalesNumber
+			[false, 1, "A", "3", "5"],
+			[false, 1, "A", "4", "7"],
+			[false, 1, "C", "", ""],
+			[true, 1, "A", "", "10"],
+			[true, 1, "B", "", "20"]
+		], 6);
+
+		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+				+ ",groupby((Country,Id),aggregate(SalesNumber))"
+				+ "/concat(aggregate($count as UI5__count),top(4)))", {
+				value : [
+					{SalesNumber : 42},
+					{UI5__count : "4"},
+					{Country : "A", Id : 1, SalesNumber : 8},
+					{Country : "B", Id : 2, SalesNumber : 20},
+					{Country : "A", Id : 3, SalesNumber : 5},
+					{Country : "A", Id : 4, SalesNumber : 7}
+				]
+			})
+			.expectChange("isOutdatedHeader", false);
+
+		// code under test
+		oListBinding.setAggregation({...oListBinding.getAggregation(), groupLevels : []});
+
+		await Promise.all([
+			resolveLater(), // table update takes a moment
+			this.waitForChanges(assert, "disable visual grouping")
+		]);
+
+		checkTable("after disable visual grouping", assert, oTable, [
+			oCreatedContext2,
+			"/BusinessPartners(1)",
+			"/BusinessPartners(2)",
+			"/BusinessPartners(3)",
+			"/BusinessPartners(4)"
+		], [ // isTotal|level|Country|Id|SalesNumber
+			[false, 1, "C", "", ""],
+			[false, 1, "A", "1", "8"],
+			[false, 1, "B", "2", "20"],
+			[false, 1, "A", "3", "5"],
+			[false, 1, "A", "4", "7"]
+		], 6);
 	});
 
 	//*********************************************************************************************
@@ -89482,6 +89563,80 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			}
 			assert.deepEqual(oResult1, {body : "~body1~", headers : "~headers1~"});
 		});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: When refreshing the list binding while having kept-alive elements, the predicate
+	// behind a navigation property changes.
+	// SNOW: DINC1030483
+	[false, true].forEach((bSelected) => {
+		const sTitle = "Refresh: nested entity key property changes (selected=" + bSelected + ")";
+		QUnit.test(sTitle, async function (assert) {
+			const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+			const sView = `
+	<Table id="table" items="{/EMPLOYEES}">
+		<Text id="name" text="{Name}"/>
+		<Text id="teamId" text="{EMPLOYEE_2_TEAM/Team_Id}"/>
+		<Text id="teamName" text="{EMPLOYEE_2_TEAM/Name}"/>
+	</Table>`;
+
+			this.expectRequest("EMPLOYEES?$select=ID,Name"
+					+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$skip=0&$top=100", {
+					value : [{
+						ID : "1",
+						Name : "Jonathan Smith",
+						EMPLOYEE_2_TEAM : {
+							Name : "Team Alpha",
+							Team_Id : "TEAM_01"
+						}
+					}]
+				})
+				.expectChange("name", ["Jonathan Smith"])
+				.expectChange("teamId", ["TEAM_01"])
+				.expectChange("teamName", ["Team Alpha"]);
+
+			await this.createView(assert, sView, oModel);
+
+			const oTable = this.oView.byId("table");
+			const oContext = oTable.getItems()[0].getBindingContext();
+
+			if (bSelected) {
+				oContext.setSelected(true);
+			} else {
+				oContext.setKeepAlive(true);
+			}
+
+			this.expectRequest("EMPLOYEES?$select=ID,Name"
+					+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$filter=ID eq '1'", {
+					value : [{
+						ID : "1",
+						Name : "Jonathan Smith",
+						EMPLOYEE_2_TEAM : {
+							Name : "Team Beta",
+							Team_Id : "TEAM_02"
+						}
+					}]
+				})
+				.expectRequest("EMPLOYEES?$select=ID,Name"
+					+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$skip=0&$top=100", {
+					value : [{
+						ID : "1",
+						Name : "Jonathan Smith",
+						EMPLOYEE_2_TEAM : {
+							Name : "Team Beta",
+							Team_Id : "TEAM_02"
+						}
+					}]
+				})
+				.expectChange("teamId", ["TEAM_02"])
+				.expectChange("teamName", ["Team Beta"]);
+
+			await Promise.all([
+				// code under test
+				oContext.getBinding().requestRefresh(),
+				this.waitForChanges(assert)
+			]);
 		});
 	});
 });

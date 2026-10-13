@@ -13,20 +13,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CalendarWeekNumbering - getWeekConfigurationValues", function (assert) {
 		assert.deepEqual(Object.keys(CalendarWeekNumbering),
-			["Default", "ISO_8601", "MiddleEastern", "WesternTraditional"],
-			"getWeekConfigurationValues is not an enumerable property");
-		assert.throws(function () {
-			CalendarWeekNumbering.getWeekConfigurationValues = "foo";
-		}, "getWeekConfigurationValues is not a writeable property");
-		assert.throws(function () {
-			Object.defineProperty(CalendarWeekNumbering, "getWeekConfigurationValues", {value : {foo : "bar"}});
-		}, "getWeekConfigurationValues is not a configurable property");
-		assert.throws(function () {
-			delete CalendarWeekNumbering.getWeekConfigurationValues;
-		}, "getWeekConfigurationValues is not a configurable property");
-
+			["Default", "ISO_8601", "MiddleEastern", "WesternTraditional"]);
+		const descriptor = Object.getOwnPropertyDescriptor(CalendarWeekNumbering, "getWeekConfigurationValues");
+		assert.ok(descriptor !== undefined);
+		assert.strictEqual(descriptor.writable, false);
+		assert.strictEqual(descriptor.configurable, false);
+		assert.strictEqual(descriptor.enumerable, false);
+		assert.strictEqual(typeof descriptor.value, "function");
 		// week configuration values cannot be changed via reference
-		CalendarWeekNumbering.getWeekConfigurationValues(CalendarWeekNumbering.ISO_8601).firstDayOfWeek = "foo";
+		CalendarWeekNumbering.getWeekConfigurationValues(CalendarWeekNumbering.ISO_8601).firstDayOfWeek = 6;
 		assert.deepEqual(CalendarWeekNumbering.getWeekConfigurationValues(CalendarWeekNumbering.ISO_8601),
 			{
 				firstDayOfWeek : 1,

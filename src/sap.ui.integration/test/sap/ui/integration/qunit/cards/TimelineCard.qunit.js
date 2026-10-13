@@ -100,6 +100,9 @@ sap.ui.define([
 					removeActiveLoadingProvider: function () {
 
 					},
+					isSkeleton: function () {
+						return false;
+					},
 					getId: function () {
 						return "id1";
 					}

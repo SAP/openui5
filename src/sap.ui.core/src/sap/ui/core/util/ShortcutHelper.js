@@ -446,21 +446,32 @@ sap.ui.define([
 				return;
 			}
 
-			// handle some browser differences regarding reported keys.
-			// On macOS, Ctrl+Option+<letter> produces a "Dead" key (accent composition)
-			// instead of the actual letter. Fall back to event.code which reports the
-			// physical key (e.g. "KeyN" → "n", "Digit5" → "5").
+			// Handle some browser differences regarding reported keys.
+			// On macOS, the Option (Alt) key acts as a compose key that transforms
+			// letters into special characters (e.g. Option+M → "µ", Option+N → "Dead").
+			// event.key reports the composed character or "Dead" instead of the physical
+			// key. Fall back to event.code which always reflects the physical key
+			// (e.g. "KeyN" → "n", "Digit5" → "5").
+			// Note: event.code is layout-independent (always US QWERTY positions), so
+			// letters that swap positions across layouts (e.g. Y/Z on QWERTZ) will not
+			// match a shortcut defined with the other letter. This is a known web platform
+			// limitation that affects very few keys in practice.
 			var key;
-			if (oEvent.key === "Dead" && oEvent.code) {
-				var sCode = oEvent.code;
+			var sCode = oEvent.code;
+			var bUseCode = sCode && (
+				(oEvent.altKey && Device.os.macintosh) || // Option composes special chars on macOS
+				oEvent.key === "Dead"                     // dead key on any platform
+			);
+			if (bUseCode) {
 				if (sCode.startsWith("Key")) {
 					key = sCode.slice(3);
 				} else if (sCode.startsWith("Digit")) {
 					key = sCode.slice(5);
-				} else {
-					return; // unknown dead key, cannot resolve
+				} else if (oEvent.key === "Dead") {
+					return; // dead key that is neither a letter nor digit, cannot resolve
 				}
-			} else {
+			}
+			if (!key) {
 				key = mEventKeyFix.hasOwnProperty(oEvent.key) ? mEventKeyFix[oEvent.key] : oEvent.key;
 			}
 			key = key.toLowerCase(); // TODO: validate usage of toLowerCase

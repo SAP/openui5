@@ -6633,8 +6633,8 @@ sap.ui.define([
 		// Act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
-		// Assert
-		assert.strictEqual(this.oMultiComboBox._getList().getItems()[0].getDomRef(), document.activeElement, "The first item in the list should be focused");
+		// Assert - the leading group header is skipped, focus lands on the first real item
+		assert.strictEqual(ListHelpers.getListItem(ListHelpers.getSelectableItems(this.oMultiComboBox.getItems())[0]).getDomRef(), document.activeElement, "The first item in the list should be focused");
 
 		// Act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
@@ -6663,8 +6663,8 @@ sap.ui.define([
 		// Act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
-		// Assert
-		assert.strictEqual(this.oMultiComboBox._getList().getItems()[0].getDomRef(), document.activeElement, "The first item in the list should be focused");
+		// Assert - the leading group header is skipped, focus lands on the first real item
+		assert.strictEqual(ListHelpers.getListItem(ListHelpers.getSelectableItems(this.oMultiComboBox.getItems())[0]).getDomRef(), document.activeElement, "The first item in the list should be focused");
 
 		// Act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
@@ -8171,6 +8171,49 @@ sap.ui.define([
 		//assert
 		assert.strictEqual(this.oMCB1.getSelectedItems().length, 2, "There are two selected items");
 		assert.strictEqual(ListHelpers.getVisibleItems(this.oMCB1.getItems()).length, 4, "The selected items are shown grouped");
+	});
+
+	QUnit.test("Group headers are skipped during arrow navigation", function (assert) {
+		// arrange
+		this.oMCB1.syncPickerContent();
+		var oList = this.oMCB1._getList();
+
+		assert.strictEqual(oList.getAriaRole(), "listbox", "The list uses the listbox ARIA role");
+		assert.strictEqual(oList.getSkipGroupHeaderFocus(), true, "skipGroupHeaderFocus is enabled on the list");
+
+		// act - open and press Arrow Down
+		this.oMCB1.open();
+		this.clock.tick(500);
+		qutils.triggerKeydown(this.oMCB1.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+
+		// assert - focus lands on the first suggestion item, skipping the leading group header
+		var oFirstSelectableListItem = ListHelpers.getListItem(ListHelpers.getSelectableItems(this.oMCB1.getItems())[0]);
+		assert.notOk(oList.getItems()[0].hasStyleClass("sapMLIBFocused"), "The group header does not get the visual focus");
+		assert.strictEqual(oFirstSelectableListItem.getDomRef(), document.activeElement, "Focus moves onto the first non-header item");
+	});
+
+	QUnit.test("Item position excludes group headers from aria-posinset/aria-setsize", function (assert) {
+		// arrange
+		this.oMCB1.syncPickerContent();
+		var oList = this.oMCB1._getList();
+
+		// act - open and move focus into the list so the items render
+		this.oMCB1.open();
+		this.clock.tick(500);
+		qutils.triggerKeydown(this.oMCB1.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+
+		// assert - rendered options are numbered 1..n of n, group headers are not counted
+		var aOptions = Array.from(oList.getItemsContainerDomRef().querySelectorAll("[role='option']")),
+			iSetSize = ListHelpers.getSelectableItems(this.oMCB1.getItems()).length;
+
+		assert.strictEqual(aOptions.length, iSetSize, "Only the selectable items are exposed as options, group headers excluded");
+
+		aOptions.forEach(function (oOption, iIndex) {
+			assert.strictEqual(oOption.getAttribute("aria-posinset"), String(iIndex + 1), "aria-posinset is the position among the options");
+			assert.strictEqual(oOption.getAttribute("aria-setsize"), String(iSetSize), "aria-setsize equals the number of selectable items");
+		});
 	});
 
 	QUnit.test("Phone: Selected items are grouped when picker is opened", async function (assert) {

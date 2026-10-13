@@ -54,6 +54,9 @@
 				<m:Button icon="sap-icon://multi-select" press=".onShowSelection"
 					tooltip="Show Selection"/>
 				<m:CheckBox select=".onToggleCount" selected="true" text="$count"/>
+				<m:ToggleButton icon="sap-icon://group-2" press=".onToggleGrouping"
+					pressed="{ui>/bGrouped}"
+					tooltip="{= (${ui>/bGrouped} ? 'Disable' : 'Enable') + ' visual grouping' }"/>
 				<m:Select change=".onChangeGrandTotal" id="grandTotalAtBottomOnly">
 					<core:Item key="" text="Grand Total At Top"/>
 					<core:Item key="false" text="Grand Total At Top &amp; Bottom"/>

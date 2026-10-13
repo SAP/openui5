@@ -16,14 +16,17 @@
 	padding: 2rem;
 }
 
-html.sap-phone *, html.sap-tablet:not(.sap-desktop) * {   /* FIXME!!! (star rule with any-parent selector...) */
+/* iPad requesting desktop site is detected as macOS (combi device) — include it alongside
+   phone/tablet to disable text selection and prevent interference with taphold context menu. */
+html.sap-phone *, html.sap-tablet:not(.sap-desktop) *, html.sap-tablet.sap-desktop[data-sap-ui-os="mac"] * {   /* FIXME!!! (star rule with any-parent selector...) */
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
 }
 
 html.sap-phone input, html.sap-phone textarea, html.sap-phone [contenteditable=true], html.sap-phone [contenteditable=true] > *, html.sap-phone .sapUiSelectable,
-html.sap-tablet:not(.sap-desktop) input, html.sap-tablet:not(.sap-desktop) textarea, html.sap-tablet:not(.sap-desktop) [contenteditable=true], html.sap-tablet:not(.sap-desktop) [contenteditable=true] > *, html.sap-tablet:not(.sap-desktop) .sapUiSelectable {
+html.sap-tablet:not(.sap-desktop) input, html.sap-tablet:not(.sap-desktop) textarea, html.sap-tablet:not(.sap-desktop) [contenteditable=true], html.sap-tablet:not(.sap-desktop) [contenteditable=true] > *, html.sap-tablet:not(.sap-desktop) .sapUiSelectable,
+html.sap-tablet.sap-desktop[data-sap-ui-os="mac"] input, html.sap-tablet.sap-desktop[data-sap-ui-os="mac"] textarea, html.sap-tablet.sap-desktop[data-sap-ui-os="mac"] [contenteditable=true], html.sap-tablet.sap-desktop[data-sap-ui-os="mac"] [contenteditable=true] > *, html.sap-tablet.sap-desktop[data-sap-ui-os="mac"] .sapUiSelectable {
 	-webkit-user-select: text;
 	-moz-user-select: text;
 	user-select: text;
