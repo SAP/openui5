@@ -6753,6 +6753,67 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: An Edm.Decimal property is changed so that only the integer part differs while the fractional part
+	// stays at same. Optimization allows sending the value without fractionnal parts to the server. If the server
+	// responds with fractional values back, the pending change is cleared correctly.
+	QUnit.test("Edm.Decimal: no pending changes after submit", async function (assert) {
+		const oModel = createSalesOrdersModel({
+			defaultBindingMode : "TwoWay"
+		});
+		const sView = `
+<FlexBox binding="{/SalesOrderSet('1')}">
+	<Input id="grossAmount" value="{path : 'GrossAmount',
+		type : 'sap.ui.model.odata.type.Decimal',
+		constraints : {precision : 16, scale : 2}}" />
+</FlexBox>`;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				CurrencyCode : "USD",
+				GrossAmount : "150.00",
+				SalesOrderID : "1"
+			})
+			.expectValue("grossAmount", "150.00");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest({
+				data : {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					CurrencyCode : "USD",
+					GrossAmount : "130"
+				},
+				key : "SalesOrderSet('1')",
+				method : "MERGE",
+				requestUri : "SalesOrderSet('1')"
+			}, {
+				data : {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					GrossAmount : "130.00",
+					SalesOrderID : "1"
+				},
+				statusCode : 200
+			})
+			// auto refreshAfterChange
+			.expectRequest("SalesOrderSet('1')", {
+				__metadata : {uri : "SalesOrderSet('1')"},
+				CurrencyCode : "USD",
+				GrossAmount : "130.00",
+				SalesOrderID : "1"
+			})
+			.expectValue("grossAmount", "130.00");
+
+		this.oView.byId("grossAmount").setValue("130.00");
+		oModel.submitChanges();
+
+		await this.waitForChanges(assert);
+
+		// code under test
+		assert.deepEqual(oModel.hasPendingChanges(), false);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Use latest ETag when sending a change request for an entity. Modify a property of
 	// an entity and submit the changes. Before the request comes back, modify the property again
 	// but wait with the submit until the response of the first modification is processed. The ETag

@@ -6589,6 +6589,14 @@ sap.ui.define([
 		var oChangedEntry, sDeepPath, oEntityType, oEntry, oNavPropRefInfo, sRootPath,
 			that = this;
 
+		function propertyEqual(vChangedValue, vOriginalValue, sPropertyPath) {
+			const oPropertyMetadata = that.oMetadata._getPropertyMetadata(oEntityType, sPropertyPath);
+
+			return oPropertyMetadata?.type === "Edm.Decimal"
+				? ODataUtils.compare(vChangedValue, vOriginalValue, true) === 0
+				: deepEqual(vChangedValue, vOriginalValue);
+		}
+
 		function updateChangedEntities(oOriginalObject, oChangedObject, sCurPath) {
 			each(oChangedObject,function(sKey) {
 				var sActPath = sCurPath + '/' + sKey;
@@ -6598,13 +6606,13 @@ sap.ui.define([
 						delete oChangedObject[sKey];
 					}
 				} else if (sCurPath.endsWith("__metadata")
-						|| deepEqual(oChangedObject[sKey], oOriginalObject[sKey])
+						|| propertyEqual(oChangedObject[sKey], oOriginalObject[sKey],
+							sActPath.slice(sRootPath.length + 1))
 							&& !that.isLaundering(sActPath)) {
 					delete oChangedObject[sKey];
 					// When current object is the entity itself check for matching navigation
 					// property in changed entity data and take care of it as well
 					if (sCurPath === sRootPath) {
-						oEntityType = that.oMetadata._getEntityTypeByPath(sRootPath);
 						oNavPropRefInfo = oEntityType &&
 							that.oMetadata._getNavPropertyRefInfo(oEntityType, sKey);
 						if (oNavPropRefInfo && oChangedObject[oNavPropRefInfo.name]) {
@@ -6624,6 +6632,7 @@ sap.ui.define([
 			merge(oEntry, oData);
 			sRootPath = '/' + sEntityKey;
 			sDeepPath = that.removeInternalMetadata(oChangedEntry).deepPath;
+			oEntityType = that.oMetadata._getEntityTypeByPath(sRootPath);
 			updateChangedEntities(oEntry, oChangedEntry, sRootPath);
 			if (isEmptyObject(oChangedEntry)) {
 				delete that.mChangedEntities[sEntityKey];
