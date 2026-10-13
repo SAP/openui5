@@ -321,6 +321,12 @@ function(
 				const sName = oEvent.getParameter("name"),
 					oValue = oEvent.getParameter("value");
 				if (aForwardedProperties.indexOf(sName) !== -1 || sName === "displayValuePrecision" || sName === "validationMode" || sName === "valueState") {
+					// When the value was normalised from null/undefined, NumericInput sets its
+					// own property to the default (0) but StepInput must preserve null so that
+					// getValue() correctly reflects the unloaded model state.
+					if (sName === "value" && oEvent.getParameter("nullish")) {
+						return;
+					}
 					this._bUpdatingFromNumericInput = true;
 					Control.prototype.setProperty.call(this, sName, oValue, true);
 					this._bUpdatingFromNumericInput = false;
@@ -386,9 +392,16 @@ function(
 				oNumericInput.setValidationMode(sValidationMode);
 			}
 
-			// value: use proper setter for full NumericInput value normalization
+			// value: use proper setter for full NumericInput value normalization.
+			// Skip null — the framework sets the property to null when a binding context
+			// is cleared (e.g. NavContainer navigation) before data has been fetched.
+			// Forwarding null to NumericInput would normalise it to 0 and fire a change
+			// event, causing a spurious write-back that breaks OData v4 bindings with
+			// "Must not change a property before it has been read".
 			const fValue = this.getProperty("value");
-			if (fValue !== oNumericInput.getValue()) {
+			if (fValue == null) {
+				oNumericInput.setValue(fValue, true);
+			} else if (fValue !== oNumericInput.getValue()) {
 				oNumericInput.setValue(fValue);
 			}
 		};
@@ -413,7 +426,15 @@ function(
 			} else if (sPropertyName === "valueState") {
 				oNumericInput.setValueState(oValue);
 			} else if (sPropertyName === "value") {
-				oNumericInput.setValue(oValue);
+				if (oValue == null) {
+					// Forward null/undefined so NumericInput clears its display to the default (0),
+					// but suppress the model update so the normalised value is not written
+					// back to the model — that would break OData v4 bindings that have not
+					// yet been read (e.g. after NavContainer clears the binding context).
+					oNumericInput.setValue(oValue, true);
+				} else {
+					oNumericInput.setValue(oValue);
+				}
 			} else if (aForwardedProperties.indexOf(sPropertyName) !== -1) {
 				oNumericInput.setProperty(sPropertyName, oValue, bSuppressInvalidate);
 			}
@@ -477,7 +498,17 @@ function(
 		StepInput.prototype.setValue = function (oValue) {
 			this._iValuePrecision = this._getNumericInput()._getNumberPrecision(oValue);
 
-			if (isNaN(oValue) || oValue === null) {
+			if (oValue == null) {
+				// Forward null/undefined to NumericInput so its display resets to the
+				// default, but suppress the model update so the normalised 0 is not
+				// written back to the model — that would break OData v4 bindings that
+				// have not yet been read (e.g. after NavContainer clears the context).
+				this._getNumericInput().setValue(oValue, true);
+				Control.prototype.setProperty.call(this, "value", oValue, true);
+				return this;
+			}
+
+			if (isNaN(oValue)) {
 				oValue = this._getNumericInput()._getDefaultValue(undefined, this._getNumericInput()._getMax(), this._getNumericInput()._getMin());
 			} else {
 				oValue = Number(oValue);
@@ -486,6 +517,14 @@ function(
 			this._getNumericInput().setValue(oValue);
 			Control.prototype.setProperty.call(this, "value", this._getNumericInput().getValue(), false);
 			return this;
+		};
+
+		StepInput.prototype.getValue = function () {
+			const oValue = this.getProperty("value");
+			if (oValue == null) {
+				return this._getNumericInput().getValue();
+			}
+			return oValue;
 		};
 
 		StepInput.prototype.setTooltip = function (vTooltip) {
@@ -552,9 +591,16 @@ function(
 			Control.prototype.bindProperty.apply(this, arguments);
 			const oNumericInput = this._getNumericInput();
 			if (oNumericInput) {
-				// Clone the binding info so NumericInput gets its own independent binding instance.
-				// The live runtime properties (binding, handlers) must be stripped so the framework
-				// creates a fresh binding for NumericInput rather than sharing StepInput's instance.
+				if (sName === "value") {
+					// Do not mirror the "value" binding onto NumericInput at all — any
+					// binding (even OneWay) would receive model updates and coerce null→0
+					// via the float type, triggering a spurious write-back on OData v4
+					// bindings that have not yet been read.
+					// Instead expose a getter so NumericInput can read the binding type
+					// constraints (scale, min, max) directly from StepInput's binding.
+					oNumericInput._fnGetValueBinding = this.getBinding.bind(this, "value");
+					return this;
+				}
 				const oBindingInfo = this.getBindingInfo(sName);
 				const oClonedInfo = Object.assign({}, oBindingInfo);
 				delete oClonedInfo.binding;
@@ -570,7 +616,11 @@ function(
 			Control.prototype.unbindProperty.apply(this, arguments);
 			const oNumericInput = this._getNumericInput();
 			if (oNumericInput && !this._bIsBeingDestroyed) {
-				oNumericInput.unbindProperty(sName, bSuppressReset);
+				if (sName === "value") {
+					oNumericInput._fnGetValueBinding = null;
+				} else {
+					oNumericInput.unbindProperty(sName, bSuppressReset);
+				}
 			}
 			return this;
 		};
