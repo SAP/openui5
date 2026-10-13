@@ -110,6 +110,8 @@ sap.ui.define([
 	const FAILED = "FAILED";
 	const sParametersAfterRestartKey = "sap.ui.rta.RuntimeAuthoring.parametersAfterRestart";
 	const sHighlightAllChangesKey = "sap.ui.rta.RuntimeAuthoring.highlightAllChangesAfterRestart";
+	const ADAPTATION_BORDER_CLASS = "sapUiRtaAdaptationBorder";
+	const ADAPTATION_BORDER_VISIBLE_CLASS = "sapUiRtaAdaptationBorderVisible";
 	let oCurrentInstance;
 
 	/**
@@ -596,6 +598,9 @@ sap.ui.define([
 			if (this.getShowToolbars()) {
 				// the show() method of the toolbar relies on this RTA instance being set on the PopupManager
 				await this.getToolbar().show();
+				// add a border to the toolbar to indicate that RTA is in adaptation mode
+				this.getToolbar().addStyleClass(ADAPTATION_BORDER_CLASS);
+				toggleAdaptationBorder(this, this.getMode() === "adaptation");
 			}
 
 			this.fnKeyDown = onKeyDown.bind(this);
@@ -650,10 +655,6 @@ sap.ui.define([
 			Overlay.getOverlayContainer().classList.add("sapUiRta");
 			// RTA Visual Improvements
 			document.body.classList.add("sapUiRtaMode");
-			// In developer mode (e.g. adaptation projects) the toolbar is hidden and the border would be misplaced
-			if (!this.getFlexSettings().developerMode) {
-				createOrRemoveAdaptationBorder(this, true);
-			}
 			this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
 				this.fireSelectionChange({ selection: oEvent.getParameter("selection") });
 			}, this);
@@ -748,7 +749,6 @@ sap.ui.define([
 		if (!bExitFailed) {
 			this._sStatus = STOPPED;
 			document.body.classList.remove("sapUiRtaMode");
-			createOrRemoveAdaptationBorder(this, false);
 		}
 	};
 
@@ -820,9 +820,7 @@ sap.ui.define([
 			}
 			this.setProperty("mode", sNewMode);
 			this.fireModeChanged({ mode: sNewMode });
-			if (!this.getFlexSettings().developerMode) {
-				toggleAdaptationBorder(this, sNewMode === "adaptation");
-			}
+			toggleAdaptationBorder(this, sNewMode === "adaptation");
 		}
 	};
 
@@ -872,7 +870,6 @@ sap.ui.define([
 		if (this.getRootControlInstance()) {
 			addOrRemoveStyleClass(this.getRootControlInstance(), false);
 		}
-		toggleAdaptationBorder(this, false);
 
 		this.setCommandStack(null);
 
@@ -1202,30 +1199,8 @@ sap.ui.define([
 		}
 	}
 
-	const ADAPTATION_BORDER_CLASS = "sapUiRtaAdaptationBorder";
-	const ADAPTATION_BORDER_VISIBLE_CLASS = "sapUiRtaAdaptationBorderVisible";
-
-	function createOrRemoveAdaptationBorder(oRta, bCreate) {
-		if (bCreate) {
-			if (!oRta._oAdaptationBorderElement) {
-				const oBorder = document.createElement("div");
-				oBorder.className = ADAPTATION_BORDER_CLASS;
-				if (oRta.getMode() === "adaptation") {
-					oBorder.classList.add(ADAPTATION_BORDER_VISIBLE_CLASS);
-				}
-				document.body.appendChild(oBorder);
-				oRta._oAdaptationBorderElement = oBorder;
-			}
-		} else if (oRta._oAdaptationBorderElement) {
-			oRta._oAdaptationBorderElement.remove();
-			delete oRta._oAdaptationBorderElement;
-		}
-	}
-
 	function toggleAdaptationBorder(oRta, bVisible) {
-		if (oRta._oAdaptationBorderElement) {
-			oRta._oAdaptationBorderElement.classList.toggle(ADAPTATION_BORDER_VISIBLE_CLASS, bVisible);
-		}
+		oRta.getToolbar?.()?.toggleStyleClass(ADAPTATION_BORDER_VISIBLE_CLASS, bVisible);
 	}
 
 	/**

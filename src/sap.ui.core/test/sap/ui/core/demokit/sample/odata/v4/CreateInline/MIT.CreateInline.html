@@ -1,0 +1,243 @@
+<!DOCTYPE HTML>
+<html>
+	<head><meta charset="utf-8">
+		<link rel="stylesheet" href="./MIT.CreateInline.css">
+		<title>Manual Integration Test: Create Inline</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Create Inline</h1>
+		<h2>DESCRIPTION</h2>
+		Test the inline creation of new sales orders directly within a table row using an OData V4
+		binding with <code>$auto</code> update group and inactive context support. Verify that the
+		server-assigned <code>SalesOrderID</code> and read-only defaults are reflected in the UI
+		after a successful POST, and that toolbar filter and sort operations behave correctly.
+		Also verify that an activation prevented by validation (empty Buyer) is not a dead end but
+		can be resolved by entering a valid Buyer ID.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and
+		check with each step, that there are no errors and warnings.
+		<h3>Testing with mock data</h3>
+		Start the application:
+		<a href="../../../common/index.html?component=odata.v4.CreateInline">CreateInline</a>
+		<br>
+		<b>Note:</b> The mock server responds almost instantly, so the transient (in-flight) row
+		state during a POST is barely visible. To observe it during manual testing, append
+		<code>&autoRespondAfter=1000</code> (delay per mock response in milliseconds) to the URL:
+		<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.CreateInline&autoRespondAfter=1000">
+			CreateInline (delayed mock responses)</a>
+		<h2>REALIZE and CHECK</h2>
+
+		<h3>Scenario 1: Initial Load and Rendering</h3>
+		<ol>
+			<li>Open the application URL from the <em>Testing with mock data</em> section
+				above.</li>
+			<li><b>Check:</b> The table header shows <code>6 Sales Orders</code>.</li>
+			<li><b>Check:</b> The table contains exactly six data rows with pre-filled
+				<code>Sales Order ID</code>, <code>Buyer</code>, <code>Currency</code>,
+				<code>Gross Amount</code>, <code>Note</code> and <code>Status</code> values. The
+				<code>Buyer</code> column shows the buyer ID together with the buyer's company name
+				(e.g. buyer ID <code>0100000000</code> with company name <code>SAP</code>).
+				<code>Gross Amount</code> is read-only. Each of these rows has the
+				state icon with the tooltip <code>From Server</code> (cloud icon).</li>
+			<li><b>Check:</b> The very first row is an empty inline creation row. Its state icon
+				has the tooltip <code>Inactive</code> (minus icon). The <code>Buyer</code> and
+				<code>Note</code> inputs are editable (enabled); the <code>Currency</code> cell is a
+				plain text that displays the default <code>EUR</code>. The
+				<code>Sales Order ID</code>, <code>Gross Amount</code> and <code>Status</code>
+				cells are empty.</li>
+			<li><b>Check:</b> The action button at the end of the empty inline creation row is
+				invisible (hidden); it becomes visible only once at least one field has been
+				filled.</li>
+			<li><b>Check:</b> The six data rows each have an enabled delete (<code>x</code>) icon
+				at the end of the row (tooltip <code>Delete</code>).</li>
+		</ol>
+
+		<h3>Scenario 2: Successful Inline Creation with $auto Submit</h3>
+		<ol>
+			<li>Click into the <code>Buyer</code> input of the inline creation row at the top
+				of the table.</li>
+			<li>Enter the buyer ID <code>0100000000</code> into the <code>Buyer</code> input.</li>
+			<li>Move focus out of the <code>Buyer</code> field (for example press <code>Tab</code>
+				or click into the <code>Note</code> input of the same row). Leaving the
+				<code>Buyer</code> field commits the entered value and triggers row activation,
+				since the buyer is the only required field — the <code>Currency</code> is already
+				pre-filled with <code>EUR</code>.</li>
+			<li><b>Check:</b> While the POST request is in flight, the state icon of the row
+				shows the tooltip <code>Transient</code> (plus icon) and a blue marking is visible
+				on the left side of the row. With the default mock server the response is almost
+				instant, so this state only flashes by; use the <code>autoRespondAfter</code> URL
+				parameter (see PREPARATION) to slow the mock responses down enough to
+				observe it.</li>
+			<li><b>Check:</b> A new empty inline creation row with the <code>Inactive</code>
+				(minus icon) tooltip appears directly below the just-activated row (as the second
+				table row). The activated row (now <code>Transient</code>) stays at the very top:
+				the first created row is placed at the top and every following one is appended to
+				the end of the block of rows created in this session.</li>
+			<li><b>Check:</b> The table header count increases to <code>7 Sales Orders</code>.
+				</li>
+			<li><b>Check:</b> A <code>MessageToast</code> appears at the bottom of the screen
+				with the text <code>Sales Order 0500000006 created</code>.</li>
+			<li><b>Check:</b> The state icon of the formerly transient row changes to the tooltip
+				<code>Persisted</code> (checkmark icon). The blue marking on the left side of the
+				row remains visible.</li>
+			<li><b>Check:</b> The <code>Sales Order ID</code> cell of that row now contains the
+				auto-generated value <code>0500000006</code>.</li>
+			<li><b>Check:</b> The <code>Gross Amount</code> cell of that row shows a default zero
+				value (e.g. <code>0.00</code>, depending on locale).</li>
+			<li><b>Check:</b> The <code>Status</code> cell of that row shows <code>New</code>.
+				</li>
+			<li><b>Check:</b> The <code>Buyer</code> input of the persisted row becomes read-only
+				(disabled), since the row has now been stored on the server, and it now also shows
+				the buyer's company name (<code>SAP</code>) next to the buyer ID. The
+				<code>Note</code> input of that row remains editable, while the
+				<code>Currency</code> stays a plain text. The same applies to the rows fetched from
+				the server: their <code>Buyer</code> is read-only while the <code>Note</code> stays
+				editable. Only transient (not yet stored) rows keep an editable
+				<code>Buyer</code>.
+				</li>
+			<li>Click into the <code>Note</code> input of the same row, enter
+				<code>Test inline create</code> and press <code>Enter</code> or leave the field to
+				commit the change.</li>
+			<li><b>Check:</b> The note is updated without error (a PATCH request is sent to persist
+				the change).</li>
+		</ol>
+
+		<h3>Scenario 3: Validation — Empty Buyer Prevents Activation</h3>
+		<h4>Part A: Reset the prevented row via Delete</h4>
+		<ol>
+			<li>Click into the <code>Note</code> input of the (still empty) inline creation
+				row — after Scenario 2 it is the second row, directly below the sales order you
+				just created — enter <code>No buyer yet</code> and move focus out of the field
+				(for example press <code>Tab</code> or click another cell) to commit the value.
+				Leave the <code>Buyer</code> field empty.</li>
+			<li><b>Check:</b> Committing the first field value immediately triggers an activation
+				attempt. Because the <code>Buyer</code> is still empty, activation is prevented at
+				once. An error indicator appears in the <code>Buyer</code> field of the row; move
+				the focus into the <code>Buyer</code> field to see the error message
+				<code>Buyer ID must not be empty</code>. The state icon
+				remains <code>Inactive</code> (minus icon) and no POST request is sent.</li>
+			<li><b>Check:</b> A new empty inline creation row is nevertheless added below the
+				current row, so the user can keep creating further entries. Starting to edit a row
+				always spawns the next empty row, regardless of whether the current row can be
+				activated.</li>
+			<li><b>Check:</b> A blue marking appears on the left side of the edited row and its
+				action button becomes visible, showing the delete (<code>x</code>) icon
+				(tooltip <code>Delete</code>).</li>
+			<li><b>Check:</b> The table header count does NOT increase — inactive rows (both the
+				prevented row and the newly added empty one) are not counted until they are
+				activated.</li>
+			<li>(Optional) Change the <code>Note</code> text (for example to
+				<code>Missing buyer</code>) and leave the field. The row still cannot be activated
+				while the <code>Buyer</code> is empty, and the error remains.</li>
+			<li>Click the delete (<code>x</code>) icon (tooltip <code>Delete</code>) at the end of
+				the inline creation row to reset it.</li>
+			<li><b>Check:</b> The edited row is removed from the table, leaving only the single
+				empty inline creation row. The error indicator disappears together with the removed
+				row, and its validation message is removed from the message model.</li>
+		</ol>
+
+		<h4>Part B: Resolve the prevented activation by entering a Buyer ID</h4>
+		<ol>
+			<li>Repeat the activation attempt from the previous part: click into the
+				<code>Note</code> input of the empty inline creation row, enter
+				<code>Buyer to be added</code> and move focus out of the field to commit it, again
+				leaving the <code>Buyer</code> empty.</li>
+			<li><b>Check:</b> As before, activation is prevented — the
+				<code>Buyer</code> field shows the error indicator (message
+				<code>Buyer ID must not be empty</code>), the state icon stays
+				<code>Inactive</code> (minus icon), the header count does NOT increase, and a
+				new empty inline creation row is added below.</li>
+			<li>Now click into the <code>Buyer</code> input of that same (prevented) row, enter the
+				buyer ID <code>0100000001</code> and move focus out of the field to commit it.</li>
+			<li><b>Check:</b> The validation error is resolved — the error indicator
+				disappears from the <code>Buyer</code> field and its message is removed from the
+				message model. A new activation attempt is triggered, and this time it succeeds,
+				so a POST request is sent: the state icon briefly shows <code>Transient</code>
+				(plus icon) with the blue marking (use the <code>autoRespondAfter</code> URL
+				parameter to observe it).</li>
+			<li><b>Check:</b> This second activation does NOT add another empty inline creation
+				row — the empty row spawned in step 2 remains the single empty creation row. (Only
+				the first activation of an inactive row spawns the next empty row.)</li>
+			<li><b>Check:</b> The row becomes <code>Persisted</code> (checkmark icon) and a
+				<code>MessageToast</code> shows <code>Sales Order 0500000007 created</code>. The
+				<code>Sales Order ID</code> cell shows <code>0500000007</code>,
+				<code>Gross Amount</code> shows a default <code>0.00</code>,
+				<code>Status</code> shows <code>New</code>, and the <code>Buyer</code> input
+				becomes read-only and now shows the company name <code>Becker Berlin</code>
+				next to the buyer ID. The table header count increases to
+				<code>8 Sales Orders</code>.</li>
+			<li><b>Clean up (important):</b> Click the delete (<code>x</code>) icon (tooltip
+				<code>Delete</code>) at the end of the just-persisted row
+				(<code>0500000007</code>) to remove it again. This restores the state for the
+				following scenarios, so that the only sales order created in this session
+				remains <code>0500000006</code>.</li>
+			<li><b>Check:</b> The row is removed, the header count returns to
+				<code>7 Sales Orders</code>, and the single empty inline creation row is again
+				directly below the sales order created earlier (<code>0500000006</code>) as the
+				second row — the same state as before Part B (the created
+				<code>0500000006</code> stays pinned at the top until the next sort or refresh).
+				The subsequent scenarios (Sort, Filter, Refresh, Delete) operate on the same
+				data as before.</li>
+		</ol>
+
+		<h3>Scenario 4: Toolbar Operations — Refresh, Sort and Filter</h3>
+		<h4>Refresh</h4>
+		<ol>
+			<li>Press the <code>Refresh</code> button (refresh icon) in the toolbar.</li>
+			<li><b>Check:</b> The table reloads its data. The sales order created in this session
+				(<code>0500000006</code>) remains visible, but moves from the top to its actual
+				position at the end of the data rows (the top placement is only kept until the data
+				is reloaded).</li>
+			<li><b>Check:</b> The empty inline creation row is still shown at the top after the data
+				is received — the inactive row is kept across the refresh; no new creation row is
+				generated.</li>
+		</ol>
+		<h4>Sort by Sales Order ID</h4>
+		<ol>
+			<li>Press the sort button in the toolbar (tooltip <code>Sort by Sales Order ID</code>).
+				</li>
+			<li><b>Check:</b> The sort button icon changes to the ascending sort icon. The data
+				rows are reordered with the lowest <code>Sales Order ID</code> first
+				(<code>0500000000</code> at the top of the data rows).</li>
+			<li><b>Check:</b> Only the empty inline creation row (inactive) stays at the top of the
+				table. The persisted sales order created in this session is sorted together with the
+				other persisted rows from the server according to its
+				<code>Sales Order ID</code>.</li>
+			<li>Press the sort button again.</li>
+			<li><b>Check:</b> The sort button icon changes to the descending sort icon. The data
+				rows are reordered with the highest <code>Sales Order ID</code> first.
+				The sales order created earlier in this session (<code>0500000006</code>) is the
+				highest and appears at the top of the data rows.</li>
+			<li>Press the sort button a third time.</li>
+			<li><b>Check:</b> The sort button icon returns to the default unsorted icon. The rows
+				return to their original server order.</li>
+		</ol>
+		<h4>Filter by Buyer ID</h4>
+		<ol>
+			<li>Enter <code>0100000001</code> in the <code>Filter by Buyer ID</code>
+				search field and press <code>Enter</code> or click the search icon.</li>
+			<li><b>Check:</b> Only rows whose <code>Buyer ID</code> equals
+				<code>0100000001</code> are shown (two rows for the mock data: Sales Orders
+				<code>0500000002</code> and <code>0500000005</code>).</li>
+			<li><b>Check:</b> The empty inline creation row (inactive) is still visible at
+				the top of the table. The sales order created earlier in this session is no
+				longer shown, because its <code>Buyer ID</code> <code>0100000000</code> does not
+				match the filter.</li>
+			<li>Clear the search field and press <code>Enter</code> or click the search icon.</li>
+			<li><b>Check:</b> All data rows are shown again.</li>
+		</ol>
+
+		<h3>Scenario 5: Delete a Persisted Row</h3>
+		<ol>
+			<li>Click the delete (<code>x</code>) icon (tooltip <code>Delete</code>) at the end
+				of any persisted data row.</li>
+			<li><b>Check:</b> The row is removed from the table immediately.</li>
+			<li><b>Check:</b> The table header count decreases by one.</li>
+			<li>Press the <code>Refresh</code> button (refresh icon) in the toolbar to reload the
+				data from the back end.</li>
+			<li><b>Check:</b> The deleted row does not reappear after the refresh, confirming it was
+				successfully deleted in the back end.</li>
+		</ol>
+
+		</body>
+	</html>

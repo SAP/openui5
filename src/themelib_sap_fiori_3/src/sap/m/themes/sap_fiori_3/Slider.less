@@ -3,9 +3,9 @@
 /* Fiori 3 theme                 */
 /* ============================= */
 
-@_sap_m_Slider_Height: 2.75rem;
-@_sap_m_Slider_Progress: .25rem;
-@_sap_m_Slider_Track_Total_Height: @_sap_m_Slider_Progress;
+.sapUI5Scope {
+	--_sap_m_Slider_Progress_Border: 0px;
+}
 
 /* slider */
 .sapMSliderInner {
@@ -29,7 +29,7 @@
 	width: 1.875rem;
 	height: 1.875rem;
 	margin-left: -0.9375rem;
-	top: (@_sap_m_Slider_Track_Total_Height - 1.875rem) / 2;
+	top: ~'calc((var(--_sap_m_Slider_Track_Total_Height) - 1.875rem) / 2)';
 }
 
 .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
@@ -86,7 +86,7 @@
 		width: 1.5rem;
 		height: 1.5rem;
 		margin-left: -0.75rem;
-		top: (@_sap_m_Slider_Track_Total_Height - 1.5rem) / 2;
+		top: ~'calc((var(--_sap_m_Slider_Track_Total_Height) - 1.5rem) / 2)';
 	}
 
 	.sapMSliderTickLabel .sapMSliderLabel {

@@ -31,32 +31,60 @@ sap.ui.define([
 	function _addAnimationDelegate(oDialog, oParentCard) {
 		const oParentRect = oParentCard.getDomRef().getBoundingClientRect();
 		const oParentPos = {
-			top: Math.round(oParentRect.top) + window.scrollX,
-			left: Math.round(oParentRect.left) + window.scrollX,
-			width: Math.round(oParentRect.width),
-			height: Math.round(oParentRect.height)
+			top: Math.round(oParentRect.top) + window.scrollY,
+			left: Math.round(oParentRect.left) + window.scrollX
+		};
+
+		// Offset placing the dialog over the parent card, as a transform relative to its centered
+		// position. The slide animates "transform", not "left"/"top", because sap.m.Dialog keeps
+		// rewriting "left"/"top" to re-center the still-settling child - which would drift the slide.
+		const fnGetStartOffset = (oDialogRef) => {
+			const oRect = oDialogRef.getBoundingClientRect();
+			const iDeltaX = oParentPos.left - (Math.round(oRect.left) + window.scrollX);
+			const iDeltaY = oParentPos.top - (Math.round(oRect.top) + window.scrollY);
+
+			return `translate(${iDeltaX}px, ${iDeltaY}px)`;
+		};
+
+		// Place the dialog over the parent card (without transition), then transition the
+		// transform back to its centered position to produce the opening slide.
+		const fnSlideFromParent = () => {
+			const oDialogRef = oDialog.getDomRef();
+
+			oDialogRef.classList.remove("sapUiIntCardDialogAnimate");
+			oDialogRef.style.transform = fnGetStartOffset(oDialogRef);
+			oDialogRef.getBoundingClientRect(); // force a reflow so the start offset is applied before the transition
+			oDialogRef.classList.add("sapUiIntCardDialogAnimate");
+			oDialogRef.style.transform = "";
+		};
+
+		// Start the slide exactly when the popup first centers the dialog. Only then does the
+		// measured offset reflect the final centered position instead of the pre-open origin.
+		const oPopup = oDialog.oPopup;
+		const fnOriginalApplyPosition = oPopup._applyPosition;
+		let bSlideStarted = false;
+		oPopup._applyPosition = function () {
+			fnOriginalApplyPosition.apply(this, arguments);
+
+			if (!bSlideStarted) {
+				bSlideStarted = true;
+				fnSlideFromParent();
+			}
 		};
 
 		oDialog.attachBeforeClose(() => {
 			const oDialogRef = oDialog.getDomRef();
 
 			oDialogRef.classList.add("sapUiIntCardDialogAnimate");
-			oDialogRef.style.top = oParentPos.top + "px";
-			oDialogRef.style.left = oParentPos.left + "px";
+			oDialogRef.style.transform = fnGetStartOffset(oDialogRef);
 		});
 
 		oDialog.addEventDelegate({
 			onAfterRendering: () => {
 				const oDialogRef = oDialog.getDomRef();
 
-				if (!oDialog.isOpen()) {
-					oDialogRef.classList.add("sapUiIntCardDialogAnimate");
-					oDialogRef.style.top = oParentPos.top + "px";
-					oDialogRef.style.left = oParentPos.left + "px";
-				}
-
 				const fnTransitionEnd = (oEvent) => {
-					if (["left", "right"].includes(oEvent.propertyName)) {
+					if (oEvent.propertyName === "transform") {
 						oDialogRef.classList.remove("sapUiIntCardDialogAnimate");
 						oDialogRef.removeEventListener("transitionend", fnTransitionEnd);
 					}

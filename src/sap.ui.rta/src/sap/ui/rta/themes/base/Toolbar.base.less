@@ -8,7 +8,9 @@
 	--_sap_ui_rta_Toolbar_Base_BorderDarkColor: var(--sapButton_Accept_BorderColor);
 	--_sap_ui_rta_Toolbar_Base_BackgroundColor: var(--sapToolbar_Background);
 	--_sap_ui_rta_Toolbar_Base_BorderImage: repeating-linear-gradient(-45deg, var(--_sap_ui_rta_Toolbar_Base_BorderDarkColor), var(--_sap_ui_rta_Toolbar_Base_BorderDarkColor) 0.25rem, var(--_sap_ui_rta_Toolbar_Base_BorderLiteColor) 0.25rem, var(--_sap_ui_rta_Toolbar_Base_BorderLiteColor) 0.375rem) 4;
-	--_sap_ui_rta_Toolbar_Base_BoxShadow: var(--sapContent_Shadow2);
+	--_sap_ui_rta_Toolbar_Base_Height: 3rem; /* 48px */
+	--_sap_ui_rta_Toolbar_Base_AdaptationBorderHeight: 1rem; /* 16px, to be compliant with standard paddings */
+	--_sap_ui_rta_Toolbar_Base_AdaptationBorderColor: var(--sapLegendColor7);
 }
 
 .sapUiRtaMode {
@@ -20,14 +22,34 @@
 	.sapUiRtaToolbar {
 		border: 0.125rem solid var(--_sap_ui_rta_Toolbar_Base_BorderLiteColor); /* 2px */
 		border-image: var(--_sap_ui_rta_Toolbar_Base_BorderImage);
-		box-shadow: var(--_sap_ui_rta_Toolbar_Base_BoxShadow);
+		overflow: visible;
 		position: absolute;
 		top: 0;
 		left: 0;
 		right: 0;
 		padding-left: 1.25rem; /* 20px */
-		height: 3rem; /* 48px */
+		height: var(--_sap_ui_rta_Toolbar_Base_Height); /* 48px */
 		background-color: var(--_sap_ui_rta_Toolbar_Base_BackgroundColor);
+
+		&.sapUiRtaAdaptationBorder::after {
+			opacity: 0;
+			content: "";
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 100%;
+			height: var(--_sap_ui_rta_Toolbar_Base_AdaptationBorderHeight); /* 16px */
+			transition: opacity 0.6s ease-out;
+			background-image: linear-gradient(
+				to bottom,
+				~"color-mix(in srgb, var(--_sap_ui_rta_Toolbar_Base_AdaptationBorderColor) 70%, transparent)",
+				~"color-mix(in srgb, var(--_sap_ui_rta_Toolbar_Base_AdaptationBorderColor) 0%, transparent)"
+			);
+			pointer-events: none;
+		}
+		&.sapUiRtaAdaptationBorder.sapUiRtaAdaptationBorderVisible::after {
+			opacity: 1;
+		}
 
 		&.sapUiRtaToolbar_scrolling {
 			position: fixed !important;

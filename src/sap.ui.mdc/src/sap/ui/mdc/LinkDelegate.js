@@ -4,9 +4,8 @@
 sap.ui.define([
 	'sap/ui/mdc/BaseDelegate',
 	'sap/ui/mdc/enums/LinkType',
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/apply/api/FlexRuntimeInfoAPI'
-], (BaseDelegate, LinkType, Utils, FlexRuntimeInfoAPI) => {
+	'sap/ui/core/Lib'
+], (BaseDelegate, LinkType, Lib) => {
 	"use strict";
 	/**
 	 * Base delegate for {@link sap.ui.mdc.Link}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Link}.
@@ -18,6 +17,63 @@ sap.ui.define([
 	 * @public
 	 */
 	const LinkDelegate = Object.assign({}, BaseDelegate);
+
+	// Walks up the control tree to find the owning UI5 component.
+	// Ported from sap/ui/fl/Utils#getComponentForControl to avoid a load-time
+	// dependency on sap/ui/fl/Utils. sap/ui/core/Component is resolved synchronously via
+	// sap.ui.require (it is always loaded) so it is not a load-time dependency either.
+	function getComponentForControl(oControl) {
+		const Component = sap.ui.require("sap/ui/core/Component");
+		function getComponentIdForControl(oControl) {
+			const sComponentId = Component.getOwnerIdFor(oControl);
+			if (!sComponentId) {
+				const oParent = oControl && oControl.getParent && oControl.getParent();
+				if (oParent) {
+					return getComponentIdForControl(oParent);
+				}
+			}
+			return sComponentId || "";
+		}
+
+		if (oControl) {
+			const sComponentId = getComponentIdForControl(oControl);
+			if (sComponentId) {
+				return Component.getComponentById(sComponentId);
+			}
+		}
+		return undefined;
+	}
+
+	// Returns the component of type "application" for the given control.
+	// Ported from sap/ui/fl/Utils#getAppComponentForControl; keeps the Fiori Elements
+	// and OVP special cases so flex selectors stay stable.
+	function getAppComponentForControl(oControl) {
+		const Component = sap.ui.require("sap/ui/core/Component");
+		let oComponent = oControl instanceof Component ? oControl : getComponentForControl(oControl);
+
+		// special case for Fiori Elements to reach the real appComponent
+		if (oComponent && oComponent.getAppComponent && oComponent.getAppComponent() instanceof Component) {
+			return oComponent.getAppComponent();
+		}
+
+		// special case for OVP
+		if (oComponent && oComponent.oComponentData && oComponent.oComponentData.appComponent) {
+			return oComponent.oComponentData.appComponent;
+		}
+
+		if (oComponent && oComponent.getManifestEntry) {
+			const oSapApp = oComponent.getManifestEntry("sap.app");
+			if (oSapApp && oSapApp.type && oSapApp.type !== "application") {
+				if (oComponent instanceof Component) {
+					// walk up the tree to find the owning app component
+					oComponent = getComponentForControl(oComponent);
+				}
+				return getAppComponentForControl(oComponent);
+			}
+		}
+
+		return oComponent;
+	}
 
 	/**
 	 * Retrieves and returns the relevant {@link sap.ui.mdc.link.LinkItem} for the <code>Link</code> control.
@@ -109,11 +165,18 @@ sap.ui.define([
 			oLink.setSourceControl(oField);
 			oControl = oField;
 		}
-		if (!FlexRuntimeInfoAPI.isFlexSupported({ element: oLink }) || !FlexRuntimeInfoAPI.isFlexSupported({ element: oControl })) {
+		// sap/ui/fl is consulted only when it is already loaded: this keeps LinkDelegate free of a
+		// load-time dependency on sap/ui/fl (so consumers can rely on the fl library-preload bundle).
+		// When fl is not loaded, flexibility is not supported, so the non-component-scoped id is used.
+		// FlexRuntimeInfoAPI is part of the sap.ui.fl library-preload, so once the library is loaded it
+		// resolves synchronously via sap.ui.require. The change-handler registration that RTA depends on
+		// is armed by sap/ui/fl itself (its init module), not by this eager import.
+		const FlexRuntimeInfoAPI = Lib.isLoaded("sap.ui.fl") && sap.ui.require("sap/ui/fl/apply/api/FlexRuntimeInfoAPI");
+		if (!FlexRuntimeInfoAPI || !FlexRuntimeInfoAPI.isFlexSupported({ element: oLink }) || !FlexRuntimeInfoAPI.isFlexSupported({ element: oControl })) {
 			//SapBaseLog.error("Invalid component. The mandatory 'sourceControl' association should be assigned to the app component due to personalization reasons.");
 			return oLink.getId() + "-idInfoPanel";
 		} else {
-			const oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
+			const oAppComponent = getAppComponentForControl(oControl) || getAppComponentForControl(oField);
 			return oAppComponent.createId("idInfoPanel");
 		}
 	};

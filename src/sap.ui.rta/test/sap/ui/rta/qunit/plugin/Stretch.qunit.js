@@ -59,6 +59,7 @@ sap.ui.define([
 		},
 		afterEach() {
 			this.oStretchPlugin.destroy();
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("add / remove StretchCandidate", function(assert) {
@@ -92,6 +93,12 @@ sap.ui.define([
 			this.oStretchPlugin.removeStretchCandidate(oOverlay1);
 			assert.equal(this.oStretchPlugin.getStretchCandidates().length, 0, "there is no element");
 			assert.notOk(this.oStretchPlugin.getStretchCandidates().includes("element1"), "the element of the first overlay was removed");
+		});
+
+		QUnit.test("_setStyleClassForAllStretchCandidates with a candidate id that no longer resolves to an overlay", function(assert) {
+			sandbox.stub(OverlayRegistry, "getOverlay").returns(undefined);
+			this.oStretchPlugin._setStyleClassForAllStretchCandidates(["destroyedOverlayId"]);
+			assert.ok(true, "then no error is thrown for the stale candidate id");
 		});
 	});
 
@@ -333,6 +340,48 @@ sap.ui.define([
 
 			this.oVBox2.destroy();
 			assert.ok(isStretched(this.oVBoxOverlay1), "the style class was not removed");
+		});
+
+		QUnit.test("When an overlay is destroyed and a sibling is being torn down in the same cascade", function(assert) {
+			// Simulate a sibling overlay that is mid-teardown: it still returns an element, but is no
+			// longer resolvable via the OverlayRegistry
+			const oParentOverlay = this.oVBoxOverlay1;
+			const oDestroyedSiblingElement = new ManagedObject("destroyedSibling");
+			const oDestroyedSiblingOverlay = {
+				getElement() {
+					return oDestroyedSiblingElement;
+				},
+				bIsDestroyed: false,
+				_bIsBeingDestroyed: true
+			};
+			sandbox.stub(this.oStretchPlugin, "_getRelevantOverlays").returns([oParentOverlay, oDestroyedSiblingOverlay]);
+			const oNewCandidatesSpy = sandbox.spy(this.oStretchPlugin, "_getNewStretchCandidates");
+
+			const oEvent = {
+				getParameters() {
+					return {
+						elementOverlay: {
+							getParentElementOverlay() {
+								return oParentOverlay;
+							}
+						}
+					};
+				}
+			};
+
+			this.oStretchPlugin._onElementOverlayDestroyed(oEvent);
+
+			assert.ok(oNewCandidatesSpy.calledOnce, "then the candidate re-evaluation ran");
+			assert.notOk(
+				oNewCandidatesSpy.firstCall.args[0].includes(oDestroyedSiblingOverlay),
+				"then the sibling overlay being torn down is filtered out before candidate evaluation"
+			);
+			assert.ok(
+				oNewCandidatesSpy.firstCall.args[0].includes(oParentOverlay),
+				"then the live parent overlay is kept for candidate evaluation"
+			);
+
+			oDestroyedSiblingElement.destroy();
 		});
 
 		QUnit.test("When element gets modified while a plugin is busy", function(assert) {

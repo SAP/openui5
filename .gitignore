@@ -42,9 +42,6 @@ web.config
 /.user.project.json
 /sap-ui-cachebuster-info.json
 
-# Ignore Visual Studio Code project and settings files
-.vscode/
-
 # Ignore local caches
 .ui5-tooling-modules
 

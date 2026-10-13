@@ -36,10 +36,13 @@ PanelRenderer.render = function(oRm, oControl) {
 PanelRenderer.startPanel = function (oRm, oControl) {
 	var bIsExpandable = oControl.getExpandable(),
 		bIsStickyPanel = oControl.getStickyHeader(),
-		oAccAttributes = {
-			role: oControl.getAccessibleRole().toLowerCase()
-		},
+		sAccessibleRole = oControl.getAccessibleRole(),
+		oAccAttributes = {},
 		bExpanded = oControl.getExpanded();
+
+	if (sAccessibleRole !== "None") {
+		oAccAttributes.role = sAccessibleRole.toLowerCase();
+	}
 
 	oRm.openStart("div", oControl);
 	oRm.class("sapMPanel");
@@ -62,7 +65,7 @@ PanelRenderer.startPanel = function (oRm, oControl) {
 	// or the control is not expandable
 	// since in the default case, the focus is on the header
 	// and the header would be read out twice
-	if (oControl.getHeaderToolbar() || !bIsExpandable) {
+	if (sAccessibleRole !== "None" && (oControl.getHeaderToolbar() || !bIsExpandable)) {
 		oAccAttributes.labelledby = oControl._getLabellingElementId();
 	}
 

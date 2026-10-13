@@ -242,7 +242,8 @@ sap.ui.define([
 
 		if (!oIcon) {
 			oIcon = new Icon({
-				src: EXTERNAL_LINK_ICON
+				src: EXTERNAL_LINK_ICON,
+				tooltip: this._resourceBundleTnt.getText("NAVIGATION_LIST_EXTERNAL_LINK_TOOLTIP")
 			}).addStyleClass(`sapTntNLIExternalLinkIcon`);
 			this.setAggregation("_externalLinkIconControl", oIcon);
 		}

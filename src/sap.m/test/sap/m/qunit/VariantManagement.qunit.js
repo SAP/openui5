@@ -1954,6 +1954,186 @@ sap.ui.define([
 		this.oVM.onclick();
 	});
 
+	QUnit.test("VariantItem-specific properties not in template are read from MOM (named model)", async function(assert) {
+		// Regression test for the bug introduced by 1968f0c: when the items aggregation is bound to a
+		// named external model and the template omits VariantItem-specific properties (favorite, sharing,
+		// executeOnSelect), those properties must be read from the ManagedObjectModel — not from the
+		// external model (which doesn't have them and would trigger failing OData requests).
+		const oExtModel = new JSONModel({
+			variants: [
+				{variantKey: "std",  variantTitle: "Standard"},
+				{variantKey: "priv", variantTitle: "My View"}
+			]
+		});
+
+		this.oVM.setModel(oExtModel, "ext");
+
+		// Template deliberately omits favorite and sharing — simulates a real OData scenario.
+		this.oVM.bindAggregation("items", {
+			path: "ext>/variants",
+			template: new VariantItem("VMI", {
+				key: "{ext>variantKey}",
+				title: "{ext>variantTitle}"
+			})
+		});
+
+		this.oVM.setDefaultKey("std");
+
+		await nextUIUpdate();
+
+		// fl layer sets VariantItem-specific values after the binding resolves.
+		const [oStd, oPriv] = this.oVM.getItems();
+		oStd.setFavorite(true);
+		oStd.setSharing("Public");
+		oPriv.setFavorite(false);
+		oPriv.setSharing("Private");
+
+		const done = assert.async();
+
+		const fOriginalManageCall = this.oVM._openManagementDialog.bind(this.oVM);
+		sinon.stub(this.oVM, "_openManagementDialog").callsFake(function() {
+			fOriginalManageCall();
+
+			const aItems = this.oVM.oManagementTable.getItems();
+			assert.equal(aItems.length, 2, "both rows shown");
+
+			// Row 1 (Standard): favorite=true → filled star, sharing=Public
+			const aCells0 = aItems[0].getCells();
+			assert.equal(aCells0[0].getSrc(), "sap-icon://favorite", "row 1: favorite icon shows filled star");
+			assert.ok(aCells0[0].getBinding("src").getModel().isA("sap.ui.model.base.ManagedObjectModel"),
+				"row 1: favorite src is bound to MOM, not the external model");
+			assert.equal(aCells0[2].getText(), "Public", "row 1: sharing text reads from MOM");
+
+			// Row 2 (My View): favorite=false → unfilled star, sharing=Private
+			const aCells1 = aItems[1].getCells();
+			assert.equal(aCells1[0].getSrc(), "sap-icon://unfavorite", "row 2: favorite icon shows unfilled star");
+			assert.equal(aCells1[2].getText(), "Private", "row 2: sharing text reads from MOM");
+
+			done();
+		}.bind(this));
+
+		const fOriginalCall = this.oVM._openVariantList.bind(this.oVM);
+		sinon.stub(this.oVM, "_openVariantList").callsFake(async function(oEvent) {
+			fOriginalCall(oEvent);
+			await new Promise((resolve) => {setTimeout(resolve, 100);});
+			QUnitUtils.triggerTouchEvent("tap", this.oVM.oVariantManageBtn.getFocusDomRef(), {srcControl: null});
+		}.bind(this));
+
+		this.oVM.onclick();
+	});
+
+	QUnit.test("favorite bound to named external model is respected and not overridden by MOM", async function(assert) {
+		// When the template explicitly binds favorite to the external model, fnCreateBinding must
+		// use that template binding — not fall back to the MOM absolute path.
+		const oExtModel = new JSONModel({
+			variants: [
+				{variantKey: "1", variantTitle: "Standard", isFav: false},
+				{variantKey: "2", variantTitle: "My View",  isFav: true}
+			]
+		});
+
+		this.oVM.setModel(oExtModel, "ext");
+
+		this.oVM.bindAggregation("items", {
+			path: "ext>/variants",
+			template: new VariantItem("VMI", {
+				key: "{ext>variantKey}",
+				title: "{ext>variantTitle}",
+				favorite: "{ext>isFav}"
+			})
+		});
+
+		this.oVM.setDefaultKey("1");
+
+		await nextUIUpdate();
+
+		const done = assert.async();
+
+		const fOriginalManageCall = this.oVM._openManagementDialog.bind(this.oVM);
+		sinon.stub(this.oVM, "_openManagementDialog").callsFake(function() {
+			fOriginalManageCall();
+
+			const aItems = this.oVM.oManagementTable.getItems();
+			const oSrcBinding = aItems[0].getCells()[0].getBinding("src");
+
+			// The binding must point to the external model path, not the MOM absolute path.
+			assert.equal(oSrcBinding.getModel(), oExtModel,
+				"favorite src binding uses the external model, not the MOM");
+			assert.equal(oSrcBinding.getPath(), "isFav",
+				"favorite src binding path comes from the template (isFav), not the MOM path");
+
+			done();
+		}.bind(this));
+
+		const fOriginalCall = this.oVM._openVariantList.bind(this.oVM);
+		sinon.stub(this.oVM, "_openVariantList").callsFake(async function(oEvent) {
+			fOriginalCall(oEvent);
+			await new Promise((resolve) => {setTimeout(resolve, 100);});
+			QUnitUtils.triggerTouchEvent("tap", this.oVM.oVariantManageBtn.getFocusDomRef(), {srcControl: null});
+		}.bind(this));
+
+		this.oVM.onclick();
+	});
+
+	QUnit.test("runtime MOM update is reflected when favorite is a constant in the template", async function(assert) {
+		// Regression test for the !isPropertyInitial bug: a static constant in the template
+		// (favorite: true) must not pin the binding to that value. The MOM reflects runtime
+		// updates from the fl layer (setFavorite), so the dialog must read from the MOM.
+		const oExtModel = new JSONModel({
+			variants: [
+				{variantKey: "1", variantTitle: "Standard"},
+				{variantKey: "2", variantTitle: "My View"}
+			]
+		});
+
+		this.oVM.setModel(oExtModel, "ext");
+
+		this.oVM.bindAggregation("items", {
+			path: "ext>/variants",
+			template: new VariantItem("VMI", {
+				key: "{ext>variantKey}",
+				title: "{ext>variantTitle}",
+				favorite: true   // static constant — fl layer overrides this at runtime
+			})
+		});
+
+		this.oVM.setDefaultKey("1");
+
+		await nextUIUpdate();
+
+		// fl layer overrides the constant — the dialog must reflect these values, not the constant.
+		const [oStd, oCustom] = this.oVM.getItems();
+		oStd.setFavorite(true);
+		oCustom.setFavorite(false); // overrides the constant true → must show unfavorite
+
+		const done = assert.async();
+
+		const fOriginalManageCall = this.oVM._openManagementDialog.bind(this.oVM);
+		sinon.stub(this.oVM, "_openManagementDialog").callsFake(function() {
+			fOriginalManageCall();
+
+			const aItems = this.oVM.oManagementTable.getItems();
+			const aCells0 = aItems[0].getCells();
+			const aCells1 = aItems[1].getCells();
+
+			assert.ok(aCells0[0].getBinding("src").getModel().isA("sap.ui.model.base.ManagedObjectModel"),
+				"favorite src binding uses MOM even though template had a constant");
+			assert.equal(aCells0[0].getSrc(), "sap-icon://favorite",    "row 1: MOM value true shown");
+			assert.equal(aCells1[0].getSrc(), "sap-icon://unfavorite",  "row 2: MOM value false shown, not the constant true");
+
+			done();
+		}.bind(this));
+
+		const fOriginalCall = this.oVM._openVariantList.bind(this.oVM);
+		sinon.stub(this.oVM, "_openVariantList").callsFake(async function(oEvent) {
+			fOriginalCall(oEvent);
+			await new Promise((resolve) => {setTimeout(resolve, 100);});
+			QUnitUtils.triggerTouchEvent("tap", this.oVM.oVariantManageBtn.getFocusDomRef(), {srcControl: null});
+		}.bind(this));
+
+		this.oVM.onclick();
+	});
+
 	QUnit.test("search filters by 'author' on the path resolved from the items template", async function(assert) {
 		const oVariantsModel = new JSONModel({variants: [
 			{variantKey: "1", variantName: "Standard", createdBy: "Alice", visible: true},

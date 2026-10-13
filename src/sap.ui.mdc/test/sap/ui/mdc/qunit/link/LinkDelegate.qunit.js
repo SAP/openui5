@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/mdc/link/LinkItem",
 	"sap/ui/mdc/Link",
 	"sap/ui/test/actions/Press",
-	"sap/ui/mdc/enums/LinkType"
-], function(QUnit, LinkDelegate, LinkItem, Link, Press, LinkType) {
+	"sap/ui/mdc/enums/LinkType",
+	"sap/ui/core/Lib"
+], function(QUnit, LinkDelegate, LinkItem, Link, Press, LinkType, Lib) {
 	"use strict";
 
 	const aLinkItems = [
@@ -149,5 +150,85 @@ sap.ui.define([
 		fnCheckBeforeNavigationCallback(oDelegate);
 		fnCheckGetPanelId(oDelegate);
 		fnCheckFetchPopoverTitle(oDelegate);
+	});
+
+	QUnit.module("getPanelId", {
+		beforeEach: function() {
+			this.sandbox = sinon.sandbox.create();
+			this.oLink = new Link("panelIdLink");
+		},
+		afterEach: function() {
+			this.sandbox.restore();
+			this.oLink.destroy();
+			this.oLink = null;
+		}
+	});
+
+	QUnit.test("sap.ui.fl not loaded - returns non-component-scoped id", function(assert) {
+		// Arrange
+		this.sandbox.stub(Lib, "isLoaded").withArgs("sap.ui.fl").returns(false);
+		const oRequireSpy = this.sandbox.spy(sap.ui, "require");
+
+		// Act
+		const sPanelId = LinkDelegate.getPanelId(this.oLink);
+
+		// Assert
+		assert.equal(sPanelId, this.oLink.getId() + "-idInfoPanel", "Fallback panel id returned when sap.ui.fl is not loaded");
+		assert.notOk(oRequireSpy.calledWith("sap/ui/fl/apply/api/FlexRuntimeInfoAPI"),
+			"FlexRuntimeInfoAPI is not required when sap.ui.fl is not loaded");
+	});
+
+	QUnit.test("Flex not supported - returns non-component-scoped id", function(assert) {
+		// Arrange
+		const oFlexRuntimeInfoAPI = { isFlexSupported: this.sandbox.stub().returns(false) };
+		this.sandbox.stub(Lib, "isLoaded").withArgs("sap.ui.fl").returns(true);
+		this.sandbox.stub(sap.ui, "require")
+			.withArgs("sap/ui/fl/apply/api/FlexRuntimeInfoAPI").returns(oFlexRuntimeInfoAPI);
+
+		// Act
+		const sPanelId = LinkDelegate.getPanelId(this.oLink);
+
+		// Assert
+		assert.equal(sPanelId, this.oLink.getId() + "-idInfoPanel", "Fallback panel id returned when flex is not supported");
+		assert.ok(oFlexRuntimeInfoAPI.isFlexSupported.called, "isFlexSupported was consulted");
+	});
+
+	QUnit.test("Flex supported - returns component-scoped id", function(assert) {
+		// Arrange
+		const oAppComponent = { createId: this.sandbox.stub().returns("appComponent---idInfoPanel") };
+		const oFlexRuntimeInfoAPI = { isFlexSupported: this.sandbox.stub().returns(true) };
+		// Component is resolved inline via sap.ui.require; use a function so `instanceof` is valid.
+		const Component = function() {};
+		Component.getOwnerIdFor = this.sandbox.stub().returns("myComponentId");
+		Component.getComponentById = this.sandbox.stub().withArgs("myComponentId").returns(oAppComponent);
+
+		this.sandbox.stub(this.oLink, "_getSourceControl").returns({});
+		this.sandbox.stub(Lib, "isLoaded").withArgs("sap.ui.fl").returns(true);
+		const oRequireStub = this.sandbox.stub(sap.ui, "require");
+		oRequireStub.withArgs("sap/ui/fl/apply/api/FlexRuntimeInfoAPI").returns(oFlexRuntimeInfoAPI);
+		oRequireStub.withArgs("sap/ui/core/Component").returns(Component);
+
+		// Act
+		const sPanelId = LinkDelegate.getPanelId(this.oLink);
+
+		// Assert
+		assert.equal(sPanelId, "appComponent---idInfoPanel", "Component-scoped panel id returned when flex is supported");
+		assert.ok(oAppComponent.createId.calledWith("idInfoPanel"), "createId called with 'idInfoPanel'");
+	});
+
+	QUnit.test("No source control - falls back to the parent as source control", function(assert) {
+		// Arrange
+		const oField = {};
+		this.sandbox.stub(this.oLink, "getParent").returns(oField);
+		this.sandbox.stub(this.oLink, "_getSourceControl").returns(undefined);
+		const oSetSourceControlStub = this.sandbox.stub(this.oLink, "setSourceControl");
+		this.sandbox.stub(Lib, "isLoaded").withArgs("sap.ui.fl").returns(false);
+
+		// Act
+		const sPanelId = LinkDelegate.getPanelId(this.oLink);
+
+		// Assert
+		assert.ok(oSetSourceControlStub.calledWith(oField), "setSourceControl called with the parent as fallback");
+		assert.equal(sPanelId, this.oLink.getId() + "-idInfoPanel", "Fallback panel id returned");
 	});
 });
