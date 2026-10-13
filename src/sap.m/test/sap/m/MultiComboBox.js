@@ -981,6 +981,12 @@ function(
 			},
 
 			{
+				"key" : "AD",
+				"text" : "Andorra",
+				"group" : "Countries 2"
+			},
+
+			{
 				"key" : "BE",
 				"text" : "Belgium",
 				"group" : "Countries 2"
@@ -1013,6 +1019,12 @@ function(
 			{
 				"key" : "EG",
 				"text" : "Egypt",
+				"group" : "Countries 3"
+			},
+
+			{
+				"key" : "AM",
+				"text" : "Armenia",
 				"group" : "Countries 3"
 			},
 

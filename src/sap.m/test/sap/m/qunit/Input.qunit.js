@@ -8826,13 +8826,15 @@ sap.ui.define([
 		aVisibleItems = this.oInput._getSuggestionsPopover().getItemsContainer().getItems().filter(function(oItem){
 			return oItem.getVisible();
 		});
-		var sInvisibleTextId = aVisibleItems[0].getId();
+		// Group headers are skipped in keyboard navigation for accessibility (ARIA 1.2 compliance)
+		// The first selectable item is the first actual item, not the group header
+		var sFirstSelectableItemId = aVisibleItems[1].getId();
 
 		// Act
 		qutils.triggerKeydown(this.oInput.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(10); // Allow setTimeout in updateAriaActiveDescendant to execute
 		// Assert
-		assert.strictEqual(this.oInput.getFocusDomRef().getAttribute('aria-activedescendant'), sInvisibleTextId, "Input has aria-activedescendant attribute set");
+		assert.strictEqual(this.oInput.getFocusDomRef().getAttribute('aria-activedescendant'), sFirstSelectableItemId, "Input has aria-activedescendant attribute set to first selectable item (skipping group header)");
 		assert.strictEqual(aVisibleItems.length, 3, "The correct number of items is displayed");
 		assert.ok(aVisibleItems[0].isA("sap.m.GroupHeaderListItem"), "A group header is added");
 		assert.strictEqual(aVisibleItems[1].getTitle(), "A Item 1", "The first list item has correct text");
@@ -8866,7 +8868,7 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
-	QUnit.test("Keyboard selection of group header", async function (assert) {
+	QUnit.test("Keyboard selection skips group header", async function (assert) {
 		var aVisibleItems;
 
 		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
@@ -8877,25 +8879,23 @@ sap.ui.define([
 			return oItem.getVisible();
 		});
 
-		// act
+		// act - first arrow down should skip group header and land on first actual item
+		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
+		await nextUIUpdate(this.clock);
+
+		// assert - group header is skipped, value is populated with first item
+		assert.strictEqual(this.oInput.getValue(), aVisibleItems[1].getTitle(), "The value is populated with first selectable item (group header skipped).");
+
+		// act - second arrow down moves to next item
 		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
 		await nextUIUpdate(this.clock);
 
 		// assert
-		// go to the header group item
-		assert.strictEqual(this.oInput.getValue(), "A", "The typed in value should be reset.");
-
-		// act
-		// go to the next list item
-		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		await nextUIUpdate(this.clock);
-
-		// assert
-		assert.strictEqual(this.oInput.getValue(), aVisibleItems[1].getTitle(), "The value is populated again.");
+		assert.strictEqual(this.oInput.getValue(), aVisibleItems[2].getTitle(), "The value is populated with second selectable item.");
 	});
 
-	QUnit.test("Selection of group header", function(assert) {
-		var aVisibleItems, oGroupHeader;
+	QUnit.test("Selection skips group header and focuses first item", function(assert) {
+		var aVisibleItems, oGroupHeader, oFirstItem;
 		var oSuggPopover = this.oInput._getSuggestionsPopover();
 
 		// act
@@ -8907,23 +8907,116 @@ sap.ui.define([
 			return oItem.getVisible();
 		});
 		oGroupHeader = aVisibleItems[0];
+		oFirstItem = aVisibleItems[1];
 
 		// assert
 		assert.ok(oGroupHeader.isA("sap.m.GroupHeaderListItem"), "The first visible item is a group header");
 
-		//act
+		//act - trying to focus group header should redirect to input
 		oGroupHeader.focus();
 
 		//assert
 		assert.strictEqual(document.activeElement, this.oInput.getFocusDomRef(), "The focus is in the input field");
 
-		// act
+		// act - navigate down should skip group header
 		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ENTER);
 
-		//assert
-		assert.ok(oGroupHeader.hasStyleClass("sapMLIBFocused"), "The focus outline is over the group header");
-		assert.ok(oSuggPopover.isOpen(), "The popover remains open");
+		//assert - first actual item should have focus outline, not group header
+		assert.notOk(oGroupHeader.hasStyleClass("sapMLIBFocused"), "The focus outline is NOT on the group header (skipped)");
+		assert.ok(oFirstItem.hasStyleClass("sapMLIBFocused"), "The focus outline is on the first selectable item");
+		assert.notOk(oSuggPopover.isOpen(), "The popover is closed after selecting an item");
+	});
+
+	QUnit.test("_applySuggestionAcc announces group count for multiple groups", function (assert) {
+		// Arrange
+		var oGetTextSpy = this.spy(this.oInput._oRb, "getText");
+
+		// Act - 4 items spread across 2 visible groups
+		this.oInput._applySuggestionAcc(4, {
+			groups: [
+				{ header: {}, visible: true },
+				{ header: {}, visible: true }
+			]
+		});
+		this.clock.tick(100);
+
+		// Assert
+		assert.ok(oGetTextSpy.calledWith("INPUT_SUGGESTIONS_MORE_HITS_WITH_GROUPS", [4, 2]),
+			"The announcement uses the multi-group bundle key with item and group counts");
+	});
+
+	QUnit.test("_applySuggestionAcc announces single group", function (assert) {
+		// Arrange
+		var oGetTextSpy = this.spy(this.oInput._oRb, "getText");
+
+		// Act - 3 items in a single visible group
+		this.oInput._applySuggestionAcc(3, {
+			groups: [
+				{ header: {}, visible: true }
+			]
+		});
+		this.clock.tick(100);
+
+		// Assert
+		assert.ok(oGetTextSpy.calledWith("INPUT_SUGGESTIONS_MORE_HITS_WITH_GROUP", [3]),
+			"The announcement uses the single-group bundle key");
+	});
+
+	QUnit.test("_applySuggestionAcc announces plain count when no groups", function (assert) {
+		// Arrange
+		var oGetTextSpy = this.spy(this.oInput._oRb, "getText");
+
+		// Act
+		this.oInput._applySuggestionAcc(5, { groups: [] });
+		this.clock.tick(100);
+
+		// Assert
+		assert.ok(oGetTextSpy.calledWith("INPUT_SUGGESTIONS_MORE_HITS", [5]),
+			"The announcement uses the plain (no-group) bundle key");
+	});
+
+	QUnit.test("_applySuggestionAcc one-hit variants respect group count", function (assert) {
+		// Arrange
+		var oGetTextSpy = this.spy(this.oInput._oRb, "getText");
+
+		// Act - single hit, single group
+		this.oInput._applySuggestionAcc(1, { groups: [{ header: {}, visible: true }] });
+		this.clock.tick(100);
+
+		// Assert
+		assert.ok(oGetTextSpy.calledWith("INPUT_SUGGESTIONS_ONE_HIT_WITH_GROUP"),
+			"Single hit in one group uses the ONE_HIT_WITH_GROUP key");
+
+		// Act - single hit, two groups (edge: a hit visible in each of two groups)
+		oGetTextSpy.resetHistory();
+		this.oInput._applySuggestionAcc(1, {
+			groups: [{ header: {}, visible: true }, { header: {}, visible: true }]
+		});
+		this.clock.tick(100);
+
+		// Assert
+		assert.ok(oGetTextSpy.calledWith("INPUT_SUGGESTIONS_ONE_HIT_WITH_GROUPS", [2]),
+			"Single hit across two groups uses the ONE_HIT_WITH_GROUPS key with the group count");
+	});
+
+	QUnit.test("_applySuggestionAcc counts only visible groups", function (assert) {
+		// Arrange
+		var oGetTextSpy = this.spy(this.oInput._oRb, "getText");
+
+		// Act - 3 groups present, only 2 visible
+		this.oInput._applySuggestionAcc(4, {
+			groups: [
+				{ header: {}, visible: true },
+				{ header: {}, visible: false },
+				{ header: {}, visible: true }
+			]
+		});
+		this.clock.tick(100);
+
+		// Assert
+		assert.ok(oGetTextSpy.calledWith("INPUT_SUGGESTIONS_MORE_HITS_WITH_GROUPS", [4, 2]),
+			"Only visible groups are counted (invisible group ignored)");
 	});
 
 	QUnit.test("Behaviour for a 'startsWith' item selection", async function (assert) {

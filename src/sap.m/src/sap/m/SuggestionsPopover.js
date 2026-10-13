@@ -181,6 +181,9 @@ sap.ui.define([
 			});
 
 			oList.applyAriaRole("listbox");
+
+			// Skip group headers during keyboard navigation in listbox mode
+			oList.setSkipGroupHeaderFocus(true);
 		}
 
 		this.addContent(oList);
@@ -221,6 +224,34 @@ sap.ui.define([
 		})[0];
 	};
 
+	/**
+	 * Gets selectable items, filtering out group headers when the list runs in listbox mode.
+	 *
+	 * Group headers are skipped during keyboard navigation for all consuming controls
+	 * (Input, MultiInput, ComboBox, MultiComboBox) via the native skipGroupHeaderFocus flag.
+	 *
+	 * @private
+	 * @returns {sap.m.ListItemBase[]} Array of selectable items
+	 */
+	SuggestionsPopover.prototype._getSelectableItems = function() {
+		var oList = this.getItemsContainer();
+		if (!oList) {
+			return [];
+		}
+
+		var bSkipGroupHeaders = oList.getSkipGroupHeaderFocus && oList.getSkipGroupHeaderFocus();
+
+		return oList.getItems().filter(function(oItem) {
+			if (!oItem.getVisible || !oItem.getVisible()) {
+				return false;
+			}
+			if (bSkipGroupHeaders && oItem.isGroupHeader && oItem.isGroupHeader()) {
+				return false;
+			}
+			return true;
+		});
+	};
+
 
 	/* =================== List Navigation =================== */
 
@@ -250,14 +281,11 @@ sap.ui.define([
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 
-		var oList = this.getItemsContainer(),
-			bFocusInInput = oParent.hasStyleClass("sapMFocus"),
-			aSelectableItems = oList && oList.getItems().filter(function (oItem) {
-				return oItem.getVisible && oItem.getVisible();
-			}),
+		var bFocusInInput = oParent.hasStyleClass("sapMFocus"),
+			aSelectableItems = this._getSelectableItems(oParent),
 			oNewItem;
 
-		const iSelectedItemIndex = this.getSelectedListItemIndex();
+		const iSelectedItemIndex = this.getSelectedListItemIndex(oParent);
 
 		switch (oEvent.type) {
 			case "sapdown":
@@ -525,20 +553,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the index of currently selected list item, if any, or the currently focused group header item
+	 * Gets the index of currently selected list item, if any, or the currently focused item
 	 *
 	 * @private
+	 * @param {sap.ui.core.Control} [oParent] The parent control - passed to _getSelectableItems
 	 */
-	SuggestionsPopover.prototype.getSelectedListItemIndex = function () {
+	SuggestionsPopover.prototype.getSelectedListItemIndex = function (oParent) {
 		const oList = this.getItemsContainer();
 		const aListItems = oList && oList.getItems() || [];
-		const aVisibleItems = aListItems.filter((item) => item.getVisible && item.getVisible());
+		const aSelectableItems = this._getSelectableItems(oParent);
 
 		if (aListItems.filter((item) => item.getSelected()).length) {
-			return aVisibleItems.findIndex((item) => item.getSelected());
+			return aSelectableItems.findIndex((item) => item.getSelected());
 		}
 
-		return aVisibleItems.findIndex((groupItem) => groupItem.hasStyleClass("sapMLIBFocused"));
+		return aSelectableItems.findIndex((item) => item.hasStyleClass("sapMLIBFocused"));
 	};
 
 

@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/ComboBox",
 	"sap/m/MultiComboBox",
 	"sap/m/GroupHeaderListItem",
+	"sap/m/StandardListItem",
 	"sap/ui/core/Item",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/nextUIUpdate"
@@ -24,6 +25,7 @@ sap.ui.define([
 	ComboBox,
 	MultiComboBox,
 	GroupHeaderListItem,
+	StandardListItem,
 	Item,
 	InvisibleText,
 	nextUIUpdate
@@ -327,5 +329,128 @@ QUnit.test("aria-labelledby should include both ValueStateHeader and other assoc
 
 	// Cleanup
 	oInvisibleText.destroy();
+});
+
+QUnit.module("Group header skipping (listbox mode)", {
+	beforeEach: async function () {
+		this.oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({ text: "Argentina" }),
+				new Item({ text: "Australia" })
+			]
+		});
+		this.oInput.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		this.oInput._$input.trigger("focus").val("a").trigger("input");
+		await nextUIUpdate();
+
+		this.oSuggPopover = this.oInput._getSuggestionsPopover();
+		this.oList = this.oSuggPopover.getItemsContainer();
+		this.oList.removeAllItems();
+	},
+	afterEach: function () {
+		this.oInput.destroy();
+	}
+});
+
+QUnit.test("The suggestions List has skipGroupHeaderFocus enabled in listbox mode", function (assert) {
+	assert.strictEqual(this.oList.getAriaRole(), "listbox", "The List uses the listbox ARIA role");
+	assert.strictEqual(this.oList.getSkipGroupHeaderFocus(), true,
+		"skipGroupHeaderFocus is enabled via the native List API");
+});
+
+QUnit.test("_getSelectableItems excludes group headers when the parent has no handleSelectionFromList", function (assert) {
+	// Arrange
+	var oHeader = new GroupHeaderListItem({ title: "Group" }),
+		oItem1 = new StandardListItem({ title: "Item 1" }),
+		oItem2 = new StandardListItem({ title: "Item 2" });
+	this.oList.addItem(oHeader).addItem(oItem1).addItem(oItem2);
+
+	// Act
+	var aSelectable = this.oSuggPopover._getSelectableItems(this.oInput);
+
+	// Assert
+	assert.strictEqual(aSelectable.length, 2, "Only the two suggestion items are selectable");
+	assert.strictEqual(aSelectable.indexOf(oHeader), -1, "The group header is excluded");
+	assert.deepEqual(aSelectable, [oItem1, oItem2], "The suggestion items are kept in order");
+});
+
+QUnit.test("_getSelectableItems excludes invisible items", function (assert) {
+	// Arrange
+	var oVisible = new StandardListItem({ title: "Visible" }),
+		oHidden = new StandardListItem({ title: "Hidden", visible: false });
+	this.oList.addItem(oVisible).addItem(oHidden);
+
+	// Act
+	var aSelectable = this.oSuggPopover._getSelectableItems(this.oInput);
+
+	// Assert
+	assert.deepEqual(aSelectable, [oVisible], "The invisible item is excluded");
+});
+
+QUnit.test("_getSelectableItems skips group headers even when the parent defines handleSelectionFromList", function (assert) {
+	// Arrange - a parent that manages selection itself (ComboBox/MultiComboBox-like)
+	var oHeader = new GroupHeaderListItem({ title: "Group" }),
+		oItem1 = new StandardListItem({ title: "Item 1" });
+	this.oList.addItem(oHeader).addItem(oItem1);
+
+	var oComboBoxLikeParent = { handleSelectionFromList: function () {} };
+
+	// Act
+	var aSelectable = this.oSuggPopover._getSelectableItems(oComboBoxLikeParent);
+
+	// Assert
+	assert.strictEqual(aSelectable.length, 1, "Only the regular item is selectable");
+	assert.strictEqual(aSelectable.indexOf(oHeader), -1, "The group header is skipped even for ComboBox-like parents");
+});
+
+QUnit.test("Arrow Up on the first selectable item returns to the input (group header not focused)", function (assert) {
+	// Arrange - header + two items; selectable set excludes the header
+	var oHeader = new GroupHeaderListItem({ title: "Group" }),
+		oItem1 = new StandardListItem({ title: "Item 1" }),
+		oItem2 = new StandardListItem({ title: "Item 2" });
+	this.oList.addItem(oHeader).addItem(oItem1).addItem(oItem2);
+
+	var aSelectable = this.oSuggPopover._getSelectableItems(this.oInput);
+
+	// Act - focus is on the first selectable item, press Up
+	var oNewItem = this.oSuggPopover.handleArrowUp(aSelectable, 0, false);
+
+	// Assert - no item returned => focus goes back to the input, no group header in between
+	assert.strictEqual(oNewItem, undefined, "Up on the first item returns nothing (focus back on the input)");
+});
+
+QUnit.test("Arrow Down on the last selectable item stays there (grouped list)", function (assert) {
+	// Arrange
+	var oHeader = new GroupHeaderListItem({ title: "Group" }),
+		oItem1 = new StandardListItem({ title: "Item 1" }),
+		oItem2 = new StandardListItem({ title: "Item 2" });
+	this.oList.addItem(oHeader).addItem(oItem1).addItem(oItem2);
+
+	var aSelectable = this.oSuggPopover._getSelectableItems(this.oInput);
+
+	// Act - focus is on the last selectable item, press Down (no typeahead)
+	var oNewItem = this.oSuggPopover.handleArrowDown(aSelectable, aSelectable.length - 1, false, false);
+
+	// Assert - stays on the last item, does not fall onto a following group header
+	assert.strictEqual(oNewItem, aSelectable[aSelectable.length - 1], "Down on the last item keeps focus there");
+});
+
+QUnit.test("Arrow Down from the input lands on the first item, skipping the leading group header", function (assert) {
+	// Arrange - a list starting with a group header
+	var oHeader = new GroupHeaderListItem({ title: "Group" }),
+		oItem1 = new StandardListItem({ title: "Item 1" }),
+		oItem2 = new StandardListItem({ title: "Item 2" });
+	this.oList.addItem(oHeader).addItem(oItem1).addItem(oItem2);
+
+	var aSelectable = this.oSuggPopover._getSelectableItems(this.oInput);
+
+	// Act - focus is on the input (bFocusInInput = true), no typeahead
+	var oNewItem = this.oSuggPopover.handleArrowDown(aSelectable, -1, true, false);
+
+	// Assert - first real item, not the group header
+	assert.strictEqual(oNewItem, oItem1, "Down from the input focuses the first item, skipping the group header");
 });
 });
