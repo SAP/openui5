@@ -1906,15 +1906,17 @@ sap.ui.define([
 	  * @name sap.ui.core.IAccessKeySupport
 	  * @interface
 	  * @public
+	  * @deprecated As of version 1.154. The concept has been abandoned.
 	  * @ui5-experimental-since 1.104
 	  */
 
 	 /**
-	  * Returns a refence to DOM element to be focused during Access key navigation.
+	  * Returns a reference to DOM element to be focused during Access key navigation.
 	  * If not implemented getFocusDomRef() method is used.
 	  *
 	  * @public
 	  * @function
+	  * @deprecated As of version 1.154. The concept has been abandoned.
 	  * @ui5-experimental-since 1.104
 	  * @name sap.ui.core.IAccessKeySupport.getAccessKeysFocusTarget?
 	  */
@@ -1924,6 +1926,7 @@ sap.ui.define([
 	  *
 	  * @public
 	  * @function
+	  * @deprecated As of version 1.154. The concept has been abandoned.
 	  * @ui5-experimental-since 1.104
 	  * @name sap.ui.core.IAccessKeySupport.onAccKeysHighlightStart?
 	  */
@@ -1933,6 +1936,7 @@ sap.ui.define([
 	  *
 	  * @public
 	  * @function
+	  * @deprecated As of version 1.154. The concept has been abandoned.
 	  * @ui5-experimental-since 1.104
 	  * @name sap.ui.core.IAccessKeySupport.onAccKeysHighlightEnd?
 	  */

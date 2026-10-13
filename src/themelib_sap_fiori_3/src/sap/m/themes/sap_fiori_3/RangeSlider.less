@@ -1,11 +1,11 @@
 /* ================================== */
 /* CSS for control sap.m/RangeSlider  */
-/* Fiori 3 theme                      */
+/* Quartz Light theme                 */
 /* ================================== */
 
 /* overlap */
 .sapMSliderHandle.sapMSliderHandleOverlap {
-	border: 0.125rem solid darken(@sapUiFieldActiveBorderColor, 5);
+	border: 0.125rem solid ~'hsl(from var(--sapField_Active_BorderColor) h s calc(l - 5))';
 }
 
 .sapMRangeSlider.sapMSlider {
@@ -21,7 +21,7 @@
 	}
 
 	.sapMSliderInner .sapMSliderHandle {
-		background: fade(@sapUiButtonBackground, 25);
+		background: ~'hsl(from var(--sapButton_Background) h s l / .25)';
 	}
 
 	.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
@@ -44,7 +44,7 @@
 
 	.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderProgress:hover ~ .sapMSliderHandle,
 	.sapMSliderHandle:hover {
-		background-color: fade(@sapUiButtonHoverBackground, 25);
+		background-color: ~'hsl(from var(--sapButton_Hover_Background) h s l / .25)';
 		border-color: var(--sapButton_Hover_BorderColor);
 	}
 }

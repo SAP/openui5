@@ -2025,6 +2025,18 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/Device'], (jQuery, Device) =>
 						// MODIFIED BY SAP: create the custom taphold event from the original event in order to preserve the properties
 						var oTapholdEvent = $.event.fix(mouseDownEvent);
 						oTapholdEvent.type = "taphold";
+						// MODIFIED BY SAP: copy touch coordinates directly from the native
+						// touchstart's touches[0]. The native TouchEvent does not expose
+						// coordinate properties at the top level.
+						var oTouch = mouseDownEvent && mouseDownEvent.touches && mouseDownEvent.touches[0];
+						if (oTouch) {
+							oTapholdEvent.pageX = oTouch.pageX;
+							oTapholdEvent.pageY = oTouch.pageY;
+							oTapholdEvent.clientX = oTouch.clientX;
+							oTapholdEvent.clientY = oTouch.clientY;
+							oTapholdEvent.screenX = oTouch.screenX;
+							oTapholdEvent.screenY = oTouch.screenY;
+						}
 						triggerCustomEvent( thisObject, "taphold", oTapholdEvent );
 					}, $.event.special.tap.tapholdThreshold );
 				});

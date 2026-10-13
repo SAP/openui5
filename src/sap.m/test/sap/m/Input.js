@@ -20,6 +20,7 @@ sap.ui.define([
   "sap/ui/layout/VerticalLayout",
   "sap/m/HBox",
   "sap/ui/core/library",
+  "sap/ui/core/SeparatorItem",
   "sap/m/List",
   "sap/m/InputListItem"
 ], function(
@@ -44,6 +45,7 @@ sap.ui.define([
   VerticalLayout,
   HBox,
   coreLibrary,
+  SeparatorItem,
   List,
   InputListItem
 ) {
@@ -1149,6 +1151,25 @@ sap.ui.define([
 									  this.setValueState("None");
 									  break;
 							  }
+						  }
+					  }),
+					  new Input({
+						  width: "300px",
+						  placeholder: "Grouped suggestions",
+						  showSuggestion: true,
+						  suggest: function(oEvent) {
+							  var oInput = oEvent.getSource();
+							  var sValue = (oEvent.getParameter("suggestValue") || "").toLowerCase();
+							  oInput.destroySuggestionItems();
+							  oInput.addSuggestionItem(new SeparatorItem({text: "Group A"}));
+							  ["Apple", "Apricot", "Avocado"].filter(function(s){ return s.toLowerCase().indexOf(sValue) === 0; })
+								  .forEach(function(s){ oInput.addSuggestionItem(new Item({text: s})); });
+							  oInput.addSuggestionItem(new SeparatorItem({text: "Group B"}));
+							  ["Almond", "Apple pie", "Anise"].filter(function(s){ return s.toLowerCase().indexOf(sValue) === 0; })
+								  .forEach(function(s){ oInput.addSuggestionItem(new Item({text: s})); });
+							  oInput.addSuggestionItem(new SeparatorItem({text: "Group C"}));
+							  ["Apron", "Amber", "Arrow"].filter(function(s){ return s.toLowerCase().indexOf(sValue) === 0; })
+								  .forEach(function(s){ oInput.addSuggestionItem(new Item({text: s})); });
 						  }
 					  })
 				  ]

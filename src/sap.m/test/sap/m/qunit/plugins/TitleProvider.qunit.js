@@ -381,4 +381,27 @@ sap.ui.define([
 		await nextUIUpdateAndTimeout();
 		assert.equal(this.oTitle.getSelectedCount(), 2, "Selected count is updated when TitleProvider is added to dependents");
 	});
+
+	QUnit.test("Suspended binding", function(assert) {
+		const oBinding = this.getBinding();
+		this.oTitle.setTotalCount(25);
+
+		// Simulate a binding whose root binding is suspended (e.g. sap.ui.model.odata.v4.ODataListBinding),
+		// for which #getCount throws instead of returning a value.
+		const fnOriginalGetRootBinding = oBinding.getRootBinding;
+		oBinding.getRootBinding = () => ({
+			isSuspended: () => true
+		});
+		const oGetCountStub = sinon.stub(oBinding, "getCount").throws(
+			new Error("Must not call method when the binding's root binding is suspended")
+		);
+
+		this.oTitleProvider._updateTitle();
+
+		assert.ok(oGetCountStub.notCalled, "Binding#getCount is not called while the binding is suspended");
+		assert.equal(this.oTitle.getTotalCount(), 25, "Total count is kept unchanged while the binding is suspended");
+
+		oGetCountStub.restore();
+		oBinding.getRootBinding = fnOriginalGetRootBinding;
+	});
 });

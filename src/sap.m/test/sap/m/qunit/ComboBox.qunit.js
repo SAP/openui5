@@ -11907,11 +11907,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Group header's aria-activedescendant reference", function (assert) {
+	QUnit.test("Arrow navigation skips the group header", function (assert) {
 		this.clock = sinon.useFakeTimers();
 		var oGroupHeaderListItem,
-			oFocusDomRef = this.oComboBox.getFocusDomRef(),
-			sExpectedActiveDescendantId;
+			oActiveDescendant,
+			oFocusDomRef = this.oComboBox.getFocusDomRef();
 
 		// arrange
 		this.oComboBox.focus();
@@ -11922,14 +11922,25 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
-		qutils.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
-		this.clock.tick(10); // Allow setTimeout in updateAriaActiveDescendant to execute
 
 		oGroupHeaderListItem = this.oComboBox._getList().getItems()[0];
-		sExpectedActiveDescendantId = oGroupHeaderListItem.getId();
+		assert.ok(oGroupHeaderListItem.isGroupHeader(), "The first list item is the group header.");
+
+		// act - move down through the list; the leading group header must be skipped
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_DOWN);
+		this.clock.tick(10); // Allow setTimeout in updateAriaActiveDescendant to execute
+
+		// assert - activedescendant points at a suggestion item, not the group header
+		oActiveDescendant = Element.getElementById(oFocusDomRef.getAttribute("aria-activedescendant"));
+		assert.ok(oActiveDescendant && !oActiveDescendant.isGroupHeader(), "aria-activedescendant is a suggestion item, not the group header.");
+		assert.notStrictEqual(oFocusDomRef.getAttribute("aria-activedescendant"), oGroupHeaderListItem.getId(), "aria-activedescendant is not the group header.");
+
+		// act - arrow up returns towards the input, never landing on the group header
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
+		this.clock.tick(10);
 
 		// assert
-		assert.strictEqual(this.oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId, "aria-activedescendent is correctly set to the group header");
+		assert.notStrictEqual(oFocusDomRef.getAttribute("aria-activedescendant"), oGroupHeaderListItem.getId(), "aria-activedescendant is never set to the group header.");
 	});
 
 	QUnit.test("Group header shown when filtering", function (assert) {
@@ -11964,8 +11975,8 @@ sap.ui.define([
 
 	QUnit.test("onsapdown when picker opened should move visual focus to the first selectable item (not to the group header)", function (assert) {
 		this.clock = sinon.useFakeTimers();
-		assert.expect(6);
-		var oGroupHeaderItem, aItems, oSelectedItem;
+		assert.expect(4);
+		var oGroupHeaderItem, aItems, oFirstSelectableListItem;
 
 		// arrange
 		this.oComboBox.focus();
@@ -11978,42 +11989,11 @@ sap.ui.define([
 
 		aItems = this.oComboBox._getList().getItems();
 		oGroupHeaderItem = aItems[0];
-		oSelectedItem = aItems[1];
+		oFirstSelectableListItem = ListHelpers.getListItem(ListHelpers.getSelectableItems(this.oComboBox.getItems())[0]);
 
-		assert.notOk(oGroupHeaderItem.hasStyleClass("sapMLIBFocused"), "Visual focus moved to the group header item.");
-		assert.ok(oSelectedItem.hasStyleClass("sapMLIBFocused"), "Visual focus moved to the first item.");
-
-		// assert
-		// no selection was made, the value is empty and the group header has the visual focus
-		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
-		this.fnCheckSelectedItemAndValue(assert, null, "");
-	});
-
-	QUnit.test("onsapdown twice when picker opened should move visual focus to the first item", function (assert) {
-		this.clock = sinon.useFakeTimers();
-		var oExpectedItem = this.oComboBox.getItems()[1],
-			sExpectedValue = "item11",
-			oExpectedListItem, oGroupHeaderListItem;
-
-		// arrange
-		this.oComboBox.focus();
-		this.oComboBox.open();
-		this.clock.tick(500);
-
-		// act
-		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		this.clock.tick(500);
-		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		this.clock.tick(500);
-
-		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
-		oExpectedListItem = ListHelpers.getListItem(oExpectedItem);
-		oGroupHeaderListItem = this.oComboBox._getList().getItems()[0];
-
-
-		// assert
-		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
-		this.fnCheckVisualFocusedMoved(assert, oGroupHeaderListItem, oExpectedListItem);
+		assert.ok(oGroupHeaderItem.isGroupHeader(), "The first list item is the group header.");
+		assert.notOk(oGroupHeaderItem.hasStyleClass("sapMLIBFocused"), "The group header does not get the visual focus.");
+		assert.ok(oFirstSelectableListItem.hasStyleClass("sapMLIBFocused"), "The visual focus is on the first selectable item, skipping the group header.");
 	});
 
 	QUnit.test("onsapdown when key already selected and picker is opened should move visual focus to the next item", function (assert) {
@@ -12131,10 +12111,9 @@ sap.ui.define([
 		assert.ok(this.oComboBox.getSelectedItem() !== null, "The expected item was selected.");
 	});
 
-	QUnit.test("when moving through group header, the user input should stay and be autocompleted", function (assert) {
+	QUnit.test("when moving down past a group header, the header is skipped onto the next real item", function (assert) {
 		this.clock = sinon.useFakeTimers();
-		var oExpectedItem = this.oComboBox.getItems()[3],
-			oExpectedListItem,
+		var oSecondGroupHeaderListItem = ListHelpers.getListItem(this.oComboBox.getItems()[3]),
 			oFakeEvent = {
 				target: {
 					value: "it"
@@ -12144,26 +12123,31 @@ sap.ui.define([
 				},
 				isMarked: function () {
 				}
-			};
+			},
+			oFocusedListItem;
 
 		// arrange
 		this.oComboBox.focus();
 		this.oComboBox.open();
 		this.clock.tick(500);
 
-		oExpectedListItem = ListHelpers.getListItem(oExpectedItem);
-
 		this.oComboBox.oninput(oFakeEvent);
 		this.clock.tick(0);
 
-		// act
+		// act - open selects item11, two downs move item11 -> item12 -> item21, skipping the Group2 header
 		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
 		qutils.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
 
-		// assert
-		assert.strictEqual(this.oComboBox.getFocusDomRef().value, "it", "Text do not change as group header is selected.");
-		assert.strictEqual(jQuery(this.oComboBox.getFocusDomRef()).getSelectedText(), "", "Correct text was selected in the combo box.");
-		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The item has visual focus");
+		oFocusedListItem = this.oComboBox._getList().getItems().filter(function (oItem) {
+			return oItem.hasStyleClass("sapMLIBFocused");
+		})[0];
+
+		// assert - the group header is skipped, focus rests on a real item
+		assert.ok(oSecondGroupHeaderListItem.isGroupHeader(), "The item at index 3 is a group header.");
+		assert.notOk(oSecondGroupHeaderListItem.hasStyleClass("sapMLIBFocused"), "The group header does not receive the visual focus.");
+		assert.ok(oFocusedListItem && !oFocusedListItem.isGroupHeader(), "The visual focus rests on a real item past the group header.");
 	});
 
 	QUnit.test("No double focus when last item before close was group header", function (assert) {

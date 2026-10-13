@@ -417,8 +417,8 @@ function(
 		// Note: Prevent document scrolling when End key is pressed
 		oEvent.preventDefault();
 
-		var aVisibleItems = ListHelpers.getVisibleItems(this.getItems()),
-			oListItem = aVisibleItems.length && ListHelpers.getListItem(aVisibleItems[aVisibleItems.length - 1]);
+		var aSelectableItems = ListHelpers.getSelectableItems(this.getItems()),
+			oListItem = aSelectableItems.length && ListHelpers.getListItem(aSelectableItems[aSelectableItems.length - 1]);
 
 		oListItem && oListItem.focus();
 	};
@@ -448,8 +448,8 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.focusFirstItemInList = function () {
-		var aVisibleItems = ListHelpers.getVisibleItems(this.getItems()),
-			oListItem = aVisibleItems.length && ListHelpers.getListItem(aVisibleItems[0]);
+		var aSelectableItems = ListHelpers.getSelectableItems(this.getItems()),
+			oListItem = aSelectableItems.length && ListHelpers.getListItem(aSelectableItems[0]);
 
 		oListItem && oListItem.focus();
 	};
@@ -2076,8 +2076,8 @@ function(
 				// note: prevent document scrolling when arrow keys are pressed
 				oEvent.preventDefault();
 
-				var aVisibleItems = ListHelpers.getVisibleItems(this.getItems());
-				var oItemFirst = aVisibleItems[0];
+				var aSelectableItems = ListHelpers.getSelectableItems(this.getItems());
+				var oItemFirst = aSelectableItems[0];
 				var oItemCurrent = Element.closestTo(document.activeElement);
 
 				if (oItemCurrent !== ListHelpers.getListItem(oItemFirst)) {
@@ -2331,14 +2331,17 @@ function(
 		var bControlFocussed = Element.closestTo(document.activeElement);
 		var bTokenFocused = bControlFocussed && bControlFocussed.isA("sap.m.Token");
 		var oList = this._getList();
-		var aVisibleItems = oList ? oList.getVisibleItems() : [];
+		var aSelectableListItems = oList ? ListHelpers.getSelectableItems(this.getItems()).map(function (oItem) {
+			return ListHelpers.getListItem(oItem);
+		}) : [];
 
-		if (this.getEditable() && !bInputFocussed && !bTokenFocused && aVisibleItems[this._iFocusedIndex]) {
-			aVisibleItems[this._iFocusedIndex].focus();
+		if (this.getEditable() && !bInputFocussed && !bTokenFocused && aSelectableListItems[this._iFocusedIndex]) {
+			aSelectableListItems[this._iFocusedIndex].focus();
 			this._iFocusedIndex = null;
 		}
 
 		this.manageSelectAllCheckBoxState();
+		this._handleListItemsAccessibility();
 	};
 
 	/**
@@ -3330,6 +3333,9 @@ function(
 		itemsVisibilityHandler(this.getItems(), this.filterItems({ value: sValue, items: aItemsToCheck }));
 		this.manageSelectAllCheckBoxState();
 
+		// run after the filtered items have re-rendered, so re-shown options get fresh positions
+		setTimeout(this._handleListItemsAccessibility.bind(this), 0);
+
 		this._sOldInput = sValue;
 
 		// First do manipulations on list items and then let the list render
@@ -3545,7 +3551,7 @@ function(
 			oItemToFocus = aSelectedItems.length ? ListHelpers.getItemByListItem(this.getItems(), this._getList().getSelectedItems()[0]) : aSelectableItems[0];
 		}
 
-		iItemToFocus = ListHelpers.getVisibleItems(this.getItems()).indexOf(oItemToFocus);
+		iItemToFocus = aSelectableItems.indexOf(oItemToFocus);
 
 		// Set the initial selected index and focus
 		if (oItemNavigation) {
@@ -3851,6 +3857,45 @@ function(
 		var oSelectAllToolbar = this.getSelectAllToolbar();
 
 		return oSelectAllToolbar && oSelectAllToolbar.getContent()[0];
+	};
+
+	/**
+	 * Refreshes the listbox accessibility after each list rendering: <code>aria-posinset</code>/
+	 * <code>aria-setsize</code> on the options and, with select all on, <code>aria-owns</code>.
+	 * Filtering only toggles item visibility without re-rendering the surviving options, so
+	 * these must be recomputed from the filtered selectable items to stay correct.
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._handleListItemsAccessibility = function () {
+		var oList = this._getList(),
+			oListboxDomRef = oList && oList.getItemsContainerDomRef(),
+			oCheckbox = this.getShowSelectAll() && this.getSelectAllCheckbox(),
+			aSelectableItems = ListHelpers.getSelectableItems(this.getItems()),
+			iSetSize = aSelectableItems.length,
+			aOwnedIds = oCheckbox ? [oCheckbox.getId()] : [];
+
+		if (!oListboxDomRef) {
+			return;
+		}
+
+		aSelectableItems.forEach(function (oItem, iIndex) {
+			var oListItem = ListHelpers.getListItem(oItem),
+				oItemDomRef = oListItem.getDomRef();
+
+			aOwnedIds.push(oListItem.getId());
+
+			if (oItemDomRef) {
+				oItemDomRef.setAttribute("aria-posinset", iIndex + 1);
+				oItemDomRef.setAttribute("aria-setsize", iSetSize);
+			}
+		});
+
+		if (oCheckbox) {
+			oListboxDomRef.setAttribute("aria-owns", aOwnedIds.join(" "));
+		} else {
+			oListboxDomRef.removeAttribute("aria-owns");
+		}
 	};
 
 	/**

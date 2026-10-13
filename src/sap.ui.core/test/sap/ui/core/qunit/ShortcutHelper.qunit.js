@@ -446,33 +446,51 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("handleKeydown - Dead key fallback via event.code", function(assert) {
-		assert.expect(1);
-		// On macOS, Ctrl+Option+N produces event.key "Dead" with event.code "KeyN".
-		// handleKeydown should fall back to event.code to identify the physical key.
+	QUnit.test("handleKeydown - macOS Option key produces composed characters", function(assert) {
+		assert.expect(2);
 		var bOriginalMac = Device.os.macintosh;
 		Device.os.macintosh = true;
-
-		var oSpec = ShortcutHelper.getNormalizedShortcutSpec({
-			"default": "Ctrl+Alt+N",
-			"macintosh": "Ctrl+Option+N"
-		});
 
 		// Simulate a left Alt keydown so that the AltGr guard (bLastAltWasLeftAlt) allows the shortcut
 		document.dispatchEvent(new KeyboardEvent("keydown", { keyCode: 18, location: 1 }));
 
-		var e = jQuery.Event("keydown");
-		e.key = "Dead";       // macOS dead key
-		e.code = "KeyN";      // physical key
-		e.ctrlKey = true;
-		e.altKey = true;
-		e.shiftKey = false;
-		e.metaKey = false;
-		e.srcElement = document.createElement("div");
+		// Case 1: Ctrl+Option+N produces event.key "Dead" (accent composition)
+		var oSpecN = ShortcutHelper.getNormalizedShortcutSpec({
+			"default": "Ctrl+Alt+N",
+			"macintosh": "Ctrl+Option+N"
+		});
 
-		ShortcutHelper.handleKeydown(oSpec, "Ctrl+Option+N", function() {
-			assert.ok(true, "shortcut triggered despite Dead key");
-		}, e);
+		var e1 = jQuery.Event("keydown");
+		e1.key = "Dead";       // macOS dead key
+		e1.code = "KeyN";      // physical key
+		e1.ctrlKey = true;
+		e1.altKey = true;
+		e1.shiftKey = false;
+		e1.metaKey = false;
+		e1.srcElement = document.createElement("div");
+
+		ShortcutHelper.handleKeydown(oSpecN, "Ctrl+Option+N", function() {
+			assert.ok(true, "shortcut triggered despite Dead key (Ctrl+Option+N)");
+		}, e1);
+
+		// Case 2: Ctrl+Option+M produces event.key "µ" (special character, not Dead)
+		var oSpecM = ShortcutHelper.getNormalizedShortcutSpec({
+			"default": "Ctrl+Alt+M",
+			"macintosh": "Ctrl+Option+M"
+		});
+
+		var e2 = jQuery.Event("keydown");
+		e2.key = "µ";          // macOS Option+M produces µ
+		e2.code = "KeyM";      // physical key
+		e2.ctrlKey = true;
+		e2.altKey = true;
+		e2.shiftKey = false;
+		e2.metaKey = false;
+		e2.srcElement = document.createElement("div");
+
+		ShortcutHelper.handleKeydown(oSpecM, "Ctrl+Option+M", function() {
+			assert.ok(true, "shortcut triggered despite composed character (Ctrl+Option+M → µ)");
+		}, e2);
 
 		Device.os.macintosh = bOriginalMac;
 	});

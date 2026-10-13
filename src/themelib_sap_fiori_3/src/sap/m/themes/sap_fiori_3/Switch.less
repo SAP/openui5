@@ -28,7 +28,7 @@ html.sap-desktop {
 		left: -0.125rem;
 		bottom: -0.375rem;
 		right: -0.125rem;
-		outline: 1px dotted var(--sapContent_FocusColor);
+		outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	}
 
 	.sapUiSizeCompact {
@@ -108,7 +108,7 @@ html.sap-desktop {
 
 /* Text */
 .sapMSwtText {
-	line-height: 1.25rem;
+	line-height: 1.375rem;
 	width: 1.75rem;
 
 	&.sapMSwtTextOn {
@@ -119,12 +119,44 @@ html.sap-desktop {
 	&.sapMSwtTextOff {
 		margin: 0 0.125rem 0 0;
 		color: var(--sapButton_Track_TextColor);
-		left: 3.8rem;
+		left: 3.8125rem;
 	}
 
 	.sapMSwtLabel {
 		height: 1.25rem;
 		padding: 0;
+	}
+}
+
+.sapMSwt.sapMSwtNoLabel,
+.sapMSwt.sapMSwtAcceptReject {
+
+	&.sapMSwtOn .sapMSwtText.sapMSwtTextOff,
+	&.sapMSwtOff .sapMSwtText.sapMSwtTextOn {
+		display: none;
+	}
+
+	.sapMSwtText .sapMSwtLabel {
+		height: 1.1875rem;
+		line-height: 1.125rem;
+	}
+}
+
+.sapMSwt.sapMSwtNoLabel .sapMSwtText {
+	&.sapMSwtTextOn {
+		left: 1.0625rem;
+	}
+	&.sapMSwtTextOff {
+		left: 2.6875rem;
+	}
+}
+
+.sapMSwt.sapMSwtAcceptReject .sapMSwtText {
+	&.sapMSwtTextOn {
+		left: 0.25rem;
+	}
+	&.sapMSwtTextOff {
+		left: 3.5625rem;
 	}
 }
 
@@ -265,6 +297,15 @@ html.sap-desktop {
 				&.sapMSwtOn .sapMSwtInner {
 					left: -0.88rem;
 				}
+
+				.sapMSwtText {
+					&.sapMSwtTextOn { left: 1.125rem; }
+					&.sapMSwtTextOff { left: 2.375rem; }
+					.sapMSwtLabel {
+						height: 0.9375rem;
+						line-height: 1rem;
+					}
+				}
 			}
 
 			.sapMSwtHandle {
@@ -277,7 +318,7 @@ html.sap-desktop {
 				line-height: 1.25rem;
 
 				&.sapMSwtTextOff {
-					left: 3.5rem;
+					left: 3.4375rem;
 				}
 
 				.sapMSwtLabel {
@@ -291,6 +332,19 @@ html.sap-desktop {
 
 			&.sapMSwtOff .sapMSwtText.sapMSwtTextOn {
 				left: -0.125rem;
+			}
+
+			&.sapMSwtAcceptReject {
+				.sapMSwtText {
+					&.sapMSwtTextOn {
+						left: 0.5rem;
+						top: -0.0625rem;
+					}
+					&.sapMSwtTextOff {
+						left: 3rem;
+						top: -0.0625rem;
+					}
+				}
 			}
 		}
 	}
