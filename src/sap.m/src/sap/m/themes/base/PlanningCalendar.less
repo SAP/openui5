@@ -446,15 +446,16 @@
 html.sap-desktop .sapMPlanCal .sapMTblCellFocusable.sapMPlanCalAppRow:focus,
 .sapMPlanCal .sapMTblCellFocusable.sapMPlanCalAppRow:focus-visible {
 	position: relative;
+	overflow: visible; /* override overflow:clip from .sapMListTblCell so ::after can extend outside */
 	outline: none;
 
 	&::after {
 		content: '';
 		position: absolute;
 		top: 0;
-		left: 0.0625rem;
+		left: -0.1875rem;
 		bottom: 0.0625rem;
-		right: 0.0625rem;
+		right: -0.1875rem;
 		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	}
 }
@@ -468,9 +469,9 @@ html.sap-desktop .sapMPlanCal .sapMLIBFocusable:focus,
 		content: '';
 		position: absolute;
 		top: 0;
-		left: 0.0625rem;
+		left: -0.1875rem;
 		bottom: 0.0625rem;
-		right: 0.0625rem;
+		right: -0.1875rem;
 		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 		pointer-events: none;
 	}

@@ -3,15 +3,14 @@
 /* Horizon theme                 */
 /* ============================= */
 
-@_sap_m_Slider_Height: 2.75rem;
-@_sap_m_Slider_Progress: .125rem;
-@_sap_m_Slider_Progress_Border: 0.0625rem;
-@_sap_m_Slider_Track_Total_Height: @_sap_m_Slider_Progress + (2 * @_sap_m_Slider_Progress_Border);
+.sapUI5Scope {
+	--_sap_m_Slider_Progress: .125rem;
+	--_sap_m_Slider_Track_Total_Height: ~"calc(var(--_sap_m_Slider_Progress) + 2 * var(--_sap_m_Slider_Progress_Border))";
+}
 
 .sapMSlider {
 	display: flex;
 	align-items: center;
-	height: @_sap_m_Slider_Height;
 	padding-top: 0;
 	padding-bottom: 0;
 }
@@ -23,7 +22,7 @@
 	width: 2rem;
 	height: 1.5rem;
 	margin-left: -1rem;
-	top: (@_sap_m_Slider_Track_Total_Height - 1.5rem) / 2 - @_sap_m_Slider_Progress_Border;
+	top: ~"calc((var(--_sap_m_Slider_Track_Total_Height) - 1.5rem) / 2 - var(--_sap_m_Slider_Progress_Border))";
 
 	&::after {
 		font-family: var(--sapContent_IconFontFamily);
@@ -72,17 +71,17 @@ html.sap-desktop .sapMSliderHandle:focus::before,
 .sapMSliderInner {
 	position: relative;
 	background: var(--sapSlider_Background);
-	border: @_sap_m_Slider_Progress_Border solid var(--sapSlider_BorderColor);
-	height: @_sap_m_Slider_Track_Total_Height;
+	border: var(--_sap_m_Slider_Progress_Border) solid var(--sapSlider_BorderColor);
+	height: var(--_sap_m_Slider_Track_Total_Height);
 }
 
 .sapMSliderProgress {
-	top: -@_sap_m_Slider_Progress_Border;
-	inset-inline-start: -@_sap_m_Slider_Progress_Border;
+	top: ~'calc(-1 * var(--_sap_m_Slider_Progress_Border))';
+	inset-inline-start: ~'calc(-1 * var(--_sap_m_Slider_Progress_Border))';
 	background: var(--sapSlider_Selected_Background);
-	border: @_sap_m_Slider_Progress_Border solid var(--sapSlider_Selected_BorderColor);
+	border: var(--_sap_m_Slider_Progress_Border) solid var(--sapSlider_Selected_BorderColor);
 	box-sizing: content-box;
-	height: @_sap_m_Slider_Progress;
+	height: var(--_sap_m_Slider_Progress);
 
 	&::before {
 		content: none;
@@ -99,20 +98,20 @@ html.sap-desktop .sapMSliderHandle:focus::before,
 	content: '';
 	position: absolute;
 	box-sizing: border-box;
-	border: @_sap_m_Slider_Progress_Border solid var(--sapContent_Selected_MeasureIndicatorColor);
+	border: var(--_sap_m_Slider_Progress_Border) solid var(--sapContent_Selected_MeasureIndicatorColor);
 	background-color: var(--sapSlider_Selected_Background);
 	border-radius: 50%;
 	width: 0.5rem;
 	height: 0.5rem;
 	left: -0.875rem;
-	top: (@_sap_m_Slider_Track_Total_Height - 0.5rem) / 2 - @_sap_m_Slider_Progress_Border;
+	top: ~"calc((var(--_sap_m_Slider_Track_Total_Height) - 0.5rem) / 2 - var(--_sap_m_Slider_Progress_Border))";
 }
 
 .sapMSlider::after {
 	content: '';
 	position: absolute;
 	box-sizing: border-box;
-	border: @_sap_m_Slider_Progress_Border solid var(--sapContent_MeasureIndicatorColor);
+	border: var(--_sap_m_Slider_Progress_Border) solid var(--sapContent_MeasureIndicatorColor);
 	background-color: var(--sapContent_MeasureIndicatorColor);
 	border-radius: 50%;
 	width: 0.5rem;
@@ -130,14 +129,14 @@ html.sap-desktop .sapMSliderHandle:focus::before,
 	padding-top: 0.4375rem;
 	height: 1rem;
 	width: 2rem;
-	left: -1rem + @_sap_m_Slider_Progress_Border;
+	left: ~"calc(-1rem + var(--_sap_m_Slider_Progress_Border))";
 	font-size: var(--sapFontSmallSize);
 	color: var(--sapContent_LabelColor);
 }
 
 .sapMSliderTickmarks {
 	height: 1.5rem;
-	top: (@_sap_m_Slider_Track_Total_Height - 1.5rem) / 2 - @_sap_m_Slider_Progress_Border;
+	top: ~"calc((var(--_sap_m_Slider_Track_Total_Height) - 1.5rem) / 2 - var(--_sap_m_Slider_Progress_Border))";
 	display: flex;
 	box-sizing: border-box;
 	align-items: center;
@@ -167,11 +166,11 @@ html.sap-desktop .sapMSliderHandle:focus::before,
 	}
 
 	.sapMSliderTickmarks {
-		top: -0.375rem - @_sap_m_Slider_Progress_Border;
+		top: ~"calc(-0.375rem - var(--_sap_m_Slider_Progress_Border))";
 	}
 
 	.sapMSlider::after {
-		right: .125rem + @_sap_m_Slider_Progress_Border;
+		right: ~"calc(0.125rem + var(--_sap_m_Slider_Progress_Border))";
 	}
 
 	.sapMSliderInner::before {
@@ -182,7 +181,7 @@ html.sap-desktop .sapMSliderHandle:focus::before,
 		width: 1.5rem;
 		height: 1.25rem;
 		margin-left: -0.75rem;
-		top: (@_sap_m_Slider_Track_Total_Height - 1.25rem) / 2 - @_sap_m_Slider_Progress_Border;
+		top: ~"calc((var(--_sap_m_Slider_Track_Total_Height) - 1.25rem) / 2 - var(--_sap_m_Slider_Progress_Border))";
 	}
 
 	.sapMSliderTickLabel .sapMSliderLabel {

@@ -611,10 +611,6 @@ sap.ui.define([
 	});
 
 	QUnit.test('ARIA attributes', async function (assert) {
-
-		var sExpectedAriaRoleDescription = Library.getResourceBundleFor("sap.tnt")
-			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM");
-
 		// roles
 		const oDomRef = this.navigationList.getDomRef();
 
@@ -705,9 +701,6 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 		oItem.getDomRef().querySelector("li a");
 		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), "tree", "aria-haspopup is of correct type when setting different value in collapsed mode");
-
-		//aria-roledescription
-		assert.strictEqual(currentItem.getAttribute('aria-roledescription'), sExpectedAriaRoleDescription, jQuery(currentItem).text() + ' has ARIA attribute roledescription.');
 	});
 
 	QUnit.module("ARIA", {
@@ -1290,11 +1283,7 @@ sap.ui.define([
 		var $groupItem = jQuery(".sapTntNL .sapTntNLISecondLevel a").first();
 		var popover = Element.closestTo($groupItem.closest(".sapMPopover")[0]);
 
-		var sExpectedAriaRoleDescription = Library.getResourceBundleFor("sap.tnt")
-			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE");
-
 		assert.strictEqual($list.getAttribute("role"), "tree", "Role of the popup ul should be menubar");
-		assert.strictEqual($list.getAttribute("aria-roledescription"), sExpectedAriaRoleDescription, "Role description of the popup is as expected");
 
 		assert.strictEqual($InnerListItem.getAttribute("role"), "treeitem", "Role of the popup li should be treeitem");
 
@@ -1441,6 +1430,26 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(sExternalLinkWithTarget2, "External link icon is rendered when href is set and 'target=_blank'");
+
+		// the external link icon carries the "Open Link" tooltip
+		var sExpectedTooltip = Library.getResourceBundleFor("sap.tnt").getText("NAVIGATION_LIST_EXTERNAL_LINK_TOOLTIP");
+		assert.strictEqual(Element.getElementById("groupItem1")._getExternalIcon().getTooltip(), sExpectedTooltip, "External link icon has the 'Open Link' tooltip");
+	});
+
+	QUnit.test("External link icon tooltip on menu item", function (assert) {
+		// Arrange
+		var oMenuItem = new NavigationListMenuItem({
+			text: "External",
+			href: "https://www.sap.com",
+			target: "_blank"
+		});
+		var sExpectedTooltip = Library.getResourceBundleFor("sap.tnt").getText("NAVIGATION_LIST_EXTERNAL_LINK_TOOLTIP");
+
+		// Assert
+		assert.strictEqual(oMenuItem._getExternalLinkIcon().getTooltip(), sExpectedTooltip, "Menu item external link icon has the 'Open Link' tooltip");
+
+		// Clean up
+		oMenuItem.destroy();
 	});
 
 	QUnit.module("Overflow behavior", {

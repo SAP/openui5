@@ -27,7 +27,7 @@ sap.ui.define([
      * @version ${version}
      *
      * @private
-     * @ui5-experimental-since 1.142
+     * @since 1.154
      * @alias sap.ui.mdc.geomap.PropertyHelper
      */
     const PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.geomap.PropertyHelper", {

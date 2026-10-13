@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
-	"sap/tnt/library"
-], function (Lib, library) {
+	"sap/tnt/library",
+	"sap/ui/core/InvisibleText"
+], function (Lib, library, InvisibleText) {
 	"use strict";
 
 	// shortcut for SideNavigationDesign in sap.tnt library
@@ -33,8 +34,12 @@ sap.ui.define([
 
 		this.renderFilterSection(oRM, oControl);
 
+		this.startNavigation(oRM, oControl);
+
 		this.renderFlexibleList(oRM, oControl);
 		this.renderFixedList(oRM, oControl);
+
+		this.endNavigation(oRM);
 
 		this.renderFooter(oRM, oControl);
 
@@ -43,23 +48,16 @@ sap.ui.define([
 
 	SideNavigationRenderer.startSideNavigation = function (oRM, oControl) {
 		const bExpanded = oControl.getExpanded(),
-			sAriaLabel = oControl.getAriaLabel(),
 			sDesign = oControl.getDesign();
 
-		oRM.openStart("nav", oControl)
+		// The outer element is a plain container, not a landmark. The real navigation
+		// landmark is the <div role="navigation"> rendered below the search field (see
+		// startNavigation), so the search field is not part of any navigation landmark.
+		oRM.openStart("div", oControl)
 			.class("sapTntSideNavigation")
 			.class("sapContrast")
 			.class("sapContrastPlus")
-			.accessibilityState(oControl, {
-				roledescription: oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION")
-			})
 			.attr("data-sap-ui-fastnavgroup", "true"); // Define group for F6 handling
-
-		if (sAriaLabel) {
-			oRM.accessibilityState(oControl, {
-				label: sAriaLabel
-			});
-		}
 
 		if (!bExpanded) {
 			oRM.class("sapTntSideNavigationNotExpanded")
@@ -80,7 +78,34 @@ sap.ui.define([
 	};
 
 	SideNavigationRenderer.endSideNavigation = function (oRM) {
-		oRM.close("nav");
+		oRM.close("div");
+	};
+
+	/**
+	 * Opens the navigation landmark that wraps the navigation lists. This landmark sits
+	 * below the search field (so the search is not part of it) and carries the accessible
+	 * label and description of the navigation. During an active search the flexible list is
+	 * merged by the application and rendered as the single list inside this landmark.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager
+	 * @param {sap.tnt.SideNavigation} oControl the SideNavigation control
+	 */
+	SideNavigationRenderer.startNavigation = function (oRM, oControl) {
+		const bExpanded = oControl.getExpanded(),
+			sAriaLabel = oControl.getAriaLabel();
+
+		oRM.openStart("div", `${oControl.getId()}-navigation`)
+			.class("sapTntSideNavigationNavigation")
+			.accessibilityState({
+				role: "navigation",
+				label: sAriaLabel || oRB.getText(bExpanded ? "SIDE_NAVIGATION_LABEL_EXPANDED" : "SIDE_NAVIGATION_LABEL_COLLAPSED"),
+				describedby: InvisibleText.getStaticId("sap.tnt", "SIDE_NAVIGATION_DESCRIPTION")
+			})
+			.openEnd();
+	};
+
+	SideNavigationRenderer.endNavigation = function (oRM) {
+		oRM.close("div");
 	};
 
 	SideNavigationRenderer.renderFlexibleList = function (oRM, oControl) {
@@ -107,11 +132,13 @@ sap.ui.define([
 			return;
 		}
 
+		// The separator is always rendered. When the fixed list is empty - for example because the
+		// application merged everything into the flexible list during a search - the separator and
+		// the empty fixed list are hidden via CSS so nothing floats above an empty region.
 		oRM.openStart("div")
 			.class("sapTntSideNavigationSeparator")
 			.accessibilityState({
 				role: "separator",
-				roledescription: oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION_SEPARATOR"),
 				orientation: "horizontal"
 			})
 			.openEnd()

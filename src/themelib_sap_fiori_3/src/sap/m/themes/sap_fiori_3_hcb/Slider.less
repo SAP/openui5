@@ -3,16 +3,12 @@
 /* Quartz High Contrast Black theme  */
 /* ================================= */
 
-@_sap_m_Slider_Height: 2.75rem;
-@_sap_m_Slider_Progress: .25rem;
-@_sap_m_Slider_Progress_Border: 0.0625rem;
-@_sap_m_Slider_Track_Total_Height: @_sap_m_Slider_Progress + (2 * @_sap_m_Slider_Progress_Border);
 
 .sapMSliderInner {
 	background: var(--sapField_BorderColor);
-	border: @_sap_m_Slider_Progress_Border solid var(--sapSlider_BorderColor);
+	border: var(--_sap_m_Slider_Progress_Border) solid var(--sapSlider_BorderColor);
 	border-radius: 0.375rem;
-	height: @_sap_m_Slider_Track_Total_Height;
+	height: var(--_sap_m_Slider_Track_Total_Height);
 }
 
 .sapMSliderProgress {
@@ -33,7 +29,7 @@
 	width: 1.875rem;
 	height: 1.875rem;
 	margin-left: -0.9375rem;
-	top: (@_sap_m_Slider_Track_Total_Height - 1.875rem) / 2 - @_sap_m_Slider_Progress_Border;
+	top: ~"calc((var(--_sap_m_Slider_Track_Total_Height) - 1.875rem) / 2 - var(--_sap_m_Slider_Progress_Border))";
 
 	&:focus::before {
 		top: -0.3125rem;
@@ -97,7 +93,7 @@
 		width: 1.5rem;
 		height: 1.5rem;
 		margin-left: -0.75rem;
-		top: (@_sap_m_Slider_Track_Total_Height - 1.5rem) / 2 - @_sap_m_Slider_Progress_Border;
+		top: ~"calc((var(--_sap_m_Slider_Track_Total_Height) - 1.5rem) / 2 - var(--_sap_m_Slider_Progress_Border))";
 	}
 
 	.sapMSliderTickLabel .sapMSliderLabel {

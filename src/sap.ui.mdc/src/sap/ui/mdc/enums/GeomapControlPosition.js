@@ -11,7 +11,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
      *
      * @enum {string}
      * @public
-     * @ui5-experimental-since 1.142
+     * @since 1.154
      * @alias sap.ui.mdc.enums.GeomapControlPosition
      */
     const GeomapControlPosition = {

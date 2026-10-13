@@ -1,0 +1,11 @@
+{
+    "lsp": {
+        "stylelint-lsp": {
+            "settings": {
+                "stylelint": {
+                    "validate": ["less", "css", "postcss"]
+                }
+            }
+        }
+    }
+}

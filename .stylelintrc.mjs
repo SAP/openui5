@@ -72,5 +72,8 @@ export default {
     "@stylistic/selector-combinator-space-after": "before",
     "@stylistic/selector-combinator-space-after": "always",
     "@stylistic/declaration-bang-space-before": "always",
-  }
+  },
+  overrides: [
+    {files: ["**/*.less"], customSyntax: "postcss-less"}
+  ]
 };

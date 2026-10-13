@@ -3876,7 +3876,15 @@ sap.ui.define([
 		  * A section of a page, that is important enough to be included in a page summary or table of contents.
 		  * @public
 		  */
-		 Region: "Region"
+		 Region: "Region",
+
+		 /**
+		  * No ARIA role is set on the Panel container. Use this when the Panel is purely
+		  * presentational and should not be exposed as a landmark region.
+		  * @public
+		  * @since 1.154
+		  */
+		 None: "None"
 	 };
 
 	 /**

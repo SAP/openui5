@@ -586,7 +586,6 @@ sap.ui.define([
 				oLinkAriaProps.describedby = this.getId() + TagInvTextSuffix;
 			}
 
-			oLinkAriaProps.roledescription = this._resourceBundleTnt.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM");
 		} else {
 			const aDescribedBy = [];
 
