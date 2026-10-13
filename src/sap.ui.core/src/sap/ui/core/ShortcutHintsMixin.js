@@ -277,7 +277,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl The control to query.
 	 * @returns {string}
 	 * @private
-	 * @ui5-restricted sap.m
+	 * @ui5-restricted sap.m, sap.ui.comp
 	 */
 	ShortcutHintsMixin.getRegisteredShortcutText = function(oControl) {
 		var oMixin = oControl && oControl._shortcutHintsMixin;
