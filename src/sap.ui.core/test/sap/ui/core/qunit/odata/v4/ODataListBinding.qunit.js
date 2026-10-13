@@ -419,7 +419,8 @@ sap.ui.define([
 			.withExactArgs("$$aggregation", "~oAggregation~").returns(false);
 		oBindingMock.expects("hasFilterNone").withExactArgs().returns(false);
 		oBindingMock.expects("isUnchangedParameter").exactly(iCreatedContexts ? 1 : 0)
-			.withExactArgs("$$aggregation", "~oAggregation~", ["search"]).returns(false);
+			.withExactArgs("$$aggregation", "~oAggregation~", ["groupLevels", "search"])
+			.returns(false);
 		oBindingMock.expects("hasPendingChanges").exactly(1 - iCreatedContexts)
 			.withExactArgs().returns(true);
 		oBindingMock.expects("hasEffectivelyKeptAlive").never();
@@ -465,6 +466,71 @@ sap.ui.define([
 		// code under test
 		oBinding.setAggregation("~oAggregation~");
 	});
+
+	//*********************************************************************************************
+[{ // the first case throws an error, ...
+	bInactive : true,
+	bFirstCreateAtEnd : true,
+	oAggregation : {groupLevels : ["Foo"]}
+}, { // ... all other cases not
+	bInactive : false, // no inactive created context
+	bFirstCreateAtEnd : true,
+	oAggregation : {groupLevels : ["Foo"]}
+}, {
+	bInactive : true,
+	bFirstCreateAtEnd : false, // created at start
+	oAggregation : {groupLevels : ["Foo"]}
+}, {
+	bInactive : true,
+	bFirstCreateAtEnd : true,
+	oAggregation : {groupLevels : []} // empty groupLevels
+}, {
+	bInactive : true,
+	bFirstCreateAtEnd : true,
+	oAggregation : {} // no groupLevels
+}].forEach(function (oFixture, i) {
+	QUnit.test("setAggregation: inactive contexts and groupLevels, #" + i, function (assert) {
+		const bError = i === 0;
+		const oBinding = this.bindList("/EMPLOYEES");
+		oBinding.aContexts = [
+			{isInactive : () => false},
+			{isInactive : () => oFixture.bInactive},
+			{isInactive : mustBeMocked}
+		];
+		oBinding.iCreatedContexts = 2;
+		oBinding.bFirstCreateAtEnd = oFixture.bFirstCreateAtEnd;
+
+		const oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("checkTransient").withExactArgs();
+		oBindingMock.expects("isUnchangedParameter")
+			.withExactArgs("$$aggregation", sinon.match.same(oFixture.oAggregation))
+			.returns(false);
+		oBindingMock.expects("hasFilterNone").withExactArgs().returns(false);
+		oBindingMock.expects("isUnchangedParameter")
+			.withExactArgs("$$aggregation", sinon.match.same(oFixture.oAggregation),
+				["groupLevels", "search"])
+			.returns(true);
+		oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
+		oBindingMock.expects("hasEffectivelyKeptAlive").exactly(bError ? 0 : 1)
+			.withExactArgs().returns(false);
+		this.mock(_Helper).expects("clone").exactly(bError ? 0 : 1)
+			.withExactArgs(sinon.match.same(oFixture.oAggregation))
+			.returns("~oAggregation~cloned~");
+		oBindingMock.expects("applyParameters").exactly(bError ? 0 : 1)
+			.withExactArgs({$$aggregation : "~oAggregation~cloned~"}, "");
+
+		if (bError) {
+			assert.throws(function () {
+				// code under test
+				oBinding.setAggregation(oFixture.oAggregation);
+			}, new Error("Must not set groupLevels when having inactive contexts at the end: "
+				+ oBinding));
+		} else {
+			// code under test
+			oBinding.setAggregation(oFixture.oAggregation);
+		}
+	});
+});
 
 	//*********************************************************************************************
 [0, 1, 2].forEach(function (i) {
@@ -513,7 +579,8 @@ sap.ui.define([
 		oBindingMock.expects("isUnchangedParameter")
 			.withExactArgs("$$aggregation", sinon.match.same(oNewAggregation)).returns(false);
 		oBindingMock.expects("isUnchangedParameter").exactly(iCreatedContexts ? 1 : 0)
-			.withExactArgs("$$aggregation", sinon.match.same(oNewAggregation), ["search"])
+			.withExactArgs("$$aggregation", sinon.match.same(oNewAggregation),
+				["groupLevels", "search"])
 			.returns(true);
 		oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
 		oBindingMock.expects("hasEffectivelyKeptAlive").exactly(i === j ? 0 : 1)
