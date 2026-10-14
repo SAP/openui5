@@ -29635,6 +29635,7 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 				$count : true
 			}
 		}" threshold="0" visibleRowCount="5">
+	<Text text="{= %{@$ui5.context.isOutdated} }"/>
 	<Text text="{= %{@$ui5.node.isTotal} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{Country}"/>
@@ -29666,10 +29667,10 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			"/BusinessPartners(Country='A')",
 			"/BusinessPartners(Country='B')",
 			"/BusinessPartners()"
-		], [ // isTotal|level|Country|Id|SalesNumber
-			[true, 1, "A", "", "10"],
-			[true, 1, "B", "", "20"],
-			[true, 0, "", "", "30"]
+		], [ // isOutdated|isTotal|level|Country|Id|SalesNumber
+			[, true, 1, "A", "", "10"],
+			[, true, 1, "B", "", "20"],
+			[, true, 0, "", "", "30"]
 		]);
 
 		this.expectChange("count", "2")
@@ -29712,11 +29713,11 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			"/BusinessPartners(Country='A')",
 			"/BusinessPartners(Country='B')",
 			"/BusinessPartners()"
-		], [ // isTotal|level|Country|Id|SalesNumber
-			[false, 1, "A", "3", "5"],
-			[true, 1, "A", "", "10"],
-			[true, 1, "B", "", "20"],
-			[true, 0, "", "", "35"]
+		], [ // isOutdated|isTotal|level|Country|Id|SalesNumber
+			[, false, 1, "A", "3", "5"],
+			[true, true, 1, "A", "", "10"],
+			[true, true, 1, "B", "", "20"],
+			[false, true, 0, "", "", "35"]
 		]);
 		assert.strictEqual(oCreatedContext0.getPath(), "/BusinessPartners(3)", "check predicate");
 
@@ -29732,12 +29733,12 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			"/BusinessPartners(Country='A')",
 			"/BusinessPartners(Country='B')",
 			"/BusinessPartners()"
-		], [ // isTotal|level|Country|Id|SalesNumber
-			[false, 1, "A", "3", "5"],
-			[false, 1, "", "", ""],
-			[true, 1, "A", "", "10"],
-			[true, 1, "B", "", "20"],
-			[true, 0, "", "", "35"]
+		], [ // isOutdated|isTotal|level|Country|Id|SalesNumber
+			[, false, 1, "A", "3", "5"],
+			[, false, 1, "", "", ""],
+			[true, true, 1, "A", "", "10"],
+			[true, true, 1, "B", "", "20"],
+			[false, true, 0, "", "", "35"]
 		]);
 
 		this.expectRequest("#0 POST BusinessPartners", {
@@ -29766,12 +29767,12 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			"/BusinessPartners(Country='A')",
 			"/BusinessPartners(Country='B')",
 			"/BusinessPartners()"
-		], [ // isTotal|level|Country|Id|SalesNumber
-			[false, 1, "A", "3", "5"],
-			[false, 1, "A", "4", "7"],
-			[true, 1, "A", "", "10"],
-			[true, 1, "B", "", "20"],
-			[true, 0, "", "", "42"]
+		], [ // isOutdated|isTotal|level|Country|Id|SalesNumber
+			[, false, 1, "A", "3", "5"],
+			[, false, 1, "A", "4", "7"],
+			[true, true, 1, "A", "", "10"],
+			[true, true, 1, "B", "", "20"],
+			[false, true, 0, "", "", "42"]
 		]);
 		assert.strictEqual(oCreatedContext1.getPath(), "/BusinessPartners(4)", "check predicate");
 
@@ -29799,12 +29800,12 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			"/BusinessPartners(1)",
 			"/BusinessPartners(Country='B')",
 			"/BusinessPartners()"
-		], [ // isTotal|level|Country|Id|SalesNumber
-			[false, 1, "A", "3", "5"],
-			[false, 1, "A", "4", "7"],
-			[true, 1, "A", "", "10"],
-			[false, 2, "A", "1", "8"],
-			[true, 1, "B", "", "20"]
+		], [ // isOutdated|isTotal|level|Country|Id|SalesNumber
+			[, false, 1, "A", "3", "5"],
+			[, false, 1, "A", "4", "7"],
+			[true, true, 1, "A", "", "10"],
+			[, false, 2, "A", "1", "8"],
+			[true, true, 1, "B", "", "20"]
 		]);
 
 		// code under test
@@ -29818,12 +29819,12 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			oGroupA,
 			"/BusinessPartners(Country='B')",
 			"/BusinessPartners()"
-		], [ // isTotal|level|Country|Id|SalesNumber
-			[false, 1, "A", "3", "5"],
-			[false, 1, "A", "4", "7"],
-			[true, 1, "A", "", "10"],
-			[true, 1, "B", "", "20"],
-			[true, 0, "", "", "42"]
+		], [ // isOutdated|isTotal|level|Country|Id|SalesNumber
+			[, false, 1, "A", "3", "5"],
+			[, false, 1, "A", "4", "7"],
+			[true, true, 1, "A", "", "10"],
+			[true, true, 1, "B", "", "20"],
+			[false, true, 0, "", "", "42"]
 		]);
 		assertIndices(assert, oListBinding.getCurrentContexts(), [-2, -1, 0, 1, 2]);
 
@@ -29843,12 +29844,12 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			"/BusinessPartners(Country='A')",
 			"/BusinessPartners(Country='B')",
 			"/BusinessPartners()"
-		], [ // isTotal|level|Country|Id|SalesNumber
-			[false, 1, "A", "3", "5"],
-			[false, 1, "A", "4", "7"],
-			[false, 1, "C", "", ""],
-			[true, 1, "A", "", "10"],
-			[true, 1, "B", "", "20"]
+		], [ // isOutdated|isTotal|level|Country|Id|SalesNumber
+			[, false, 1, "A", "3", "5"],
+			[, false, 1, "A", "4", "7"],
+			[, false, 1, "C", "", ""],
+			[true, true, 1, "A", "", "10"],
+			[true, true, 1, "B", "", "20"]
 		], 6);
 
 		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
@@ -29879,12 +29880,12 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			"/BusinessPartners(2)",
 			"/BusinessPartners(3)",
 			"/BusinessPartners(4)"
-		], [ // isTotal|level|Country|Id|SalesNumber
-			[false, 1, "C", "", ""],
-			[false, 1, "A", "1", "8"],
-			[false, 1, "B", "2", "20"],
-			[false, 1, "A", "3", "5"],
-			[false, 1, "A", "4", "7"]
+		], [ // isOutdated|isTotal|level|Country|Id|SalesNumber
+			[, false, 1, "C", "", ""],
+			[, false, 1, "A", "1", "8"],
+			[, false, 1, "B", "2", "20"],
+			[, false, 1, "A", "3", "5"],
+			[, false, 1, "A", "4", "7"]
 		], 6);
 	});
 
