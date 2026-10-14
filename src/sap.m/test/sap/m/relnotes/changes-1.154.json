@@ -3,6 +3,31 @@
     "date": "October 2026",
     "notes": [
       {
+        "id": "9434a4dc1a417f44547d166a5b19519179dd9125",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: delegate tabindex fixup to inner button rendering"
+      },
+      {
+        "id": "5363e0bb8e71faddc9ca0e24260412b284f67f65",
+        "type": "FIX",
+        "text": " sap.m.StepInput: null binding value is not written back to model"
+      },
+      {
+        "id": "94e5b65b0144cae9f88a4673d3023fb947cfcbf5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix focus ring overlap in appointments row"
+      },
+      {
+        "id": "35863e14e5975763dbbb438b3c126ef116c3aab1",
+        "type": "FEATURE",
+        "text": " sap.m.Panel: Allow accessibleRole=None"
+      },
+      {
+        "id": "363bf7e1142423ded84551bc0a33aadb2fc9af39",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Correct wrong icon count"
+      },
+      {
         "id": "555f82bbbfaf70a05566adf9546d372cfc4bf66a",
         "type": "FIX",
         "text": " sap.m.NumericInput has correct Application Component now"
@@ -21,6 +46,11 @@
         "id": "1730d4a9d8a638b25c389debd3561b1be4e08e64",
         "type": "FIX",
         "text": " sap.m.IconTabFilter: fix invalid role=\"separator\" inside role=\"tab\""
+      },
+      {
+        "id": "804c8bd7ea8d9e7d0e76147614beb1d00f36643f",
+        "type": "FIX",
+        "text": " sap.m.VariantManagement: fix property resolution in Manage Views with external items binding"
       },
       {
         "id": "17f6cb928378bb7ae4e09fef370abb3a62dc8c9c",

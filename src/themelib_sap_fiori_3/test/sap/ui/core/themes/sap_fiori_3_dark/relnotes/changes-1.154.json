@@ -3,6 +3,16 @@
     "date": "October 2026",
     "notes": [
       {
+        "id": "3411b71c867962f482e9b4557329e91d1863da8c",
+        "type": "FIX",
+        "text": " sap.m.Switch: fix various display glitches"
+      },
+      {
+        "id": "3c4d73ac4b443a56bb6b353de7504e2549f4e249",
+        "type": "FIX",
+        "text": " sap.ui.core: Enable context menu simulation for iPad requesting desktop site"
+      },
+      {
         "id": "ea237cfde91c1d8088b38e578da2763a4217b91b",
         "type": "FEATURE",
         "text": " sap.m.NumericInput - Introduce sap.m.NumericInput"

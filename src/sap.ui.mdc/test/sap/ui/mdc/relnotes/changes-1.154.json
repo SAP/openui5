@@ -3,6 +3,16 @@
     "date": "October 2026",
     "notes": [
       {
+        "id": "60e7718b6c6b0aaccedd5c9a4d0e8d9e29699606",
+        "type": "FEATURE",
+        "text": " MDC Geomap: experimental flag is now removed"
+      },
+      {
+        "id": "522ea60c3b2798ca26ca081f16f4c9f8bb567638",
+        "type": "FIX",
+        "text": " LinkDelegate: drop sap.ui.fl load-time dependencies"
+      },
+      {
         "id": "664a73128ec7387422082fabd5b985ed6ea9efb4",
         "type": "FIX",
         "text": " mdc.ActionToolbarAction: restore disabled-toolbar propagation"

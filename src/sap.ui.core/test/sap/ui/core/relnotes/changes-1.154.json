@@ -3,6 +3,16 @@
     "date": "October 2026",
     "notes": [
       {
+        "id": "e7af2baaeb368e9a2b276352176413a97537e49d",
+        "type": "FIX",
+        "text": " Deprecate sap.ui.core.IAccessKeySupport"
+      },
+      {
+        "id": "3c4d73ac4b443a56bb6b353de7504e2549f4e249",
+        "type": "FIX",
+        "text": " sap.ui.core: Enable context menu simulation for iPad requesting desktop site"
+      },
+      {
         "id": "3bb26ab935ba17428de670815f62a70f7259f869",
         "type": "FIX",
         "text": " TooltipEventTrigger: Fixed failing tests on Safari"

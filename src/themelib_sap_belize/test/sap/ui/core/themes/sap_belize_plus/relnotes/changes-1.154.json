@@ -1,0 +1,12 @@
+{
+  "1.154.0": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "3c4d73ac4b443a56bb6b353de7504e2549f4e249",
+        "type": "FIX",
+        "text": " sap.ui.core: Enable context menu simulation for iPad requesting desktop site"
+      }
+    ]
+  }
+}
