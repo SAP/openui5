@@ -1,6 +1,6 @@
 /* =========================== */
 /* CSS for control sap.m/Menu  */
-/* Quartz Light theme          */
+/* Quartz theme                */
 /* =========================== */
 
 .sapMMenu {
@@ -10,13 +10,13 @@
 	}
 
 	.sapMMenuItem.sapMMenuItemDisabled .sapMMenuItemIcon {
-		opacity: var(--sapContent_DisabledOpacity);
+		opacity: @sapUiContentDisabledOpacity;
 	}
 
 	.sapMMenuItem.sapMMenuItemSubMenuOpen,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
-		background-color: var(--sapList_Hover_SelectionBackground);
+		background-color: @sapUiListSelectionHoverBackground;
 	}
 
 	.sapMMenuItemIcon {
@@ -31,7 +31,8 @@
 		}
 	}
 
-	.sapMMenuItemSubMenu > div::after {
+	.sapMMenuItemSubMenu > div:after {
 		font-size: 0.75rem;
 	}
+
 }

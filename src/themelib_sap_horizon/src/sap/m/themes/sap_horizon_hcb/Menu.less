@@ -4,14 +4,16 @@
 /* ==================================== */
 
 .sapMMenu {
-	box-shadow: var(--sapContent_Shadow1);
+
+	box-shadow: @sapUiContentShadow1;
 
 	.sapMMenuItem.sapMMenuItemSubMenuOpen {
-		background-color: var(--sapList_SelectionBackgroundColor);
+		background-color: @sapUiListSelectionBackgroundColor
 	}
 
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
-		background-color: var(--sapList_Active_Background);
+		background-color: @sapUiListActiveBackground;
 	}
+
 }
