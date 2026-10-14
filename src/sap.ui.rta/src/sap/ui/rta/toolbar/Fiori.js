@@ -61,12 +61,16 @@ sap.ui.define([
 	Fiori.prototype.init = function(...aArgs) {
 		// TODO: Remove, as this does not work in legacy-free
 		this._oRenderer = getFiori2Renderer();
-		this._oFioriHeader = this._oRenderer.getRootControl().getShellHeader();
+		if (this._oRenderer && typeof this._oRenderer.getRootControl === "function") {
+			this._oFioriHeader = this._oRenderer.getRootControl().getShellHeader();
+		} else {
+			Log.warning("sap.ui.rta: the FLP renderer does not provide a root control, the Fiori header will not be hidden");
+		}
 		Adaptation.prototype.init.apply(this, aArgs);
 	};
 
 	Fiori.prototype.show = function(...aArgs) {
-		this._oFioriHeader.addStyleClass(FIORI_HIDDEN_CLASS);
+		this._oFioriHeader?.addStyleClass(FIORI_HIDDEN_CLASS);
 		return Adaptation.prototype.show.apply(this, aArgs);
 	};
 
@@ -104,7 +108,7 @@ sap.ui.define([
 	 */
 	Fiori.prototype.hide = async function(...aArgs) {
 		await Adaptation.prototype.hide.apply(this, aArgs);
-		this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
+		this._oFioriHeader?.removeStyleClass(FIORI_HIDDEN_CLASS);
 	};
 
 	Fiori.prototype._checkLogoSize = function(oLogo, iWidth, iHeight) {
@@ -122,7 +126,7 @@ sap.ui.define([
 
 	Fiori.prototype.destroy = function(...aArgs) {
 		// In case of destroy() without normal hide() call
-		this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
+		this._oFioriHeader?.removeStyleClass(FIORI_HIDDEN_CLASS);
 
 		Adaptation.prototype.destroy.apply(this, aArgs);
 	};

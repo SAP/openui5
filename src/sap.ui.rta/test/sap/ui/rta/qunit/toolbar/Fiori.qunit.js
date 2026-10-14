@@ -169,6 +169,38 @@ sap.ui.define([
 			await this.oToolbar.onFragmentLoaded();
 			assert.notOk(this.oToolbar.getControl("icon"), "then no logo control is created");
 		});
+
+		QUnit.test("when the FLP renderer does not provide a root control", async function(assert) {
+			// The FLP renderer (owned by a different repository) may no longer expose getRootControl().
+			// UI adaptation must still start - only the hiding of the original Fiori header is skipped.
+			Utils.getUshellContainer.returns({
+				async getServiceAsync() {},
+				getRenderer() {
+					return {};
+				}
+			});
+
+			this.oToolbar = new Fiori({
+				ushellApi: this.oUshellApi,
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
+			});
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+
+			assert.notOk(this.oToolbar._oFioriHeader, "then no Fiori header reference is created");
+
+			await this.oToolbar.onFragmentLoaded();
+
+			// show / hide / destroy must not throw even though the Fiori header is not available
+			await this.oToolbar.show();
+			assert.ok(true, "then show does not throw");
+
+			sandbox.stub(Adaptation.prototype, "hide").returns(Promise.resolve());
+			await this.oToolbar.hide();
+			assert.ok(true, "then hide does not throw");
+
+			this.oToolbar.destroy();
+			assert.ok(true, "then destroy does not throw");
+		});
 	});
 
 	QUnit.module("Navigate Back", {
