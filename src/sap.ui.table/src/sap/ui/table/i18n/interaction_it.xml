@@ -76,13 +76,13 @@
 				<p><kbd>Enter</kbd></p>
 				<p>Se il focus è sulla testata del gruppo, viene aperto il menu della testata del gruppo.</p>
 				<p><kbd>Spacebar</kbd></p>
-				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p><span class="emphasis">Se la selezione delle celle è attivata:</span></p>
 				<p>Se il focus è su una cella, viene selezionata la cella con il focus.</p>
 				<p>Se il focus è su un blocco di selezione cella, la selezione delle celle viene rimossa.</p>
 				<p>Se il focus è su una cella e la tabella ha una determinata configurazione del funzionamento di selezione (per selezionare una riga, è possibile selezionare la riga stessa o la casella di controllo se disponibile), invece della riga viene selezionata solo la cella con il focus.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Se il focus è su una cella o sul selettore di riga, attiva/disattiva la selezione della riga corrente.</p>
-				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p><span class="emphasis">Se la selezione delle celle è attivata:</span></p>
 				<p>Se il focus è su un blocco di selezione cella, il blocco viene modificato in una selezione riga. La selezione della cella viene rimossa.</p>
 				<p>A seconda della modalità di selezione della riga può accadere quanto segue:</p>
 				<ul>
@@ -93,7 +93,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
-				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p><span class="emphasis">Se la selezione delle celle è attivata:</span></p>
 				<p>Se il focus è all'interno della tabella e delle celle sono selezionate, la selezione delle celle viene rimossa.</p>
 			</description>
 		</interaction>
@@ -112,7 +112,7 @@
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
 				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante è selezionata, si sposta sulla riga sopra e la selezione viene ampliata fino a questa riga.</p>
 				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, si sposta sulla riga sopra e la selezione viene rimossa per questa riga. </p>
-				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p><span class="emphasis">Se la selezione delle celle è attivata:</span></p>
 				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata e la riga <span class="emphasis">non</span> è selezionata, vengono selezionate la cella con il focus e la cella sopra. Il focus si sposta sulla cella sopra la cella con il focus.</p>
 				<p>Se il focus è su una cella selezionata, passa anche sulla cella sopra e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
@@ -120,21 +120,21 @@
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
 				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante è selezionata, si sposta sulla riga sotto e la selezione viene ampliata fino a questa riga.</p>
 				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, si sposta sulla riga sotto e la selezione viene rimossa per questa riga. </p>
-				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p><span class="emphasis">Se la selezione delle celle è attivata:</span></p>
 				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata e la riga <span class="emphasis">non</span> è selezionata, vengono selezionate la cella con il focus e la cella sotto. Il focus si sposta sulla cella sotto la cella con il focus.</p>
 				<p>Se il focus è su una cella selezionata, passa anche sulla cella sotto e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
 				<p>Se il focus è su un'intestazione colonna, la larghezza della colonna viene aumentata di 1 em. Ciò viene ripetuto se il tasto resta premuto.</p>
-				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p><span class="emphasis">Se la selezione delle celle è attivata:</span></p>
 				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata, vengono selezionate la cella con il focus e la cella a destra. Il focus si sposta sulla cella a destra della cella con il focus.</p>
 				<p>Se il focus è su una cella selezionata, passa anche sulla cella a destra e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
 				<p>Se il focus è su un'intestazione colonna, la larghezza della colonna viene diminuita di 1 em. Ciò viene ripetuto se il tasto resta premuto.</p>
-				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p><span class="emphasis">Se la selezione delle celle è attivata:</span></p>
 				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata, vengono selezionate la cella con il focus e la cella a sinistra. Il focus si sposta sulla cella a sinistra della cella con il focus.</p>
 				<p>Se il focus è su una cella selezionata, passa anche sulla cella a sinistra e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
