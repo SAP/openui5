@@ -167,7 +167,7 @@ function(
 	 * @return {sap.ui.dt.DesignTimeMetadata} oDesignTimeMetadata
 	 * @private
 	 */
-	ElementMover.prototype._getMoveAction = function(oOverlay) {
+	RTAElementMover.prototype._getMoveAction = function(oOverlay) {
 		var oParentAggregationDtMetadata;
 		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
 		if (oParentAggregationOverlay) {
@@ -182,7 +182,7 @@ function(
 	 * @public
 	 * @return {boolean} true if type is movable, false otherwise
 	 */
-	ElementMover.prototype.isMovableType = function() {
+	RTAElementMover.prototype.isMovableType = function() {
 		// real check is part of checkMovable which has the overlay
 		return true;
 	};
