@@ -32222,6 +32222,11 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 	// Refresh the table, it becomes empty. Create two entries in paralell. The grand total is
 	// requested and shown.
 	// JIRA: CPOUI5ODATAV4-3672
+	//
+	// Create an inactive context, delete a persisted entry (which refreshes the grand total), and
+	// perform a side-effects refresh on the whole list in parallel. The processing of the separate
+	// grand total refresh is skipped due to the pending side-effects refresh.
+	// SNOW: DINC1076734
 	QUnit.test("Data Aggregation: create before read is finished", async function (assert) {
 		const oModel = this.createAggregationModel({autoExpandSelect : true},
 			/*bExpandAfterConcatSupported*/true);
@@ -32384,6 +32389,45 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			[, false, "3", "A1", "200"],
 			[, false, "4", "B1", "300"],
 			[false, true, "", "", "500"]
+		]);
+
+		// code under test (SNOW: DINC1076734)
+		const oInactive = oListBinding.create({Region : "C0"}, /*bSkipRefresh*/true,
+			/*bAtEnd*/true, /*bInactive*/true);
+
+		await this.waitForChanges(assert, "create inactive");
+
+		this.expectRequest("DELETE BusinessPartners(3)")
+			.expectRequest("BusinessPartners?$apply=aggregate(SalesAmount)", {
+				value : [{SalesAmount : "n/a"}]
+			})
+			.expectRequest("BusinessPartners?$apply=filter(not (Id eq 3))"
+				+ "/concat(aggregate(SalesAmount),concat(aggregate($count as UI5__count),top(1)))"
+				+ "&$select=Id,Region,SalesAmount,UI5__count", {
+				value : [
+					{SalesAmount : "300", "SalesAmount@odata.type" : "#Decimal"},
+					{UI5__count : "1", "UI5__count@odata.type" : "#Decimal"},
+					{Id : 4, Region : "B1", SalesAmount : "300"}
+				]
+			})
+			.expectChange("isOutdatedHeader", false)
+			.expectChange("region", ["C0"]); // was not visible before
+
+		await Promise.all([
+			// code under test (SNOW: DINC1076734)
+			oCreatedContext2.delete(),
+			oListBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "delete")
+		]);
+
+		checkTable("after delete", assert, oTable, [
+			oInactive,
+			"/BusinessPartners(4)",
+			"/BusinessPartners()"
+		], [ // isOutdated|isTotal|Id|Region|SalesAmount
+			[, false, "", "C0", ""],
+			[, false, "4", "B1", "300"],
+			[, true, "", "", "300"]
 		]);
 	});
 

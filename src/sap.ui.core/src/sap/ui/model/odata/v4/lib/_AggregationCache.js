@@ -151,6 +151,7 @@ sap.ui.define([
 			this.createCountPromise();
 		}
 
+		const iResetCount = this.iResetCount;
 		const fnDelete = oParentCache
 			? oParentCache._delete.bind(oParentCache)
 			: _Cache.prototype._delete.bind(this); // "super" call
@@ -163,7 +164,7 @@ sap.ui.define([
 			this.readCount(this.oRequestor.lockGroup("$auto", this))
 		]).then(() => {
 			this.oTreeState.delete(oElement, this.removeKeptElement.bind(this));
-			if (this.aElements.length === 0) {
+			if (iResetCount !== this.iResetCount) {
 				return; // concurrent side-effects refresh takes care of cleanup
 			}
 
@@ -2433,11 +2434,15 @@ sap.ui.define([
 		const oGroupLock4Request = sGroupId.startsWith("$inactive.")
 			? this.oRequestor.lockGroup(sGroupId.slice(10), oGroupLock.getOwner())
 			: oGroupLock.getUnlockedCopy();
+		const iResetCount = this.iResetCount;
 
 		return this.oRequestor.request("GET", sResourcePathWithQuery, oGroupLock4Request, undefined,
 				undefined, undefined, undefined, undefined, undefined, undefined,
 				{/*mMergeableQueryOptions*/})
 			.then((oResult) => {
+				if (iResetCount !== this.iResetCount) {
+					return; // concurrent side-effects refresh takes care of grand total handling
+				}
 				oGrandTotal = this.aElements.$byPredicate["()"];
 				if (!oGrandTotal) {
 					oGrandTotal = this.oGrandTotalPromise.getResult();
