@@ -956,6 +956,44 @@ sap.ui.define([
 		assert.equal(aSelectedItems[1].getCells()[0].getItems()[0].getText(), "Field 3", "Field 2 is correctly selected");
 	});
 
+	QUnit.test("Check count header is updated after '_filterList' ", function(assert) {
+		// Arrange: 3 selected (key1-3), 3 unselected (key4-6)
+		this.oSelectionPanel.setEnableCount(true);
+		this.oSelectionPanel.setP13nData(this.getTestData());
+		var aColumns = ["Fields", "Test"];
+		this.oSelectionPanel._setPanelColumns(aColumns);
+
+		var oRB = Library.getResourceBundleFor("sap.m");
+
+		var fnGetHeaderText = function() {
+			var oList = this.oSelectionPanel && this.oSelectionPanel._oListControl;
+			var oFirstColumn = oList && oList.getColumns()[0];
+			var oHeader = oFirstColumn && oFirstColumn.getHeader();
+			return oHeader ? oHeader.getText() : null;
+		}.bind(this);
+
+		// Assert initial count: 3 selected out of 6 total
+		assert.equal(fnGetHeaderText(), "Fields " + oRB.getText("p13n.HEADER_COUNT", [3, 6]), "Initial count: 3 selected, 6 visible");
+
+		// Act: filter to show only selected items (3 visible, all selected)
+		this.oSelectionPanel._filterList(true);
+
+		// Assert: count must reflect filtered state — 3 selected out of 3 visible
+		assert.equal(fnGetHeaderText(), "Fields " + oRB.getText("p13n.HEADER_COUNT", [3, 3]), "After 'show selected' filter: 3 selected, 3 visible");
+
+		// Act: filter by search to show only unselected item (0 selected out of 1 visible)
+		this.oSelectionPanel._filterList(false, "Field 4");
+
+		// Assert
+		assert.equal(fnGetHeaderText(), "Fields " + oRB.getText("p13n.HEADER_COUNT", [0, 1]), "After search filter: 0 selected, 1 visible");
+
+		// Act: clear filter
+		this.oSelectionPanel._filterList(false, undefined);
+
+		// Assert: count is back to 3/6
+		assert.equal(fnGetHeaderText(), "Fields " + oRB.getText("p13n.HEADER_COUNT", [3, 6]), "After clearing filter: 3 selected, 6 visible");
+	});
+
 	QUnit.test("Check '_filterList' showSelectedFilters and hideDescriptionFilters are true", function(assert) {
 		// Arrange: Create test data with selected items and redundant items
 		const oTestData = [

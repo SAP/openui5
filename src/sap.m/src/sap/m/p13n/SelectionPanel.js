@@ -476,8 +476,8 @@ sap.ui.define([
 		}
 		this._oListControl.getBinding("items").filter(vFilter);
 
-		// Update the visible items count after filtering
-		this._updateVisibleItemsCount();
+		// Update items count after filtering
+		this._updateCount();
 	};
 
 	SelectionPanel.prototype._onSearchFieldLiveChange = function(oEvent) {
