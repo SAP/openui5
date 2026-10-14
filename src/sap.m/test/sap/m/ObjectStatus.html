@@ -483,7 +483,9 @@
 				template : new sap.m.ObjectStatus({
 					text : "{value}",
 					icon: "{icon}",
-					inverted: "{inverted}"
+					inverted: "{inverted}",
+					state: "{state}",
+					active: "{active}"
 				})
 			}),
 			new sap.ui.table.Column({
@@ -501,7 +503,8 @@
 	});
 
 	var aData = [
-		{value : "Error status", inverted: true, state: "Error", icon: "sap-icon://alert"},
+		{value : "Error status", inverted: true, state: "Error", icon: "sap-icon://alert", active: true},
+		{value : "Error status2", inverted: true, state: "Error", icon: "sap-icon://alert", active: false},
 		{value : "Very very very long status text Very very very long status text Very very very long status text", inverted: false, state: "None", icon: "sap-icon://information"},
 		{value : "Very very very long inverted status text vVery very very long inverted status textVery very very long inverted status text", inverted: true, state: "Warning"},
 		{value : "Some status", inverted: false, state: "Success"}
