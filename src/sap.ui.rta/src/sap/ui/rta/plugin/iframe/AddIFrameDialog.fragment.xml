@@ -55,106 +55,94 @@
 						containerQuery="true"
 						defaultSpan="XL6 L6 M6 S12">
 					<VBox id="sapUiRtaAddIFrameDialog_EditUrl" class="sapUiRtaAddIFrameDialogEditUrl" renderType="Bare">
-						<Label
-							id="sapUiRtaAddIFrameDialog_EditUrlLabel"
-							labelFor="sapUiRtaAddIFrameDialog_EditUrlTA"
-							class="sapUiRtaAddIFrameDialogEditUrlLabel"
-							text="{i18n>IFRAME_ADDIFRAME_DIALOG_EDIT_URL_LABEL}"
-							design="Bold"
-							required="true"
-						/>
+						<Toolbar style="Clear" class="sapUiRtaAddIFrameDialogHeaderToolbar">
+							<Label
+								id="sapUiRtaAddIFrameDialog_EditUrlLabel"
+								labelFor="sapUiRtaAddIFrameDialog_EditUrlTA"
+								class="sapUiRtaAddIFrameDialogEditUrlLabel"
+								text="{i18n>IFRAME_ADDIFRAME_DIALOG_EDIT_URL_LABEL}"
+								design="Bold"
+								required="true"
+							/>
+						</Toolbar>
 						<TextArea
 							id="sapUiRtaAddIFrameDialog_EditUrlTA"
-							class="sapUiTinyMarginTop"
-							fieldGroupIds = "sapUiRtaAddIFrameDialog_EditUrlTA"
+							class="sapUiTinyMarginTop sapUiNoMarginBottom"
+							fieldGroupIds="sapUiRtaAddIFrameDialog_EditUrlTA"
 							ariaLabelledBy="sapUiRtaAddIFrameDialog_EditUrlLabel"
 							valueLiveUpdate="true"
 							value="{dialogInfo>/frameUrl/value}"
+							placeholder="{i18n>IFRAME_ADDIFRAME_DIALOG_URL_PLACEHOLDER}"
 							valueState="{= !!${dialogInfo>/frameUrlError/value} ? 'Error' : 'None'}"
 							valueStateText="{dialogInfo>/frameUrlError/value}"
 							validateFieldGroup=".onValidateUrl"
 							liveChange=".onUrlLiveChange"
-							rows="{= !!${dialogInfo>/showParameters/value} ? 8 : 1 }"
-							growingMaxLines="8"
-							width="100%"
-							growing="true" />
+							width="100%" />
 					</VBox>
-					<VBox id="sapUiRtaAddIFrameDialog_Parameters" class="sapUiRtaAddIFrameDialogEditUrl" alignItems="Start" renderType="Bare">
-						<Button id="sapUiRtaAddIFrameDialog_ShowParametersButton"
-							text="{i18n>IFRAME_ADDIFRAME_DIALOG_SHOW_PARAMETERS_BUTTON_TEXT}"
-							press=".toggleParameterVisibility"
-							class="sapUiRtaAddIFrameDialogShowParametersButton"
-							visible="{= !${dialogInfo>/showParameters/value} }"/>
-						<VBox id="sapUiRtaAddIFrameDialog_Parameters_Selection"
-							visible="{dialogInfo>/showParameters/value}"
-							class="sapUiRtaAddIFrameDialogParameters"
-							renderType="Bare"
+					<VBox id="sapUiRtaAddIFrameDialog_Parameters" class="sapUiRtaAddIFrameDialogEditUrl sapUiRtaAddIFrameDialogParameters" width="100%" renderType="Bare">
+						<Toolbar style="Clear" class="sapUiRtaAddIFrameDialogHeaderToolbar">
+							<Label
+								id="sapUiRtaAddIFrameDialog_ParametersLabel"
+								text="{i18n>IFRAME_ADDIFRAME_DIALOG_PARAMETERS_LABEL}"
+								labelFor="sapUiRtaAddIFrameDialog_ParameterTable"
+								class="sapUiRtaAddIFrameDialogParametersLabel"
+								tooltip="{i18n>IFRAME_ADDIFRAME_DIALOG_PARAMETERS_LABEL}"
+								design="Bold"/>
+							<Button
+								id="sapUiRtaAddIFrameDialog_ParametersInfoButton"
+								icon="sap-icon://message-information"
+								tooltip="{i18n>IFRAME_ADDIFRAME_DIALOG_PARAMETERS_INFO_TOOLTIP}"
+								class="sapUiRtaAddIFrameDialogParametersInfoButton sapUiTinyMarginBegin"
+								press=".onParameterInfoPress"
+								type="Transparent" />
+						</Toolbar>
+						<SearchField
+							id="sapUiRtaAddIFrameDialog_ParametersSearch"
+							ariaLabelledBy="sapUiRtaAddIFrameDialog_ParameterSearchLabel"
+							class="sapUiTinyMarginTop"
+							liveChange=".onLiveChange"
+							showSearchButton="false"
+						/>
+						<ScrollContainer
+							id="sapUiRtaAddIFrameDialog_ParameterScrollContainer"
+							vertical="true"
 						>
-							<HBox id="sapUiRtaAddIFrameDialog_ParametersHeader" class="sapUiRtaAddIFrameParametersHeader" justifyContent="SpaceBetween" alignContent="Center">
-								<Label
-									id="sapUiRtaAddIFrameDialog_ParametersLabel"
-									text="{i18n>IFRAME_ADDIFRAME_DIALOG_PARAMETERS_LABEL}"
-									labelFor="sapUiRtaAddIFrameDialog_ParameterTable"
-									class="sapUiRtaAddIFrameDialogParametersLabel"
-									tooltip="{i18n>IFRAME_ADDIFRAME_DIALOG_PARAMETERS_LABEL}"
-									design="Bold"/>
-								<Button
-									id="sapUiRtaAddIFrameDialog_HideParametersButton"
-									icon="sap-icon://decline"
-									tooltip="{i18n>IFRAME_ADDIFRAME_DIALOG_HIDE_PARAMETERS_TOOLTIP}"
-									class="sapUiRtaAddIFrameDialogHideParametersButton"
-									press=".toggleParameterVisibility"
-									type="Transparent" />
-							</HBox>
-							<SearchField
-								id="sapUiRtaAddIFrameDialog_ParametersSearch"
-								ariaLabelledBy="sapUiRtaAddIFrameDialog_ParameterSearchLabel"
-								class="sapUiTinyMarginTop sapUiTinyMarginBottom"
-								liveChange=".onLiveChange"
-								showSearchButton="false"
-							/>
-							<ScrollContainer
-								id="sapUiRtaAddIFrameDialog_ParameterScrollContainer"
-								height="11rem"
-								vertical="true"
+							<Table
+								id="sapUiRtaAddIFrameDialog_ParameterTable"
+								items="{dialogInfo>/parameters/value}"
+								ariaLabelledBy="sapUiRtaAddIFrameDialog_ParametersLabel"
+								class="sapUiSizeCompact sapUiRtaAddIFrameDialogParameterTable"
+								sticky="ColumnHeaders"
 							>
-								<Table
-									id="sapUiRtaAddIFrameDialog_ParameterTable"
-									items="{dialogInfo>/parameters/value}"
-									ariaLabelledBy="sapUiRtaAddIFrameDialog_ParametersLabel"
-									class="sapUiSizeCompact sapUiRtaAddIFrameDialogParameterTable"
-									sticky="ColumnHeaders"
-								>
-									<columns>
-										<Column>
-											<header>
-												<Label id="sapUiRtaAddIFrameDialog_ParameterLabel" class="sapUiRtaAddIFrameDialogParameterLabel" text="{i18n>IFRAME_ADDIFRAME_DIALOG_TABLE_PARAMETER_LABEL}"/>
-											</header>
-										</Column>
-										<Column>
-											<header>
-												<Label id="sapUiRtaAddIFrameDialog_ValueLabel" class="sapUiRtaAddIFrameDialog_ValueLabel" text="{i18n>IFRAME_ADDIFRAME_DIALOG_TABLE_UI_VALUE_LABEL}"/>
-											</header>
-										</Column>
-									</columns>
-									<items>
-										<ColumnListItem type="Active" press=".onParameterPress">
-											<cells>
-												<Text
-													text="{dialogInfo>label}"
-													tooltip="{dialogInfo>label}"
-												/>
-												<Text
-													text="{dialogInfo>value}"
-													tooltip="{=${dialogInfo>value}.toString()}"
-													wrapping="false"
-												/>
-											</cells>
-										</ColumnListItem>
-									</items>
-								</Table>
-							</ScrollContainer>
-						</VBox>
+								<columns>
+									<Column>
+										<header>
+											<Label id="sapUiRtaAddIFrameDialog_ParameterLabel" class="sapUiRtaAddIFrameDialogParameterLabel" text="{i18n>IFRAME_ADDIFRAME_DIALOG_TABLE_PARAMETER_LABEL}"/>
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Label id="sapUiRtaAddIFrameDialog_ValueLabel" class="sapUiRtaAddIFrameDialog_ValueLabel" text="{i18n>IFRAME_ADDIFRAME_DIALOG_TABLE_UI_VALUE_LABEL}"/>
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active" press=".onParameterPress">
+										<cells>
+											<Text
+												text="{dialogInfo>label}"
+												tooltip="{dialogInfo>label}"
+											/>
+											<Text
+												text="{dialogInfo>value}"
+												tooltip="{=${dialogInfo>value}.toString()}"
+												wrapping="false"
+											/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</ScrollContainer>
 					</VBox>
 				</layout:Grid>
 				<VBox id="sapUiRtaAddIFrameDialog_UrlWarningVBox" class="sapUiSmallMarginBegin sapUiRtaAddIFrameDialogUrlWarningVBox" displayInline="true">
@@ -412,6 +400,16 @@
 			<core:InvisibleText id="sapUiRtaAddIFrameDialog_HeightUnitLabel" text="{i18n>IFRAME_ADDIFRAME_DIALOG_HEIGHT_UNITLABEL}"/>
 			<core:InvisibleText id="sapUiRtaAddIFrameDialog_ParameterSearchLabel" text="{i18n>IFRAME_ADDIFRAME_DIALOG_PARAMETER_SEARCH_LABEL}"/>
 		</content>
+		<dependents>
+			<Popover
+				id="sapUiRtaAddIFrameDialog_ParametersInfoPopover"
+				title="{i18n>IFRAME_ADDIFRAME_DIALOG_PARAMETERS_LABEL}"
+				placement="Auto"
+				contentWidth="20rem"
+				class="sapUiContentPadding sapUiRtaAddIFrameDialogParametersInfoPopover">
+				<Text text="{i18n>IFRAME_ADDIFRAME_DIALOG_PARAMETERS_INFO_TEXT}"/>
+			</Popover>
+		</dependents>
 		<beginButton>
 			<Button
 				id="sapUiRtaAddIFrameDialogSaveButton"

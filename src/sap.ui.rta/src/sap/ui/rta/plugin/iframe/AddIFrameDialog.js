@@ -156,9 +156,6 @@ sap.ui.define([
 			settingsUpdate: {
 				value: false
 			},
-			showParameters: {
-				value: false
-			},
 			allowFocusWithoutUserActivation: {
 				// In update mode, fall back to true to preserve the legacy default for iframes
 				// persisted before this property existed; in add mode, fall back to false so newly

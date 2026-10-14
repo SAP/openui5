@@ -455,7 +455,6 @@ sap.ui.define([
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				const oParameterList = Element.getElementById("sapUiRtaAddIFrameDialog_ParameterTable");
 				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "thisIsSomeUrl");
-				QUnitUtils.triggerEvent("tap", Element.getElementById("sapUiRtaAddIFrameDialog_ShowParametersButton").getFocusDomRef());
 				await nextUIUpdate();
 
 				return new Promise((resolve) => {
@@ -474,6 +473,36 @@ sap.ui.define([
 					QUnitUtils.triggerEvent("tap", oParameterList.getItems()[0].getDomRef());
 				});
 			});
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
+		});
+
+		QUnit.test("When the parameters info button is pressed then an explanation popover is shown", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				const oInfoButton = Element.getElementById("sapUiRtaAddIFrameDialog_ParametersInfoButton");
+				assert.ok(oInfoButton, "then the info button is available");
+				assert.strictEqual(
+					oInfoButton.getIcon(), "sap-icon://message-information",
+					"then it uses the information icon"
+				);
+				assert.strictEqual(
+					oInfoButton.getTooltip(), oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PARAMETERS_INFO_TOOLTIP"),
+					"then it has the correct tooltip"
+				);
+				const oPopover = Element.getElementById("sapUiRtaAddIFrameDialog_ParametersInfoPopover");
+				assert.ok(oPopover, "then the info popover exists as a dependent of the dialog");
+				assert.notOk(oPopover.isOpen(), "then the popover is initially closed");
+				oPopover.attachEventOnce("afterOpen", function() {
+					assert.ok(oPopover.isOpen(), "then the popover opens when the info button is pressed");
+					assert.strictEqual(
+						oPopover.getContent()[0].getText(),
+						oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PARAMETERS_INFO_TEXT"),
+						"then the popover shows the parameters explanation text"
+					);
+					oPopover.close();
+					clickOnCancel();
+				});
+				clickOnButton("sapUiRtaAddIFrameDialog_ParametersInfoButton");
+			}, this);
 			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 

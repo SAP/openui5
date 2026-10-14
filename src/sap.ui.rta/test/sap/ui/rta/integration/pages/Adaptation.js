@@ -537,6 +537,14 @@ sap.ui.define([
 						actions: new Press(),
 						errorMessage: "Did not find the RTA Back button"
 					});
+				},
+				iClickTheAddIFrameParametersInfoButton() {
+					return this.waitFor({
+						id: "sapUiRtaAddIFrameDialog_ParametersInfoButton",
+						controlType: "sap.m.Button",
+						actions: new Press(),
+						errorMessage: "Did not find the Add iFrame parameters info button"
+					});
 				}
 			},
 			assertions: {
@@ -993,6 +1001,18 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Found the Reload Button in the Toolbar");
 						},
 						errorMessage: "Did not find the Reload Button in the Toolbar"
+					});
+				},
+				iShouldSeeTheAddIFrameParametersInfoPopoverAndCloseIt() {
+					return this.waitFor({
+						id: "sapUiRtaAddIFrameDialog_ParametersInfoPopover",
+						controlType: "sap.m.Popover",
+						success(vPopover) {
+							const oPopover = vPopover.length ? vPopover[0] : vPopover;
+							Opa5.assert.ok(oPopover.isOpen(), "The Add iFrame parameters info popover is shown");
+							oPopover.close();
+						},
+						errorMessage: "Did not find the Add iFrame parameters info popover"
 					});
 				}
 			}
