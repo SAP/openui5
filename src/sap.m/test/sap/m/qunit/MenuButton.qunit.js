@@ -1741,6 +1741,39 @@ sap.ui.define([
 		oMenuButton.destroy();
 	});
 
+	QUnit.test("inner button delegates set tabindex and survive null DOM ref", function(assert) {
+		// Prepare
+		const oSplitButton = new SplitButton();
+		oSplitButton.placeAt("content");
+		oCore.applyChanges();
+
+		// Assert delegates already ran during initial rendering
+		assert.strictEqual(oSplitButton._getTextButton().getDomRef().getAttribute("tabindex"), "-1",
+			"text button has tabindex=-1 after rendering");
+		assert.strictEqual(oSplitButton._getArrowButton().getDomRef().getAttribute("tabindex"), "-1",
+			"arrow button has tabindex=-1 after rendering");
+
+		// Assert null guard: fire the delegate with getDomRef stubbed to null
+		const oTextButton = oSplitButton._getTextButton(),
+			oArrowButton = oSplitButton._getArrowButton();
+		let bError = false;
+
+		sinon.stub(oTextButton, "getDomRef").returns(null);
+		sinon.stub(oArrowButton, "getDomRef").returns(null);
+
+		try {
+			oTextButton.fireEvent("AfterRendering");
+			oArrowButton.fireEvent("AfterRendering");
+		} catch (e) {
+			bError = true;
+		}
+
+		assert.notOk(bError, "delegates do not throw when getDomRef returns null");
+
+		// Cleanup
+		oSplitButton.destroy();
+	});
+
 	QUnit.module("IFormContent");
 
 	QUnit.test("Implements sap.ui.core.IFormContent interface", function(assert) {
