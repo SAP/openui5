@@ -1,25 +1,24 @@
-/* =========================== */
-/* CSS for control sap.m/Menu  */
-/* Base theme                  */
-/* =========================== */
+/* ==================================== */
+/* CSS for control sap.m/Menu  			*/
+/* Base theme                           */
+/* ==================================== */
 
-.sapUI5Scope {
-	--_sap_m_Menu_ItmHeightCozy: 2.75rem;
-	--_sap_m_Menu_ItmHeightCompact: 2rem;
-	--_sap_m_Menu_ItmPaddingCozy: 0.625rem;
-	--_sap_m_Menu_ItmPaddingCompact: 0.5rem;
-}
+@_sap_m_Menu_ItmHeightCozy: 2.75rem;
+@_sap_m_Menu_ItmHeightCompact: 2rem;
+@_sap_m_Menu_ItmPaddingCozy: 0.625rem;
+@_sap_m_Menu_ItmPaddingCompact: 0.5rem;
 
 .sapMMenu {
+
 	max-width: 100%;
-	background-color: var(--sapGroup_ContentBackground);
+	background-color: @sapUiGroupContentBackground;
 	cursor: default;
 	outline: none;
 	overflow: hidden;
-	font-family: var(--sapFontFamily);
-	font-size: var(--sapFontSize);
-	color: var(--sapList_TextColor);
-	border-radius: var(--sapElement_BorderCornerRadius);
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiListTextColor;
+	border-radius: @sapUiElementBorderCornerRadius;
 
 	&.sapMPopover .sapMPopoverCont {
 		padding: 0;
@@ -30,21 +29,22 @@
 		margin: 0;
 		display: block;
 		cursor: default;
-		color: var(--sapList_TextColor);
-		font-size: var(--sapFontSize);
-		font-family: var(--sapFontFamily);
+		color: @sapUiListTextColor;
+		font-size: @sapMFontMediumSize;
+		font-family: @sapUiFontFamily;
 	}
 
 	.sapMMenuItem {
 		display: flex;
-		height: var(--_sap_m_Menu_ItmHeightCozy);
+		height: @_sap_m_Menu_ItmHeightCozy;
 		white-space: nowrap;
 		position: relative;
 		align-items: center;
 		flex: 0 0 auto;
-		padding: 0 var(--_sap_m_Menu_ItmPaddingCozy);
+		padding: 0 @_sap_m_Menu_ItmPaddingCozy;
 		-webkit-user-select: none; /* Safari */
-		user-select: none;
+		-ms-user-select: none; /* IE 10 and IE 11 */
+		user-select: none; /* Standard syntax */
 		border-bottom: 0.0625rem solid transparent;
 	}
 
@@ -58,22 +58,22 @@
 	}
 
 	.sapMMenuItem:hover {
-		color: var(--sapList_TextColor);
-		background-color: var(--sapList_Hover_Background);
+		color: @sapUiListTextColor;
+		background-color: @sapUiListHoverBackground;
 	}
 
 	.sapMMenuItem:focus {
-		outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapUiContentFocusColor);
+		outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapUiContentFocusColor;
 		outline-offset: -3px;
-		color: var(--sapList_TextColor);
+		color: @sapUiListTextColor;
 	}
 
 	.sapMMenuItem:hover {
-		background-color: var(--sapList_Hover_Background);
+		background-color: @sapUiListHoverBackground;
 	}
 
 	.sapMMenuItem.sapMMenuItemDisabled {
-		color: var(--sapContent_DisabledTextColor);
+		color: @sapUiContentDisabledTextColor;
 	}
 
 	.sapMMenuItemText {
@@ -86,13 +86,15 @@
 	}
 
 	.sapMMenuItemShortcut {
-		padding-inline: 1rem 0.25rem;
-		color: var(--sapContent_LabelColor);
+		padding-inline-start: 1rem;
+		padding-inline-end: 0.25rem;
+		color: @sapContent_LabelColor;
 		font-weight: normal;
 		text-align: right;
 
 		&:empty {
-			padding-inline: 0 0;
+			padding-inline-start: 0;
+			padding-inline-end: 0;
 		}
 	}
 
@@ -101,14 +103,14 @@
 	}
 
 	.sapMMenuItemSelected {
-		padding-inline: 0.5rem 0;
+		padding-inline-start: 0.5rem;
+		padding-inline-end: 0;
 		font-weight: normal;
 		text-align: center;
-
 		&::after {
-			color: var(--sapSelectedColor);
-			content: '\e05b';
-			font-family: var(--sapContent_IconFontFamily);
+			color: @sapSelectedColor;
+			content: "\e05b";
+			font-family: 'SAP-icons';
 			outline: none;
 			line-height: inherit;
 			padding-inline-end: 0.125rem;
@@ -121,7 +123,7 @@
 		min-width: 1.125rem;
 		max-width: 1.125rem;
 		text-align: center;
-		color: var(--sapContent_NonInteractiveIconColor);
+		color: @sapUiContentNonInteractiveIconColor;
 		padding-inline-end: 0.625rem;
 	}
 
@@ -138,15 +140,14 @@
 	}
 
 	&.sapMDialog .sapMDialogHeader {
-
 		.sapMBarLeft:not(:empty) ~ .sapMBarMiddle > .sapMBarPH {
 			padding-left: 0.25rem;
 		}
 	}
 
 	.sapMMenuItemIcon > .sapUiIcon {
-		line-height: var(--_sap_m_Menu_ItmHeightCozy);
-		font-size: ~'calc(var(--_sap_m_Menu_ItmHeightCozy) / 2 - 0.125rem)';
+		line-height: @_sap_m_Menu_ItmHeightCozy;
+		font-size: @_sap_m_Menu_ItmHeightCozy / 2 - 0.125rem;
 	}
 
 	.sapMMenuItemIcon > .sapUiIcon {
@@ -166,11 +167,12 @@
 
 	.sapMMenuItemDisabled > .sapMMenuItemIcon > img {
 		opacity: 0.5;
+		filter: alpha(opacity=50);
 	}
 
 	.sapMMenuNoIcons > .sapMMenuItem > .sapMMenuItemIcon,
 	.sapMMenuNoIcons > div > .sapMMenuItem > .sapMMenuItemIcon {
-		width: 0;
+		width: 0px;
 		display: none;
 	}
 
@@ -187,10 +189,10 @@
 		padding-inline-end: 0.25rem;
 	}
 
-	.sapMMenuItemSubMenu > div::after {
-		content: '\e066';
-		color: var(--sapContent_NonInteractiveIconColor);
-		font-family: var(--sapContent_IconFontFamily);
+	.sapMMenuItemSubMenu > div:after {
+		content: "\e066";
+		color: @sapUiContentNonInteractiveIconColor;
+		font-family: 'SAP-icons';
 		outline: none;
 		font-size: 1rem;
 	}
@@ -208,64 +210,64 @@
 			margin-top: 1px;
 			margin-bottom: 1px;
 			border-width: 0;
-			border-top: 0.0625rem solid var(--sapGroup_ContentBorderColor);
+			border-top: 0.0625rem solid @sapUiGroupContentBorderColor;
 			height: 1px;
-			color: var(--sapToolbar_SeparatorColor);
+			color: @sapUiToolbarSeparatorColor;
 		}
 	}
 
 	.sapMMenuItem.sapMMenuItemSubMenuOpen {
-		background-color: var(--sapList_SelectionBackgroundColor);
+		background-color: @sapUiListSelectionBackgroundColor;
 	}
 
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
-		background-color: var(--sapList_Hover_SelectionBackground);
+		background-color: @sapUiListHoverSelectionBackground;
 	}
 
 	.sapMMenuItem.sapMMenuItemSubMenuOpen,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
-		border-bottom: 1px solid var(--sapList_SelectionBorderColor);
+		border-bottom: 1px solid @sapUiListSelectionBorderColor;
 	}
 
 	.sapMMenuItem:focus:active,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus:active {
-		color: var(--sapList_Active_TextColor);
-		background-color: var(--sapList_Active_Background);
+		color: @sapUiListActiveTextColor;
+		background-color: @sapUiListActiveBackground;
 	}
 
 	.sapMMenuItem.sapMMenuItemDisabled:hover,
 	.sapMMenuItem.sapMMenuItemDisabled:focus,
 	.sapMMenuItem.sapMMenuItemDisabled:focus:active {
-		color: var(--sapContent_DisabledTextColor);
+		color: @sapUiContentDisabledTextColor;
 		background-color: transparent;
 	}
 
 	.sapMMenuItem.sapMMenuItemDisabled .sapMMenuItemIcon {
-		color: var(--sapContent_DisabledTextColor);
+		color: @sapUiContentDisabledTextColor;
 	}
 
 	.sapMMenuItem:focus:active .sapMMenuItemIcon {
-		color: var(--sapList_Active_TextColor);
+		color: @sapUiListActiveTextColor;
 	}
 
 	.sapMMenuItem.sapMMenuItemDisabled:focus:active .sapMMenuItemIcon {
-		color: var(--sapContent_DisabledTextColor);
+		color: @sapUiContentDisabledTextColor;
 	}
 
 	.sapMMenuNoIcons .sapMMenuItemText {
 		padding-inline-start: 0;
 	}
 
-	.sapMMenuItem:focus .sapMMenuItemSubMenu > div::after,
-	.sapMMenuItem:hover .sapMMenuItemSubMenu > div::after {
-		color: var(--sapContent_NonInteractiveIconColor);
+	.sapMMenuItem:focus .sapMMenuItemSubMenu > div:after,
+	.sapMMenuItem:hover .sapMMenuItemSubMenu > div:after {
+		color: @sapUiContentNonInteractiveIconColor;
 	}
 
-	.sapMMenuItem:focus:active .sapMMenuItemSubMenu > div::after,
-	.sapMMenuItem:hover:active .sapMMenuItemSubMenu > div::after {
-		color: var(--sapList_Active_TextColor);
+	.sapMMenuItem:focus:active .sapMMenuItemSubMenu > div:after,
+	.sapMMenuItem:hover:active .sapMMenuItemSubMenu > div:after {
+		color: @sapUiListActiveTextColor;
 	}
 
 	.sapMMenuItem .sapMMenuItemIcon + .sapMMenuItemText {
@@ -280,8 +282,8 @@
 		}
 
 		.sapMMenuItem {
-			height: var(--_sap_m_Menu_ItmHeightCompact);
-			padding: 0 var(--_sap_m_Menu_ItmPaddingCompact);
+			height: @_sap_m_Menu_ItmHeightCompact;
+			padding: 0 @_sap_m_Menu_ItmPaddingCompact;
 		}
 
 		.sapMMenuNoIcons.sapMMenuNoSubMenu > .sapMMenuItem > .sapMMenuItemText {
@@ -293,11 +295,11 @@
 		}
 
 		.sapMMenuList > .sapMMenuItem > .sapMMenuItemIcon + .sapMMenuItemText {
-			padding-inline-start: 0;
+			padding-inline-start: 0rem;
 		}
 
 		.sapMMenuList.sapMMenuNoIcons > .sapMMenuItem > .sapMMenuItemText,
-		.sapMMenuList.sapMMenuNoIcons > .sapMMenuItem > .sapMMenuItemIcon + .sapMMenuItemText {
+		.sapMMenuList.sapMMenuNoIcons > .sapMMenuItem > .sapMMenuItemIcon + .sapMMenuItemText{
 			padding-inline-start: 0;
 		}
 
@@ -313,19 +315,21 @@
 		}
 
 		.sapMMenuItemIcon > .sapUiIcon {
-			line-height: var(--_sap_m_Menu_ItmHeightCompact);
+			line-height: @_sap_m_Menu_ItmHeightCompact;
 		}
+
 	}
+
 }
 
 /* Occasionally, the .sapUiShd class loads after .sapMMenu, overriding its box-shadow. */
 .sapMMenu,
 .sapMMenu.sapUiShd {
-	box-shadow: var(--sapContent_Shadow1);
+	box-shadow: @sapUiContentShadow1;
 }
 /* mobile view */
 .sapMMenu.sapMDialog > .sapMDialogHeader:last-of-type .sapMIBar {
-	box-shadow: inset 0 -1px #ebebeb;
+    box-shadow: inset 0 -1px #ebebeb;
 }
 
 .sap-phone .sapMMenu .sapMMenuItem:focus {
@@ -337,8 +341,8 @@
 .sapMMenuContextMenuPointer {
 	display: block;
 	position: absolute;
-	inset-block-start: 0;
-	inset-inline-start: 0;
+	inset-block-start: 0px;
+	inset-inline-start: 0px;
 	width: 0;
 	height: 0;
 	z-index: 100;
