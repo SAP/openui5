@@ -113,12 +113,50 @@ sap.ui.define([
 		}
 	};
 
+	const oExampleGenericRender = {
+		"sap.app": {
+			"id": "qunit.analyticscloud.genericrender"
+		},
+		"sap.card": {
+			"type": "AnalyticsCloud",
+			"configuration": {
+				"parameters": {
+					"metricId": {
+						"value": "2FEAE57EEECA4DE484617D6F9B9528E2"
+					}
+				},
+				"destinations": {
+					"SAC": {
+						"name": "SAC",
+						"defaultUrl": "https://master-fpa135.master.canary.eu10.projectorca.cloud"
+					}
+				}
+			},
+			"content": {
+				"minHeight": "10rem",
+				"sacTenantDestination": "{{destinations.SAC}}",
+				"render": {
+					"type": "metric",
+					"payload": {
+						"metricId": "{parameters>/metricId/value}"
+					}
+				},
+				"options": {
+					"attributes": {
+						"useHostTheme": true
+					}
+				}
+			}
+		}
+	};
+
 	QUnit.module("Widget rendering", {
 		beforeEach: function () {
 			this.fnIncludeScriptStub = sinon.stub(AnalyticsCloudHelper, "_includeScript");
 			this.fnIncludeScriptStub.callsFake(() => {
 				sap.sac = {
 					api: {
+						render: sinon.stub(),
 						widget: {
 							setup: sinon.stub(),
 							getWidgetInfo: sinon.stub().callsFake(() => {
@@ -286,6 +324,41 @@ sap.ui.define([
 			},
 			"options.attributes is correct."
 		);
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("Creating a card with a generic render descriptor", async function (assert) {
+		// Arrange
+		const oCard = new Card({
+			manifest: oExampleGenericRender,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources"
+		});
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		// Assert
+		const fnRender = sap.sac.api.render;
+		assert.ok(fnRender.calledOnce, "sap.sac.api.render was called only once.");
+
+		const oArgs = fnRender.firstCall.args;
+		assert.strictEqual(oArgs[0], oCard.getCardContent().getId() + "-widgetContainer", "Container id is correct.");
+		assert.strictEqual(oArgs[1].proxy, "https://master-fpa135.master.canary.eu10.projectorca.cloud", "Destination is correct.");
+		assert.deepEqual(oArgs[2], {
+			type: "metric",
+			payload: { metricId: "2FEAE57EEECA4DE484617D6F9B9528E2" }
+		}, "Opaque render descriptor is forwarded unchanged.");
+		assert.strictEqual(typeof oArgs[3].renderComplete.onSuccess, "function", "options.renderComplete.onSuccess is a function.");
+		assert.strictEqual(typeof oArgs[3].renderComplete.onFailure, "function", "options.renderComplete.onFailure is a function.");
+		assert.strictEqual(oArgs[3].attributes.useHostTheme, true, "Options are forwarded.");
+
+		oArgs[3].renderComplete.onSuccess();
+		assert.notOk(oCard.getCardContent()._oLastConfig, "Last config is cleared after rendering.");
+		assert.notOk(sap.sac.api.widget.getWidgetInfo.called, "Generic rendering does not request widget info.");
 
 		// Clean up
 		oCard.destroy();

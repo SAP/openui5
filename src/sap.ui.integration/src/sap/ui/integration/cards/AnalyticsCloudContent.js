@@ -144,11 +144,18 @@ sap.ui.define([
 		const sContainerId = this._oWidgetContainer.getId();
 		const oWidget = oConfig?.widget;
 		const vInterpretation = oConfig?.interpretation;
-		const oOptions = this._getOptions(oConfig);
+		const oRender = oConfig?.render;
+		const bUseGenericRender = !oWidget && !vInterpretation && !!oRender;
+		const oOptions = this._getOptions(oConfig, bUseGenericRender);
 
 		// Check if the configuration has changed
 		// during rendering the sac widget.
 		if (deepEqual(this._oLastConfig, oConfig)) {
+			return;
+		}
+
+		if (bUseGenericRender && typeof sap.sac.api.render !== "function") {
+			this._showError("Object sap.sac.api.render not found on the page.");
 			return;
 		}
 
@@ -169,8 +176,15 @@ sap.ui.define([
 				vInterpretation,
 				oOptions
 			);
+		} else if (oRender) {
+			sap.sac.api.render(
+				sContainerId,
+				{ proxy: oConfig.sacTenantDestination },
+				oRender,
+				oOptions
+			);
 		} else {
-			this._showError("Required configuration /sap.card/content/widget or /sap.card/content/interpretation was not found or is empty.");
+			this._showError("Required configuration /sap.card/content/widget, /sap.card/content/interpretation, or /sap.card/content/render was not found or is empty.");
 		}
 	};
 
@@ -189,9 +203,10 @@ sap.ui.define([
 	/**
 	 * Gets the options from manifest merged with default options.
 	 * @param {Object} oConfig The content config.
+	 * @param {boolean} bUseGenericRender Whether the generic SAC dispatcher is used.
 	 * @returns {Object} The options.
 	 */
-	AnalyticsCloudContent.prototype._getOptions = function (oConfig) {
+	AnalyticsCloudContent.prototype._getOptions = function (oConfig, bUseGenericRender) {
 		const oOptions = deepClone(oConfig.options) || {};
 		const oDefaultAttributes = {
 			enableInteraction: false,
@@ -203,7 +218,10 @@ sap.ui.define([
 
 		oOptions.attributes = Object.assign({}, oDefaultAttributes, oOptions.attributes);
 
-		oOptions.renderComplete = {
+		oOptions.renderComplete = bUseGenericRender ? {
+			onSuccess: this._onRenderSuccess.bind(this),
+			onFailure: this._onRenderFailure.bind(this)
+		} : {
 			onSuccess: this._onWidgetSuccess.bind(this),
 			onFailure: this._onWidgetFailure.bind(this)
 		};
@@ -219,6 +237,42 @@ sap.ui.define([
 
 		Log.info(`Widget rendered successfully: ${sWidgetId}`, this);
 		this._updateWidgetInfo();
+	};
+
+	/**
+	 * Handles successful rendering through the generic SAC dispatcher.
+	 */
+	AnalyticsCloudContent.prototype._onRenderSuccess = function () {
+		Log.info("Analytics Cloud content rendered successfully through sap.sac.api.render.", this);
+		this._completeRendering();
+	};
+
+	/**
+	 * Handles failed rendering through the generic SAC dispatcher.
+	 * @param {Error|Object|string|null} vError The error returned by the renderer.
+	 */
+	AnalyticsCloudContent.prototype._onRenderFailure = function (vError) {
+		let sError = "There was a failure in sap.sac.api.render.";
+
+		if (vError instanceof Error) {
+			sError += " " + vError.toString();
+			Log.error(vError.stack);
+		} else if (typeof vError === "object") {
+			sError += " " + JSON.stringify(vError);
+		} else if (vError) {
+			sError += " " + vError;
+		}
+
+		Log.error(sError, this);
+		this._completeRendering();
+	};
+
+	/**
+	 * Completes generic rendering without requesting widget metadata.
+	 */
+	AnalyticsCloudContent.prototype._completeRendering = function () {
+		this._oLastConfig = null;
+		this.getCardInstance().scheduleFireStateChanged();
 	};
 
 	/**
