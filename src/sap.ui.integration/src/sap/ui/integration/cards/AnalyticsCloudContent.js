@@ -29,15 +29,11 @@ sap.ui.define([
 
 	const oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
-	// Allowlist of SAC render APIs that a card manifest is permitted to invoke
-	// through the generic "content/render" descriptor. The manifest references
-	// these by their dotted path under sap.sac.api; anything not listed here is
-	// rejected, so a manifest can never invoke an arbitrary function.
-	const mAllowedRenderApis = {
-		"widget.renderWidget": true,
-		"widget.renderWidgetForJustAsk": true,
-		"metrics.renderMetric": true
-	};
+	// Only public SAC render methods can be invoked through a generic descriptor.
+	// Keeping the contract to one namespace and a render-prefixed method prevents
+	// access to APIs such as setup/export while allowing future artifact renderers
+	// without another UI5 change.
+	const rRenderApi = /^(?!(?:constructor|prototype)\.)[A-Za-z][A-Za-z0-9_]*\.render[A-Z][A-Za-z0-9_]*$/;
 
 	// Completion modes a render descriptor may request.
 	// "widgetInfo" runs the sap.sac.api.widget.getWidgetInfo flow afterwards;
@@ -158,7 +154,6 @@ sap.ui.define([
 		}
 
 		const sContainerId = this._oWidgetContainer.getId();
-		const oOptions = this._getOptions(oConfig);
 
 		// Check if the configuration has changed
 		// during rendering the sac widget.
@@ -166,18 +161,27 @@ sap.ui.define([
 			return;
 		}
 
-		this._oLastConfig = oConfig;
-
 		// Normalize whatever the manifest provided (a generic "render" descriptor
 		// or one of the legacy named keys) into a single generic descriptor, then
 		// dispatch it. Adding a new artifact type is a manifest-only change: it just
 		// supplies a different "render" descriptor and needs no change here.
 		const oDescriptor = this._getRenderDescriptor(oConfig);
 		if (!oDescriptor) {
-			this._showError("Required configuration /sap.card/content/render, /sap.card/content/widget, /sap.card/content/metric, or /sap.card/content/interpretation was not found or is empty.");
+			this._showError("Required configuration /sap.card/content/render, /sap.card/content/widget, or /sap.card/content/interpretation was not found or is empty.");
 			return;
 		}
 
+		if (![WIDGET_INFO_COMPLETION, NO_COMPLETION].includes(oDescriptor.completion)) {
+			this._showError(`Render completion '${oDescriptor.completion}' is not supported.`);
+			return;
+		}
+
+		if (oDescriptor.args !== undefined && !Array.isArray(oDescriptor.args)) {
+			this._showError("Render descriptor 'args' must be an array.");
+			return;
+		}
+
+		const oOptions = this._getOptions(oConfig, oDescriptor);
 		this._dispatchRender(oDescriptor, oConfig, sContainerId, oOptions);
 	};
 
@@ -185,8 +189,8 @@ sap.ui.define([
 	 * Builds a generic render descriptor from the content configuration.
 	 *
 	 * Prefers an explicit generic <code>content/render</code> descriptor. For
-	 * backward compatibility, the legacy <code>widget</code>, <code>metric</code>,
-	 * and <code>interpretation</code> keys are mapped onto the same descriptor
+	 * backward compatibility, the legacy <code>widget</code> and
+	 * <code>interpretation</code> keys are mapped onto the same descriptor
 	 * shape so existing manifests keep working unchanged.
 	 *
 	 * @param {Object} oConfig The resolved content config.
@@ -201,23 +205,15 @@ sap.ui.define([
 		if (oConfig.widget) {
 			return {
 				api: "widget.renderWidget",
-				args: ["$container", "$destination", oConfig.widget.storyId, oConfig.widget.widgetId, "$options"],
+				args: [oConfig.widget.storyId, oConfig.widget.widgetId],
 				completion: WIDGET_INFO_COMPLETION
-			};
-		}
-
-		if (oConfig.metric) {
-			return {
-				api: "metrics.renderMetric",
-				args: ["$container", "$destination", oConfig.metric.metricId, "$options"],
-				completion: NO_COMPLETION
 			};
 		}
 
 		if (oConfig.interpretation) {
 			return {
 				api: "widget.renderWidgetForJustAsk",
-				args: ["$container", "$destination", oConfig.interpretation, "$options"],
+				args: [oConfig.interpretation],
 				completion: WIDGET_INFO_COMPLETION
 			};
 		}
@@ -228,10 +224,9 @@ sap.ui.define([
 	/**
 	 * Dispatches a generic render descriptor to the referenced SAC API.
 	 *
-	 * The descriptor's <code>api</code> is resolved against an allowlist on
-	 * <code>sap.sac.api</code>; its <code>args</code> are built by substituting the
-	 * card-owned placeholders <code>$container</code>, <code>$destination</code>,
-	 * and <code>$options</code>; and completion is driven by <code>completion</code>.
+	 * The descriptor's <code>api</code> must identify a public render method on
+	 * <code>sap.sac.api</code>. The card supplies the container, destination, and
+	 * options around the descriptor's artifact-specific <code>args</code>.
 	 *
 	 * @param {{api: string, args: Array, completion: string}} oDescriptor The render descriptor.
 	 * @param {Object} oConfig The resolved content config.
@@ -241,8 +236,8 @@ sap.ui.define([
 	AnalyticsCloudContent.prototype._dispatchRender = function (oDescriptor, oConfig, sContainerId, oOptions) {
 		const sApi = oDescriptor.api;
 
-		if (!mAllowedRenderApis[sApi]) {
-			this._showError(`Render API '${sApi}' is not allowed. Allowed APIs: ${Object.keys(mAllowedRenderApis).join(", ")}.`);
+		if (typeof sApi !== "string" || !rRenderApi.test(sApi)) {
+			this._showError(`Render API '${sApi}' is not allowed. Expected '<namespace>.render<Method>'.`);
 			return;
 		}
 
@@ -252,21 +247,20 @@ sap.ui.define([
 			return;
 		}
 
-		const oPlaceholders = {
-			$container: sContainerId,
-			$destination: { proxy: oConfig.sacTenantDestination },
-			$options: oOptions
-		};
-		const aArgs = (oDescriptor.args || []).map((vArg) => {
-			return Object.hasOwn(oPlaceholders, vArg) ? oPlaceholders[vArg] : vArg;
-		});
+		const aArgs = [
+			sContainerId,
+			{ proxy: oConfig.sacTenantDestination },
+			...(oDescriptor.args || []),
+			oOptions
+		];
 
+		this._oLastConfig = oConfig;
 		fnRender.apply(null, aArgs);
 	};
 
 	/**
 	 * Resolves a dotted API path (e.g. "metrics.renderMetric") against sap.sac.api.
-	 * Only paths present in the allowlist reach this method.
+	 * Only paths matching the render API contract reach this method.
 	 * @param {string} sApi The dotted API path under sap.sac.api.
 	 * @returns {Function|undefined} The resolved function, or undefined.
 	 */
@@ -291,9 +285,10 @@ sap.ui.define([
 	/**
 	 * Gets the options from manifest merged with default options.
 	 * @param {Object} oConfig The content config.
+	 * @param {{api: string, args: Array, completion: string}} oDescriptor The render descriptor.
 	 * @returns {Object} The options.
 	 */
-	AnalyticsCloudContent.prototype._getOptions = function (oConfig) {
+	AnalyticsCloudContent.prototype._getOptions = function (oConfig, oDescriptor) {
 		const oOptions = deepClone(oConfig.options) || {};
 		const oDefaultAttributes = {
 			enableInteraction: false,
@@ -306,11 +301,9 @@ sap.ui.define([
 		oOptions.attributes = Object.assign({}, oDefaultAttributes, oOptions.attributes);
 
 		// Completion is driven by the render descriptor's "completion" mode.
-		// "none" completes without requesting widget metadata; anything else
-		// (default) runs the getWidgetInfo flow after rendering.
-		const sCompletion = this._getRenderDescriptor(oConfig)?.completion;
-
-		oOptions.renderComplete = sCompletion === NO_COMPLETION ? {
+		// "none" completes without requesting widget metadata; "widgetInfo"
+		// runs the getWidgetInfo flow after rendering.
+		oOptions.renderComplete = oDescriptor.completion === NO_COMPLETION ? {
 			onSuccess: this._onRenderSuccess.bind(this),
 			onFailure: this._onRenderFailure.bind(this)
 		} : {
