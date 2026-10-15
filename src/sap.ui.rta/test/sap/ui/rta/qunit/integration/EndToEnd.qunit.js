@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/CombineDialog",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/Device",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	RtaQunitUtils,
@@ -26,7 +25,6 @@ sap.ui.define([
 	CombineDialog,
 	RtaUtils,
 	sinon,
-	Device,
 	FlexTestAPI
 ) {
 	"use strict";
@@ -34,22 +32,6 @@ sap.ui.define([
 	const sandbox = sinon.createSandbox();
 	let oCompCont;
 	let oView;
-
-	function triggerKeydown(oTargetDomRef, iKeyCode, bShiftKey = false, bAltKey = false, bCtrlOrMetaKey = false) {
-		const sCtrlKey = Device.os.macintosh ? "metaKey" : "ctrlKey";
-		const oEvent = new KeyboardEvent("keydown", {
-			keyCode: iKeyCode,
-			which: iKeyCode,
-			shiftKey: bShiftKey,
-			altKey: bAltKey,
-			[sCtrlKey]: bCtrlOrMetaKey,
-			bubbles: true,
-			cancelable: true
-		});
-
-		// Dispatch the event on the target DOM element
-		oTargetDomRef.dispatchEvent(oEvent);
-	}
 
 	QUnit.module("Given RTA is started...", {
 		before() {
@@ -173,9 +155,9 @@ sap.ui.define([
 
 			// to reveal we have to remove the field first (otherwise it would be addViaDelegate)
 			this.oBoundButton35FieldOverlay.focus();
-			triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.ENTER, false, false, false);
+			RtaQunitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.ENTER, { bubbles: true, cancelable: true });
 			this.oBoundButton35FieldOverlay.focus();
-			triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.DELETE);
+			RtaQunitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.DELETE, { bubbles: true, cancelable: true });
 		});
 
 		QUnit.test("when adding a group element via context menu (expanded context menu - addViaDelegate)", function(assert) {
@@ -230,7 +212,7 @@ sap.ui.define([
 
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.focus();
-					triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
+					RtaQunitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, { bubbles: true, cancelable: true });
 					const oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					await nextUIUpdate();
@@ -268,10 +250,10 @@ sap.ui.define([
 			}.bind(this));
 
 			this.oVictimOverlay.focus();
-			triggerKeydown(this.oVictimOverlay.getDomRef(), KeyCodes.ENTER, false, false, false);
+			RtaQunitUtils.triggerKeydown(this.oVictimOverlay.getDomRef(), KeyCodes.ENTER, { bubbles: true, cancelable: true });
 
 			this.oVictimOverlay.focus();
-			triggerKeydown(this.oVictimOverlay.getDomRef(), KeyCodes.DELETE);
+			RtaQunitUtils.triggerKeydown(this.oVictimOverlay.getDomRef(), KeyCodes.DELETE, { bubbles: true, cancelable: true });
 		});
 		QUnit.test("when moving a field (via cut and paste),", function(assert) {
 			const fnDone = assert.async();
@@ -304,10 +286,18 @@ sap.ui.define([
 
 			const oCutPastePlugin = this.oRta.getPlugins().cutPaste;
 
-			triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
+			RtaQunitUtils.triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.X, {
+				ctrlOrMetaKey: true,
+				bubbles: true,
+				cancelable: true
+			});
 			// need to wait until the valid targetzones get marked by the cut action
 			oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function() {
-				triggerKeydown(this.oDatesGroupOverlay.getDomRef(), KeyCodes.V, false, false, true);
+				RtaQunitUtils.triggerKeydown(this.oDatesGroupOverlay.getDomRef(), KeyCodes.V, {
+					ctrlOrMetaKey: true,
+					bubbles: true,
+					cancelable: true
+				});
 			}.bind(this), 0);
 		});
 

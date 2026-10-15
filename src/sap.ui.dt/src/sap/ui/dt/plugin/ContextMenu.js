@@ -543,6 +543,8 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._onKeyUp = function(oEvent) {
 		const oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
+		// on macintosh os cmd-key is used instead of ctrl-key
+		const bCtrlKey = Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
 		// Prevents that the context menu opens after finishing a rename with ENTER
 		if (oEvent.keyCode === KeyCodes.ENTER && oOverlay.getIgnoreEnterKeyUpOnce()) {
 			oOverlay.setIgnoreEnterKeyUpOnce(false);
@@ -553,7 +555,7 @@ sap.ui.define([
 		if ((oEvent.keyCode === KeyCodes.SPACE || oEvent.keyCode === KeyCodes.ENTER) &&
 			(oEvent.shiftKey === false) &&
 			(oEvent.altKey === false) &&
-			(oEvent.ctrlKey === false)) {
+			(bCtrlKey === false)) {
 			if (!this._checkForPluginLock()) {
 				this._openContextMenu(oEvent);
 				oEvent.stopPropagation();
@@ -563,7 +565,7 @@ sap.ui.define([
 		if ((oEvent.keyCode === KeyCodes.F10) &&
 			(oEvent.shiftKey === true) &&
 			(oEvent.altKey === false) &&
-			(oEvent.ctrlKey === false)) {
+			(bCtrlKey === false)) {
 			if (!this._checkForPluginLock()) {
 				this._openContextMenu(oEvent);
 				oEvent.stopPropagation();
@@ -579,10 +581,12 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._onKeyDown = function(oEvent) {
 		const oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
+		// on macintosh os cmd-key is used instead of ctrl-key
+		const bCtrlKey = Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
 		if ((oEvent.keyCode === KeyCodes.SPACE) &&
 			(oEvent.shiftKey === false) &&
 			(oEvent.altKey === false) &&
-			(oEvent.ctrlKey === false)) {
+			(bCtrlKey === false)) {
 			if (oOverlay && oOverlay.isSelectable() && !this._checkForPluginLock()) {
 				oOverlay.setSelected(true);
 				oEvent.stopPropagation();

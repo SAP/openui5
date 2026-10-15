@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ],
 function(
 	Button,
@@ -28,24 +29,11 @@ function(
 	JSONModel,
 	nextUIUpdate,
 	sinon,
-	Device
+	Device,
+	RtaQunitUtils
 ) {
 	"use strict";
 	const oSandbox = sinon.createSandbox();
-
-	function triggerKeydown(oTargetDomRef, iKeyCode, bShiftKey, bAltKey, bCtrlKey, bMetaKey) {
-		const oEvent = new KeyboardEvent("keydown", {
-			keyCode: iKeyCode,
-			which: iKeyCode,
-			shiftKey: bShiftKey || false,
-			altKey: bAltKey || false,
-			// This test module deliberately distinguishes mac and win (meta vs ctrl key)
-			ctrlKey: bCtrlKey || false,
-			metaKey: bMetaKey || false
-		});
-
-		oTargetDomRef.dispatchEvent(oEvent);
-	}
 
 	QUnit.module("Given that a CutPaste is initialized", {
 		async beforeEach(assert) {
@@ -106,28 +94,28 @@ function(
 
 		QUnit.test("when cut is triggered on a button overlay, with macintosh device and metaKey is pushed", function(assert) {
 			Device.os.macintosh = true;
-			triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, false, true);
+			RtaQunitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, { metaKey: true });
 			assert.ok(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the button overlay is marked with the correct style");
 			assert.equal(this.oCutPaste.getElementMover().getMovedOverlay(), this.oButtonOverlay, "then the button overlay is remembered as to be cut");
 		});
 
 		QUnit.test("when cut is triggered on a button overlay, with macintosh device and ctrlKey is pushed", function(assert) {
 			Device.os.macintosh = true;
-			triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true, false);
+			RtaQunitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, { ctrlKey: true });
 			assert.notOk(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the button overlay is marked with the correct style");
 			assert.equal(this.oCutPaste.getElementMover().getMovedOverlay(), undefined, "then the button overlay is undefined");
 		});
 
 		QUnit.test("when cut is triggered on a button overlay, with no macintosh device and ctrlKey is pushed", function(assert) {
 			Device.os.macintosh = false;
-			triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true, false);
+			RtaQunitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, { ctrlKey: true });
 			assert.ok(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the button overlay is marked with the correct style");
 			assert.equal(this.oCutPaste.getElementMover().getMovedOverlay(), this.oButtonOverlay, "then the button overlay is remembered as to be cut");
 		});
 
 		QUnit.test("when cut is triggered on a button overlay, with no macintosh device and metaKey is pushed", function(assert) {
 			Device.os.macintosh = false;
-			triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, false, true);
+			RtaQunitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, { metaKey: true });
 			assert.notOk(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the button overlay is marked with the correct style");
 			assert.equal(this.oCutPaste.getElementMover().getMovedOverlay(), undefined, "then the button overlay is undefined");
 		});
@@ -135,10 +123,10 @@ function(
 		QUnit.test("when cut is triggered on a button overlay and paste is triggered on the last button overlay", function(assert) {
 			var done = assert.async();
 			Device.os.macintosh = false;
-			triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true, false);
+			RtaQunitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, { ctrlKey: true });
 
 			this.oCutPaste.getElementMover().attachValidTargetZonesActivated(function() {
-				triggerKeydown(this.oButton3Overlay.getDomRef(), KeyCodes.V, false, false, true, false);
+				RtaQunitUtils.triggerKeydown(this.oButton3Overlay.getDomRef(), KeyCodes.V, { ctrlKey: true });
 				var aContent = this.oLayout.getContent();
 				assert.equal(aContent.indexOf(this.oButton), 2, "the first Button is at position 2");
 				assert.equal(aContent.indexOf(this.oButton2), 0, "the second Button is at position 0");
@@ -150,10 +138,10 @@ function(
 		QUnit.test("when cut is triggered on a button overlay and paste is triggered on the first button overlay", function(assert) {
 			var done = assert.async();
 			Device.os.macintosh = false;
-			triggerKeydown(this.oButton3Overlay.getDomRef(), KeyCodes.X, false, false, true, false);
+			RtaQunitUtils.triggerKeydown(this.oButton3Overlay.getDomRef(), KeyCodes.X, { ctrlKey: true });
 
 			this.oCutPaste.getElementMover().attachValidTargetZonesActivated(function() {
-				triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.V, false, false, true, false);
+				RtaQunitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.V, { ctrlKey: true });
 				var aContent = this.oLayout.getContent();
 				assert.equal(aContent.indexOf(this.oButton), 0, "the first Button is at position 0");
 				assert.equal(aContent.indexOf(this.oButton2), 2, "the second Button is at position 2");
@@ -164,8 +152,8 @@ function(
 
 		QUnit.test("when cut is triggered on a button overlay and paste is triggered on layout overlay", function(assert) {
 			Device.os.macintosh = false;
-			triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true, false);
-			triggerKeydown(this.oLayoutOverlay.getDomRef(), KeyCodes.V, false, false, true, false);
+			RtaQunitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, { ctrlKey: true });
+			RtaQunitUtils.triggerKeydown(this.oLayoutOverlay.getDomRef(), KeyCodes.V, { ctrlKey: true });
 
 			var aContent = this.oLayout.getContent();
 			assert.equal(aContent.indexOf(this.oButton), 0, "the first Button is at position 0");
@@ -177,7 +165,7 @@ function(
 			Device.os.macintosh = false;
 			var oPasteSpy = sinon.spy(this.oCutPaste, "paste");
 
-			triggerKeydown(this.oLayoutOverlay.getDomRef(), KeyCodes.V, false, false, true, false);
+			RtaQunitUtils.triggerKeydown(this.oLayoutOverlay.getDomRef(), KeyCodes.V, { ctrlKey: true });
 
 			var aContent = this.oLayout.getContent();
 			assert.equal(aContent.indexOf(this.oButton), 0, "the first Button is at position 0");
@@ -315,10 +303,10 @@ function(
 			const oVBox2Overlay = OverlayRegistry.getOverlay(oVBox2);
 			const oSetSpy = oSandbox.spy(oButton1Overlay, "setOngoingMoveInformation");
 			const oResetSpy = oSandbox.spy(oButton1Overlay, "resetOngoingMoveInformation");
-			triggerKeydown(oButton1Overlay.getDomRef(), KeyCodes.X, false, false, true, false);
+			RtaQunitUtils.triggerKeydown(oButton1Overlay.getDomRef(), KeyCodes.X, { ctrlKey: true });
 
 			this.oCutPaste.getElementMover().attachValidTargetZonesActivated(() => {
-				triggerKeydown(oVBox2Overlay.getDomRef(), KeyCodes.V, false, false, true, false);
+				RtaQunitUtils.triggerKeydown(oVBox2Overlay.getDomRef(), KeyCodes.V, { ctrlKey: true });
 
 				assert.strictEqual(oSetSpy.callCount, 1, "then the setOngoingMoveInformation function was called once");
 				assert.deepEqual(oSetSpy.firstCall.args[0], {
@@ -338,10 +326,10 @@ function(
 			const oButton3Overlay = OverlayRegistry.getOverlay(oButton3);
 			const oSetSpy = oSandbox.spy(oButton1Overlay, "setOngoingMoveInformation");
 			const oResetSpy = oSandbox.spy(oButton1Overlay, "resetOngoingMoveInformation");
-			triggerKeydown(oButton1Overlay.getDomRef(), KeyCodes.X, false, false, true, false);
+			RtaQunitUtils.triggerKeydown(oButton1Overlay.getDomRef(), KeyCodes.X, { ctrlKey: true });
 
 			this.oCutPaste.getElementMover().attachValidTargetZonesActivated(() => {
-				triggerKeydown(oButton3Overlay.getDomRef(), KeyCodes.V, false, false, true, false);
+				RtaQunitUtils.triggerKeydown(oButton3Overlay.getDomRef(), KeyCodes.V, { ctrlKey: true });
 
 				assert.strictEqual(oSetSpy.callCount, 1, "then the setOngoingMoveInformation function was called once");
 				assert.deepEqual(oSetSpy.firstCall.args[0], {

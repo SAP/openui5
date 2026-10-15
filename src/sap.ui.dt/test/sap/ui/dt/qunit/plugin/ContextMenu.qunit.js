@@ -836,6 +836,33 @@ sap.ui.define([
 			await openContextMenu.call(this, this.oButton2Overlay, oKeyUpEvent);
 		});
 
+		QUnit.test("Testing onKeyUp function with CMD+ENTER on macintosh (contextMenu must not open)", function(assert) {
+			sandbox.stub(Device, "os").value({ ...Device.os, macintosh: true });
+			const oOpenSpy = sandbox.spy(this.oContextMenuPlugin, "open");
+			const oKeyUpEvent = new KeyboardEvent("keyup", {
+				keyCode: KeyCodes.ENTER,
+				which: KeyCodes.ENTER,
+				metaKey: true
+			});
+			this.oButton2Overlay.getDomRef().dispatchEvent(oKeyUpEvent);
+			// on macintosh the meta-key is the equivalent of ctrl-key, so the menu must stay closed
+			assert.strictEqual(oOpenSpy.callCount, 0, "the open function was not triggered");
+		});
+
+		QUnit.test("Testing onKeyUp function with ENTER on macintosh (contextMenu opens)", async function(assert) {
+			sandbox.stub(Device, "os").value({ ...Device.os, macintosh: true });
+			const oOpenSpy = sandbox.spy(this.oContextMenuPlugin, "open");
+			const fnTempListener = () => {
+				assert.strictEqual(oOpenSpy.callCount, 1, "the open function was triggered");
+			};
+			this.oButton2Overlay.attachBrowserEvent("keyup", fnTempListener, this);
+			const oKeyUpEvent = new KeyboardEvent("keyup", {
+				keyCode: KeyCodes.ENTER,
+				which: KeyCodes.ENTER
+			});
+			await openContextMenu.call(this, this.oButton2Overlay, oKeyUpEvent);
+		});
+
 		QUnit.test("Testing onKeyUp function (ENTER) with other plugin busy", function(assert) {
 			const oOpenSpy = sandbox.spy(this.oContextMenuPlugin, "open");
 			const oCheckPluginLockStub = sandbox.stub(this.oContextMenuPlugin, "_checkForPluginLock").returns(true);

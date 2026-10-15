@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/plugin/rename/RenameDialog",
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/Device",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
@@ -39,6 +40,7 @@ sap.ui.define([
 	QUnitUtils,
 	RenameDialog,
 	RuntimeAuthoring,
+	Device,
 	FlexTestAPI,
 	FlQUnitUtils
 ) {
@@ -382,6 +384,65 @@ sap.ui.define([
 				"then every parameter has a description"
 			);
 		});
+	};
+
+	/**
+	 * Dispatches a synthetic <code>keydown</code> event for QUnit tests.
+	 *
+	 * The <code>ctrlOrMetaKey</code> option is platform-aware: it sets <code>metaKey</code> on
+	 * macintosh (CMD) and <code>ctrlKey</code> elsewhere. Modules that must force a specific
+	 * modifier regardless of platform (e.g. to test both branches in one run) can pass
+	 * <code>ctrlKey</code>/<code>metaKey</code> explicitly instead.
+	 *
+	 * @param {HTMLElement} oTargetDomRef - Element to dispatch on (ignored when <code>onDocument</code> is set)
+	 * @param {int} iKeyCode - Key code, see {@link sap.ui.events.KeyCodes}
+	 * @param {object} [mOptions] - Modifier and dispatch options
+	 * @param {boolean} [mOptions.shiftKey=false] - Whether SHIFT is pressed
+	 * @param {boolean} [mOptions.altKey=false] - Whether ALT is pressed
+	 * @param {boolean} [mOptions.ctrlOrMetaKey=false] - Platform-aware CTRL/CMD; mutually exclusive with ctrlKey/metaKey
+	 * @param {boolean} [mOptions.ctrlKey=false] - Explicit CTRL, regardless of platform
+	 * @param {boolean} [mOptions.metaKey=false] - Explicit CMD/meta, regardless of platform
+	 * @param {boolean} [mOptions.bubbles=false] - Whether the event bubbles
+	 * @param {boolean} [mOptions.cancelable=false] - Whether the event is cancelable
+	 * @param {boolean} [mOptions.onDocument=false] - Dispatch on <code>document</code> instead of <code>oTargetDomRef</code>
+	 */
+	RtaQunitUtils.triggerKeydown = function(oTargetDomRef, iKeyCode, mOptions = {}) {
+		const oParams = {
+			keyCode: iKeyCode,
+			which: iKeyCode,
+			shiftKey: mOptions.shiftKey || false,
+			altKey: mOptions.altKey || false,
+			bubbles: mOptions.bubbles || false,
+			cancelable: mOptions.cancelable || false
+		};
+		if (mOptions.ctrlOrMetaKey) {
+			// on macintosh os cmd-key is used instead of ctrl-key
+			oParams[Device.os.macintosh ? "metaKey" : "ctrlKey"] = true;
+		} else {
+			oParams.ctrlKey = mOptions.ctrlKey || false;
+			oParams.metaKey = mOptions.metaKey || false;
+		}
+		const oTarget = mOptions.onDocument ? document : oTargetDomRef;
+		oTarget.dispatchEvent(new KeyboardEvent("keydown", oParams));
+	};
+
+	/**
+	 * Dispatches the platform undo shortcut (CTRL+Z, or CMD+Z on macintosh) on <code>document</code>.
+	 */
+	RtaQunitUtils.triggerUndo = function() {
+		RtaQunitUtils.triggerKeydown(null, KeyCodes.Z, { ctrlOrMetaKey: true, onDocument: true });
+	};
+
+	/**
+	 * Dispatches the platform redo shortcut (CTRL+Y, or CMD+SHIFT+Z on macintosh) on <code>document</code>.
+	 */
+	RtaQunitUtils.triggerRedo = function() {
+		// on macintosh os the redo shortcut is CMD+SHIFT+Z, on other os it is CTRL+Y
+		if (Device.os.macintosh) {
+			RtaQunitUtils.triggerKeydown(null, KeyCodes.Z, { ctrlOrMetaKey: true, shiftKey: true, onDocument: true });
+		} else {
+			RtaQunitUtils.triggerKeydown(null, KeyCodes.Y, { ctrlKey: true, onDocument: true });
+		}
 	};
 
 	return RtaQunitUtils;
