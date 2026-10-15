@@ -271,7 +271,7 @@ sap.ui.define([
 			this._setHoveredItem(this._getNextFocusableItem(-1, 1), true);
 		} else if (oEvent.keyCode === KeyCodes.END) {
 			// Go to the last selectable item
-			this._setHoveredItem(this._getPrevFocusableItem(this._getItems().length, 1), true);
+			this._setHoveredItem(this._getPrevFocusableItem(this._getVisibleItems().length, 1), true);
 		} else if (oEvent.keyCode === KeyCodes.PAGE_UP) {
 			// Go to the first item in the visible viewport, or to the first item
 			this._navigateToPageItem(iIdx, false);
