@@ -5259,6 +5259,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("readGrandTotal: during side-effects refresh", function () {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			$leafLevelAggregated : false, // see ODataListBinding#fetchFilter
+			aggregate : {
+				bar : {
+					grandTotal : true
+				}
+			}
+		});
+		oCache.aElements[0] = "foo";
+		oCache.aElements.$byPredicate["()"] = {}; // grand total is not outdated
+		Object.freeze(oCache.aElements); // must stay untouched
+
+		this.mock(_AggregationHelper).expects("hasGrandTotal")
+			.withExactArgs(sinon.match.same(oCache.oAggregation.aggregate))
+			.returns(true);
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oCache.oAggregation),
+				sinon.match.same(oCache.mQueryOptions), -1)
+			.returns("~mQueryOptions~");
+		this.mock(this.oRequestor).expects("buildQueryString")
+			.withExactArgs("/Foo", "~mQueryOptions~", false, false, true)
+			.returns("~sQueryString~");
+		const oGroupLock = {
+			getGroupId : mustBeMocked,
+			getUnlockedCopy : mustBeMocked
+		};
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("~sGroupId~");
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
+			.returns("~oGroupLock4Request~");
+		this.mock(this.oRequestor).expects("request")
+			.withExactArgs("GET", "Foo~sQueryString~", "~oGroupLock4Request~", undefined, undefined,
+				undefined, undefined, undefined, undefined, undefined, {/*mMergeableQueryOptions*/})
+			.callsFake(() => {
+				oCache.iResetCount = 1; // => side-effects refresh in progress
+
+				return Promise.resolve({value : ["~newGrandTotal~"]});
+			});
+		this.mock(oCache).expects("addElements").never();
+		this.mock(_Helper).expects("updateExisting").never();
+		this.mock(oCache).expects("setGrandTotalOutdated").never();
+
+		// code under test
+		return oCache.readGrandTotal(oGroupLock);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("setGrandTotalOutdated: no grand total", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {},
 			{hierarchyQualifier : "X"});
@@ -8097,7 +8144,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oCache)).returns("~removeKeptElement~");
 				this.mock(oCache.oTreeState).expects("delete")
 					.withExactArgs("~oElement~", "~removeKeptElement~");
-				oCache.aElements.length = 0; // => side-effects refresh in progress
+				oCache.iResetCount = 1; // => side-effects refresh in progress
 
 				return Promise.resolve();
 			});
