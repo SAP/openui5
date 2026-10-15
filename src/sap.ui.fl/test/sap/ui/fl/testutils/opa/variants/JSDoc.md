@@ -1,11 +1,5 @@
 <a name="onVariantManagement"></a>
 
-> **Note:** `onVariantManagement` is a deprecated alias (since 1.152) kept for cross-repo
-> compatibility. Prefer **`onVariantManagement`**, which is registered against the exact same
-> actions and assertions and drives the same `sap.m.VariantManagement` (used both by V4 control
-> variants and by the V2 comp `SmartVariantManagement`'s inner variant management). All methods
-> below apply identically to `onVariantManagement`.
-
 ## onVariantManagement : <code>object</code>
 **Kind**: global namespace  
 
