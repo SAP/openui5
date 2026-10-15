@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/base/Interface",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
-	"sap/ui/integration/Designtime",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/Destinations",
@@ -32,7 +31,8 @@ sap.ui.define([
 	"./EditorFieldManager",
 	"./EditorTranslation",
 	"./EditorContext",
-	"./EditorDataLoading"
+	"./EditorDataLoading",
+	"./EditorSettingsLayer"
 ], function(
 	Localization,
 	Control,
@@ -42,7 +42,6 @@ sap.ui.define([
 	Interface,
 	Element,
 	Library,
-	Designtime,
 	JSONModel,
 	Utils,
 	Destinations,
@@ -63,7 +62,8 @@ sap.ui.define([
 	EditorFieldManager,
 	EditorTranslation,
 	EditorContext,
-	EditorDataLoading
+	EditorDataLoading,
+	EditorSettingsLayer
 ) {
 	"use strict";
 
@@ -326,9 +326,9 @@ sap.ui.define([
 				//map translations of unmatch languages
 				Utils.mapLanguagesInManifestChanges(vIdOrSettings.manifestChanges);
 				//filter the child changes from the current layer
-				this._filterChildManifestChanges(vIdOrSettings);
+				EditorSettingsLayer.filterChildManifestChanges(this, vIdOrSettings);
 				//filter the changes from the current layer
-				this._filterManifestChangesByLayer(vIdOrSettings);
+				EditorSettingsLayer.filterManifestChangesByLayer(this, vIdOrSettings, this._language);
 			}
 			if (this._oManifestModel) {
 				//already created
@@ -675,119 +675,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Filter out the manifestChanges of Child editors in the oManifestSettings
-	 *
-	 * @param {*} oManifestSettings
-	 */
-	Editor.prototype._filterChildManifestChanges = function (oManifestSettings) {
-		var that = this;
-		if (that._bChildManifestChangesFiltered) {
-			return;
-		}
-		that._aMainEditorChanges = deepClone(oManifestSettings.manifestChanges, 500);
-		that._oChildEditorChanges = {};
-		var processObject = function(obj, parentKey) {
-			parentKey = parentKey ? (parentKey + "/") : "";
-			Object.keys(obj).forEach(function(sKey) {
-				if (sKey.startsWith(that.getConfigurationPath() + "/childCards/") && sKey.endsWith("_manifestChanges")) {
-					var sRest = sKey.substring("/sap.card/configuration/childCards/".length);
-					var sChildEditorName = sRest.split("/")[0];
-					if (sChildEditorName) {
-						var sChildEditorPath = parentKey + sChildEditorName;
-						that._oChildEditorChanges[sChildEditorPath] = that._oChildEditorChanges[sChildEditorPath] || [];
-						that._oChildEditorChanges[sChildEditorPath].push(obj[sKey]);
-						if (obj[sKey] !== null) {
-							processObject(obj[sKey], sChildEditorPath);
-						}
-					}
-				}
-			});
-		};
-
-		// first process child changes
-		//   - move all the /sap.card/configuration/childCards/.../_manifestChanges to oChildChanges
-		that._aMainEditorChanges.forEach(function(oChange) {
-			processObject(oChange);
-		});
-
-		// clean up child changes
-		//  - remove all /sap.card/configuration/childCards/.../_manifestChanges
-		Object.keys(that._oChildEditorChanges).forEach(function(sKey) {
-			that._oChildEditorChanges[sKey].forEach(function(oChange) {
-				Object.keys(oChange).forEach(function(sKey1) {
-					if (sKey1.startsWith(that.getConfigurationPath() + "/childCards/") && sKey1.endsWith("_manifestChanges")) {
-						delete oChange[sKey1];
-					}
-				});
-			});
-		});
-
-		// clean up main changes
-		//  - remove all /sap.card/configuration/childCards/.../_manifestChanges
-		that._aMainEditorChanges.forEach(function(oChange) {
-			Object.keys(oChange).forEach(function(sKey1) {
-				if (sKey1.startsWith(that.getConfigurationPath() + "/childCards/") && sKey1.endsWith("_manifestChanges")) {
-					delete oChange[sKey1];
-				}
-			});
-		});
-
-		that._bChildManifestChangesFiltered = true;
-	};
-
-	/**
-	 * Filters the manifestChanges array in the oManifestSettings
-	 * All changes that are done for layers > than current layer are removed (see also layers)
-	 * The changes of current layer will be stored in this._oCurrentLayerChange to be applied later in the editor code.
-	 * All changes that are done for layers < that the current layer are kept in oManifestSettings.manifestChanges
-	 *
-	 * @param {*} oManifestSettings
-	 */
-	Editor.prototype._filterManifestChangesByLayer = function (oManifestSettings) {
-		var aChanges = [],
-			that = this,
-			oBeforeLayerChange = {},
-			oCurrentLayerChange = { ":layer": Merger.layers[this.getMode()] },
-			iCurrentModeIndex = Merger.layers[that.getMode()];
-		oManifestSettings.manifestChanges.forEach(function (oChange) {
-			//filter manifest changes. only the changes before the current layer are needed
-			//editor will merge the last layer locally to allow "reset" or properties
-			//also for translation layer, the "original" value is needed
-			var iLayer = oChange.hasOwnProperty(":layer") ? oChange[":layer"] : 1000;
-			if (iLayer === Merger.layers[Constants.EDITOR_MODE.TRANSLATION]) {
-				var sLanguage = that._language;
-				if (sLanguage === "") {
-					sLanguage = Localization.getLanguage().replaceAll('_', '-');
-				}
-				var oTranslationChange = {
-					"texts": {}
-				};
-				// delete the error texts property
-				delete oChange.texts;
-				oTranslationChange.texts[sLanguage] = {};
-				Object.keys(oChange).forEach(function (s) {
-					if (s.charAt(0) === "/") {
-						oTranslationChange.texts[sLanguage][s] = oChange[s];
-					} else {
-						oTranslationChange[s] = oChange[s];
-					}
-				});
-				oChange = oTranslationChange;
-			}
-			if (iLayer < iCurrentModeIndex) {
-				aChanges.push(oChange);
-				oBeforeLayerChange = merge(oBeforeLayerChange, oChange);
-			} else if (iLayer === iCurrentModeIndex) {
-				//store the current layer changes locally for later processing
-				oCurrentLayerChange = oChange;
-			}
-		});
-		oManifestSettings.manifestChanges = aChanges;
-		this._oCurrentLayerChange = oCurrentLayerChange;
-		this._oBeforeLayerChange = oBeforeLayerChange;
-	};
-
-	/**
 	 * Create the tree of Child editors
 	 *
 	 * @param {*} oChildNodes
@@ -1101,7 +988,7 @@ sap.ui.define([
 			if (typeof oDesigntimeConfig === "function") {
 				oPromise = new Promise(function (resolve, reject) {
 					var oDesigntimeInstance = new oDesigntimeConfig();
-					that._applyDesigntimeDefaults(oDesigntimeInstance.getSettings());
+					EditorSettingsLayer.applyDesigntimeDefaults(that, oDesigntimeInstance.getSettings());
 					resolve(oDesigntimeInstance);
 				});
 			} else if (typeof oDesigntimeConfig === "object") {
@@ -1112,7 +999,7 @@ sap.ui.define([
 							return oDesigntimeConfig;
 						};
 						var oDesigntime = new AdvancedDesigntime();
-						that._applyDesigntimeDefaults(oDesigntime.getSettings());
+						EditorSettingsLayer.applyDesigntimeDefaults(that, oDesigntime.getSettings());
 						resolve(oDesigntime);
 					});
 				});
@@ -1120,12 +1007,12 @@ sap.ui.define([
 		} else if (sDesigntime) {
 			//load designtime from module
 			oPromise = that.loadDesigntime().then(function (oDesigntime) {
-				that._applyDesigntimeDefaults(oDesigntime.getSettings());
+				EditorSettingsLayer.applyDesigntimeDefaults(that, oDesigntime.getSettings());
 				return oDesigntime;
 			});
 		} else {
 			//stay compatible and create designtime configuration based on parameters/destinations
-			oPromise = Promise.resolve(that._createParameterDesigntime(oConfiguration));
+			oPromise = Promise.resolve(EditorSettingsLayer.createParameterDesigntime(that, oConfiguration));
 		}
 		oPromise.then(function (oDesigntime) {
 			that._oDesigntimeInstance = oDesigntime;
@@ -1144,7 +1031,7 @@ sap.ui.define([
 			that.setModel(that._oSettingsModel, "items");
 			return EditorContext.loadValueContextInDesigntime(that);
 		}).then(function () {
-			that._applyDesigntimeLayers(); //changes done from admin to content on the dt values
+			EditorSettingsLayer.applyDesigntimeLayers(that); //changes done from admin to content on the dt values
 			return EditorDataLoading.requestExtensionData(that);
 		}).then(function () {
 			EditorFieldManager.requireFields().then(function () {
@@ -1642,179 +1529,6 @@ sap.ui.define([
 			oPreview.destroy();
 			this.setAggregation("_preview", null);
 		}
-	};
-
-	/**
-	 * Applies the defaults for the designtime settings
-	 */
-	Editor.prototype._applyDesigntimeDefaults = function (oSettings) {
-		oSettings = oSettings || {};
-		oSettings.form = oSettings.form || {};
-		oSettings.form.items = oSettings.form.items || {};
-		var mItems = oSettings.form.items || oSettings.form.items;
-		for (var n in mItems) {
-			var oItem = mItems[n];
-			// do not apply default values for destination
-			if (oItem.type === "destination") {
-				continue;
-			}
-			if (oItem.manifestpath) {
-				oItem.value = this._oManifestModel.getProperty(oItem.manifestpath);
-			}
-			if (oItem.visible === undefined || oItem.visible === null) {
-				oItem.visible = true;
-			}
-			if (oItem.editable === undefined || oItem.editable === null) {
-				oItem.editable = true;
-			}
-			if (this.getMode() !== Constants.EDITOR_MODE.ADMIN) {
-				if (oItem.visibleToUser !== undefined) {
-					oItem.visible = oItem.visibleToUser;
-				}
-				if (oItem.editableToUser !== undefined) {
-					oItem.editable = oItem.editableToUser;
-				}
-			}
-			if (typeof oItem.translatable !== "boolean") {
-				oItem.translatable = false;
-			}
-			if (!oItem.label) {
-				oItem.label = n;
-			}
-
-			if (!oItem.type || oItem.type === "enum") {
-
-				oItem.type = "string";
-			}
-			//only if the value is undefined from the this._oManifestModel.getProperty(oItem.manifestpath)
-			//false, "", 0... are valid values and should not apply the default
-			if (oItem.value === undefined || oItem.value === null) {
-				switch (oItem.type) {
-					case "boolean": oItem.value = false; break;
-					case "integer":
-					case "number": oItem.value = 0; break;
-					case "string[]": oItem.value = []; break;
-					case "object": oItem.value = undefined; break;
-					case "object[]": oItem.value = undefined; break;
-					default: oItem.value = "";
-				}
-			}
-			if (oItem.type === "group") {
-				if (oItem.visible === undefined || oItem.value === null) {
-					oItem.visible = true;
-				}
-			}
-			oItem._settingspath = "/form/items/" + n;
-		}
-	};
-	/**
-	 * Applies previous layer designtime settings that were changed
-	 */
-	Editor.prototype._applyDesigntimeLayers = function (oSettings) {
-		var oTexts = {};
-		var oDesigntime = {};
-		//pull current values
-		if (this._aAppliedLayerChanges && Array.isArray(this._aAppliedLayerChanges)) {
-			for (var i = 0; i < this._aAppliedLayerChanges.length; i++) {
-				var oChanges = this._aAppliedLayerChanges[i][":designtime"];
-				if (oChanges) {
-					var aKeys = Object.keys(oChanges);
-					for (var j = 0; j < aKeys.length; j++) {
-						var sPath = aKeys[j],
-							vValue = oChanges[sPath];
-						if (!sPath.endsWith("/pageAdminValues") && typeof vValue === "object") {
-							// if vValue is a object type and not from pageAdminValues
-							if (vValue.configuration && vValue.configuration.parameterFromDestination) {
-								//if it is a parameter transformed from destination, add it into form/items as new parameter for this layer
-								var oNewParameterConfig = vValue.configuration;
-								delete oNewParameterConfig.parameterFromDestination;
-								oNewParameterConfig.value = this._oManifestModel.getProperty(oNewParameterConfig.manifestpath);
-								oNewParameterConfig._settingspath = "/form/items/" + vValue.parameter;
-								this._oSettingsModel.setProperty(oNewParameterConfig._settingspath, oNewParameterConfig);
-							} else {
-								// else it should for the object field/object list field
-								// add it into designtime of settings
-								oDesigntime[aKeys[j]] = merge(oDesigntime[aKeys[j]], vValue);
-								continue;
-							}
-						} else {
-							this._oSettingsModel.setProperty(aKeys[j], vValue);
-						}
-					}
-				}
-				var oAppliedLayerManifestChangeTexts = this._aAppliedLayerChanges[i]["texts"];
-				if (oAppliedLayerManifestChangeTexts) {
-					oTexts = merge(oTexts, oAppliedLayerManifestChangeTexts);
-				}
-			}
-		}
-		if (this._oCurrentLayerChange) {
-			var oChanges = this._oCurrentLayerChange[":designtime"];
-			if (oChanges) {
-				var aKeys = Object.keys(oChanges);
-				for (var j = 0; j < aKeys.length; j++) {
-					//apply the values to a "_next/editable", "_next/visible" entry to the settings.
-					//the current layer needs to be able to change those values
-					var sPath = aKeys[j],
-						vValue = oChanges[sPath];
-						sNext = sPath.substring(0, sPath.lastIndexOf("/") + 1) + "_next";
-					if (!sPath.endsWith("/pageAdminValues") && typeof vValue === "object") {
-						// if the value of design time is object type and not from pageAdminValues or a parameter transformed from destination, it should for the object field/object list field
-						// add it into designtime of settings, else add it into _next property
-						if (!vValue.configuration || !vValue.configuration.parameterFromDestination) {
-							oDesigntime[sPath] = merge(oDesigntime[sPath], vValue);
-							continue;
-						}
-					}
-					if (!this._oSettingsModel.getProperty(sNext)) {
-						//create a _next entry if it does not exist
-						this._oSettingsModel.setProperty(sNext, {});
-					}
-					var sNext = sPath.substring(0, sPath.lastIndexOf("/") + 1) + "_next",
-						sProp = sPath.substring(sPath.lastIndexOf("/") + 1);
-					this._oSettingsModel.setProperty(sNext + "/" + sProp, vValue);
-				}
-			}
-			var ocurrentLayerManifestChangeTexts = this._oCurrentLayerChange["texts"];
-			if (ocurrentLayerManifestChangeTexts) {
-				oTexts = merge(oTexts, ocurrentLayerManifestChangeTexts);
-			}
-		}
-		if (!deepEqual(oTexts, {})) {
-			this._oSettingsModel.setProperty("/texts", oTexts);
-		}
-		if (!deepEqual(oDesigntime, {})) {
-			this._oSettingsModel.setProperty("/:designtime", oDesigntime);
-		}
-	};
-	/**
-	 * Creates a designtime instance based on an configuration section within the manifest.
-	 * This is valid if there is no explicit sap.card/designtime module in the manifest itself.
-	 */
-	Editor.prototype._createParameterDesigntime = function (oConfiguration) {
-		var oSettings = {},
-			sBasePath = this.getConfigurationPath() + "/parameters",
-			sMode = this.getMode();
-		if (oConfiguration && oConfiguration.parameters) {
-			oSettings.form = oSettings.form || {};
-			oSettings.form.items = oSettings.form.items || {};
-			var oItems = oSettings.form.items;
-			Object.keys(oConfiguration.parameters).forEach(function (n) {
-				oItems[n] = merge({
-					manifestpath: sBasePath + "/" + n + "/value",
-					editable: (sMode !== Constants.EDITOR_MODE.TRANSLATION),
-					_settingspath: "/form/items/" + n
-				}, oConfiguration.parameters[n]);
-				var oItem = oItems[n];
-				if (!oItem.type) {
-					oItem.type = "string";
-				}
-				if (!oItem.hasOwnProperty("visible")) {
-					oItem.visible = true;
-				}
-			});
-		}
-		return new Designtime(oSettings);
 	};
 
 	/**
