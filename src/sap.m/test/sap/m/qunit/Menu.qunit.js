@@ -1831,6 +1831,42 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("End key does not throw when a menu item has visible=false", async function (assert) {
+		// Arrange
+		const oMenu = new Menu({
+			items: [
+				new MenuItem({ text: "Item 1" }),
+				new MenuItem({ text: "Item 2", visible: false }),
+				new MenuItem({ text: "Item 3" })
+			]
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate(this.clock);
+
+		oMenu.openBy(document.body);
+		await nextUIUpdate(this.clock);
+
+		const oWrapper = oMenu._getMenuWrapper();
+
+		// Act - trigger End key; before the fix this threw a TypeError because
+		// _getPrevFocusableItem was called with _getItems().length (3) as the
+		// starting index, but iterates over _getVisibleItems() (length 2), so
+		// aItems[2] was undefined.
+		try {
+			oMenu.getItems()[0].$().trigger({ type: "keydown", keyCode: KeyCodes.END });
+			await nextUIUpdate(this.clock);
+			assert.ok(true, "No error thrown when pressing End with a hidden item in the list");
+		} catch (e) {
+			assert.ok(false, "Error thrown: " + e.message);
+		}
+
+		// Assert - hover lands on the last visible focusable item ("Item 3")
+		assert.strictEqual(oWrapper.oHoveredItem, oMenu.getItems()[2],
+			"Hovered item is the last visible item after pressing End");
+
+		// Cleanup
+		oMenu.destroy();
+	});
+
 	QUnit.module("Page navigation", {
 		beforeEach: async function () {
 			// 6 items: items[0..5], all focusable
