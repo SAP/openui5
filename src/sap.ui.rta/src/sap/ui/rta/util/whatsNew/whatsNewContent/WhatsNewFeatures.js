@@ -70,6 +70,22 @@ sap.ui.define([
 	const aWhatsNewFeaturesContent =
 	[
 		{
+			featureId: "CombineWith",
+			title: oTextResources.getText("TIT_WHATS_NEW_COMBINE_WITH_TITLE"),
+			description: oTextResources.getText("TXT_WHATS_NEW_COMBINE_WITH_DESCRIPTION"),
+			documentationUrls: null,
+			information: [
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_COMBINE_WITH_TEXT_1"),
+					image: getImagePath("CombineWith.png")
+				},
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_COMBINE_WITH_TEXT_2"),
+					image: null
+				}
+			]
+		},
+		{
 			featureId: "AdaptationModeOnOff",
 			title: oTextResources.getText("TIT_WHATS_NEW_ADAPTATION_MODE_ON_OFF_TITLE"),
 			description: oTextResources.getText("TXT_WHATS_NEW_ADAPTATION_MODE_ON_OFF_DESCRIPTION"),
