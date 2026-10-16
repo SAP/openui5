@@ -1922,6 +1922,110 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Highlighting on selection - Given a List with bound items with nested sibling groups", {
+		async beforeEach(assert) {
+			const fnDone = assert.async();
+			this.oHorizontalLayout = await TestUtil.createNestedListWithBoundItems();
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oHorizontalLayout]
+			});
+			this.oDesignTime.attachEventOnce("synced", fnDone);
+		},
+		afterEach() {
+			this.oDesignTime.destroy();
+			this.oHorizontalLayout.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when a leaf in the first group of a clone is selected", function(assert) {
+			// Select 'a-btn-0' in the first clone. It lives in groupA (content index 0).
+			// The corresponding leaf must be highlighted in the template and in every clone,
+			// but the leaf at the same position inside the sibling groupB (content index 1) must NOT be highlighted.
+			const oSelectedOverlay = OverlayRegistry.getOverlay("a-btn-0-nestedBoundlist-0");
+			oSelectedOverlay.setSelectable(true);
+			oSelectedOverlay.setSelected(true);
+
+			assert.ok(
+				oSelectedOverlay.hasStyleClass("sapUiDtOverlayHighlighted"),
+				"then the selected overlay is highlighted"
+			);
+			assert.ok(
+				OverlayRegistry.getOverlay("a-btn-0-nestedBoundlist-1").hasStyleClass("sapUiDtOverlayHighlighted"),
+				"then the corresponding leaf in the other clone is highlighted"
+			);
+			// The sibling group (groupB) must stay untouched - this is the regression being guarded.
+			assert.notOk(
+				OverlayRegistry.getOverlay("b-btn-0-nestedBoundlist-0").hasStyleClass("sapUiDtOverlayHighlighted"),
+				"then the leaf at the same index in the sibling group is NOT highlighted (clone 0)"
+			);
+			assert.notOk(
+				OverlayRegistry.getOverlay("b-btn-0-nestedBoundlist-1").hasStyleClass("sapUiDtOverlayHighlighted"),
+				"then the leaf at the same index in the sibling group is NOT highlighted (clone 1)"
+			);
+			assert.notOk(
+				OverlayRegistry.getOverlay("b-btn-0").hasStyleClass("sapUiDtOverlayHighlighted"),
+				"then the leaf at the same index in the sibling group is NOT highlighted (template)"
+			);
+			// A different index inside the same group must also stay untouched.
+			assert.notOk(
+				OverlayRegistry.getOverlay("a-btn-1-nestedBoundlist-0").hasStyleClass("sapUiDtOverlayHighlighted"),
+				"then a leaf at a different index in the same group is NOT highlighted"
+			);
+		});
+	});
+
+	QUnit.module("Highlighting on selection - Given a List with bound items with nested aggregation bindings", {
+		async beforeEach(assert) {
+			const fnDone = assert.async();
+			this.oHorizontalLayout = await TestUtil.createDeeplyNestedListWithBoundItems();
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oHorizontalLayout]
+			});
+			this.oDesignTime.attachEventOnce("synced", fnDone);
+		},
+		afterEach() {
+			this.oDesignTime.destroy();
+			this.oHorizontalLayout.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when a leaf in an inner clone is selected", function(assert) {
+			// Tree: outerList[items bound] > outerItem > innerList[items bound] > innerItem > [leafA, leafB].
+			// Selecting leafA of inner clone 0 inside outer clone 0 must fan out at BOTH binding boundaries
+			// (outer items and inner items), so the matching leafA is highlighted in every inner clone of
+			// every outer clone. The structural sibling leafB (content index 1) must stay untouched.
+			function innerCloneLeaf(sLeaf, iOuter, iInner) {
+				return `${sLeaf}-outerList-${iOuter}-innerList-outerList-${iOuter}-${iInner}`;
+			}
+			const oSelectedOverlay = OverlayRegistry.getOverlay(innerCloneLeaf("leafA", 0, 0));
+			oSelectedOverlay.setSelectable(true);
+			oSelectedOverlay.setSelected(true);
+
+			[
+				innerCloneLeaf("leafA", 0, 0),
+				innerCloneLeaf("leafA", 0, 1),
+				innerCloneLeaf("leafA", 1, 0),
+				innerCloneLeaf("leafA", 1, 1)
+			].forEach(function(sId) {
+				assert.ok(
+					OverlayRegistry.getOverlay(sId).hasStyleClass("sapUiDtOverlayHighlighted"),
+					`then the leaf '${sId}' is highlighted (fan-out at both binding boundaries)`
+				);
+			});
+			[
+				innerCloneLeaf("leafB", 0, 0),
+				innerCloneLeaf("leafB", 0, 1),
+				innerCloneLeaf("leafB", 1, 0),
+				innerCloneLeaf("leafB", 1, 1)
+			].forEach(function(sId) {
+				assert.notOk(
+					OverlayRegistry.getOverlay(sId).hasStyleClass("sapUiDtOverlayHighlighted"),
+					`then the structural sibling '${sId}' is NOT highlighted (index-restricted level)`
+				);
+			});
+		});
+	});
+
 	QUnit.module("Given a DynamicPage with scrolling", {
 		async beforeEach(assert) {
 			const fnDone = assert.async();

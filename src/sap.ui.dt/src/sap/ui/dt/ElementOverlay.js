@@ -693,20 +693,28 @@ sap.ui.define([
 		iStackIndex = iStackIndex === undefined ? mAggregationBindingInfo.stack.length - 1 : iStackIndex;
 		const mStackEntry = mAggregationBindingInfo.stack[iStackIndex];
 		const bLastStackEntry = iStackIndex === 0;
-		const bTemplateSelected = mAggregationBindingInfo.stack.length === 1;
+		// At a boundary we deliberately fan out to all children so that the corresponding element is
+		// highlighted in the template and in every clone.
+		// On a structural (non-boundary) level we must stay within the matching child, otherwise siblings
+		// in unrelated sub-trees (e.g. a different group inside the same template) would get highlighted as well.
+		// Nested bindings therefore fan out at each nested bound aggregation and index-restrict in between.
+		const bBoundary = mStackEntry && mStackEntry.boundary;
 		if (mStackEntry) {
 			oElementOverlay.getChildren().forEach(function(oChildAggregationOverlay) {
 				if (oChildAggregationOverlay.getAggregationName() === mStackEntry.aggregation) {
 					oChildAggregationOverlay.getChildren().some(function(oChildElementOverlay, iIndex) {
-						if (bLastStackEntry && bTemplateSelected) {
+						const bMatchingChild = bBoundary || iIndex === mStackEntry.index;
+						if (!bMatchingChild) {
+							return undefined;
+						}
+						if (bLastStackEntry) {
 							oChildElementOverlay.toggleStyleClass("sapUiDtOverlayHighlighted");
-						} else if (bLastStackEntry && iIndex === mStackEntry.index) {
-							oChildElementOverlay.toggleStyleClass("sapUiDtOverlayHighlighted");
-							return true;
-						} else if (!bLastStackEntry) {
+						} else {
 							highlightTemplateCloneElements(mAggregationBindingInfo, oChildElementOverlay, iStackIndex - 1);
 						}
-						return undefined;
+						// On boundary levels keep iterating to cover the template and all clones; on structural
+						// levels the matching index is unique, so stop once it has been handled.
+						return bBoundary ? undefined : true;
 					});
 				}
 			});
