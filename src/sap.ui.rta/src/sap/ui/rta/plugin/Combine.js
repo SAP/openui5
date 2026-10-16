@@ -392,6 +392,38 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the context for the "Combine With" (CTX_COMBINE_WITH) action: the list of sibling
+	 * elements that can be combined with the source element, together with the maximum number of
+	 * controls that may be in the resulting combined element.
+	 * Agents must call this before invoking {@link #createCommands} so they only pass valid element IDs.
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Source element overlay
+	 * @returns {object} Context object with an <code>availableElements</code> property
+	 * @since 1.155
+	 */
+	Combine.prototype.getContext = function(oOverlay) {
+		const aSiblingOverlays = this._getCompatibleSiblingOverlays(oOverlay).filter(
+			(oSiblingOverlay) => this._isCombinationWithinLimit(oOverlay, [oOverlay, oSiblingOverlay])
+		);
+		return {
+			availableElements: {
+				description: "Sibling elements that can be combined with the source element. "
+					+ "Pass their `id` values as `elementIds` to `createCommands`. "
+					+ "Do not pass IDs not listed here.",
+				value: aSiblingOverlays.map((oSiblingOverlay) => ({
+					id: oSiblingOverlay.getElement().getId(),
+					label: ElementUtil.getLabelForElement(oSiblingOverlay.getElement()),
+					count: this._getControlsCount(oSiblingOverlay)
+				}))
+			},
+			maxControlsCount: {
+				description: "Maximum number of controls (source + combined) allowed in a single combined element. "
+					+ "The sum of `count` values of all chosen siblings plus the source element's count must not exceed this.",
+				value: this._getMaxControlsCount(oOverlay)
+			}
+		};
+	};
+
+	/**
 	 * Returns the parameters that a programmatic consumer must provide to create the commands for this plugin.
 	 * @returns {object[]} List of parameter descriptors (name, type, required, description)
 	 * @since 1.153
@@ -402,7 +434,8 @@ sap.ui.define([
 				name: "elementIds",
 				type: "array",
 				required: true,
-				description: "Ids of sibling elements to combine with the source element"
+				description: "IDs of sibling elements to combine with the source element, "
+					+ "as returned in `getContext().availableElements`. Only IDs listed there are valid."
 			}
 		];
 	};
@@ -423,7 +456,13 @@ sap.ui.define([
 			}
 			return oSiblingOverlay;
 		});
-		return await this.handleCombine([oOverlay].concat(aSiblingOverlays), oOverlay.getElement());
+		const aAllOverlays = [oOverlay].concat(aSiblingOverlays);
+		if (!this._isCombinationWithinLimit(oOverlay, aAllOverlays)) {
+			throw new Error(
+				`Combining ${aAllOverlays.length} elements exceeds the maximum allowed by the control`
+			);
+		}
+		return await this.handleCombine(aAllOverlays, oOverlay.getElement());
 	};
 
 	return Combine;
