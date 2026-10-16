@@ -523,6 +523,7 @@ sap.ui.define([
 		let iIndex;
 		const oParentOverlay = oOverlay.getParent();
 		let bBoundControlFound = false;
+		let bBoundary = false;
 
 		if (oOverlay.isA("sap.ui.dt.ElementOverlay")) {
 			const oParentElementOverlay = oOverlay.getParentElementOverlay();
@@ -532,6 +533,11 @@ sap.ui.define([
 				iIndex = oParentOverlay.getChildren().indexOf(oOverlay);
 				bBoundControlFound = oParentElementOverlay
 					&& oParentElementOverlay.getAggregationOverlay(sAggregationName, "AggregationBindingTemplateOverlays");
+				// A stack entry marks an aggregation binding boundary when its parent control has an aggregation
+				// binding on the traversed aggregation. This holds for both the bound control (template side) and
+				// its clones, so it is reliable also for nested bindings
+				const oParentElement = oParentElementOverlay?.getElement();
+				bBoundary = !!(oParentElement?.getBindingInfo?.(sAggregationName));
 			} else {
 				iIndex = -1;
 			}
@@ -539,7 +545,8 @@ sap.ui.define([
 			aStack.push({
 				overlayId: oOverlay.getId(),
 				aggregation: sAggregationName,
-				index: iIndex
+				index: iIndex,
+				boundary: bBoundary
 			});
 
 			if (bBoundControlFound) {
@@ -572,6 +579,10 @@ sap.ui.define([
 	 * @property {string} stack.overlayId - Overlay ID of an element overlay
 	 * @property {string} stack.aggregation - Aggregation name
 	 * @property {number} stack.index - Index of the overlay in parent aggregation
+	 * @property {boolean} stack.boundary - Whether the parent control has an aggregation binding on the traversed
+	 *                                      aggregation, i.e. this level is a binding boundary.
+	 *                                      <code>true</code> for the bound control as well as for every nested
+	 *                                      bound aggregation on the path.
 	 */
 
 	/**

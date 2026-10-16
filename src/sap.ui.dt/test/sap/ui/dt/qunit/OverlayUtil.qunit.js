@@ -690,7 +690,8 @@ sap.ui.define([
 			assert.deepEqual(mFirstStackObject, {
 				overlayId: OverlayRegistry.getOverlay("boundListItem").getId(),
 				aggregation: "items",
-				index: 0
+				index: 0,
+				boundary: true
 			},	"then the stack is valid");
 		});
 
@@ -709,7 +710,8 @@ sap.ui.define([
 			assert.deepEqual(mFirstStackObject, {
 				overlayId: OverlayRegistry.getOverlay("boundListItem-boundlist-0").getId(),
 				aggregation: "items",
-				index: 0
+				index: 0,
+				boundary: true
 			}, "then the stack is valid");
 		});
 
