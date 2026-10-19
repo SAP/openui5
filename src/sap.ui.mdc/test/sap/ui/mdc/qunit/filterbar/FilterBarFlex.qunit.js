@@ -697,6 +697,53 @@ sap.ui.define([
 
 	});
 
+	QUnit.test('addCondition - sequential revert does not corrupt conditions of unrelated fields', function(assert) {
+		const oChangeHandler = FilterBarFlexHandler["addCondition"].changeHandler;
+		const mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: this.oUiComponent,
+			view: this.oView
+		};
+
+		const aField1Changes = ["val1", "val2", "val3"].map((sVal) => ({
+			"changeType": "addCondition",
+			"content": { "key": "Category", "condition": { "operator": OperatorName.EQ, "values": [sVal] } }
+		}));
+		const aField2Changes = ["valA", "valB"].map((sVal) => ({
+			"changeType": "addCondition",
+			"content": { "key": "Name", "condition": { "operator": OperatorName.EQ, "values": [sVal] } }
+		}));
+
+		return Promise.all([...aField1Changes, ...aField2Changes].map((oDef) =>
+			ChangesWriteAPI.create({ changeSpecificData: oDef, selector: this.oFilterBar })
+		)).then(function(aChanges) {
+			// Apply all changes sequentially via the queue
+			return aChanges.reduce(function(pChain, oChange) {
+				return pChain.then(function() {
+					return oChangeHandler.applyChange(oChange, this.oFilterBar, mPropertyBag);
+				}.bind(this));
+			}.bind(this), Promise.resolve()).then(function() {
+				assert.deepEqual(this.oFilterBar.getFilterConditions()["Category"].length, 3, "3 Category conditions applied");
+				assert.deepEqual(this.oFilterBar.getFilterConditions()["Name"].length, 2, "2 Name conditions applied");
+
+				// Revert the Category changes one by one (simulates Reverter.revertMultipleChanges)
+				const aCategoryChanges = aChanges.slice(0, 3);
+				return aCategoryChanges.reduce(function(pChain, oChange) {
+					return pChain.then(function() {
+						return oChangeHandler.revertChange(oChange, this.oFilterBar, mPropertyBag);
+					}.bind(this));
+				}.bind(this), Promise.resolve());
+			}.bind(this)).then(function() {
+				assert.deepEqual(this.oFilterBar.getFilterConditions()["Category"], [], "Category conditions removed after revert");
+				assert.deepEqual(
+					this.oFilterBar.getFilterConditions()["Name"],
+					[{ "operator": OperatorName.EQ, "values": ["valA"] }, { "operator": OperatorName.EQ, "values": ["valB"] }],
+					"Name conditions unaffected by Category revert"
+				);
+			}.bind(this));
+		}.bind(this));
+	});
+
 	QUnit.module("Simulate RTA UI Visualisation", {
 		before: function() {
 			// Implement required Delgate APIs
