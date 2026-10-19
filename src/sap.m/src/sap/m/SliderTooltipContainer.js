@@ -163,10 +163,33 @@ function(
 				fTooltipHeight = this.getAssociatedTooltipsAsControls()[0].$().outerHeight(true);
 
 			if (this.getDomRef()) {
+				this._adjustTooltipsOverflow();
 				this[bParentRangeSlider ? "_positionRangeTooltips" : "_positionTooltip"].call(this, aTooltips, arguments[0], arguments[1]);
 				this.getDomRef().style["top"] = (this._$ParentSlider.offset().top - fTooltipHeight) + "px";
 				this._handleOverflow();
 			}
+		};
+
+		/**
+		 * Widens each tooltip box whose input text overflows it.
+		 *
+		 * The box width is pinned to a fixed estimate (<code>CHARACTER_WIDTH_PX</code> per char)
+		 * that ignores app CSS such as <code>letter-spacing</code>. When the rendered value is
+		 * wider than the estimate the centered text clips, so grow the box by the measured overflow.
+		 *
+		 * @private
+		 */
+		SliderTooltipContainer.prototype._adjustTooltipsOverflow = function () {
+			this.getAssociatedTooltipsAsControls().forEach(function (oTooltip) {
+				var oInput = oTooltip.getDomRef("input"),
+					oTooltipDomRef = oTooltip.getDomRef();
+
+				if (!oInput || !oTooltipDomRef || oInput.scrollWidth <= oInput.clientWidth) {
+					return;
+				}
+
+				oTooltipDomRef.style.width = oTooltipDomRef.offsetWidth + (oInput.scrollWidth - oInput.clientWidth) + "px";
+			});
 		};
 
 		/**
