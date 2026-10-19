@@ -5217,8 +5217,8 @@ sap.ui.define([
 	 *   <code>expandTo >= Number.MAX_SAFE_INTEGER</code> can be used to expand all levels
 	 *   (<code>1E16</code> is recommended inside XML views for simplicity). Since 1.139.0,
 	 *   {@link #getAggregation} returns <code>expandTo : Number.MAX_SAFE_INTEGER</code> instead of
-	 *   values greater than this. These differences do not count as changes. Since 1.153.0 it is
-	 *   also supported for visual grouping (@experimental as of version 1.153.0) and requires the
+	 *   values greater than this. These differences do not count as changes. This parameter is also
+	 *   supported for visual grouping (@experimental as of version 1.154.0) and requires the
 	 *   <a href="https://sap.github.io/odata-vocabularies/vocabularies/Analytics.html#MultiLevelExpand">"com.sap.vocabularies.Analytics.v1.MultiLevelExpand"</a>
 	 *   "$apply" transformation.
 	 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
