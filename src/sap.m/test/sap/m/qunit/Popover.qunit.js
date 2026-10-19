@@ -551,6 +551,28 @@ sap.ui.define([
 		assert.ok(this.oPopover.isOpen(), "Popover is open");
 	});
 
+	QUnit.test("Destroying a Popover restores documentElement scrolling", function (assert) {
+		// Arrange: force the no-scrollbar precondition so _preventDocumentElementScrolling
+		// saves the original overflow and overrides it, as it does during open.
+		const oClientHeightDesc = Object.getOwnPropertyDescriptor(Element.prototype, "clientHeight");
+		Object.defineProperty(document.documentElement, "clientHeight", { configurable: true, get: function () { return 100000; } });
+		const sOriginalOverflow = document.documentElement.style.overflow;
+
+		this.oPopover._preventDocumentElementScrolling();
+		assert.strictEqual(document.documentElement.style.overflow, "hidden", "documentElement overflow is overridden to 'hidden'");
+
+		// Act: destroy without restoring first (simulates destroy while the override is active)
+		this.oPopover.destroy();
+
+		// Assert
+		assert.strictEqual(document.documentElement.style.overflow, sOriginalOverflow, "documentElement overflow is restored on destroy");
+
+		delete document.documentElement.clientHeight;
+		if (oClientHeightDesc) {
+			Object.defineProperty(Element.prototype, "clientHeight", oClientHeightDesc);
+		}
+	});
+
 	QUnit.module("Position calculation", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
