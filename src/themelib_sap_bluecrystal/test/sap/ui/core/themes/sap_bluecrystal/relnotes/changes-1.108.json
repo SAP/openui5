@@ -14,5 +14,15 @@
         ]
       }
     ]
+  },
+  "1.108.55": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "5c79f1966650e9b00ef498a1b8bbb82974df3aef",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Improve screen-reader accessibility"
+      }
+    ]
   }
 }
