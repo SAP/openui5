@@ -481,6 +481,127 @@ sap.ui.define([
 			return this.oCombinePlugin;
 		}, ["elementIds"]);
 
+		QUnit.test("when getContext is called on a source with compatible siblings", function(assert) {
+			sandbox.stub(Utils, "checkSourceTargetBindingCompatibility").returns(true);
+			// Use a limited combine action so maxControlsCount.value is a defined number
+			const oLimitedMetadata = {
+				actions: {
+					combine: {
+						changeType: "combineStuff",
+						changeOnRelevantContainer: true,
+						maxControlsCount: 3,
+						getControlsCount() {
+							return 1;
+						}
+					}
+				}
+			};
+			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oLimitedMetadata);
+			this.oButton2.setText("Button 2");
+
+			const oContext = this.oCombinePlugin.getContext(this.oButton1Overlay);
+
+			assert.ok(oContext.availableElements, "then availableElements is returned");
+			assert.ok(typeof oContext.availableElements.description === "string", "then availableElements carries a description");
+			const aElements = oContext.availableElements.value;
+			assert.ok(Array.isArray(aElements), "then availableElements.value is an array");
+			assert.ok(aElements.length > 0, "then at least one sibling is listed");
+			assert.ok(
+				aElements.every((oEl) => oEl.id && typeof oEl.id === "string"),
+				"then every element carries an id"
+			);
+			assert.ok(
+				aElements.every((oEl) => typeof oEl.label === "string"),
+				"then every element carries a label"
+			);
+			assert.ok(
+				aElements.every((oEl) => typeof oEl.count === "number"),
+				"then every element carries a count"
+			);
+			assert.notOk(
+				aElements.some((oEl) => oEl.id === this.oButton1.getId()),
+				"then the source element itself is not listed"
+			);
+			assert.ok(oContext.maxControlsCount, "then maxControlsCount is returned");
+			assert.ok(typeof oContext.maxControlsCount.description === "string", "then maxControlsCount carries a description");
+			assert.strictEqual(oContext.maxControlsCount.value, 3, "then maxControlsCount.value reflects the action's limit");
+		});
+
+		QUnit.test("when getContext is called on a source with no compatible siblings", function(assert) {
+			sandbox.stub(Utils, "checkSourceTargetBindingCompatibility").returns(true);
+			// button5 is alone in panel2 → no siblings
+
+			const oContext = this.oCombinePlugin.getContext(this.oButton5Overlay);
+
+			assert.ok(oContext.availableElements, "then availableElements is returned");
+			assert.deepEqual(
+				oContext.availableElements.value,
+				[],
+				"then availableElements.value is an empty array when no siblings are compatible"
+			);
+		});
+
+		QUnit.test("when getContext is called on a source at its combine limit", function(assert) {
+			sandbox.stub(Utils, "checkSourceTargetBindingCompatibility").returns(true);
+			// source counts as 1, limit is 1 → no sibling can be added without exceeding the limit
+			const oAtLimitMetadata = {
+				actions: {
+					combine: {
+						changeType: "combineStuff",
+						changeOnRelevantContainer: true,
+						maxControlsCount: 1,
+						getControlsCount() {
+							return 1;
+						}
+					}
+				}
+			};
+			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oAtLimitMetadata);
+
+			const oContext = this.oCombinePlugin.getContext(this.oButton1Overlay);
+
+			assert.strictEqual(oContext.maxControlsCount.value, 1, "then maxControlsCount.value reflects the action's limit");
+			assert.deepEqual(
+				oContext.availableElements.value,
+				[],
+				"then siblings that would exceed the limit are excluded from availableElements"
+			);
+		});
+
+		QUnit.test("when getContext filters out siblings that individually exceed the limit", function(assert) {
+			sandbox.stub(Utils, "checkSourceTargetBindingCompatibility").returns(true);
+			// source counts as 1, limit is 2 → only a sibling counting as 1 fits (1+1=2);
+			// a sibling counting as 2 does not fit (1+2=3 > 2)
+			const oBaseMetadata = {
+				actions: {
+					combine: {
+						changeType: "combineStuff",
+						changeOnRelevantContainer: true,
+						maxControlsCount: 2,
+						getControlsCount() { return 1; }
+					}
+				}
+			};
+			const oHeavyMetadata = {
+				actions: {
+					combine: {
+						changeType: "combineStuff",
+						changeOnRelevantContainer: true,
+						getControlsCount() { return 2; }
+					}
+				}
+			};
+			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oBaseMetadata);
+			fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oBaseMetadata);
+			fnSetOverlayDesigntimeMetadata(this.oButton3Overlay, oHeavyMetadata);
+
+			const oContext = this.oCombinePlugin.getContext(this.oButton1Overlay);
+			const aIds = oContext.availableElements.value.map((oEl) => oEl.id);
+
+			assert.ok(aIds.includes(this.oButton2.getId()), "then button2 (count 1) is listed");
+			assert.notOk(aIds.includes(this.oButton3.getId()), "then button3 (count 2) is excluded");
+		});
+
 		QUnit.test("when createCommands is called directly", async function(assert) {
 			const oExpectedCommand = {};
 			const oHandleCombineStub = sandbox.stub(this.oCombinePlugin, "handleCombine").resolves(oExpectedCommand);
@@ -502,6 +623,37 @@ sap.ui.define([
 				"then handleCombine is called with the source element as combine element"
 			);
 			assert.strictEqual(oResult, oExpectedCommand, "then createCommands returns the command from handleCombine");
+		});
+
+		QUnit.test("when createCommands is called with more elements than the control-defined limit", async function(assert) {
+			const oLimitedMetadata = {
+				actions: {
+					combine: {
+						changeType: "combineStuff",
+						changeOnRelevantContainer: true,
+						maxControlsCount: 2,
+						getControlsCount() {
+							return 1;
+						}
+					}
+				}
+			};
+			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oLimitedMetadata);
+			const oHandleCombineStub = sandbox.stub(this.oCombinePlugin, "handleCombine").resolves({});
+
+			// source (1) + two siblings (1+1) = 3 controls, exceeds maxControlsCount: 2
+			try {
+				await this.oCombinePlugin.createCommands(this.oButton1Overlay, {
+					elementIds: [this.oButton2.getId(), this.oButton3.getId()]
+				});
+				assert.ok(false, "then createCommands should have thrown");
+			} catch (oError) {
+				assert.ok(
+					oError.message.includes("exceeds the maximum"),
+					"then createCommands rejects when the combination exceeds the limit"
+				);
+			}
+			assert.strictEqual(oHandleCombineStub.callCount, 0, "then handleCombine is not called");
 		});
 
 		QUnit.test("when handleCombineWith combines the source with the selected sibling", async function(assert) {
