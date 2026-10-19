@@ -23,5 +23,15 @@
         "text": " sap.uxap.ObjectPageSection: Enable rename in RTA"
       }
     ]
+  },
+  "1.148.10": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "d4a10172eb60fe8ebd8a89582452c6bb2aaecd4f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: no re-scroll when subSection in view"
+      }
+    ]
   }
 }

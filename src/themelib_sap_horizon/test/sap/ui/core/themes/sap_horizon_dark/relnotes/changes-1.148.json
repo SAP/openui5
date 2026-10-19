@@ -48,5 +48,15 @@
         "text": " Form: use sap.m.Title for rendering"
       }
     ]
+  },
+  "1.148.10": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "74716fdb12f952b334a97f4eded67899411039b5",
+        "type": "FIX",
+        "text": " We've now fixed the visual clipping of the remove button in the ScopeActions scope on the sap_horizon and sap_horizon_dark themes in the slide tile control"
+      }
+    ]
   }
 }

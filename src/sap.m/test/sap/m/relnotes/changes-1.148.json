@@ -393,5 +393,45 @@
         "text": "sap.m.ComboBox: Dialog opens when tapping on mobile"
       }
     ]
+  },
+  "1.148.10": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "3e27d643be9df31a8e08fde25c99eece260dccd4",
+        "type": "FIX",
+        "text": " sap.m.IconTabFilter: fix invalid role=\"separator\" inside role=\"tab\""
+      },
+      {
+        "id": "74716fdb12f952b334a97f4eded67899411039b5",
+        "type": "FIX",
+        "text": " We've now fixed the visual clipping of the remove button in the ScopeActions scope on the sap_horizon and sap_horizon_dark themes in the slide tile control"
+      },
+      {
+        "id": "ceca3a1c320443b2e3656be97fef949abf2de4c9",
+        "type": "FIX",
+        "text": " We've now fixed the displacement of action buttons when they are incorrectly placed inside the content wrapper in generic tile"
+      },
+      {
+        "id": "cc673278159252ca111e12eb851b1944cf9496d1",
+        "type": "FIX",
+        "text": " We've now fixed the overflow clipping and border-radius issues in generic tile and action tile controls"
+      },
+      {
+        "id": "cbcb323a5adad4512903fa93402b0194551dc4e1",
+        "type": "FIX",
+        "text": " m.ListItemAction: use direct shortcut definitions"
+      },
+      {
+        "id": "5bc9f5e9fc3689400bed5abeafeef6afe20c813c",
+        "type": "FIX",
+        "text": " sap.m.p13n.FilterController: Editing existing filter condition fails"
+      },
+      {
+        "id": "3125e19645e8c592fd44eba52f2654fbd9c5314c",
+        "type": "FIX",
+        "text": " sap.m.ScrollPosition: fix intermittent QUnit test failures after navigation and re-render"
+      }
+    ]
   }
 }
