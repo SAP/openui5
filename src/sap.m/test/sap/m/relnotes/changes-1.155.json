@@ -1,0 +1,27 @@
+{
+  "1.155.0": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "ddc67fff529b9a40ad05471c5a057969648689de",
+        "type": "FIX",
+        "text": " sap.m.Menu: fixed End key error when there are invisible items"
+      },
+      {
+        "id": "2f8f0d4a713bd14b7665fd97c6ecb1d531eb23f2",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: active inverted status is aligned in ui.Table"
+      },
+      {
+        "id": "6441f71e0d27f73dfc7d94b6cb5e462dee6b7b58",
+        "type": "FIX",
+        "text": " SelectionPanel: update selected and visible count after filtering"
+      },
+      {
+        "id": "26ee3a1ebfe4eccdf04fad7322ffa12d8ae2ba86",
+        "type": "FIX",
+        "text": " We've now fixed the HTTP/1.1 connection pool exhaustion in PDFViewer by canceling the fetch response body after URL validation"
+      }
+    ]
+  }
+}
