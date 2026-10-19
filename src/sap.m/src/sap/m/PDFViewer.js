@@ -357,11 +357,18 @@ sap.ui.define([
 							this._fireLoadedEvent();
 						} else {
 							try {
-								// Source validation using GET request to check resource existence
-								// Simple and universally compatible approach without Range headers
+								// Source validation using GET request to check resource existence.
+								// body.cancel() releases the HTTP/1.1 connection slot immediately after
+								// the status check — without it, the unconsumed response body holds the
+								// connection open and exhausts Chrome's 6-connection-per-origin pool when
+								// 6+ PDFViewer instances load from the same origin simultaneously.
 								window.fetch(sSource, { method: "GET" })
 									.then(function (response) {
-										if (response.ok) {
+										var bOk = response.ok;
+										if (response.body) {
+											response.body.cancel();
+										}
+										if (bOk) {
 											this._fireLoadedEvent();
 										} else {
 											this._fireErrorEvent(oEvent.target);

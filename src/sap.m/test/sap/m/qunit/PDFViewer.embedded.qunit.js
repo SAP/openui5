@@ -521,6 +521,96 @@ sap.ui.define([
 		assert.notOk(oPdfViewer._isDataUriOrBlob(undefined), "Returns false for undefined");
 	});
 
+	QUnit.test("_onLoadListener cancels response body on success to release HTTP/1.1 connection slot", function (assert) {
+		var fnDone = assert.async();
+		assert.expect(3);
+
+		var oCancelStub = sinon.stub().returns(Promise.resolve());
+		var oMockResponse = { ok: true, status: 200, body: { cancel: oCancelStub } };
+		this.oFetchStub.resolves(oMockResponse);
+
+		var originalPdfPluginEnabled = PDFViewerRenderer._isPdfPluginEnabled;
+		PDFViewerRenderer._isPdfPluginEnabled = function () { return true; };
+
+		oPdfViewer = TestUtils.createPdfViewer({
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
+		});
+
+		oPdfViewer._fireLoadedEvent = function () {
+			assert.ok(oCancelStub.calledOnce, "response.body.cancel() called once to free HTTP connection slot");
+			assert.ok(this.oFetchStub.calledWithMatch("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf", { method: "GET" }), "GET method used");
+			assert.ok(true, "loaded event fired after body cancel");
+			PDFViewerRenderer._isPdfPluginEnabled = originalPdfPluginEnabled;
+			fnDone();
+		}.bind(this);
+		oPdfViewer._fireErrorEvent = function () {
+			assert.ok(false, "error event must not fire for 200 OK");
+			PDFViewerRenderer._isPdfPluginEnabled = originalPdfPluginEnabled;
+			fnDone();
+		};
+
+		oPdfViewer._onLoadListener({ target: {} });
+	});
+
+	QUnit.test("_onLoadListener cancels response body even for non-ok responses", function (assert) {
+		var fnDone = assert.async();
+		assert.expect(2);
+
+		var oCancelStub = sinon.stub().returns(Promise.resolve());
+		var oMockResponse = { ok: false, status: 404, body: { cancel: oCancelStub } };
+		this.oFetchStub.resolves(oMockResponse);
+
+		var originalPdfPluginEnabled = PDFViewerRenderer._isPdfPluginEnabled;
+		PDFViewerRenderer._isPdfPluginEnabled = function () { return true; };
+
+		oPdfViewer = TestUtils.createPdfViewer({
+			source: "test-resources/sap/m/qunit/pdfviewer/non-existent.pdf"
+		});
+
+		oPdfViewer._fireLoadedEvent = function () {
+			assert.ok(false, "loaded event must not fire for 404");
+			PDFViewerRenderer._isPdfPluginEnabled = originalPdfPluginEnabled;
+			fnDone();
+		};
+		oPdfViewer._fireErrorEvent = function () {
+			assert.ok(oCancelStub.calledOnce, "response.body.cancel() called for non-ok response to free HTTP connection slot");
+			assert.ok(true, "error event fired for 404");
+			PDFViewerRenderer._isPdfPluginEnabled = originalPdfPluginEnabled;
+			fnDone();
+		};
+
+		oPdfViewer._onLoadListener({ target: {} });
+	});
+
+	QUnit.test("_onLoadListener does not crash when response.body is null", function (assert) {
+		var fnDone = assert.async();
+		assert.expect(1);
+
+		// Some environments return response without a body (e.g. mocked servers, older fetch polyfills)
+		var oMockResponse = { ok: true, status: 200, body: null };
+		this.oFetchStub.resolves(oMockResponse);
+
+		var originalPdfPluginEnabled = PDFViewerRenderer._isPdfPluginEnabled;
+		PDFViewerRenderer._isPdfPluginEnabled = function () { return true; };
+
+		oPdfViewer = TestUtils.createPdfViewer({
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
+		});
+
+		oPdfViewer._fireLoadedEvent = function () {
+			assert.ok(true, "loaded event fires without crash when response.body is null");
+			PDFViewerRenderer._isPdfPluginEnabled = originalPdfPluginEnabled;
+			fnDone();
+		};
+		oPdfViewer._fireErrorEvent = function () {
+			assert.ok(false, "error event must not fire for 200 OK");
+			PDFViewerRenderer._isPdfPluginEnabled = originalPdfPluginEnabled;
+			fnDone();
+		};
+
+		oPdfViewer._onLoadListener({ target: {} });
+	});
+
 	QUnit.test("_onLoadListener with empty source fires error event", function (assert) {
 		// Mock PDFViewerRenderer._isPdfPluginEnabled
 		var originalPdfPluginEnabled = PDFViewerRenderer._isPdfPluginEnabled;
