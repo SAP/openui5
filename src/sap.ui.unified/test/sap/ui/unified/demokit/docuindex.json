@@ -51,7 +51,8 @@
 				"since": "1.22",
 				"samples": [
 					"sap.ui.unified.sample.FileUploaderBasic",
-					"sap.ui.unified.sample.FileUploaderComplex"
+					"sap.ui.unified.sample.FileUploaderComplex",
+					"sap.ui.unified.sample.FileUploaderMultiple"
 				]
 			},
 			{
@@ -147,6 +148,11 @@
 				"id": "sap.ui.unified.sample.FileUploaderComplex",
 				"name": "Complex",
 				"description": "File Uploader Example with Parameters"
+			},
+			{
+				"id": "sap.ui.unified.sample.FileUploaderMultiple",
+				"name": "Multiple Files",
+				"description": "File Uploader Example with Multiple Files"
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarSingleDaySelection",
