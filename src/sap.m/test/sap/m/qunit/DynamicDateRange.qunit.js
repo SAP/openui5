@@ -1637,6 +1637,44 @@ sap.ui.define([
 			oDRS.destroy();
 	});
 
+	QUnit.test("Calendar week number for Jan 1, 2027 is week 1 in en-US locale", async function(assert) {
+		var sOriginalLocale = Formatting.getLanguageTag().toString();
+
+		// en-US uses Western Traditional: week starts Sunday, first week needs only 1 day in new year.
+		// The week Dec 27, 2026 (Sun) – Jan 2, 2027 (Sat) contains Jan 1 → week 1 of 2027.
+		Formatting.setLanguageTag("en-US");
+
+		var oDRS = new DynamicDateRange({
+			id: 'myDDR-weeknum',
+			value: { operator: 'DATE', values: [UI5Date.getInstance('2026-12-15T00:00:00')] }
+		});
+		oDRS.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		oDRS.open();
+		await nextUIUpdate();
+
+		var oDateOptionDomRef = Element.getElementById('myDDR-weeknum-option-DATE');
+		oDateOptionDomRef.firePress();
+		await nextUIUpdate();
+
+		var sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
+		var oMonthDomRef = Element.getElementById(sCalendarId).getAggregation("month")[0].getDomRef();
+
+		// Find the row containing Jan 1, 2027 via its data-sap-day attribute and read the week number.
+		// The Calendar always renders 6 rows; Jan 1 (data-sap-day="20270101") is in the 5th row.
+		var oJan1Cell = oMonthDomRef.querySelector("[data-sap-day='20270101']");
+		var oWeekRow = oJan1Cell.closest("div[role='row']");
+		var iWeekNumber = parseInt(oWeekRow.querySelector(".sapUiCalWeekNum").textContent);
+
+		assert.strictEqual(iWeekNumber, 1,
+			"Jan 1, 2027 is in week 1 with en-US locale (Western Traditional), not week 53 or 2");
+
+		// Cleanup
+		Formatting.setLanguageTag(sOriginalLocale);
+		oDRS.destroy();
+	});
+
 	QUnit.test("DynamicDateFormat doesn't allow year outside of the range [1-9999]", function (assert) {
 		var oResult;
 

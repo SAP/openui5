@@ -460,7 +460,7 @@ sap.ui.define([
 				aParams = this.getValueHelpUITypes(oControl),
 				aControls = [],
 				oCurrentLabel,
-				sCalendarWeekNumbering = oControl.getCalendarWeekNumbering();
+				sCalendarWeekNumbering = oControl._getCalendarWeekNumbering();
 
 			if (!oControl.aControlsByParameters) {
 				oControl.aControlsByParameters = {};
