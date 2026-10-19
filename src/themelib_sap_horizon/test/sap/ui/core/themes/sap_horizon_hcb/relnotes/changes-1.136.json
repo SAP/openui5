@@ -198,5 +198,15 @@
         "text": " sap.f.DynamicPageTitle: GenericTag layout corrected"
       }
     ]
+  },
+  "1.136.22": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "666ec07a3d4cbcd55472c92923702c30565f82dd",
+        "type": "FIX",
+        "text": " We've now fixed the visual clipping of the remove button in the ScopeActions scope on the sap_horizon and sap_horizon_dark themes in the slide tile control"
+      }
+    ]
   }
 }

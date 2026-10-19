@@ -63,5 +63,15 @@
         "text": " sap.f.DynamicPage: Cache scrollbar width to avoid excessive style recalculations"
       }
     ]
+  },
+  "1.136.22": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "ee090dee8fa1e34817a4a15be46e260196f2e027",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Sentinel divs now have aria-hidden=\"true\""
+      }
+    ]
   }
 }

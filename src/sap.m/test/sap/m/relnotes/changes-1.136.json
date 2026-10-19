@@ -853,5 +853,35 @@
         "text": " sap.m.Popover: Label custom header when showHeader is false"
       }
     ]
+  },
+  "1.136.22": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "d024e6f8a727cb3b4f58670a67c4ad220f2895cb",
+        "type": "FIX",
+        "text": " sap.m.IconTabFilter: fix invalid role=\"separator\" inside role=\"tab\""
+      },
+      {
+        "id": "666ec07a3d4cbcd55472c92923702c30565f82dd",
+        "type": "FIX",
+        "text": " We've now fixed the visual clipping of the remove button in the ScopeActions scope on the sap_horizon and sap_horizon_dark themes in the slide tile control"
+      },
+      {
+        "id": "cbba0db3a07eb97a15f4986c0ed1d6814d694f05",
+        "type": "FIX",
+        "text": " We've now fixed the displacement of action buttons when they are incorrectly placed inside the content wrapper in generic tile"
+      },
+      {
+        "id": "a89b372e2c1ae40fde4dc067b2e7650dd81e71d4",
+        "type": "FIX",
+        "text": " We've now fixed the overflow clipping and border-radius issues in generic tile and action tile controls"
+      },
+      {
+        "id": "a2211e70ffb2ab06c7807856095106cd23630337",
+        "type": "FIX",
+        "text": " sap.m.ScrollPosition: fix intermittent QUnit test failures after navigation and re-render"
+      }
+    ]
   }
 }

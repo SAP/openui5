@@ -183,5 +183,15 @@
         "text": " ObjectPageLayout: prevent endless loop in ResizeHandler callbacks"
       }
     ]
+  },
+  "1.136.22": {
+    "date": "October 2026",
+    "notes": [
+      {
+        "id": "a2edafc52ef8516b775309a232ec0bc618c7fe2e",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: no re-scroll when subSection in view"
+      }
+    ]
   }
 }
