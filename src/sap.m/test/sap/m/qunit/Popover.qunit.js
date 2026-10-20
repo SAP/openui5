@@ -91,24 +91,21 @@ sap.ui.define([
 	// shortcut for sap.m.TitleAlignment
 	var TitleAlignment = mobileLibrary.TitleAlignment;
 
-	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
+	// Creates the shared "content" render target in the document body. Modules call this in
+	// their "before" hook and removeRenderTarget() in "after", so no DOM leaks between modules.
+	function createRenderTarget() {
+		document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
+	}
+
+	function removeRenderTarget() {
+		document.getElementById("content")?.remove();
+	}
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
 	const fArrowOffset = Rem.toPx(Parameters.get({
 		name: "_sap_m_Popover_ArrowOffset"
 	}));
-
-	var app = new App("myApp", {
-		initialPage: "myFirstPage"
-	});
-
-	var page = new Page("myFirstPage", {
-		title: "Test",
-		showNavButton: true
-	});
-
-	app.addPage(page).placeAt("content");
 
 	function bindListData (data, itemTemplate, list) {
 		var oModel = new JSONModel();
@@ -230,15 +227,22 @@ sap.ui.define([
 	});
 
 	QUnit.module("Open and Close", {
+		before: function () {
+			createRenderTarget();
+		},
 		beforeEach: async function () {
 			this.clock = sinon.useFakeTimers();
+
+			this.oApp = new App();
+			this.oPage = new Page({ title: "Test", showNavButton: true });
+			this.oApp.addPage(this.oPage).placeAt("content");
 
 			this.oButton = new Button({
 				text: "Open Popover",
 				press: () => {
 					this.oPopover.openBy(this.oButton);
 				}
-			}).addStyleClass("positioned");
+			});
 
 			this.oPopover = new Popover({
 				placement: PlacementType.Bottom,
@@ -247,19 +251,22 @@ sap.ui.define([
 				content: createPopoverContent()
 			});
 
-			page.addContent(this.oButton);
+			this.oPage.addContent(this.oButton);
 			await nextUIUpdate(this.clock);
-
 		},
 		afterEach: function () {
 			this.oPopover.destroy();
 			this.oButton.destroy();
-			page.destroyContent();
+			this.oApp.destroy();
 			runAllFakeTimersAndRestore(this.clock);
+		},
+		after: function () {
+			removeRenderTarget();
 		}
 	});
 
 	QUnit.test("Open, render and then close", function (assert){
+		this.oButton.addStyleClass("positioned");
 		this.oButton.firePress();
 		this.clock.tick(500);
 		assert.ok(this.oPopover.isOpen(), "Popover is open");
@@ -277,6 +284,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Open with placement: Bottom, and then close", function (assert){
+		this.oButton.addStyleClass("positioned");
 		this.oPopover.setPlacement(PlacementType.Bottom);
 
 		var fnBeforeOpen = this.spy(),
@@ -301,9 +309,6 @@ sap.ui.define([
 		assert.equal(fnBeforeOpen.callCount, 1, "beforeOpen event is fired");
 		assert.equal(fnAfterOpen.callCount, 1, "afterOpen event is fired");
 
-		// assert.ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
-		// assert.ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
-
 		var fnBeforeClose = this.spy(),
 				fnAfterClose = this.spy();
 		this.oPopover.attachBeforeClose(fnBeforeClose);
@@ -318,7 +323,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Open with placement: Right, and then close", function (assert){
-		this.oButton.removeStyleClass("positioned").addStyleClass("positioned1");
+		this.oButton.addStyleClass("positioned1");
 		this.oPopover.setPlacement(PlacementType.Right);
 		this.oButton.firePress();
 		this.clock.tick(500);
@@ -330,10 +335,6 @@ sap.ui.define([
 		assert.ok($popover.length, "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 		assert.ok(Math.ceil($popover.offset().left - fArrowOffset) >= Math.floor($Button.offset().left + $Button.outerWidth()), "Popover should be opened at the right side of the button");
-		//the window size of the test machine is too small, this test can't be executed successfully
-		//		assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
-		//		assert.ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
-		//		assert.ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
 		this.oPopover.close();
 		this.clock.tick(500);
 
@@ -342,7 +343,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Open with placement: Left, and then close", function (assert){
-		this.oButton.removeStyleClass("positioned").addStyleClass("positioned2");
+		this.oButton.addStyleClass("positioned2");
 		this.oPopover.setPlacement(PlacementType.Left);
 		this.oButton.firePress();
 		this.clock.tick(500);
@@ -354,9 +355,6 @@ sap.ui.define([
 		assert.ok($popover.length, "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 		assert.ok(Math.floor($popover.offset().left + $popover.outerWidth() + fArrowOffset) <= Math.ceil($Button.offset().left), "Popover should be opened at the left side of the button");
-		//the window size of the test machine is too small, this test can't be executed successfully
-		//		assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
-		//		assert.ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
 
 		this.oPopover.close();
 		this.clock.tick(500);
@@ -366,7 +364,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Open with placement: Top, and close", function (assert){
-		this.oButton.removeStyleClass("positioned").addStyleClass("positioned3");
+		this.oButton.addStyleClass("positioned3");
 		this.oPopover.setPlacement(PlacementType.Top);
 		this.oButton.firePress();
 		this.clock.tick(500);
@@ -381,11 +379,6 @@ sap.ui.define([
 			// when the browser window is really short, this has to be disabled.
 			assert.ok(Math.floor($popover.offset().top + $popover.outerHeight() + fArrowOffset) <= Math.ceil($Button.offset().top), "Popover should be opened at the top of the button");
 		}
-		//the window size of the test machine is too small, this test can't be executed successfully
-		//		assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
-		//		assert.ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
-		//the window size of the test machine is too small, this test can't be executed successfully
-		//		assert.ok($popover.position().left >= 10, "popover is not overlapping the left border");
 
 		this.oPopover.close();
 		this.clock.tick(500);
@@ -395,6 +388,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Popover should stay open after destroyContent", function(assert) {
+		this.oButton.addStyleClass("positioned");
 		this.oPopover.destroyContent();
 		this.oPopover.addContent(new List({
 			items: [new StandardListItem({ title: 'Test'})]
@@ -410,6 +404,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('it should set the width of the content to "450px"', function(assert) {
+		this.oButton.addStyleClass("positioned");
 		// act
 		this.oPopover.setContentMinWidth("450px");  // note: contentWidth is set to "400px"
 
@@ -422,6 +417,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('it should set the width of the content to "150px"', function(assert) {
+		this.oButton.addStyleClass("positioned");
 		// act
 		this.oPopover.setContentWidth("150px");
 
@@ -434,6 +430,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('ESCAPE should not dismiss the Popover in certain situations', function (assert) {
+		this.oButton.addStyleClass("positioned");
 		var fnKeyDownModifiers = function (iCode) {
 				qutils.triggerKeydown(this.oPopover.getDomRef(), iCode);
 				qutils.triggerKeydown(this.oPopover.getDomRef(), KeyCodes.ESCAPE);
@@ -467,6 +464,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ESCAPE press while the popover hasn't applied initial focus yet", function (assert) {
+		this.oButton.addStyleClass("positioned");
 		// Arrange
 		const oCloseSpy = this.spy(this.oPopover, "close");
 		const oRemoveEventListenersSpy = this.spy(this.oPopover, "_removeDocumentEventListeners");
@@ -496,6 +494,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus is correctly restored to the last control that opened the Popover", async function (assert){
+		this.oButton.addStyleClass("positioned");
 		const oButton = new Button({
 			text: "Click me!",
 			press: () => {
@@ -533,6 +532,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Open invisible popover", function (assert) {
+		this.oButton.addStyleClass("positioned");
 		// Arrange
 		this.oPopover.setVisible(false);
 
@@ -551,12 +551,40 @@ sap.ui.define([
 		assert.ok(this.oPopover.isOpen(), "Popover is open");
 	});
 
+	QUnit.test("Destroying a Popover restores documentElement scrolling", function (assert) {
+		// Arrange: force the no-scrollbar precondition so _preventDocumentElementScrolling
+		// saves the original overflow and overrides it, as it does during open.
+		const oClientHeightDesc = Object.getOwnPropertyDescriptor(Element.prototype, "clientHeight");
+		Object.defineProperty(document.documentElement, "clientHeight", { configurable: true, get: function () { return 100000; } });
+		const sOriginalOverflow = document.documentElement.style.overflow;
+
+		this.oPopover._preventDocumentElementScrolling();
+		assert.strictEqual(document.documentElement.style.overflow, "hidden", "documentElement overflow is overridden to 'hidden'");
+
+		// Act: destroy without restoring first (simulates destroy while the override is active)
+		this.oPopover.destroy();
+
+		// Assert
+		assert.strictEqual(document.documentElement.style.overflow, sOriginalOverflow, "documentElement overflow is restored on destroy");
+
+		delete document.documentElement.clientHeight;
+		if (oClientHeightDesc) {
+			Object.defineProperty(Element.prototype, "clientHeight", oClientHeightDesc);
+		}
+	});
+
 	QUnit.module("Position calculation", {
+		before: function () {
+			createRenderTarget();
+		},
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
 		},
 		afterEach: function () {
 			runAllFakeTimersAndRestore(this.clock);
+		},
+		after: function () {
+			removeRenderTarget();
 		}
 	});
 
@@ -943,13 +971,16 @@ sap.ui.define([
 		// Arrange
 		this.clock.restore();
 		const done = assert.async();
+		// Opener first (stays at viewport top), then a tall spacer to force a documentElement scrollbar.
+		const oOpener = new Button({ text: "Open Popover" });
+		oOpener.placeAt(DOM_RENDER_LOCATION);
+		const oSpacer = new HTML({ content: "<div style='height: 10000px;'></div>" });
+		oSpacer.placeAt(DOM_RENDER_LOCATION);
 		const oPopover = new Popover({
 			content: [
 				new HTML({ content: "<div style='height: 10000px;'></div>" })
 			]
 		});
-		const oOpener = new Button({ text: "Open Popover" });
-		oOpener.placeAt(DOM_RENDER_LOCATION);
 		await nextUIUpdate();
 
 		// Assert
@@ -968,6 +999,7 @@ sap.ui.define([
 			// Clean up
 			oPopover.destroy();
 			oOpener.destroy();
+			oSpacer.destroy();
 			done();
 		});
 
@@ -1026,8 +1058,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Property Setter", {
+		before: function () {
+			createRenderTarget();
+		},
 		beforeEach: async function () {
 			this.clock = sinon.useFakeTimers();
+
+			this.oApp = new App();
+			this.oPage = new Page({ title: "Test", showNavButton: true });
+			this.oApp.addPage(this.oPage).placeAt("content");
+
 			this.oBeginButton = new Button("beginButton", {
 				text: "Left",
 				type: ButtonType.Reject
@@ -1056,7 +1096,7 @@ sap.ui.define([
 				]
 			});
 
-			page.addContent(this.oButton);
+			this.oPage.addContent(this.oButton);
 			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
@@ -1064,7 +1104,11 @@ sap.ui.define([
 			this.oEndButton.destroy();
 			this.oPopover.destroy();
 			this.oButton.destroy();
+			this.oApp.destroy();
 			runAllFakeTimersAndRestore(this.clock);
+		},
+		after: function () {
+			removeRenderTarget();
 		}
 	});
 
@@ -1998,19 +2042,30 @@ sap.ui.define([
 	});
 
 	QUnit.module("Internal methods", {
+		before: function () {
+			createRenderTarget();
+		},
 		beforeEach: async function () {
+			this.oApp = new App();
+			this.oPage = new Page({ title: "Test", showNavButton: true });
+			this.oApp.addPage(this.oPage).placeAt("content");
+
 			this.oButton = new Button({
 				text: "Open Popover"
 			});
 			this.oButton.addStyleClass("positioned");
 			this.oPopover = new Popover();
 
-			page.addContent(this.oButton);
+			this.oPage.addContent(this.oButton);
 			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oPopover.destroy();
 			this.oButton.destroy();
+			this.oApp.destroy();
+		},
+		after: function () {
+			removeRenderTarget();
 		}
 	});
 
@@ -2068,7 +2123,7 @@ sap.ui.define([
 		// Opener placed to the right of the within area's right edge (250px) but well inside the viewport.
 		Object.assign(this.oButton.getDomRef().style, { position: "absolute", top: "60px", left: "400px" });
 
-		oWithinArea.placeAt(page);
+		oWithinArea.placeAt(this.oPage);
 		await nextUIUpdate();
 		Popup.setWithinArea(oWithinArea.getDomRef());
 
@@ -2485,21 +2540,32 @@ sap.ui.define([
 	});
 
 	QUnit.module("Screen Reader", {
+		before: function () {
+			createRenderTarget();
+		},
 		beforeEach: async function () {
 			this.clock = sinon.useFakeTimers();
+
+			this.oApp = new App();
+			this.oPage = new Page({ title: "Test", showNavButton: true });
+			this.oApp.addPage(this.oPage).placeAt("content");
 
 			this.oButton = new Button({
 				text: "Open Popover"
 			});
 			this.oPopover = new Popover();
 
-			page.addContent(this.oButton);
+			this.oPage.addContent(this.oButton);
 			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
 			this.oPopover.destroy();
 			this.oButton.destroy();
+			this.oApp.destroy();
 			runAllFakeTimersAndRestore(this.clock);
+		},
+		after: function () {
+			removeRenderTarget();
 		}
 	});
 
@@ -2781,7 +2847,22 @@ sap.ui.define([
 		oValueStateHeader.destroy();
 	});
 
-	QUnit.module("Integration");
+	QUnit.module("Integration", {
+		before: function () {
+			createRenderTarget();
+		},
+		beforeEach: function () {
+			this.oApp = new App();
+			this.oPage = new Page({ title: "Test", showNavButton: true });
+			this.oApp.addPage(this.oPage).placeAt("content");
+		},
+		afterEach: function () {
+			this.oApp.destroy();
+		},
+		after: function () {
+			removeRenderTarget();
+		}
+	});
 
 	QUnit.test("Focus should be taken out of Popover after closed on tablet", async function (assert) {
 		this.clock = sinon.useFakeTimers();
@@ -3072,8 +3153,8 @@ sap.ui.define([
 			text: "Other Button"
 		});
 
-		page.addContent(oOpenButton);
-		page.addContent(oOtherButton);
+		this.oPage.addContent(oOpenButton);
+		this.oPage.addContent(oOtherButton);
 
 		var oPopover = new Popover({
 			title: "Popover Title",
@@ -3118,8 +3199,8 @@ sap.ui.define([
 			text: "Other Button"
 		});
 
-		page.addContent(oOpenButton);
-		page.addContent(oOtherButton);
+		this.oPage.addContent(oOpenButton);
+		this.oPage.addContent(oOtherButton);
 
 		var oPopover = new Popover({
 			modal: true,
@@ -3191,6 +3272,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Popover scroll width",{
+		before: function () {
+			createRenderTarget();
+		},
 		beforeEach: async function() {
 			this.oButton = new Button().placeAt("content");
 			this.oPopover = new Popover({
@@ -3226,6 +3310,9 @@ sap.ui.define([
 		afterEach: function() {
 			this.oPopover.destroy();
 			this.oButton.destroy();
+		},
+		after: function () {
+			removeRenderTarget();
 		}
 	});
 
@@ -3292,7 +3379,22 @@ sap.ui.define([
 		oPopover.destroy();
 	});
 
-	QUnit.module("Responsive paddings");
+	QUnit.module("Responsive paddings", {
+		before: function () {
+			createRenderTarget();
+		},
+		beforeEach: function () {
+			this.oApp = new App();
+			this.oPage = new Page({ title: "Test", showNavButton: true });
+			this.oApp.addPage(this.oPage).placeAt("content");
+		},
+		afterEach: function () {
+			this.oApp.destroy();
+		},
+		after: function () {
+			removeRenderTarget();
+		}
+	});
 
 	QUnit.test("_initResponsivePaddingsEnablement is called on init", async function (assert) {
 		// Arrange
@@ -3345,7 +3447,7 @@ sap.ui.define([
 			})
 		});
 
-		page.addContent(oButton);
+		this.oPage.addContent(oButton);
 
 		await nextUIUpdate(oClock);
 
@@ -3449,7 +3551,22 @@ sap.ui.define([
 		oPopover.destroy();
 	});
 
-	QUnit.module("Invalidation");
+	QUnit.module("Invalidation", {
+		before: function () {
+			createRenderTarget();
+		},
+		beforeEach: function () {
+			this.oApp = new App();
+			this.oPage = new Page({ title: "Test", showNavButton: true });
+			this.oApp.addPage(this.oPage).placeAt("content");
+		},
+		afterEach: function () {
+			this.oApp.destroy();
+		},
+		after: function () {
+			removeRenderTarget();
+		}
+	});
 
 	QUnit.test("Invalidate while closing", async function (assert) {
 		var done = assert.async();
@@ -3482,13 +3599,28 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 
-		page.addContent(oButton);
+		this.oPage.addContent(oButton);
 		await nextUIUpdate();
 
 		oPopover.openBy(oButton);
 	});
 
-	QUnit.module("Initial Focus");
+	QUnit.module("Initial Focus", {
+		before: function () {
+			createRenderTarget();
+		},
+		beforeEach: function () {
+			this.oApp = new App();
+			this.oPage = new Page({ title: "Test", showNavButton: true });
+			this.oApp.addPage(this.oPage).placeAt("content");
+		},
+		afterEach: function () {
+			this.oApp.destroy();
+		},
+		after: function () {
+			removeRenderTarget();
+		}
+	});
 
 	QUnit.test("Keyboard Focusable Scroll Container", async function (assert) {
 		if (Device.browser.safari) {
@@ -3513,7 +3645,7 @@ sap.ui.define([
 			]
 		});
 
-		page.addContent(oButton);
+		this.oPage.addContent(oButton);
 
 		await nextUIUpdate(oClock);
 
@@ -3552,7 +3684,7 @@ sap.ui.define([
 			]
 		});
 
-		page.addContent(oButton);
+		this.oPage.addContent(oButton);
 
 		await nextUIUpdate(oClock);
 
@@ -3570,11 +3702,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Focus Handling and Screen Reader Support", {
+		before: function () {
+			createRenderTarget();
+		},
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
 		},
 		afterEach: function () {
 			runAllFakeTimersAndRestore(this.clock);
+		},
+		after: function () {
+			removeRenderTarget();
 		}
 	});
 

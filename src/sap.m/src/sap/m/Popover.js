@@ -861,6 +861,8 @@ sap.ui.define([
 
 			InstanceManager.removePopoverInstance(this);
 
+			this._restoreDocumentElementScrolling();
+
 			this._removeAriaOwnsFromModalAncestor();
 
 			PreventKeyboardEvents.restore(this.getDomRef());
