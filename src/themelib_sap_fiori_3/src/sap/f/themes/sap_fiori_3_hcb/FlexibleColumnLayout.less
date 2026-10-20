@@ -50,11 +50,11 @@
 		}
 
 		&::before {
-			background-image: linear-gradient(to top, var(--sapObjectHeader_BorderColor), fade(@sapUiObjectHeaderBorderColor, 0));
+			background-image: linear-gradient(to top, var(--sapObjectHeader_BorderColor), ~'hsl(from var(--sapObjectHeader_BorderColor) h s l / 0)');
 		}
 
 		&::after {
-			background-image: linear-gradient(to bottom, var(--sapObjectHeader_BorderColor), fade(@sapUiObjectHeaderBorderColor, 0));
+			background-image: linear-gradient(to bottom, var(--sapObjectHeader_BorderColor), ~'hsl(from var(--sapObjectHeader_BorderColor) h s l / 0)');
 		}
 	}
 }
