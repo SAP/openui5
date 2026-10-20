@@ -128,6 +128,7 @@ sap.ui.define([
 			expanded: true,
 			headerToolbar: new Toolbar({
 				design: "Transparent",
+				active: true,
 				content: [
 					new Title({ text: "4th Header toolbar content ..." })
 				]

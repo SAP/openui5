@@ -81,7 +81,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 			oHeaderTBar = oControl.getHeaderToolbar(),
 			sHeaderClass;
 
-		oRm.openStart("div");
+		oRm.openStart("div", oControl.getId() + "-heading");
 		oRm.class("sapMPanelHeadingDiv");
 
 		if (bIsStickyPanel) {

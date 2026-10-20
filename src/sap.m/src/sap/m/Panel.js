@@ -12,9 +12,10 @@ sap.ui.define([
 	'./PanelRenderer',
 	"sap/ui/core/Lib",
 	'sap/m/Button',
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/tooltip/TooltipEnablement"
 ],
-	function(library, Control, ControlBehavior, IconPool, Device, PanelRenderer, Library, Button, KeyCodes) {
+	function(library, Control, ControlBehavior, IconPool, Device, PanelRenderer, Library, Button, KeyCodes, TooltipEnablement) {
 	"use strict";
 
 	// shortcut for sap.m.PanelAccessibleRole
@@ -208,6 +209,18 @@ sap.ui.define([
 		// tracks if there's a pending toggle action waiting for space key release
 		this._bPendingToggle = false;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+
+		if (TooltipEnablement.isEnhancedTooltipEnabled()) {
+			this._oHeaderTooltipEnablement = new TooltipEnablement(this, {
+				textProvider: this._getHeaderTooltipText.bind(this),
+				domRefProvider: () => (this.getExpandable() && !this.getHeaderToolbar() ? this.getDomRef("heading") : null),
+				focusDomRefProvider: () => {
+					var oDomRef = (this.getExpandable() && !this.getHeaderToolbar()) ? this.getDomRef("heading") : null;
+					return oDomRef ? oDomRef.querySelector(".sapMPanelWrappingDiv") : null;
+				},
+				invisibleTooltipIdSuffix: "-headerTooltip"
+			});
+		}
 	};
 
 	Panel.prototype.onThemeChanged = function () {
@@ -389,24 +402,43 @@ sap.ui.define([
 			this._oExpandButton.destroy();
 			this._oExpandButton = null;
 		}
+
+		if (this._oHeaderTooltipEnablement) {
+			this._oHeaderTooltipEnablement.destroy();
+			this._oHeaderTooltipEnablement = null;
+		}
+	};
+
+	/**
+	 * Returns the enhanced tooltip text shown over the panel header and the
+	 * expand/collapse icon. For an expandable panel this is the action offered
+	 * on activation - "Expand" while collapsed, "Collapse" while expanded.
+	 *
+	 * @returns {string} The tooltip text.
+	 * @private
+	 */
+	Panel.prototype._getHeaderTooltipText = function () {
+		var oBundle = Library.getResourceBundleFor("sap.m");
+
+		return this.getExpanded()
+			? oBundle.getText("PANEL_COLLAPSE")
+			: oBundle.getText("PANEL_EXPAND");
 	};
 
 	Panel.prototype._createExpandButton = function () {
 		var that = this,
 			sIconURI = IconPool.getIconURI("slim-arrow-right"),
-			sTooltipBundleText = Library.getResourceBundleFor("sap.m").getText("PANEL_ICON"),
 			oButton;
 
 		if (!this.getHeaderToolbar()) {
 			return IconPool.createControlByURI({
-				src: sIconURI,
-				tooltip: sTooltipBundleText
+				src: sIconURI
 			});
 		}
 
 		oButton = new Button(this.getId() + "-expandButton", {
 			icon: sIconURI,
-			tooltip: sTooltipBundleText,
+			tooltip: this._getHeaderTooltipText(),
 			type: ButtonType.Transparent,
 			press: function () {
 				that._bInteractiveExpand = true;
@@ -417,6 +449,13 @@ sap.ui.define([
 				oButton.$().attr("aria-expanded", this.getExpanded());
 			}.bind(this)
 		}, this);
+
+		// Suppress the Button's invisible tooltip anchor so it is not additionally referenced via aria-describedby,
+		// which would otherwise make screen readers announce the same text twice, because we re-render the button
+		// with a new tooltip on every expand/collapse
+		if (oButton._oTooltipEnablement) {
+			oButton._oTooltipEnablement._fnInvisibleTextProvider = function () { return ""; };
+		}
 
 		this.addDependent(oButton);
 
@@ -432,6 +471,7 @@ sap.ui.define([
 
 		if (this.getHeaderToolbar()) {
 			this._oExpandButton.toggleStyleClass("sapMPanelExpandBtnRotated", bIsExpanded);
+			this._oExpandButton.setTooltip(this._getHeaderTooltipText());
 		} else {
 			oIconDomRef = this._oExpandButton.getDomRef();
 			oIconDomRef && oIconDomRef.classList.toggle("sapMPanelExpandIconRotated", bIsExpanded);

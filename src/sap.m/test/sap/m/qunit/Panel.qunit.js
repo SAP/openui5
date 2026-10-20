@@ -8,6 +8,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Title",
 	"sap/m/OverflowToolbar",
+	"sap/ui/core/tooltip/TooltipEnablement",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
@@ -21,6 +23,8 @@ sap.ui.define([
 	Label,
 	Title,
 	OverflowToolbar,
+	TooltipEnablement,
+	Library,
 	jQuery,
 	nextUIUpdate,
 	qutils,
@@ -881,5 +885,35 @@ sap.ui.define([
 		assert.strictEqual(oPanel.$().attr("aria-labelledby"), undefined, "There should be no aria-labelledby when there's no header or headerText");
 
 		oPanel.destroy();
+	});
+
+	QUnit.module("Enhanced tooltip");
+
+	QUnit.test("enhanced tooltip is applied on the whole header", async function (assert) {
+		sinon.stub(TooltipEnablement, "isEnhancedTooltipEnabled").returns(true);
+
+		var oBundle = Library.getResourceBundleFor("sap.m"),
+			oPanel = new Panel({ headerText: "My header", expandable: true, expanded: false });
+		oPanel.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		assert.strictEqual(oPanel._oHeaderTooltipEnablement._fnDomRefProvider(), oPanel.getDomRef("heading"),
+			"the enhanced tooltip is anchored to the whole panel header");
+
+		assert.strictEqual(oPanel._oHeaderTooltipEnablement._fnFocusDomRefProvider(),
+			oPanel.getDomRef("heading").querySelector(".sapMPanelWrappingDiv"),
+			"the enhanced tooltip focus events are anchored to the focusable wrapping div");
+
+		assert.strictEqual(oPanel._getHeaderTooltipText(), oBundle.getText("PANEL_EXPAND"),
+			"the enhanced tooltip to expand while the panel is collapsed");
+
+		oPanel.setExpanded(true);
+		await nextUIUpdate();
+
+		assert.strictEqual(oPanel._getHeaderTooltipText(), oBundle.getText("PANEL_COLLAPSE"),
+			"the enhanced tooltip to collapse while the panel is expanded");
+
+		oPanel.destroy();
+		TooltipEnablement.isEnhancedTooltipEnabled.restore();
 	});
 });
