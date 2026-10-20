@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/ShellBar"
   ],
-  function (WebComponentBaseClass) {
+  function (WebComponent) {
     "use strict";
 
     /**
@@ -44,11 +44,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/ShellBar
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const ShellBar = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.ShellBar",
       {
         metadata: {
-          tag: "ui5-shellbar-ad055745",
+          tag: "ui5-shellbar-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -655,6 +655,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return ShellBar;
   }
 );

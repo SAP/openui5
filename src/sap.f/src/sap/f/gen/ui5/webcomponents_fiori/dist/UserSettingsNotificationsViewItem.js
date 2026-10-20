@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/UserSettingsNotificationsViewItem"
   ],
-  function (WebComponentBaseClass) {
+  function (ListItemCustom) {
     "use strict";
 
     /**
@@ -37,11 +37,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/UserSettingsNotificationsViewItem
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const UserSettingsNotificationsViewItem = ListItemCustom.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.UserSettingsNotificationsViewItem",
       {
         metadata: {
-          tag: "ui5-user-settings-notifications-view-item-ad055745",
+          tag: "ui5-user-settings-notifications-view-item-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -254,7 +254,7 @@ sap.ui.define(
                           ui5Type:
                             "sap.f.gen.ui5.webcomponents_fiori.dist.UserSettingsNotificationsViewItem",
                           moduleType:
-                            "module:@ui5/webcomponents-fiori/dist/UserSettingsNotificationsViewItem",
+                            "module:ui5/webcomponents_fiori/dist/UserSettingsNotificationsViewItem",
                           packageName:
                             "sap/f/gen/ui5/webcomponents_fiori/dist/UserSettingsNotificationsViewItem",
                           isClass: true
@@ -309,6 +309,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return UserSettingsNotificationsViewItem;
   }
 );

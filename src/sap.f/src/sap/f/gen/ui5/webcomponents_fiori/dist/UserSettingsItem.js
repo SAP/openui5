@@ -8,7 +8,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/UserSettingsItem"
   ],
-  function (WebComponentBaseClass, EnabledPropagator) {
+  function (WebComponent, EnabledPropagator) {
     "use strict";
 
     /**
@@ -32,11 +32,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/UserSettingsItem
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const UserSettingsItem = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.UserSettingsItem",
       {
         metadata: {
-          tag: "ui5-user-settings-item-ad055745",
+          tag: "ui5-user-settings-item-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -167,7 +167,7 @@ sap.ui.define(
                           ui5Type:
                             "sap.f.gen.ui5.webcomponents_fiori.dist.UserSettingsView",
                           moduleType:
-                            "module:@ui5/webcomponents-fiori/dist/UserSettingsView",
+                            "module:ui5/webcomponents_fiori/dist/UserSettingsView",
                           packageName:
                             "sap/f/gen/ui5/webcomponents_fiori/dist/UserSettingsView",
                           isClass: true
@@ -188,8 +188,8 @@ sap.ui.define(
       }
     );
 
-    EnabledPropagator.call(WrapperClass.prototype);
+    EnabledPropagator.call(UserSettingsItem.prototype);
 
-    return WrapperClass;
+    return UserSettingsItem;
   }
 );

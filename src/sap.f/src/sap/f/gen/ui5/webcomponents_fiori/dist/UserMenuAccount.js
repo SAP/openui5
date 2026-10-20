@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/UserMenuAccount"
   ],
-  function (WebComponentBaseClass) {
+  function (WebComponent) {
     "use strict";
 
     /**
@@ -26,11 +26,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/UserMenuAccount
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const UserMenuAccount = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.UserMenuAccount",
       {
         metadata: {
-          tag: "ui5-user-menu-account-ad055745",
+          tag: "ui5-user-menu-account-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -141,6 +141,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return UserMenuAccount;
   }
 );

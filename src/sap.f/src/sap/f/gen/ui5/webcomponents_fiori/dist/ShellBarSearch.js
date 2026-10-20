@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/ShellBarSearch"
   ],
-  function (WebComponentBaseClass) {
+  function (Search) {
     "use strict";
 
     /**
@@ -21,11 +21,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/ShellBarSearch
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const ShellBarSearch = Search.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.ShellBarSearch",
       {
         metadata: {
-          tag: "ui5-shellbar-search-ad055745",
+          tag: "ui5-shellbar-search-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -251,6 +251,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return ShellBarSearch;
   }
 );

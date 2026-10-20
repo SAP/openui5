@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents",
     "sap/f/thirdparty/UserSettingsAppearanceViewItem"
   ],
-  function (WebComponentBaseClass) {
+  function (ListItem) {
     "use strict";
 
     /**
@@ -45,11 +45,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents/dist/ListItemCustom
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const ListItemCustom = ListItem.extend(
       "sap.f.gen.ui5.webcomponents.dist.ListItemCustom",
       {
         metadata: {
-          tag: "ui5-li-custom-ad055745",
+          tag: "ui5-li-custom-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents",
 
@@ -223,6 +223,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return ListItemCustom;
   }
 );

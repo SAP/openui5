@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/ShellBarSpacer"
   ],
-  function (WebComponentBaseClass) {
+  function (WebComponent) {
     "use strict";
 
     /**
@@ -23,11 +23,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/ShellBarSpacer
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const ShellBarSpacer = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.ShellBarSpacer",
       {
         metadata: {
-          tag: "ui5-shellbar-spacer-ad055745",
+          tag: "ui5-shellbar-spacer-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -68,6 +68,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return ShellBarSpacer;
   }
 );

@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/SearchMessageArea"
   ],
-  function (WebComponentBaseClass) {
+  function (WebComponent) {
     "use strict";
 
     /**
@@ -21,11 +21,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/SearchMessageArea
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const SearchMessageArea = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.SearchMessageArea",
       {
         metadata: {
-          tag: "ui5-search-message-area-ad055745",
+          tag: "ui5-search-message-area-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -70,6 +70,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return SearchMessageArea;
   }
 );

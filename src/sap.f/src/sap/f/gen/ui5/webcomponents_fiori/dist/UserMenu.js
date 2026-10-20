@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/UserMenu"
   ],
-  function (WebComponentBaseClass) {
+  function (WebComponent) {
     "use strict";
 
     /**
@@ -29,11 +29,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/UserMenu
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const UserMenu = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.UserMenu",
       {
         metadata: {
-          tag: "ui5-user-menu-ad055745",
+          tag: "ui5-user-menu-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -161,7 +161,10 @@ sap.ui.define(
              * When using this attribute in a declarative way, you must only use the `id` (as a string) of the element at which you want to show the popover.
              * You can only set the `opener` attribute to a DOM Reference when using JavaScript.
              */
-            opener: { mapping: { type: "property", to: "opener" } }
+            opener: {
+              type: "sap.ui.core.Control",
+              mapping: { type: "property", to: "opener" }
+            }
           },
 
           events: {
@@ -193,7 +196,7 @@ sap.ui.define(
                           ui5Type:
                             "sap.f.gen.ui5.webcomponents_fiori.dist.UserMenuAccount",
                           moduleType:
-                            "module:@ui5/webcomponents-fiori/dist/UserMenuAccount",
+                            "module:ui5/webcomponents_fiori/dist/UserMenuAccount",
                           packageName:
                             "sap/f/gen/ui5/webcomponents_fiori/dist/UserMenuAccount",
                           isClass: true
@@ -218,7 +221,7 @@ sap.ui.define(
                           ui5Type:
                             "sap.f.gen.ui5.webcomponents_fiori.dist.UserMenuAccount",
                           moduleType:
-                            "module:@ui5/webcomponents-fiori/dist/UserMenuAccount",
+                            "module:ui5/webcomponents_fiori/dist/UserMenuAccount",
                           packageName:
                             "sap/f/gen/ui5/webcomponents_fiori/dist/UserMenuAccount",
                           isClass: true
@@ -265,7 +268,7 @@ sap.ui.define(
                           dtsType: "UserMenuItem",
                           ui5Type: "sap.f.gen.ui5.webcomponents_fiori.dist.UserMenuItem",
                           moduleType:
-                            "module:@ui5/webcomponents-fiori/dist/UserMenuItem",
+                            "module:ui5/webcomponents_fiori/dist/UserMenuItem",
                           packageName:
                             "sap/f/gen/ui5/webcomponents_fiori/dist/UserMenuItem",
                           isClass: true
@@ -309,6 +312,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return UserMenu;
   }
 );

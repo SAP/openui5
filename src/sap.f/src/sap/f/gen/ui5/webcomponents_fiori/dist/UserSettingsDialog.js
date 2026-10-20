@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/UserSettingsDialog"
   ],
-  function (WebComponentBaseClass) {
+  function (WebComponent) {
     "use strict";
 
     /**
@@ -27,11 +27,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/UserSettingsDialog
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const UserSettingsDialog = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.UserSettingsDialog",
       {
         metadata: {
-          tag: "ui5-user-settings-dialog-ad055745",
+          tag: "ui5-user-settings-dialog-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -180,7 +180,7 @@ sap.ui.define(
                           ui5Type:
                             "sap.f.gen.ui5.webcomponents_fiori.dist.UserSettingsItem",
                           moduleType:
-                            "module:@ui5/webcomponents-fiori/dist/UserSettingsItem",
+                            "module:ui5/webcomponents_fiori/dist/UserSettingsItem",
                           packageName:
                             "sap/f/gen/ui5/webcomponents_fiori/dist/UserSettingsItem",
                           isClass: true
@@ -201,6 +201,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return UserSettingsDialog;
   }
 );

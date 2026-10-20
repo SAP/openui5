@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/UserSettingsAppearanceViewItem"
   ],
-  function (WebComponentBaseClass) {
+  function (ListItemCustom) {
     "use strict";
 
     /**
@@ -29,11 +29,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/UserSettingsAppearanceViewItem
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const UserSettingsAppearanceViewItem = ListItemCustom.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.UserSettingsAppearanceViewItem",
       {
         metadata: {
-          tag: "ui5-user-settings-appearance-view-item-ad055745",
+          tag: "ui5-user-settings-appearance-view-item-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -224,6 +224,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return UserSettingsAppearanceViewItem;
   }
 );

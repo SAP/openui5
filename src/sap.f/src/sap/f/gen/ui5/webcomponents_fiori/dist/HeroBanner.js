@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/HeroBanner"
   ],
-  function (WebComponentBaseClass) {
+  function (WebComponent) {
     "use strict";
 
     /**
@@ -56,11 +56,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/HeroBanner
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const HeroBanner = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.HeroBanner",
       {
         metadata: {
-          tag: "ui5-hero-banner-ad055745",
+          tag: "ui5-hero-banner-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -190,6 +190,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return HeroBanner;
   }
 );

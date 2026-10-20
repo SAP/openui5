@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/SearchItem"
   ],
-  function (WebComponentBaseClass) {
+  function (ListItemBase) {
     "use strict";
 
     /**
@@ -27,11 +27,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/SearchItem
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const SearchItem = ListItemBase.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.SearchItem",
       {
         metadata: {
-          tag: "ui5-search-item-ad055745",
+          tag: "ui5-search-item-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -159,6 +159,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return SearchItem;
   }
 );

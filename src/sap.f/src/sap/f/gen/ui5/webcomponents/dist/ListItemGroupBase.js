@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents",
     "sap/f/thirdparty/UserSettingsAppearanceViewGroup"
   ],
-  function (WebComponentBaseClass) {
+  function (WebComponent) {
     "use strict";
 
     /**
@@ -27,7 +27,7 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents/dist/ListItemGroupBase
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const ListItemGroupBase = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents.dist.ListItemGroupBase",
       {
         metadata: {
@@ -77,6 +77,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return ListItemGroupBase;
   }
 );

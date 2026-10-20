@@ -8,7 +8,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/UserMenuItem"
   ],
-  function (WebComponentBaseClass, EnabledPropagator) {
+  function (MenuItem, EnabledPropagator) {
     "use strict";
 
     /**
@@ -35,11 +35,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/UserMenuItem
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const UserMenuItem = MenuItem.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.UserMenuItem",
       {
         metadata: {
-          tag: "ui5-user-menu-item-ad055745",
+          tag: "ui5-user-menu-item-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -382,8 +382,8 @@ sap.ui.define(
       }
     );
 
-    EnabledPropagator.call(WrapperClass.prototype);
+    EnabledPropagator.call(UserMenuItem.prototype);
 
-    return WrapperClass;
+    return UserMenuItem;
   }
 );

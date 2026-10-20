@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/NotificationListItem"
   ],
-  function (WebComponentBaseClass) {
+  function (ListItemBase) {
     "use strict";
 
     /**
@@ -21,7 +21,7 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/NotificationListItemBase
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const NotificationListItemBase = ListItemBase.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.NotificationListItemBase",
       {
         metadata: {
@@ -107,6 +107,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return NotificationListItemBase;
   }
 );

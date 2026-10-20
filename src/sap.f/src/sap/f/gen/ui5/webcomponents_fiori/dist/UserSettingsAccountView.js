@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/UserSettingsAccountView"
   ],
-  function (WebComponentBaseClass) {
+  function (UserSettingsView) {
     "use strict";
 
     /**
@@ -23,11 +23,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/UserSettingsAccountView
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const UserSettingsAccountView = UserSettingsView.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.UserSettingsAccountView",
       {
         metadata: {
-          tag: "ui5-user-settings-account-view-ad055745",
+          tag: "ui5-user-settings-account-view-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -130,6 +130,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return UserSettingsAccountView;
   }
 );

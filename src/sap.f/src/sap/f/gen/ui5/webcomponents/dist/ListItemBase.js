@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents",
     "sap/f/thirdparty/SearchItem"
   ],
-  function (WebComponentBaseClass) {
+  function (WebComponent) {
     "use strict";
 
     /**
@@ -22,7 +22,7 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents/dist/ListItemBase
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const ListItemBase = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents.dist.ListItemBase",
       {
         metadata: {
@@ -84,6 +84,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return ListItemBase;
   }
 );

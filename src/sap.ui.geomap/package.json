@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@ui5/webcomponents-geomap": "0.1.0",
-    "ui5-tooling-modules": "3.41.1"
+    "ui5-tooling-modules": "3.41.2"
   },
   "scripts": {
     "build-webcomponents": "ui5 build --dest ./src/sap/ui/geomap --output-style flat --config ui5-build.yaml --exclude-task \\* --include-task ui5-tooling-modules-task",

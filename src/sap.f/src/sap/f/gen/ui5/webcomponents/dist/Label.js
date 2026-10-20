@@ -8,7 +8,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents",
     "sap/f/thirdparty/Label"
   ],
-  function (WebComponentBaseClass, LabelEnablement) {
+  function (WebComponent, LabelEnablement) {
     "use strict";
 
     /**
@@ -35,90 +35,87 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents/dist/Label
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
-      "sap.f.gen.ui5.webcomponents.dist.Label",
-      {
-        metadata: {
-          tag: "ui5-label-ad055745",
+    const Label = WebComponent.extend("sap.f.gen.ui5.webcomponents.dist.Label", {
+      metadata: {
+        tag: "ui5-label-29d33248",
 
-          namespace: "sap.f.gen.ui5.webcomponents",
+        namespace: "sap.f.gen.ui5.webcomponents",
 
-          library: "sap.f",
+        library: "sap.f",
 
-          designtime: "sap/f/gen/ui5/webcomponents/designtime/Label.designtime",
+        designtime: "sap/f/gen/ui5/webcomponents/designtime/Label.designtime",
 
-          interfaces: ["sap.ui.core.Label"],
+        interfaces: ["sap.ui.core.Label"],
 
-          defaultAggregation: "content",
+        defaultAggregation: "content",
 
-          properties: {
-            /**
-             * Defines whether an asterisk character is added to the component text.
-             *
-             * **Note:** Usually indicates that user input (bound with the `for` property) is required.
-             * In that case the `required` property of
-             * the corresponding input should also be set.
-             */
-            required: {
-              type: "boolean",
-              mapping: "property",
-              defaultValue: false
-            },
-            /**
-             * Defines whether colon is added to the component text.
-             *
-             * **Note:** Usually used in forms.
-             */
-            showColon: {
-              type: "boolean",
-              mapping: "property",
-              defaultValue: false
-            },
-            /**
-             * Defines how the text of a component will be displayed when there is not enough space.
-             *
-             * **Note:** for option "Normal" the text will wrap and the words will not be broken based on hyphenation.
-             * @type module:sap/f/gen/ui5/webcomponents/dist/types/WrappingType
-             */
-            wrappingType: {
-              type: "sap.f.gen.ui5.webcomponents.dist.types.WrappingType",
-              mapping: "property",
-              defaultValue: "Normal"
-            },
-            /**
-             * The text-content of the Web Component.
-             */
-            text: { type: "string", mapping: "textContent" },
-            /**
-             * The 'width' of the Web Component in <code>sap.ui.core.CSSSize</code>.
-             */
-            width: { type: "sap.ui.core.CSSSize", mapping: "style" },
-            /**
-             * The 'height' of the Web Component in <code>sap.ui.core.CSSSize</code>.
-             */
-            height: { type: "sap.ui.core.CSSSize", mapping: "style" }
+        properties: {
+          /**
+           * Defines whether an asterisk character is added to the component text.
+           *
+           * **Note:** Usually indicates that user input (bound with the `for` property) is required.
+           * In that case the `required` property of
+           * the corresponding input should also be set.
+           */
+          required: {
+            type: "boolean",
+            mapping: "property",
+            defaultValue: false
           },
-
-          aggregations: {},
-
-          associations: {
-            labelFor: {
-              type: "sap.ui.core.Control",
-              multiple: false,
-              mapping: { type: "property", to: "for" }
-            }
+          /**
+           * Defines whether colon is added to the component text.
+           *
+           * **Note:** Usually used in forms.
+           */
+          showColon: {
+            type: "boolean",
+            mapping: "property",
+            defaultValue: false
           },
+          /**
+           * Defines how the text of a component will be displayed when there is not enough space.
+           *
+           * **Note:** for option "Normal" the text will wrap and the words will not be broken based on hyphenation.
+           * @type module:sap/f/gen/ui5/webcomponents/dist/types/WrappingType
+           */
+          wrappingType: {
+            type: "sap.f.gen.ui5.webcomponents.dist.types.WrappingType",
+            mapping: "property",
+            defaultValue: "Normal"
+          },
+          /**
+           * The text-content of the Web Component.
+           */
+          text: { type: "string", mapping: "textContent" },
+          /**
+           * The 'width' of the Web Component in <code>sap.ui.core.CSSSize</code>.
+           */
+          width: { type: "sap.ui.core.CSSSize", mapping: "style" },
+          /**
+           * The 'height' of the Web Component in <code>sap.ui.core.CSSSize</code>.
+           */
+          height: { type: "sap.ui.core.CSSSize", mapping: "style" }
+        },
 
-          events: {},
+        aggregations: {},
 
-          getters: [],
+        associations: {
+          labelFor: {
+            type: "sap.ui.core.Control",
+            multiple: false,
+            mapping: { type: "property", to: "for" }
+          }
+        },
 
-          methods: []
-        }
+        events: {},
+
+        getters: [],
+
+        methods: []
       }
-    );
-    LabelEnablement.enrich(WrapperClass.prototype);
+    });
+    LabelEnablement.enrich(Label.prototype);
 
-    return WrapperClass;
+    return Label;
   }
 );

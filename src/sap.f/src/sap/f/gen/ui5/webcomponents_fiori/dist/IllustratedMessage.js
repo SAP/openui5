@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/IllustratedMessage"
   ],
-  function (WebComponentBaseClass) {
+  function (WebComponent) {
     "use strict";
 
     /**
@@ -53,11 +53,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/IllustratedMessage
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const IllustratedMessage = WebComponent.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.IllustratedMessage",
       {
         metadata: {
-          tag: "ui5-illustrated-message-ad055745",
+          tag: "ui5-illustrated-message-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -208,6 +208,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return IllustratedMessage;
   }
 );

@@ -7,7 +7,7 @@ sap.ui.define(
     "sap/f/gen/ui5/webcomponents_fiori",
     "sap/f/thirdparty/NotificationListGroupItem"
   ],
-  function (WebComponentBaseClass) {
+  function (NotificationListItemBase) {
     "use strict";
 
     /**
@@ -46,11 +46,11 @@ sap.ui.define(
      * @alias module:sap/f/gen/ui5/webcomponents_fiori/dist/NotificationListGroupItem
      */
 
-    const WrapperClass = WebComponentBaseClass.extend(
+    const NotificationListGroupItem = NotificationListItemBase.extend(
       "sap.f.gen.ui5.webcomponents_fiori.dist.NotificationListGroupItem",
       {
         metadata: {
-          tag: "ui5-li-notification-group-ad055745",
+          tag: "ui5-li-notification-group-29d33248",
 
           namespace: "sap.f.gen.ui5.webcomponents_fiori",
 
@@ -184,6 +184,6 @@ sap.ui.define(
       }
     );
 
-    return WrapperClass;
+    return NotificationListGroupItem;
   }
 );
