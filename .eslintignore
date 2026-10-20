@@ -9,6 +9,8 @@ src/sap.ui.core/src/sap/base/util/restricted/_
 src/sap.ui.core/test/sap/ui/core/qunit/thirdparty
 src/sap.f/src/sap/f/gen
 src/sap.f/src/sap/f/thirdparty
+src/sap.ui.geomap/src/sap/ui/geomap/gen
+src/sap.ui.geomap/src/sap/ui/geomap/thirdparty
 src/sap.m/src/sap/m/_thirdparty
 src/sap.m/test/sap/m/demokit/cart/webapp/Component.js
 src/sap.m/test/sap/m/demokit/master-detail/webapp/Component.js

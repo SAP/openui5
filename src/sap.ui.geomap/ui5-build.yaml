@@ -1,0 +1,70 @@
+specVersion: "3.0"
+metadata:
+  name: sap.ui.geomap
+type: library
+customConfiguration:
+  ui5-tooling-modules: &cfgModules
+    additionalDependencies:
+      - "@ui5/webcomponents-geomap"
+    entryPoints:
+      - "@ui5/webcomponents-geomap/dist/Geomap"
+      - "@ui5/webcomponents-geomap/dist/GeomapArc"
+      - "@ui5/webcomponents-geomap/dist/GeomapCircle"
+      - "@ui5/webcomponents-geomap/dist/GeomapCircleLayer"
+      - "@ui5/webcomponents-geomap/dist/GeomapCircleLayerState"
+      - "@ui5/webcomponents-geomap/dist/GeomapClusterSource"
+      - "@ui5/webcomponents-geomap/dist/GeomapContainer"
+      - "@ui5/webcomponents-geomap/dist/GeomapContainerControl"
+      - "@ui5/webcomponents-geomap/dist/GeomapControlBase"
+      - "@ui5/webcomponents-geomap/dist/GeomapCopyrightControl"
+      - "@ui5/webcomponents-geomap/dist/GeomapElement"
+      - "@ui5/webcomponents-geomap/dist/GeomapFillLayer"
+      - "@ui5/webcomponents-geomap/dist/GeomapFillLayerState"
+      - "@ui5/webcomponents-geomap/dist/GeomapFullscreenControl"
+      - "@ui5/webcomponents-geomap/dist/GeomapGeocircle"
+      - "@ui5/webcomponents-geomap/dist/GeomapHeatmapLayer"
+      - "@ui5/webcomponents-geomap/dist/GeomapHssProvider"
+      - "@ui5/webcomponents-geomap/dist/GeomapImage"
+      - "@ui5/webcomponents-geomap/dist/GeomapLayer"
+      - "@ui5/webcomponents-geomap/dist/GeomapLayerBase"
+      - "@ui5/webcomponents-geomap/dist/GeomapLegendControl"
+      - "@ui5/webcomponents-geomap/dist/GeomapLine"
+      - "@ui5/webcomponents-geomap/dist/GeomapLineLayer"
+      - "@ui5/webcomponents-geomap/dist/GeomapLineLayerState"
+      - "@ui5/webcomponents-geomap/dist/GeomapMarkerBase"
+      - "@ui5/webcomponents-geomap/dist/GeomapNavigationControl"
+      - "@ui5/webcomponents-geomap/dist/GeomapPoint"
+      - "@ui5/webcomponents-geomap/dist/GeomapPolygon"
+      - "@ui5/webcomponents-geomap/dist/GeomapProvider"
+      - "@ui5/webcomponents-geomap/dist/GeomapRasterTiles"
+      - "@ui5/webcomponents-geomap/dist/GeomapScaleControl"
+      - "@ui5/webcomponents-geomap/dist/GeomapSelectionControl"
+      - "@ui5/webcomponents-geomap/dist/GeomapShape"
+      - "@ui5/webcomponents-geomap/dist/GeomapSource"
+      - "@ui5/webcomponents-geomap/dist/GeomapSpot"
+      - "@ui5/webcomponents-geomap/dist/GeomapSymbolLayer"
+    skipTransform:
+      - "maplibre-gl/dist/maplibre-gl-csp-worker.js"
+    sanitizeNpmPackageName: true
+    pluginOptions:
+      webcomponents:
+        force: true # framework version is missing for auto enablement, so force it
+        scoping: true # enable scoping of web components to avoid conflicts
+        includeAssets: true # include web component assets (themes, i18n, etc.)
+        forceAllAssets: true # include all assets in package modules to ensure initial registration
+        skipJSDoc: false # enable the JSDoc generation
+        customJSDocTags:
+          - public
+          - since 1.155
+builder:
+  jsdoc:
+    excludes:
+      - "sap/ui/geomap/thirdparty/**"
+  libraryPreload:
+    excludes:
+      - "sap/ui/geomap/thirdparty/maplibre-gl-csp-worker.js"
+  customTasks:
+    - name: ui5-tooling-modules-task
+      afterTask: replaceVersion
+      configuration:
+        <<: *cfgModules

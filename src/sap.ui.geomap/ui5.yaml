@@ -1,0 +1,19 @@
+---
+specVersion: "3.0"
+type: library
+metadata:
+  name: sap.ui.geomap
+  copyright: |-
+   OpenUI5
+    * (c) Copyright ${currentYear} SAP SE or an SAP affiliate company.
+    * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+resources:
+  configuration:
+    propertiesFileSourceEncoding: ISO-8859-1
+builder:
+  jsdoc:
+    excludes:
+      - "sap/ui/geomap/thirdparty/**"
+  libraryPreload:
+    excludes:
+      - "sap/ui/geomap/thirdparty/maplibre-gl-csp-worker.js"

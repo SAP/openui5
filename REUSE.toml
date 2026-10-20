@@ -565,6 +565,16 @@ SPDX-License-Identifier = "MIT"
 SPDX-FileComment = "these files belong to: Buttons extension for DataTables"
 
 
+# Library: sap.ui.geomap:
+
+[[annotations]]
+path = "src/sap.ui.geomap/src/sap/ui/geomap/thirdparty/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "SAP"
+SPDX-License-Identifier = "Apache-2.0"
+SPDX-FileComment = "these files belong to: UI5 Web Components Geomap"
+
+
 # Library: sap.ui.integration:
 
 [[annotations]]

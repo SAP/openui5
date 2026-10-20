@@ -34,6 +34,7 @@
     "@openui5/sap.ui.documentation": "1.155.0-SNAPSHOT",
     "@openui5/sap.ui.dt": "1.155.0-SNAPSHOT",
     "@openui5/sap.ui.fl": "1.155.0-SNAPSHOT",
+    "@openui5/sap.ui.geomap": "1.155.0-SNAPSHOT",
     "@openui5/sap.ui.integration": "1.155.0-SNAPSHOT",
     "@openui5/sap.ui.layout": "1.155.0-SNAPSHOT",
     "@openui5/sap.ui.mdc": "1.155.0-SNAPSHOT",

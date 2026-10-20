@@ -1,0 +1,29 @@
+{
+  "name": "@openui5/sap.ui.geomap",
+  "version": "1.155.0-SNAPSHOT",
+  "description": "OpenUI5 UI Library sap.ui.geomap",
+  "author": "SAP SE (https://www.sap.com)",
+  "license": "Apache-2.0",
+  "keywords": [
+    "openui5",
+    "sapui5",
+    "ui5"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UI5/openui5.git"
+  },
+  "dependencies": {
+    "@openui5/sap.ui.core": "1.155.0-SNAPSHOT",
+    "@openui5/sap.ui.layout": "1.155.0-SNAPSHOT"
+  },
+  "devDependencies": {
+    "@ui5/webcomponents-geomap": "0.1.0",
+    "ui5-tooling-modules": "3.41.1"
+  },
+  "scripts": {
+    "build-webcomponents": "ui5 build --dest ./src/sap/ui/geomap --output-style flat --config ui5-build.yaml --exclude-task \\* --include-task ui5-tooling-modules-task",
+    "clean-webcomponents": "node -e \"const fs = require('fs'); const path = require('path'); ['src/sap/ui/geomap/gen', 'src/sap/ui/geomap/thirdparty'].forEach(d => { if (fs.existsSync(d)) fs.rmSync(d, {recursive: true}); fs.mkdirSync(d, {recursive: true}); });\"",
+    "generate-webcomponents": "npm run clean-webcomponents && npm run build-webcomponents"
+  }
+}
