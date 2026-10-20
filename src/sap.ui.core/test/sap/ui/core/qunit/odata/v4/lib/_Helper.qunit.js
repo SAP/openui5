@@ -2058,14 +2058,11 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach((bHasPredicate) => {
-	QUnit.test("updateAll: properties, has key predicate : " + bHasPredicate, function (assert) {
+[false, true].forEach((bHasPrivateNamespace) => {
+	QUnit.test("updateAll: properties, has @$ui5._: " + bHasPrivateNamespace, function (assert) {
 		var mChangeListeners = {},
 			oHelperMock = this.mock(_Helper),
 			oSource = {
-				"@$ui5._" : {
-					ignore : true
-				},
 				changed : "new",
 				fromNull : "new",
 				unchanged : "same"
@@ -2081,14 +2078,15 @@ sap.ui.define([
 				unchanged : "same"
 			};
 
-		if (bHasPredicate) {
-			_Helper.setPrivateAnnotation(oSource, "predicate", "('1')");
+		if (bHasPrivateNamespace) {
+			oSource["@$ui5._"] = {ignore : true};
 		}
-		_Helper.setPrivateAnnotation(oTarget, "predicate", "('42')");
-		_Helper.setPrivateAnnotation(oUpdatedTarget, "predicate",
-			bHasPredicate ? "('1')" : "('42')");
-
-		oHelperMock.expects("buildPath").withExactArgs("path", "@$ui5._");
+		Object.freeze(oSource);
+		oHelperMock.expects("buildPath").exactly(bHasPrivateNamespace ? 1 : 0)
+			.withExactArgs("path", "@$ui5._");
+		oHelperMock.expects("copyPrivateAnnotation").exactly(bHasPrivateNamespace ? 1 : 0)
+			.withExactArgs(sinon.match.same(oSource), "predicate", sinon.match.same(oTarget),
+				"~bPredicateChange~");
 		oHelperMock.expects("buildPath").withExactArgs("path", "changed").returns("~changed");
 		oHelperMock.expects("buildPath").withExactArgs("path", "fromNull").returns("~fromNull");
 		oHelperMock.expects("buildPath").withExactArgs("path", "unchanged");
@@ -2098,7 +2096,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mChangeListeners), "~fromNull", "new");
 
 		// code under test
-		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource);
+		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource, "~bPredicateChange~");
 
 		assert.deepEqual(oTarget, oUpdatedTarget);
 	});
@@ -2110,6 +2108,7 @@ sap.ui.define([
 			mChangeListeners = {},
 			oHelperMock = this.mock(_Helper),
 			oSource = {
+				"@$ui5._" : {ignore : true},
 				updated : {},
 				added : {}
 			},
@@ -2117,18 +2116,24 @@ sap.ui.define([
 				updated : {}
 			};
 
+		Object.freeze(oSource);
 		oHelperMock.expects("updateAll") // obviously :-)
 			.withExactArgs(sinon.match.same(mChangeListeners), "path", sinon.match.same(oTarget),
 				sinon.match.same(oSource))
 			.callThrough();
+		oHelperMock.expects("buildPath").withExactArgs("path", "@$ui5._");
+		oHelperMock.expects("copyPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oSource), "predicate", sinon.match.same(oTarget),
+				/*bOverwrite*/false);
 		oHelperMock.expects("buildPath").withExactArgs("path", "updated").returns("~updated");
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(mChangeListeners), "~updated",
-				sinon.match.same(oTarget.updated), sinon.match.same(oSource.updated));
+				sinon.match.same(oTarget.updated), sinon.match.same(oSource.updated),
+				/*bPredicateChange*/true);
 		oHelperMock.expects("buildPath").withExactArgs("path", "added").returns("~added");
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(mChangeListeners), "~added", {},
-				sinon.match.same(oSource.added))
+				sinon.match.same(oSource.added), /*bPredicateChange*/true)
 			.returns(aAdded);
 
 		// code under test
@@ -2152,6 +2157,7 @@ sap.ui.define([
 				structure : {}
 			};
 
+		Object.freeze(oSource);
 		oHelperMock.expects("buildPath").withExactArgs("path", "changed").returns("~changed");
 		oHelperMock.expects("buildPath").withExactArgs("path", "unchanged");
 		oHelperMock.expects("buildPath").withExactArgs("path", "structure").returns("~structure");
@@ -2160,6 +2166,7 @@ sap.ui.define([
 		oHelperMock.expects("fireChanges")
 			.withExactArgs(sinon.match.same(mChangeListeners), "~structure",
 				sinon.match.same(oTarget.structure), true);
+		oHelperMock.expects("copyPrivateAnnotation").never();
 
 		// code under test
 		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource);
@@ -2174,9 +2181,11 @@ sap.ui.define([
 			},
 			oTarget = {};
 
+		Object.freeze(oSource);
 		this.mock(_Helper).expects("fireChange")
 			.withExactArgs("~mChangeListeners~", "path/array", sinon.match.same(oSource.array),
 				/*bForceUpdate*/false, /*bInArray*/true);
+		this.mock(_Helper).expects("copyPrivateAnnotation").never();
 
 		// code under test
 		_Helper.updateAll("~mChangeListeners~", "path", oTarget, oSource);
@@ -2196,6 +2205,7 @@ sap.ui.define([
 				"#changed" : {value : "old"}
 			};
 
+		Object.freeze(oSource);
 		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
 			"path/#added", oSource["#added"]); // Note: no sinon.match.same, deep copy involved
 		oHelperMock.expects("fireChange")
@@ -2204,6 +2214,7 @@ sap.ui.define([
 			"path/#changed", sinon.match.same(oTarget["#changed"]));
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/#changed/value", "new");
+		oHelperMock.expects("copyPrivateAnnotation").never();
 
 		// code under test
 		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource);
@@ -2873,16 +2884,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("copyPrivateAnnotation", function (assert) {
-		var oHelperMock = this.mock(_Helper),
-			oSource = {},
-			oTarget = {};
-
-		oHelperMock.expects("hasPrivateAnnotation").withExactArgs(sinon.match.same(oSource), "n/a")
-			.returns(false);
-
-		// code under test
-		_Helper.copyPrivateAnnotation(oSource, "n/a", null);
-
+		const oHelperMock = this.mock(_Helper);
+		const oSource = Object.freeze({});
+		const oTarget = Object.freeze({});
 		oHelperMock.expects("hasPrivateAnnotation").withExactArgs(sinon.match.same(oSource), "foo")
 			.returns(true);
 		oHelperMock.expects("hasPrivateAnnotation").withExactArgs(sinon.match.same(oTarget), "foo")
@@ -2904,19 +2908,88 @@ sap.ui.define([
 			// code under test
 			_Helper.copyPrivateAnnotation(oSource, "bar", oTarget);
 		}, new Error("Must not overwrite: bar"));
+
+		oHelperMock.expects("hasPrivateAnnotation").withExactArgs(sinon.match.same(oSource), "baz")
+			.returns(true);
+		oHelperMock.expects("hasPrivateAnnotation").withExactArgs(sinon.match.same(oTarget), "baz")
+			.returns(true);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs(sinon.match.same(oSource), "baz")
+			.returns(42);
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs(sinon.match.same(oTarget), "baz")
+			.returns(23);
+
+		assert.throws(function () {
+			// code under test
+			_Helper.copyPrivateAnnotation(oSource, "baz", oTarget, /*bOverwrite*/false);
+		}, new Error("Must not overwrite: baz"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("copyPrivateAnnotation: bAllowSame", function (assert) {
-		const oSource = {};
-		_Helper.setPrivateAnnotation(oSource, "foo", 42);
-		const oTarget = {};
-		_Helper.setPrivateAnnotation(oTarget, "foo", 42);
+	QUnit.test("copyPrivateAnnotation: delete", function (assert) {
+		const oHelperMock = this.mock(_Helper);
+		const oSource = Object.freeze({});
+		const oTarget = Object.freeze({});
+		oHelperMock.expects("hasPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oSource), "missing").returns(false);
+		oHelperMock.expects("hasPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oTarget), "missing").returns(false);
+		oHelperMock.expects("deletePrivateAnnotation").never();
+		oHelperMock.expects("setPrivateAnnotation").never();
 
 		// code under test
-		_Helper.copyPrivateAnnotation(oSource, "foo", oTarget, /*bAllowSame*/true);
+		_Helper.copyPrivateAnnotation(oSource, "missing", oTarget, /*bOverwrite*/true);
 
-		assert.strictEqual(_Helper.getPrivateAnnotation(oTarget, "foo"), 42);
+		oHelperMock.expects("hasPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oSource), "delete").returns(false);
+		oHelperMock.expects("hasPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oTarget), "delete").returns(true);
+		oHelperMock.expects("deletePrivateAnnotation")
+			.withExactArgs(sinon.match.same(oTarget), "delete");
+
+		// code under test
+		_Helper.copyPrivateAnnotation(oSource, "delete", oTarget, /*bOverwrite*/true);
+
+		[undefined, false].forEach((bOverwrite) => {
+			oHelperMock.expects("hasPrivateAnnotation")
+				.withExactArgs(sinon.match.same(oSource), "no").returns(false);
+			oHelperMock.expects("hasPrivateAnnotation")
+				.withExactArgs(sinon.match.same(oTarget), "no").returns(true);
+
+			assert.throws(function () {
+				// code under test
+				_Helper.copyPrivateAnnotation(oSource, "no", oTarget, bOverwrite);
+			}, new Error("Must not delete: no"));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("copyPrivateAnnotation: allow same", function () {
+		const oSource = {};
+		_Helper.setPrivateAnnotation(oSource, "foo", 42);
+		Object.freeze(oSource);
+		const oTarget = {};
+		_Helper.setPrivateAnnotation(oTarget, "foo", 42);
+		Object.freeze(oTarget);
+		this.mock(_Helper).expects("setPrivateAnnotation").never(); // no need to set *same* value
+
+		// code under test
+		_Helper.copyPrivateAnnotation(oSource, "foo", oTarget, /*bOverwrite*/false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("copyPrivateAnnotation: allow overwrite", function () {
+		const oSource = {};
+		_Helper.setPrivateAnnotation(oSource, "foo", 42);
+		Object.freeze(oSource);
+		const oTarget = {};
+		_Helper.setPrivateAnnotation(oTarget, "foo", 23);
+		Object.freeze(oTarget);
+		// Note: we don't care how often "get-/hasPrivateAnnotation" is used
+		this.mock(_Helper).expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oTarget), "foo", 42);
+
+		// code under test
+		_Helper.copyPrivateAnnotation(oSource, "foo", oTarget, /*bOverwrite*/true);
 	});
 
 	//*********************************************************************************************

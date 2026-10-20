@@ -589,7 +589,8 @@ sap.ui.define([
 		/**
 		 * Copies the value of the private client-side instance annotation with the given
 		 * unqualified name from the given source to the given target object, if present at the
-		 * source.
+		 * source. Removes it from the target if not present at the source (if overwriting is
+		 * allowed).
 		 *
 		 * @param {object} oSource
 		 *   Any object
@@ -598,25 +599,34 @@ sap.ui.define([
 		 *   namespace "@$ui5._")
 		 * @param {object} oTarget
 		 *   Any object
-		 * @param {boolean} [bAllowSame]
-		 *   Whether overwriting is allowed as long as the value is the same
+		 * @param {boolean} [bOverwrite]
+		 *   Whether overwriting is allowed:
+		 *   * <code>undefined</code> means not at all,
+		 *   * <code>false</code> means as long as the value is the same,
+		 *   * <code>true</code> means no matter whether the value is the same
 		 * @throws {Error}
 		 *   If the annotation to be copied is already present at the target, no matter if the value
-		 *   is the same or not (unless <code>bAllowSame</code> is given)
+		 *   is the same or not (unless <code>bOverwrite</code> is given)
 		 *
 		 * @public
 		 */
-		copyPrivateAnnotation : function (oSource, sAnnotation, oTarget, bAllowSame) {
+		copyPrivateAnnotation : function (oSource, sAnnotation, oTarget, bOverwrite) {
 			if (_Helper.hasPrivateAnnotation(oSource, sAnnotation)) {
-				if (_Helper.hasPrivateAnnotation(oTarget, sAnnotation)) {
-					if (!bAllowSame
-						|| _Helper.getPrivateAnnotation(oSource, sAnnotation)
-							!== _Helper.getPrivateAnnotation(oTarget, sAnnotation)) {
-						throw new Error("Must not overwrite: " + sAnnotation);
+				if (!bOverwrite && _Helper.hasPrivateAnnotation(oTarget, sAnnotation)) {
+					if (bOverwrite !== undefined
+						&& _Helper.getPrivateAnnotation(oSource, sAnnotation)
+							=== _Helper.getPrivateAnnotation(oTarget, sAnnotation)) {
+						return; // nothing to do, value is already the same
 					}
+					throw new Error("Must not overwrite: " + sAnnotation);
 				}
 				_Helper.setPrivateAnnotation(oTarget, sAnnotation,
 					_Helper.getPrivateAnnotation(oSource, sAnnotation));
+			} else if (_Helper.hasPrivateAnnotation(oTarget, sAnnotation)) {
+				if (!bOverwrite) {
+					throw new Error("Must not delete: " + sAnnotation);
+				}
+				_Helper.deletePrivateAnnotation(oTarget, sAnnotation);
 			}
 		},
 
@@ -3090,7 +3100,9 @@ sap.ui.define([
 		 * properties therein. It also fires for each collection encountered, no matter if changed
 		 * or not.
 		 *
-		 * (*) The key predicate is also copied over, but w/o change event.
+		 * (*) The key predicate is also copied over, but w/o change event. Without the flag
+		 * <code>bPredicateChange</code>, it must not change on root level (but may do so during
+		 * recursion).
 		 *
 		 * Restrictions:
 		 * - oTarget and oSource are expected to have the same structure: when there is an
@@ -3103,22 +3115,20 @@ sap.ui.define([
 		 * @param {string} sPath The path of the old object in mChangeListeners
 		 * @param {object} oTarget The target object
 		 * @param {object} oSource The source object
+		 * @param {boolean} [bPredicateChange] Whether changes to "predicate" are allowed
 		 * @returns {object} The target object
 		 * @throws {Error} If a key predicate check fails
 		 *
 		 * @public
 		 */
-		updateAll : function (mChangeListeners, sPath, oTarget, oSource) {
+		updateAll : function (mChangeListeners, sPath, oTarget, oSource, bPredicateChange = false) {
 			Object.keys(oSource).forEach(function (sProperty) {
 				var sPropertyPath = _Helper.buildPath(sPath, sProperty),
 					vSourceProperty = oSource[sProperty],
 					vTargetProperty = oTarget[sProperty];
 
 				if (sProperty === "@$ui5._") {
-					const sSourcePredicate = _Helper.getPrivateAnnotation(oSource, "predicate");
-					if (sSourcePredicate) {
-						 _Helper.setPrivateAnnotation(oTarget, "predicate", sSourcePredicate);
-					}
+					_Helper.copyPrivateAnnotation(oSource, "predicate", oTarget, bPredicateChange);
 				} else if (Array.isArray(vSourceProperty)) {
 					// copy complete collection
 					oTarget[sProperty] = vSourceProperty;
@@ -3127,7 +3137,7 @@ sap.ui.define([
 				} else if (vSourceProperty && typeof vSourceProperty === "object") {
 					vTargetProperty = oTarget[sProperty]
 						= _Helper.updateAll(mChangeListeners, sPropertyPath, vTargetProperty ?? {},
-								vSourceProperty);
+							vSourceProperty, /*bPredicateChange*/true);
 					_Helper.fireChange(mChangeListeners, sPropertyPath, vTargetProperty);
 				} else if (vTargetProperty !== vSourceProperty) {
 					oTarget[sProperty] = vSourceProperty;
