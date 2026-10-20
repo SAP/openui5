@@ -144,32 +144,34 @@ sap.ui.define([
 	let oTable;
 	let oTreeMapChart;
 
-	function fnSearch(oEvent) {
-		var oFilter = new Filter(
-			'', // empty path to access the context object
-			makeFilterFunction([
-				{
-					path:'fullpage',
-					formatter: makeNameFromURL
-				},
-				{
-					path:'module',
-					formatter: formatModules
-				},
-				{
-					path:'qunit/version',
-					formatter: formatQUnitVersion
-				},
-				{
-					path:'sinon/version',
-					formatter: formatSinonVersion
-				}
-			], oEvent.getParameter("newValue"))
-		);
+	function normalizeFilterValue(value) {
+		if (value && /^(?:[a-z][a-z\d+.-]*:|\/{1,2})/i.test(value)) {
+			return makeNameFromURL(value);
+		}
+		return value;
+	}
 
-		// apply the filtering again
-		oTable.getBinding("rows").filter(oFilter);
+	function applyFilter(value) {
+		oTable.getBinding("rows").filter(new Filter('', makeFilterFunction([
+			{ path: 'fullpage', formatter: makeNameFromURL },
+			{ path: 'module', formatter: formatModules },
+			{ path: 'qunit/version', formatter: formatQUnitVersion },
+			{ path: 'sinon/version', formatter: formatSinonVersion }
+		], normalizeFilterValue(value))));
 		oModel.setProperty("/filteredTestCount", oTable.getBinding("rows").getLength());
+	}
+
+	function fnSearch(oEvent) {
+		const newValue = oEvent.getParameter("newValue");
+		const currentUrl = new URL(window.location.href);
+		currentUrl.searchParams.delete("testpage");
+		if (newValue) {
+			currentUrl.searchParams.set("filter", newValue);
+		} else {
+			currentUrl.searchParams.delete("filter");
+		}
+		window.history.replaceState(null, "", currentUrl.toString());
+		applyFilter(newValue);
 	}
 
 	function createUI(showSuite) {
@@ -443,11 +445,19 @@ sap.ui.define([
 	uiCreated.then(() => {
 
 		const search = Element.getElementById("search");
-		search.setValue( cleanURL(url.searchParams.get("testpage")) || "");
+		// "testpage" is kept as a legacy alias for "filter"
+		const initialFilter = url.searchParams.get("filter")
+			|| url.searchParams.get("testpage")
+			|| "";
+		search.setValue(initialFilter);
+
 		const entryPage = cleanURL(url.searchParams.get("root")) || _utils.getAttribute("data-sap-ui-root-testsuite") || "test-resources/qunit/testsuite.qunit.html";
 
 		if ( restoreData(entryPage) ) {
 			Element.getElementById("app").setBusy(false);
+			if (initialFilter) {
+				applyFilter(initialFilter);
+			}
 		}
 
 		discovery.findTests( entryPage, progress ).then( (aTests) => {
@@ -467,6 +477,9 @@ sap.ui.define([
 				filteredTestCount: aTests.length
 			});
 			saveData();
+			if (initialFilter) {
+				applyFilter(initialFilter);
+			}
 			setTimeout(function() {
 				oTable.getFooter().setText("");
 			}, 5000);
