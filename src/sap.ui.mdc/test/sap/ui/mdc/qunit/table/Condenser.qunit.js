@@ -617,7 +617,7 @@ sap.ui.define([
 			assert.ok(oTable, "then the mdc.Table exists");
 			assert.ok(oType, "then the mdc.Table has a type");
 			assert.ok(oType.isA("sap.ui.mdc.table.GridTableType"), "then the type is a GridTableType");
-			assert.ok(oType.getInnerTable().getFixedColumnCount() === iFixedColumnCount, "then the fixedColumnCount property is set correctly");
+			assert.ok(oType.getInnerControl().getFixedColumnCount() === iFixedColumnCount, "then the fixedColumnCount property is set correctly");
 		};
 	}
 

@@ -3,70 +3,47 @@
  */
 
 sap.ui.define([
-	"./Control",
+	"./ListTableBase",
 	"./ActionToolbar",
-	"./util/ToolbarSettings",
+	"./util/ListToolbarFactory",
 	"./list/PropertyHelper",
-	"./table/utils/Personalization",
-	"./util/ExportUtils",
-	"./util/P13nUtils",
 	"./util/Common",
 	"./list/GridListType",
 	"./list/ListType",
-	"./enums/ListType",
 	"./enums/ListP13nMode",
 	"./enums/ListGrowingMode",
 	"./enums/ListSelectionMode",
-	"sap/ui/core/library",
 	"./p13n/subcontroller/SortController",
 	"./p13n/subcontroller/FilterController",
 	"./p13n/subcontroller/GroupController",
-	"sap/m/Title",
 	"sap/m/library",
-	"sap/ui/core/Lib",
-	"sap/ui/model/base/ManagedObjectModel",
-	"sap/ui/model/BindingMode",
-	"./mixin/FilterIntegrationMixin",
 	"./mixin/ActionToolbarMixin",
-	"sap/ui/core/InvisibleMessage",
-	"sap/ui/events/KeyCodes",
-	"sap/base/Log"
+	"./mixin/DeferredAggregationForwardMixin",
+	"sap/base/Log",
+	"./enums/ListType"
 ], (
-	Control,
+	ListTableBase,
 	ActionToolbar,
-	ToolbarSettings,
+	ListToolbarFactory,
 	PropertyHelper,
-	PersonalizationUtils,
-	ExportUtils,
-	P13nUtils,
 	Common,
 	GridListType,
 	ListType,
-	// load for availability
-	ListTypeEnum,
 	ListP13nMode,
 	ListGrowingMode,
 	ListSelectionMode,
-	coreLibrary,
 	SortController,
 	FilterController,
 	GroupController,
-	Title,
 	MLibrary,
-	Library,
-	ManagedObjectModel,
-	BindingMode,
-	FilterIntegrationMixin,
 	ActionToolbarMixin,
-	InvisibleMessage,
-	KeyCodes,
-	Log
+	DeferredAggregationForwardMixin,
+	Log,
+	ListTypeEnum // load for availability
 ) => {
 	"use strict";
 
-	const { TitleLevel } = coreLibrary;
-	const { ToolbarStyle } = MLibrary;
-
+	const {ToolbarStyle} = MLibrary;
 	const mTypeMap = {
 		"List": ListType,
 		"GridList": GridListType,
@@ -83,19 +60,17 @@ sap.ui.define([
 	 *
 	 * The template for the item content is provided by the application via <code>itemTemplate</code>.
 	 *
-	 * @extends sap.ui.mdc.Control
+	 * @extends sap.ui.mdc.ListTableBase
 	 * @author SAP SE
 	 * @since 1.153
 	 * @alias sap.ui.mdc.List
+	 * @private
 	 * @ui5-restricted sap.fe
 	 */
-	const List = Control.extend("sap.ui.mdc.List", {
+	const List = ListTableBase.extend("sap.ui.mdc.List", {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/list/List.designtime",
-			interfaces: [
-				"sap.ui.mdc.IFilterSource", "sap.ui.mdc.IxState"
-			],
 			properties: {
 				/**
 				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.
@@ -115,49 +90,6 @@ sap.ui.define([
 					bindable: false
 				},
 				/**
-				 * Width of the list.
-				 */
-				width: {
-					type: "sap.ui.core.CSSSize",
-					group: "Dimension",
-					defaultValue: null
-				},
-				/**
-				 * Header text that is shown in the toolbar of the list.
-				 */
-				header: {
-					type: "string",
-					group: "Appearance",
-					defaultValue: null
-				},
-				/**
-				 * Determines whether the header text is shown in the toolbar of the list.
-				 * Regardless of this property, the header text is used as a title for the list.
-				 */
-				headerVisible: {
-					type: "boolean",
-					group: "Appearance",
-					defaultValue: true
-				},
-				/**
-				 * Defines the semantic level of the header. For more information, see {@link sap.m.Title#setLevel}.
-				 *
-				 */
-				headerLevel: {
-					type: "sap.ui.core.TitleLevel",
-					group: "Appearance",
-					defaultValue: TitleLevel.Auto
-				},
-				/**
-				 * Defines the style of the header. For more information, see {@link sap.m.Title#setTitleStyle}.
-				 *
-				 * @ui5-restricted sap.fe
-				 */
-				headerStyle: {
-					type: "sap.ui.core.TitleLevel",
-					group: "Appearance"
-				},
-				/**
 				 * Determines whether the item count is shown in the toolbar of the list.
 				 */
 				showItemCount: {
@@ -172,14 +104,6 @@ sap.ui.define([
 					type: "sap.ui.mdc.enums.ListSelectionMode",
 					group: "Behavior",
 					defaultValue: ListSelectionMode.None
-				},
-				/**
-				 * Determines whether the list data can be exported to a spreadsheet.
-				 */
-				enableExport: {
-					type: "boolean",
-					group: "Behavior",
-					defaultValue: false
 				},
 				/**
 				 * Personalization options for the list.
@@ -197,72 +121,19 @@ sap.ui.define([
 				 *
 				 * The following capabilities are <b>not</b> supported for <code>sap.ui.mdc.List</code>:
 				 * column visibility, aggregation, and column reorder.
-				 *
-				 * @see sap.ui.mdc.enums.ListP13nMode
 				 */
 				p13nMode: {
 					type: "sap.ui.mdc.enums.ListP13nMode[]",
+					group: "Behavior",
 					defaultValue: []
 				},
 				/**
 				 * Activates the growing feature of the list. Use <code>threshold</code> to control the batch size.
-				 *
-				 * <b>Note:</b> This property must not be changed during runtime.
-				 *
-				 * @see sap.ui.mdc.enums.ListGrowingMode
 				 */
 				growingMode: {
 					type: "sap.ui.mdc.enums.ListGrowingMode",
 					group: "Behavior",
 					defaultValue: ListGrowingMode.Basic
-				},
-				/**
-				 * Number of items that are requested from the model for each growing request.
-				 * This property is only used if <code>growingMode</code> is not set to <code>None</code>.
-				 *
-				 * If the value is -1, a type-dependent default value is used.
-				 */
-				threshold: {
-					type: "int",
-					group: "Misc",
-					defaultValue: -1
-				},
-				/**
-				 * Defines the XML baseline for filter conditions in SAPUI5 flexibility.
-				 *
-				 * <b>Note:</b> This property must not be bound.
-				 * <b>Note:</b> This property must not be changed during runtime.
-				 *
-				 * @ui5-restricted sap.ui.mdc
-				 */
-				filterConditions: {
-					type: "object",
-					defaultValue: {},
-					bindable: false
-				},
-				/**
-				 * Defines the XML baseline for sort conditions in SAPUI5 flexibility.
-				 *
-				 * <b>Note:</b> This property must not be bound.
-				 * <b>Note:</b> This property must not be changed during runtime.
-				 *
-				 * @ui5-restricted sap.ui.mdc
-				 */
-				sortConditions: {
-					type: "object",
-					bindable: false
-				},
-				/**
-				 * Defines the XML baseline for group conditions in SAPUI5 flexibility.
-				 *
-				 * <b>Note:</b> This property must not be bound.
-				 * <b>Note:</b> This property must not be changed during runtime.
-				 *
-				 * @ui5-restricted sap.ui.mdc
-				 */
-				groupConditions: {
-					type: "object",
-					bindable: false
 				}
 			},
 			aggregations: {
@@ -292,63 +163,9 @@ sap.ui.define([
 				itemSettings: {
 					type: "sap.ui.mdc.list.ItemSettings",
 					multiple: false
-				},
-				/**
-				 * Defines the control to be displayed when the list has no data.
-				 * Pass a string as an <code>altTypes</code> shorthand or a full control instance.
-				 */
-				noData: {
-					type: "sap.ui.core.Control",
-					multiple: false,
-					altTypes: ["string"]
-				},
-				/**
-				 * Additional actions that will be available in the toolbar.
-				 *
-				 * <b>Note:</b> This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not
-				 * bindable. Any changes of the initial aggregation content might result in undesired effects.
-				 */
-				actions: {
-					type: "sap.ui.core.Control",
-					multiple: true,
-					forwarding: {
-						getter: "_createToolbar",
-						aggregation: "actions"
-					}
-				},
-				/**
-				 * Defines the context menu for the items of the list.
-				 *
-				 */
-				contextMenu: {
-					type: "sap.ui.core.IContextMenu",
-					multiple: false
-				},
-				_content: {
-					type: "sap.ui.core.Control",
-					multiple: false,
-					visibility: "hidden"
-				}
-			},
-			associations: {
-				/**
-				 * Control or object that enables the list to do filtering, such as {@link sap.ui.mdc.FilterBar}.
-				 * See also {@link sap.ui.mdc.IFilter}.
-				 *
-				 * When this association is set, the list listens to the <code>search</code> event of the filter
-				 * and triggers a rebind. This enables the <code>Filter</code> p13n mode to work in combination
-				 * with an external filter bar.
-				 */
-				filter: {
-					type: "sap.ui.mdc.IFilter",
-					multiple: false
 				}
 			},
 			events: {
-				/**
-				 * This event is fired when the selection of items changes.
-				 */
-				selectionChange: {},
 				/**
 				 * This event is fired when a list item is pressed.
 				 */
@@ -361,54 +178,11 @@ sap.ui.define([
 							type: "sap.ui.model.Context"
 						}
 					}
-				},
-				/**
-				 * This event is fired before the export is triggered.
-				 *
-				 * The export can be prevented by calling <code>preventDefault</code> on the event.
-				 */
-				beforeExport: {
-					allowPreventDefault: true,
-					parameters: {
-						/**
-						 * Contains the export settings defined by the list.
-						 */
-						exportSettings: {
-							type: "object"
-						},
-						/**
-						 * Contains the export settings defined by the user.
-						 */
-						userExportSettings: {
-							type: "object"
-						},
-						/**
-						 * Contains the filter settings defined by the user.
-						 */
-						filterSettings: {
-							type: "object"
-						}
-					}
-				},
-				/**
-				 * Fired before a context menu is opened for a list item.
-				 *
-				 */
-				beforeOpenContextMenu: {
-					allowPreventDefault: true,
-					parameters: {
-						/**
-						 * The binding context of the item the context menu was opened for.
-						 */
-						bindingContext: {
-							type: "sap.ui.model.Context"
-						}
-					}
 				}
 			}
 		},
 		constructor: function() {
-			Control.apply(this, arguments);
+			ListTableBase.apply(this, arguments);
 			this.bCreated = true;
 			this._updateAdaptation();
 		},
@@ -421,7 +195,6 @@ sap.ui.define([
 				oRm.class("sapUiMdcList");
 				sTypeClass?.getStyleClasses().forEach((sClass) => oRm.class(sClass));
 				oRm.style("width", oList.getWidth());
-				oRm.accessibilityState(oList, { role: "region", labelledby: { value: oList.getId() + "-title", append: false } });
 				oRm.openEnd();
 				oRm.renderControl(oList.getAggregation("_content"));
 				oRm.close("div");
@@ -429,11 +202,10 @@ sap.ui.define([
 		}
 	});
 
-	FilterIntegrationMixin.call(List.prototype);
 	ActionToolbarMixin.call(List.prototype);
 
 	List.prototype.init = function() {
-		Control.prototype.init.apply(this, arguments);
+		ListTableBase.prototype.init.apply(this, arguments);
 		this._oInitialized = Promise.withResolvers();
 		this._oInitialized.promise.catch(() => { /* suppress unhandled rejection when List is destroyed before initialization */ });
 		// Prevent propagation of models and binding contexts into the itemSettings and itemTemplate
@@ -443,19 +215,10 @@ sap.ui.define([
 		this.mSkipPropagation = { itemSettings: true, itemTemplate: true };
 
 		this._setPropertyHelperClass(PropertyHelper);
-
-		this._oManagedObjectModel = new ManagedObjectModel(this);
-		this._oManagedObjectModel.setDefaultBindingMode(BindingMode.OneWay);
-		this._oManagedObjectModel.setProperty("/@custom/toolbarButtonType", ToolbarSettings.getToolbarButtonType());
-		this._oManagedObjectModel.setProperty("/@custom/selectedCount", 0);
-		this.setModel(this._oManagedObjectModel, "$sap.ui.mdc.List");
 	};
 
 	List.prototype.applySettings = function(mSettings, oScope) {
-		// Apply type and delegate first so that the inner control is created with the correct type,
-		// and all subsequent settings (e.g. itemTemplate) react to the already-initialized type.
-		Common.applySettingsWithEarlyTypeAndDelegate(this, mSettings, oScope, Control.prototype.applySettings);
-		this.initControlDelegate();
+		ListTableBase.prototype.applySettings.apply(this, arguments);
 		// Initialize the property helper with an empty set so that awaitPropertyHelper() resolves
 		// immediately. finalizePropertyHelper() later fetches real properties from the delegate.
 		this.initPropertyHelper();
@@ -472,22 +235,13 @@ sap.ui.define([
 		this._oInitialized = null;
 
 		Common.cleanup(this, [
-			"_oManagedObjectModel",
-			"_oToolbar",
-			"_oTitle",
-			"_oP13nButton",
-			"_oExportButton",
-			"_oFilterInfoBar",
-			"_oFilterInfoBarText",
-			"_oExportHandler",
-			"_oDefaultType"
+			"_oToolbar"
 		]);
 
-		this.destroyContextMenu();
 		this._oList = null;
 		this._oAppliedState = null;
 
-		Control.prototype.exit.apply(this, arguments);
+		ListTableBase.prototype.exit.apply(this, arguments);
 	};
 
 	List.prototype.setType = function(vType) {
@@ -512,7 +266,6 @@ sap.ui.define([
 		this._destroyDefaultType();
 		this.destroyAggregation("type");
 		this._initializeContent();
-
 		return this;
 	};
 
@@ -529,35 +282,6 @@ sap.ui.define([
 		return this;
 	};
 
-	List.prototype.setGrowingMode = function(sGrowingMode) {
-		// The inner list reads growingMode via $sap.ui.mdc.List model bindings (growing,
-		// growingScrollToLoad), so updating the property is sufficient for propagation.
-		this.setProperty("growingMode", sGrowingMode, true);
-		return this;
-	};
-
-	List.prototype.setHeaderLevel = function(sLevel) {
-		this.setProperty("headerLevel", sLevel, true);
-		this._oTitle?.setLevel(sLevel);
-		return this;
-	};
-
-	List.prototype.setHeaderStyle = function(sStyle) {
-		this.setProperty("headerStyle", sStyle, true);
-		this._oTitle?.setTitleStyle(sStyle);
-		return this;
-	};
-
-	List.prototype.setThreshold = function(iThreshold) {
-		return this.setProperty("threshold", iThreshold, true);
-	};
-
-	List.prototype.setEnableExport = function(bEnableExport) {
-		this.setProperty("enableExport", bEnableExport, true);
-		this._updateExportButton();
-		return this;
-	};
-
 	List.prototype.setP13nMode = function(aP13nMode) {
 		this.setProperty("p13nMode", aP13nMode, true);
 		this._updateAdaptation();
@@ -565,62 +289,17 @@ sap.ui.define([
 		return this;
 	};
 
-	List.prototype.setFilterConditions = function(mConditions) {
-		this.setProperty("filterConditions", mConditions, true);
-		this.getInbuiltFilter()?.setFilterConditions(mConditions);
-		return this;
-	};
-
-	List.prototype.setSortConditions = function(mConditions) {
-		this.setProperty("sortConditions", mConditions, true);
-		return this;
-	};
-
-	List.prototype.setGroupConditions = function(mConditions) {
-		this.setProperty("groupConditions", mConditions, true);
-		return this;
-	};
-
-	List.prototype.setContextMenu = function(oContextMenu) {
-		this._oContextMenu = this.validateAggregation("contextMenu", oContextMenu, false);
-		this._oList?.setAggregation("contextMenu", oContextMenu, true);
-		return this;
-	};
-
-	List.prototype.getContextMenu = function() {
-		return (this._oContextMenu && !this._oContextMenu.isDestroyed()) ? this._oContextMenu : null;
-	};
-
-	List.prototype.destroyContextMenu = function() {
-		if (this._oList) {
-			this._oList.destroyAggregation("contextMenu");
-		} else if (this._oContextMenu) {
-			this._oContextMenu.destroy();
-		}
-		this._oContextMenu = null;
-		return this;
-	};
-
-	List.prototype.getConditions = function() {
-		return this.getInbuiltFilter() ? this.getInbuiltFilter().getConditions() : [];
-	};
-
-	List.prototype._updateAdaptation = function() {
-		const oRegisterConfig = {
-			controller: {}
-		};
-
-		const mRegistryOptions = {
+	List.prototype.getEngineControllers = function() {
+		const mControllers = {
 			Sort: new SortController({ control: this }),
 			Filter: new FilterController({ control: this }),
 			Group: new GroupController({ control: this })
 		};
 
-		this.getActiveP13nModes().forEach((sMode) => {
-			oRegisterConfig.controller[sMode] = mRegistryOptions[sMode];
-		});
-
-		this.getEngine().register(this, oRegisterConfig);
+		return this.getActiveP13nModes().reduce((mActive, sMode) => {
+			mActive[sMode] = mControllers[sMode];
+			return mActive;
+		}, {});
 	};
 
 	List.prototype._onModifications = async function(aAffectedP13nControllers) {
@@ -691,18 +370,11 @@ sap.ui.define([
 	};
 
 	List.prototype.getSelectedContexts = function() {
-		if (!this._oList) {
-			return [];
-		}
-
-		return this._oList.getSelectedContexts();
+		return this._oList?.getSelectedContexts() ?? [];
 	};
 
 	List.prototype.clearSelection = function() {
-		if (this._oList) {
-			this._oList.removeSelections(true);
-		}
-
+		this._oList?.removeSelections(true);
 		return this;
 	};
 
@@ -724,16 +396,10 @@ sap.ui.define([
 			}
 
 			this._updateAdaptation();
-
-			await this.getControlDelegate().initializeContent(this);
-
 			this._createContent();
-
+			await this.getControlDelegate().initializeContent(this);
+			this._oInitialized?.resolve(this);
 			await this.finalizePropertyHelper();
-		}).then(() => {
-			if (this._oInitialized) {
-				this._oInitialized.resolve(this);
-			}
 		}).catch((vError) => {
 			Log.error("Failed to initialize sap.ui.mdc.List content", vError, "sap.ui.mdc.List");
 			if (this._oInitialized) {
@@ -826,11 +492,6 @@ sap.ui.define([
 
 		this._getType().removeToolbar();
 
-		// store and remove the contextMenu otherwise it gets destroyed with the inner list
-		const oContextMenu = this.getContextMenu();
-		this.setContextMenu(null);
-		this._oContextMenu = oContextMenu;
-
 		this._oList.destroy("KeepDom");
 		this._oList = null;
 	};
@@ -864,9 +525,7 @@ sap.ui.define([
 		}
 
 		this.setAggregation("_content", this._oList);
-		if (this._oContextMenu) {
-			this._oList.setAggregation("contextMenu", this._oContextMenu, true);
-		}
+		this._registerForwardingTarget(this._oList);
 		this._oList.attachBeforeOpenContextMenu((oEvent) => {
 			const oListItem = oEvent.getParameter("listItem");
 			const bPreventDefault = !this.fireBeforeOpenContextMenu({
@@ -876,39 +535,19 @@ sap.ui.define([
 				oEvent.preventDefault();
 			}
 		});
-		this._bindItems();
+		if (this.getAutoBindOnInit()) {
+			this._bindItems();
+		}
 		this._updateP13nButton();
 		this._updateExportButton();
 	};
 
-	List.prototype._getType = function() {
-		const vType = this.getType();
-
-		if (!this._oDefaultType && (typeof vType === "string" || vType === null)) {
-			const TypeClass = mTypeMap[vType] || mTypeMap.null;
-			this._oDefaultType = new TypeClass();
-			this.addDependent(this._oDefaultType);
-		}
-
-		return this._oDefaultType || vType;
+	List.prototype._getManagedObjectModelName = function() {
+		return "$sap.ui.mdc.List";
 	};
 
-	List.prototype._destroyDefaultType = function() {
-		if (this._oDefaultType) {
-			this.removeDependent(this._oDefaultType);
-			this._oDefaultType.destroy();
-			delete this._oDefaultType;
-		}
-	};
-
-	List.prototype._isOfType = function(sType, bIncludeSubTypes) {
-		const oType = this._getType();
-
-		if (bIncludeSubTypes) {
-			return oType.isA(mTypeMap[sType].getMetadata().getName());
-		} else {
-			return oType.constructor === mTypeMap[sType];
-		}
+	List.prototype._getTypeStrategyMap = function() {
+		return mTypeMap;
 	};
 
 	List.prototype._createToolbar = function() {
@@ -926,54 +565,8 @@ sap.ui.define([
 			return this._oToolbar;
 		}
 
-		this._oTitle = new Title(this.getId() + "-title", {
-			level: this.getHeaderLevel(),
-			titleStyle: this.getHeaderStyle(),
-			text: {
-				parts: [
-					{ path: "$sap.ui.mdc.List>/header" },
-					{ path: "$sap.ui.mdc.List>/showItemCount" },
-					{ path: "$sap.ui.mdc.List>/@custom/itemCount" },
-					{ path: "$sap.ui.mdc.List>/@custom/selectedCount" },
-					{ path: "$sap.ui.mdc.List>/growingMode" }
-				],
-				formatter: function(sHeader, bShowItemCount, iItemCount, iSelectedCount, sGrowingMode) {
-					const sEffectiveHeader = sHeader || "";
-					// Per guidelines: when the More button is shown (growingMode="Basic"),
-					// don't show the count on the title bar.
-					const bMoreButton = sGrowingMode === ListGrowingMode.Basic;
-					if (!bShowItemCount || bMoreButton) {
-						return sEffectiveHeader;
-					}
-
-					const iSafeCount = Number.isFinite(iItemCount) && iItemCount > 0 ? iItemCount : 0;
-					const iSafeSelected = Number.isFinite(iSelectedCount) && iSelectedCount > 0 ? iSelectedCount : 0;
-
-					// Per guidelines: remove the count when no items are displayed.
-					if (iSafeCount === 0) {
-						return sEffectiveHeader;
-					}
-
-					const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-
-					if (iSafeSelected > 0) {
-						const sCounter = oRb.getText("list.TITLE_ITEM_COUNT_SELECTED", [iSafeSelected, iSafeCount]);
-						return sEffectiveHeader ? sEffectiveHeader + " " + sCounter : sCounter;
-					}
-
-					const sCounter = oRb.getText("list.TITLE_ITEM_COUNT", [iSafeCount]);
-					return sEffectiveHeader ? sEffectiveHeader + " " + sCounter : sCounter;
-				}
-			}
-		});
-
-		// Keep the title in the DOM at all times so that aria-labelledby references on the
-		// root element and the ActionToolbar always resolve. Visually hide it via a CSS
-		// class instead of removing it from the DOM when headerVisible=false.
-		this._oTitle.toggleStyleClass("sapUiMdcListTitleHidden", !this.getHeaderVisible());
-
 		this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
-			begin: [this._oTitle],
+			begin: [this._createTitle()],
 			end: [this._getP13nButton()],
 			ariaLabelledBy: [this._oTitle]
 		});
@@ -993,67 +586,20 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	List.prototype._updateToolbarStyle = function() {
-		if (!this._oToolbar) {
-			return;
-		}
-		this._oToolbar.setStyle(this._isOfType("List", true) ? ToolbarStyle.Standard : ToolbarStyle.Clear);
+	List.prototype._getToolbarStyle = function() {
+		return this._isOfType("List", true) ? ToolbarStyle.Standard : ToolbarStyle.Clear;
 	};
 
-	List.prototype.setHeaderVisible = function(bHeaderVisible) {
-		this.setProperty("headerVisible", bHeaderVisible, true);
-		if (this._oTitle) {
-			this._oTitle.toggleStyleClass("sapUiMdcListTitleHidden", !bHeaderVisible);
-		}
-		return this;
-	};
-
-	List.prototype._getP13nButton = function() {
-		if (!this._oP13nButton) {
-			this._oP13nButton = ToolbarSettings.createSettingsButton(this.getId(), [function() {
-				PersonalizationUtils.openSettingsDialog(this);
-			}, this], "$sap.ui.mdc.List");
-		}
-
-		this._updateP13nButton();
-		return this._oP13nButton;
-	};
-
-	List.prototype._updateP13nButton = function() {
-		if (!this._oP13nButton) {
-			return;
-		}
-
-		this._oP13nButton.setVisible(P13nUtils.isSettingsButtonVisible(this.getActiveP13nModes(), false, false));
+	List.prototype._createTitle = function() {
+		const oTitle = ListTableBase.prototype._createTitle.apply(this, arguments);
+		oTitle.setContext("List"); // the count reads as items, not rows
+		oTitle.setShowExtendedView(true); // and shown in the extended form by default
+		return oTitle;
 	};
 
 	List.prototype.getSupportedP13nModes = function() {
 		return Object.keys(ListP13nMode);
 	};
-
-	List.prototype.getActiveP13nModes = function() {
-		return P13nUtils.getIntersection(this.getP13nMode(), this.getSupportedP13nModes());
-	};
-
-	List.prototype.isFilteringEnabled = function() {
-		return this.getActiveP13nModes().includes(ListP13nMode.Filter);
-	};
-
-	// Start: FilterIntegrationMixin hooks
-	List.prototype._onFilterProvided = function(oFilter) {
-		this._updateInnerListNoData();
-	};
-
-	List.prototype._onFilterRemoved = function(oFilter) {
-		this._updateInnerListNoData();
-	};
-
-	List.prototype._onFilterSearch = function(oEvent) {
-		// _rebind() (called by FilterIntegrationMixin.onSearch) already triggers
-		// delegate.updateBinding which handles the actual rebind. Do not call
-		// _bindItems() here as that would cause a second, redundant binding update.
-	};
-	// End: FilterIntegrationMixin hooks
 
 	/**
 	 * Rebinds the list items. Called by {@link sap.ui.mdc.mixin.FilterIntegrationMixin}
@@ -1084,34 +630,8 @@ sap.ui.define([
 		await this.getControlDelegate().updateBinding(this, oBindingInfo, oExistingBinding, { forceRefresh: bForceRefresh });
 	};
 
-	List.prototype._updateInnerListNoData = function() {
-		if (this._oList) {
-			this._oList.setNoData(this.getNoData());
-		}
-	};
-
-	List.prototype._updateExportButton = function() {
-		const bNeedExportButton = this._oToolbar != null && this.getEnableExport();
-
-		if (bNeedExportButton && !this._oExportButton) {
-			this._oExportButton = ToolbarSettings.createExportButton(this.getId(), {
-				"default": [function() {
-					this._onExport(false);
-				}, this],
-				"exportAs": [function() {
-					this._onExport(true);
-				}, this]
-			}, "$sap.ui.mdc.List");
-			this._oToolbar.addEnd(this._oExportButton);
-		}
-
-		if (!this._oExportButton) {
-			return;
-		}
-
-		const bEnabled = this._getExportData().length > 0;
-		this._oExportButton.setVisible(this.getEnableExport());
-		this._oExportButton.setEnabled(this.getEnableExport() && bEnabled);
+	List.prototype._getToolbarFactory = function() {
+		return ListToolbarFactory;
 	};
 
 	List.prototype._bindItems = function() {
@@ -1140,17 +660,13 @@ sap.ui.define([
 		}
 
 		if (!oBindingInfo.path) {
-			this._updateItemCount(0);
 			this._updateExportButton();
 			return;
 		}
 
-		// Prefer a delegate-provided template; fall back to the app-provided itemTemplate aggregation.
-		const oDelegateTemplate = bDelegateReady ? this.getControlDelegate().getItemTemplate(this, oBindingInfo) : null;
-		const oItemTemplate = oDelegateTemplate || this.getItemTemplate();
+		const oItemTemplate = this.getItemTemplate();
 
 		if (!oItemTemplate) {
-			this._updateItemCount(0);
 			this._updateExportButton();
 			return;
 		}
@@ -1172,7 +688,6 @@ sap.ui.define([
 		this._getType().bindItems(oBindingInfo);
 
 		this._observeItemsBinding();
-		this._updateItemCountFromBinding();
 		this._updateExportButton();
 		this._updateFilterInfoBar();
 	};
@@ -1246,89 +761,6 @@ sap.ui.define([
 		oAction._onPress({ bindingContext: oBindingContext });
 	};
 
-	List.prototype._updateSelectedCount = function() {
-		if (!this._oList) {
-			this._oManagedObjectModel.setProperty("/@custom/selectedCount", 0);
-			return;
-		}
-
-		const aSelectedItems = this._oList.getSelectedItems();
-		const iCount = aSelectedItems.length;
-		this._oManagedObjectModel.setProperty("/@custom/selectedCount", iCount);
-	};
-
-	/**
-	 * Decides which info toolbar — filter bar or sort/group bar — to set on the inner list.
-	 * The filter info bar takes precedence because it is more actionable.
-	 * Called after either bar is created or destroyed.
-	 *
-	 * @private
-	 */
-	List.prototype._syncInfoToolbar = function() {
-		if (!this._oList) {
-			return;
-		}
-
-		if (this._oFilterInfoBar) {
-			this._oList.setInfoToolbar(this._oFilterInfoBar);
-		} else {
-			this._oList.setInfoToolbar(null);
-		}
-	};
-
-	List.prototype._updateFilterInfoBar = function() {
-		if (!this._oList) {
-			return;
-		}
-
-		const mFilterConditions = this.getFilterConditions();
-		const bHasFilters = Object.values(mFilterConditions).some((aConditions) => aConditions.length > 0);
-
-		if (!bHasFilters) {
-			if (this._oFilterInfoBar) {
-				this._oFilterInfoBar.destroy();
-				this._oFilterInfoBar = null;
-				this._syncInfoToolbar();
-			}
-			return;
-		}
-
-		if (!this._oFilterInfoBar) {
-			sap.ui.require(["sap/m/OverflowToolbar", "sap/m/Text"], (OverflowToolbar, Text) => {
-				if (this.isDestroyed() || !this._oList) {
-					return;
-				}
-				this._oFilterInfoBarText = new Text(this.getId() + "-filterInfoBarText");
-				this._oFilterInfoBar = new OverflowToolbar(this.getId() + "-filterInfoBar", {
-					content: [this._oFilterInfoBarText],
-					active: true,
-					design: "Info",
-					ariaLabelledBy: [this._oFilterInfoBarText]
-				});
-				this._updateFilterInfoBarText();
-				this._syncInfoToolbar();
-			});
-		} else {
-			this._updateFilterInfoBarText();
-			this._syncInfoToolbar();
-		}
-	};
-
-	List.prototype._updateFilterInfoBarText = function() {
-		if (!this._oFilterInfoBarText) {
-			return;
-		}
-
-		const mFilterConditions = this.getFilterConditions();
-		const iFilterCount = Object.values(mFilterConditions).filter((aConditions) => aConditions.length > 0).length;
-		const oRb = Library.getResourceBundleFor("sap.ui.mdc");
-		const sText = iFilterCount > 0
-			? oRb.getText("list.FILTER_INFO_BAR_TEXT", [iFilterCount])
-			: oRb.getText("list.FILTER_INFO_BAR_TEXT_NO_COUNT");
-		this._oFilterInfoBarText.setText(sText);
-		InvisibleMessage.getInstance().announce(sText, "Polite");
-	};
-
 	List.prototype._observeItemsBinding = function() {
 		if (this._oItemsBinding) {
 			this._detachItemsBindingListeners(this._oItemsBinding);
@@ -1341,51 +773,23 @@ sap.ui.define([
 			return;
 		}
 
-		this._oItemsBinding.attachChange(this._onItemsBindingChange, this);
-		this._oItemsBinding.attachDataReceived(this._onItemsBindingChange, this);
+		this._oItemsBinding.attachChange(this._onBindingChange, this);
+		this._oItemsBinding.attachDataRequested(this._onBindingDataRequested, this);
+		this._oItemsBinding.attachDataReceived(this._onBindingDataReceived, this);
 	};
 
 	List.prototype._detachItemsBindingListeners = function(oBinding) {
-		oBinding.detachChange(this._onItemsBindingChange, this);
-		oBinding.detachDataReceived(this._onItemsBindingChange, this);
+		oBinding.detachChange(this._onBindingChange, this);
+		oBinding.detachDataRequested(this._onBindingDataRequested, this);
+		oBinding.detachDataReceived(this._onBindingDataReceived, this);
 	};
 
-	List.prototype._onItemsBindingChange = function() {
-		this._updateItemCountFromBinding();
-		this._updateExportButton();
+	List.prototype.getRowBinding = function() {
+		return this._oList?.getBinding("items");
 	};
 
-	List.prototype._updateItemCountFromBinding = function() {
-		if (!this._oItemsBinding) {
-			this._updateItemCount(0);
-			return;
-		}
-
-		let iItemCount = 0;
-		if (this._oItemsBinding.getLength instanceof Function) {
-			iItemCount = this._oItemsBinding.getLength();
-		}
-
-		if (!Number.isFinite(iItemCount) || iItemCount < 0) {
-			iItemCount = this._oItemsBinding.getCurrentContexts instanceof Function
-				? this._oItemsBinding.getCurrentContexts().length
-				: 0;
-		}
-
-		this._updateItemCount(iItemCount);
-	};
-
-	List.prototype._updateItemCount = function(iItemCount) {
-		const iPrevCount = this._oManagedObjectModel.getProperty("/@custom/itemCount");
-		this._oManagedObjectModel.setProperty("/@custom/itemCount", iItemCount);
-
-		// Announce count updates caused by growing so screen readers hear the new total.
-		// Only announce when the list is initialized, showItemCount is on, and the count
-		// actually grew (growing appends rows — it never reduces the count mid-session).
-		if (this._oList && this.getShowItemCount() && iItemCount > iPrevCount) {
-			const sText = Library.getResourceBundleFor("sap.ui.mdc").getText("list.TITLE_ITEM_COUNT", [iItemCount]);
-			InvisibleMessage.getInstance().announce(sText, "Polite");
-		}
+	List.prototype._isRowCountShown = function() {
+		return this.getShowItemCount();
 	};
 
 	List.prototype._getExportData = function() {
@@ -1442,6 +846,7 @@ sap.ui.define([
 
 		const oItemsBinding = this._oList ? this._oList.getBinding("items") : null;
 		const sExportFunctionName = bExportAs ? "exportAs" : "export";
+		const oDefaultExportSettings = this.getDefaultExportSettings();
 		const mExportSettings = {
 			workbook: {
 				columns: aColumns,
@@ -1450,7 +855,7 @@ sap.ui.define([
 				}
 			},
 			dataSource: oItemsBinding || this._getExportData(),
-			fileName: this.getHeader() || "List"
+			fileName: oDefaultExportSettings?.getFileName() || this.getHeader() || "List"
 		};
 
 		return this._getExportHandler().then((oHandler) => {
@@ -1458,112 +863,17 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Loads the export library and export capabilities in parallel and
-	 * returns an initialized <code>ExportHandler</code> instance. The
-	 * instance will be cached for subsequent calls.
-	 *
-	 * @returns {Promise<sap.ui.export.ExportHandler>} Promise that resolves with an initialized <code>ExportHandler</code> instance
-	 * @private
-	 */
-	List.prototype._getExportHandler = function() {
-		if (this._oExportHandler) {
-			return Promise.resolve(this._oExportHandler);
+	DeferredAggregationForwardMixin.call(List.prototype, [{
+		aggregation: "contextMenu",
+		applyToTarget: function(oContextMenu) {
+			this._oList?.setContextMenu(oContextMenu);
 		}
-
-		return new Promise((fnResolve, fnReject) => {
-			Promise.all([
-				this.getControlDelegate().fetchExportCapabilities(this), Library.load({ name: "sap.ui.export" })
-			]).then((aResult) => {
-				const [oExportCapabilities] = aResult;
-
-				sap.ui.require(["sap/ui/export/ExportHandler"], (ExportHandler) => {
-					if (this.isDestroyed()) {
-						fnReject(new Error("sap.ui.mdc.List: control was destroyed before export handler could be initialized"));
-						return;
-					}
-					this._oExportHandler = new ExportHandler(oExportCapabilities);
-					this._oExportHandler.attachBeforeExport(this._onBeforeExport, this);
-					fnResolve(this._oExportHandler);
-				});
-			}).catch((vError) => {
-				if (!Library.all().hasOwnProperty("sap.ui.export")) {
-					sap.ui.require(["sap/m/MessageBox"], (MessageBox) => {
-						MessageBox.error(Library.getResourceBundleFor("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY"));
-					});
-				}
-
-				fnReject(vError);
-			});
-		});
-	};
-
-	/**
-	 * Handles the <code>beforeExport</code> event of the <code>ExportHandler</code>.
-	 *
-	 * @param {sap.ui.base.Event} oEvent The <code>beforeExport</code> event of the ExportHandler
-	 * @private
-	 */
-	List.prototype._onBeforeExport = function(oEvent) {
-		const aFilters = oEvent.getParameter("filterSettings");
-		const oHelper = this.getPropertyHelper();
-
-		aFilters.forEach((oFilter) => {
-			const oProperty = oHelper?.getProperties().find((oPropertyInfo) => {
-				return oPropertyInfo.path === oFilter.getProperty();
-			});
-
-			if (oProperty) {
-				oFilter.setLabel(oProperty.label);
-				oFilter.setType(oProperty.typeConfig?.typeInstance);
-			}
-		});
-
-		ExportUtils.fireBeforeExport(this, { filterSettings: aFilters }, oEvent);
-	};
-
-
-	/**
-	 * Event handler for <code>keydown</code>.
-	 * @param {object} oEvent The event object
-	 * @private
-	 */
-	List.prototype.onkeydown = function(oEvent) {
-		if (oEvent.isMarked()) {
-			return;
+	}, {
+		aggregation: "noData",
+		applyToTarget: function(vNoData) {
+			this._oList?.setNoData(vNoData);
 		}
-
-		if (isExportShortcut(oEvent)) {
-			if (this._oExportButton && this._oExportButton.getEnabled()) {
-				this._onExport(true);
-				oEvent.setMarked();
-				oEvent.preventDefault();
-			}
-		}
-
-		if (isOpenPersonalizationShortcut(oEvent)) {
-			if (this._oP13nButton && this._oP13nButton.getVisible()) {
-				this._oP13nButton.firePress();
-				oEvent.setMarked();
-				oEvent.preventDefault();
-			}
-		}
-	};
-
-	/**
-	 * Handler for theme changes
-	 */
-	List.prototype.onThemeChanged = function() {
-		this._oManagedObjectModel.setProperty("/@custom/toolbarButtonType", ToolbarSettings.getToolbarButtonType());
-	};
+	}]);
 
 	return List;
-
-	function isExportShortcut(oEvent) {
-		return (oEvent.metaKey || oEvent.ctrlKey) && oEvent.shiftKey && oEvent.which === KeyCodes.E;
-	}
-
-	function isOpenPersonalizationShortcut(oEvent) {
-		return (oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA;
-	}
 });

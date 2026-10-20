@@ -3,14 +3,14 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element",
+	"sap/ui/mdc/ListTableTypeBase",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/m/table/Util",
 	"./utils/Personalization"
 ], (
-	Element,
+	ListTableTypeBase,
 	DragDropInfo,
 	ManagedObjectModel,
 	TableP13nMode,
@@ -25,14 +25,14 @@ sap.ui.define([
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] Initial settings for the new object
 	 * @class The table type info base class for the metadata-driven table. Base class with no implementation.<br>
-	 * @extends sap.ui.core.Element
+	 * @extends sap.ui.mdc.ListTableTypeBase
 	 * @author SAP SE
 	 * @public
 	 * @abstract
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.TableTypeBase
 	 */
-	const TableTypeBase = Element.extend("sap.ui.mdc.table.TableTypeBase", {
+	const TableTypeBase = ListTableTypeBase.extend("sap.ui.mdc.table.TableTypeBase", {
 		metadata: {
 			library: "sap.ui.mdc",
 			"abstract": true,
@@ -41,7 +41,7 @@ sap.ui.define([
 	});
 
 	TableTypeBase.prototype.init = function() {
-		Element.prototype.init.apply(this, arguments);
+		ListTableTypeBase.prototype.init.apply(this, arguments);
 		this._oManagedObjectModel = new ManagedObjectModel(this);
 
 		// Map to cache cloned RowActionItems: Key = original RowActionItem, Value = clone
@@ -54,11 +54,11 @@ sap.ui.define([
 
 		this._cleanupRowActionClones();
 		delete this._mRowActionItemClones;
-		Element.prototype.exit.apply(this, arguments);
+		ListTableTypeBase.prototype.exit.apply(this, arguments);
 	};
 
 	TableTypeBase.prototype.setParent = function() {
-		Element.prototype.setParent.apply(this, arguments);
+		ListTableTypeBase.prototype.setParent.apply(this, arguments);
 		this.getTable()?.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table#type");
 	};
 
@@ -77,7 +77,7 @@ sap.ui.define([
 		return oTable && oTable.isA("sap.ui.mdc.Table") ? oTable : null;
 	};
 
-	TableTypeBase.prototype.getInnerTable = function() {
+	TableTypeBase.prototype.getInnerControl = function() {
 		const oTable = this.getTable();
 		return oTable ? oTable._oTable : null;
 	};
@@ -86,7 +86,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	TableTypeBase.prototype.setProperty = function(sProperty, vValue) {
-		Element.prototype.setProperty.apply(this, arguments);
+		ListTableTypeBase.prototype.setProperty.apply(this, arguments);
 		this.updateTableByProperty(sProperty, vValue);
 		return this;
 	};
@@ -161,7 +161,7 @@ sap.ui.define([
 
 	TableTypeBase.prototype._onColumnMove = function(oEvent) {
 		const oTable = this.getTable();
-		const oInnerTable = this.getInnerTable();
+		const oInnerTable = this.getInnerControl();
 		const oDraggedColumn = oEvent.getParameter("draggedControl");
 		const oDroppedColumn = oEvent.getParameter("droppedControl");
 
@@ -235,9 +235,9 @@ sap.ui.define([
 		const oInnerColumn = oColumn.getInnerColumn();
 
 		if (iIndex === undefined) {
-			this.getInnerTable().addColumn(oInnerColumn);
+			this.getInnerControl().addColumn(oInnerColumn);
 		} else {
-			this.getInnerTable().insertColumn(oInnerColumn, iIndex);
+			this.getInnerControl().insertColumn(oInnerColumn, iIndex);
 		}
 	};
 
@@ -251,7 +251,7 @@ sap.ui.define([
 		const oInnerColumn = oColumn?.getInnerColumn();
 
 		if (oInnerColumn) {
-			this.getInnerTable()?.removeColumn(oInnerColumn);
+			this.getInnerControl()?.removeColumn(oInnerColumn);
 		}
 	};
 
@@ -286,12 +286,6 @@ sap.ui.define([
 	TableTypeBase.prototype.bindRows = function(oBindingInfo) {};
 	TableTypeBase.prototype.isTableBound = function() {};
 	TableTypeBase.prototype.createRowTemplate = function(sId) { };
-	/**
-	 * Inserts the given filter info bar into the inner table.
-	 *
-	 * @param {sap.ui.mdc.util.InfoBar} oFilterInfoBar
-	 */
-	TableTypeBase.prototype.insertFilterInfoBar = function(oFilterInfoBar) { };
 	TableTypeBase.prototype.enableColumnResize = function() {};
 	TableTypeBase.prototype.disableColumnResize = function() {};
 	TableTypeBase.prototype.createColumnResizeMenuItem = function() {};

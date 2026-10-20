@@ -3,10 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element",
-	"sap/ui/model/base/ManagedObjectModel",
+	"sap/ui/mdc/ListTableTypeBase",
 	"sap/ui/mdc/enums/ListSelectionMode"
-], (Element, ManagedObjectModel, ListSelectionMode) => {
+], (ListTableTypeBase, ListSelectionMode) => {
 	"use strict";
 
 	// Maps the MDC list selection mode to the corresponding sap.m.ListMode of the inner list.
@@ -23,36 +22,20 @@ sap.ui.define([
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] Initial settings for the new object
 	 * @class The list type info base class for the metadata-driven list. Base class with no implementation.
-	 * @extends sap.ui.core.Element
+	 * @extends sap.ui.mdc.ListTableTypeBase
 	 * @author SAP SE
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 * @abstract
 	 * @since 1.153
 	 * @alias sap.ui.mdc.list.ListTypeBase
 	 */
-	const ListTypeBase = Element.extend("sap.ui.mdc.list.ListTypeBase", {
+	const ListTypeBase = ListTableTypeBase.extend("sap.ui.mdc.list.ListTypeBase", {
 		metadata: {
 			library: "sap.ui.mdc",
 			"abstract": true,
 			properties: {}
 		}
 	});
-
-	ListTypeBase.prototype.init = function() {
-		Element.prototype.init.apply(this, arguments);
-		this._oManagedObjectModel = new ManagedObjectModel(this);
-	};
-
-	ListTypeBase.prototype.exit = function() {
-		this._oManagedObjectModel.destroy();
-		delete this._oManagedObjectModel;
-		Element.prototype.exit.apply(this, arguments);
-	};
-
-	ListTypeBase.prototype.setParent = function() {
-		Element.prototype.setParent.apply(this, arguments);
-		this.getList()?.setModel(this._oManagedObjectModel, "$sap.ui.mdc.List#type");
-	};
 
 	/**
 	 * Returns the parent <code>sap.ui.mdc.List</code> control, or <code>null</code> if not part of one.
@@ -65,13 +48,7 @@ sap.ui.define([
 		return oList && oList.isA("sap.ui.mdc.List") ? oList : null;
 	};
 
-	/**
-	 * Returns the inner list control instance created by the type, or <code>null</code> if not yet created.
-	 *
-	 * @returns {sap.ui.core.Control|null} The inner list control, or <code>null</code>
-	 * @ui5-restricted sap.ui.mdc
-	 */
-	ListTypeBase.prototype.getInnerList = function() {
+	ListTypeBase.prototype.getInnerControl = function() {
 		const oList = this.getList();
 		return oList ? oList._oList : null;
 	};
@@ -95,7 +72,7 @@ sap.ui.define([
 				formatter: (sSelectionMode) => mSelectionModeMap[sSelectionMode] ?? "None"
 			},
 			headerToolbar: oList._createToolbar(),
-			busyIndicatorDelay: 100,
+			busyIndicatorDelay: "{$sap.ui.mdc.List>/busyIndicatorDelay}",
 			growing: {
 				path: "$sap.ui.mdc.List>/growingMode",
 				formatter: (sMode) => sMode !== "None"
@@ -154,7 +131,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	ListTypeBase.prototype.bindItems = function(oBindingInfo) {
-		const oInnerList = this.getInnerList();
+		const oInnerList = this.getInnerControl();
 
 		if (!oInnerList) {
 			return;
@@ -176,8 +153,6 @@ sap.ui.define([
 		}
 
 		oList.fireSelectionChange();
-
-		oList._updateSelectedCount();
 	};
 
 	/**
@@ -188,7 +163,7 @@ sap.ui.define([
 	 */
 	ListTypeBase.prototype._onItemPress = function(oEvent) {
 		const oList = this.getList();
-		const oInnerList = this.getInnerList();
+		const oInnerList = this.getInnerControl();
 
 		if (!oList || !oInnerList) {
 			return;
@@ -213,7 +188,7 @@ sap.ui.define([
 	 */
 	ListTypeBase.prototype._onBeforeOpenContextMenu = function(oEvent) {
 		const oList = this.getList();
-		const oInnerList = this.getInnerList();
+		const oInnerList = this.getInnerControl();
 
 		if (!oList || !oInnerList) {
 			return;
@@ -265,9 +240,23 @@ sap.ui.define([
 	 * @protected
 	 */
 	ListTypeBase.prototype.removeToolbar = function() {
-		const oInnerList = this.getInnerList();
+		const oInnerList = this.getInnerControl();
 		if (oInnerList && oInnerList.setHeaderToolbar instanceof Function) {
 			oInnerList.setHeaderToolbar(null);
+		}
+	};
+
+	ListTypeBase.prototype.insertFilterInfoBar = function(oFilterInfoBar) {
+		const oInnerList = this.getInnerControl();
+
+		if (oInnerList) {
+			const sFilterInfoBarAccTextId = oFilterInfoBar.getACCTextId();
+
+			oInnerList.setInfoToolbar(oFilterInfoBar);
+
+			if (!oInnerList.getAriaLabelledBy().includes(sFilterInfoBarAccTextId)) {
+				oInnerList.addAriaLabelledBy(sFilterInfoBarAccTextId);
+			}
 		}
 	};
 
@@ -293,7 +282,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	ListTypeBase.prototype.updateItemSettings = function() {
-		const oInnerList = this.getInnerList();
+		const oInnerList = this.getInnerControl();
 		const oList = this.getList();
 
 		if (!oInnerList || !oList) {
@@ -373,7 +362,7 @@ sap.ui.define([
 	ListTypeBase.prototype.updateListByProperty = function(sProperty, vValue) {};
 
 	ListTypeBase.prototype.setProperty = function(sProperty, vValue, bSuppressInvalidate) {
-		Element.prototype.setProperty.apply(this, arguments);
+		ListTableTypeBase.prototype.setProperty.apply(this, arguments);
 		this.updateListByProperty(sProperty, vValue);
 		return this;
 	};

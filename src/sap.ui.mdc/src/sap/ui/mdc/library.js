@@ -57,6 +57,7 @@ sap.ui.define([
 		controls: [
 			"sap.ui.mdc.Table",
 			"sap.ui.mdc.List",
+			"sap.ui.mdc.ListTableBase",
 			"sap.ui.mdc.FilterBar",
 			"sap.ui.mdc.field.FieldBase",
 			"sap.ui.mdc.field.FieldInput",
@@ -72,13 +73,16 @@ sap.ui.define([
 			"sap.ui.mdc.Geomap"
 		],
 		elements: [
+			"sap.ui.mdc.ListTableTypeBase",
 			"sap.ui.mdc.table.Column",
 			"sap.ui.mdc.table.CreationRow",
 			"sap.ui.mdc.table.DragDropConfig",
 			"sap.ui.mdc.table.TableTypeBase",
 			"sap.ui.mdc.table.GridTableType",
 			"sap.ui.mdc.table.ResponsiveTableType",
+			"sap.ui.mdc.table.RowItemSettingsBase",
 			"sap.ui.mdc.table.RowSettings",
+			"sap.ui.mdc.table.RowItemActionItemBase",
 			"sap.ui.mdc.table.RowActionItem",
 			"sap.ui.mdc.table.ActionLayoutData",
 			"sap.ui.mdc.list.ListTypeBase",
@@ -87,6 +91,7 @@ sap.ui.define([
 			"sap.ui.mdc.list.ItemSettings",
 			"sap.ui.mdc.list.ItemActionItem",
 			"sap.ui.mdc.list.DragDropConfig",
+			"sap.ui.mdc.list.ActionLayoutData",
 			"sap.ui.mdc.chart.ActionLayoutData",
 			"sap.ui.mdc.chart.Item",
 			"sap.ui.mdc.chart.ChartSelectionDetails",

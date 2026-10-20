@@ -141,7 +141,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.updateTableByProperty = function(sProperty, vValue) {
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 
 		if (!oResponsiveTable) {
 			return;
@@ -238,7 +238,7 @@ sap.ui.define([
 	 */
 	function onItemPress(oEvent) {
 		this.callHook("RowPress", this.getTable(), {
-			bindingContext: oEvent.getParameter("listItem").getBindingContext(this.getInnerTable().getBindingInfo("items").model)
+			bindingContext: oEvent.getParameter("listItem").getBindingContext(this.getInnerControl().getBindingInfo("items").model)
 		});
 
 		// Trigger action press handling for Navigation type
@@ -247,7 +247,7 @@ sap.ui.define([
 
 	function onBeforeOpenContextMenu(oEvent) {
 		const mEventParameters = oEvent.getParameters();
-		const oInnerTable = this.getInnerTable();
+		const oInnerTable = this.getInnerControl();
 		const oColumn = Element.getElementById(mEventParameters.column?.getId().replace(/\-innerColumn$/, ""));
 
 		this.callHook("BeforeOpenContextMenu", this.getTable(), {
@@ -383,7 +383,7 @@ sap.ui.define([
 		this._cleanupRowActionClones();
 
 		const oRowSettings = oTable.getRowSettings();
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 		const sType = oTable.hasListeners("rowPress") ? "Active" : "Inactive";
 
 		oTable._oRowTemplate.setType(sType);
@@ -475,7 +475,7 @@ sap.ui.define([
 
 	ResponsiveTableType.prototype.enableColumnResize = function() {
 		const oTable = this.getTable();
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 
 		if (!oTable || !oResponsiveTable) {
 			return;
@@ -498,7 +498,7 @@ sap.ui.define([
 
 	ResponsiveTableType.prototype.disableColumnResize = function() {
 		const oTable = this.getTable();
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 
 		if (!oTable || !oResponsiveTable) {
 			return;
@@ -514,7 +514,7 @@ sap.ui.define([
 
 	function onColumnResize(oEvent) {
 		const oTable = this.getTable();
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 		const oResponsiveTableColumn = oEvent.getParameter("column");
 		const sWidth = oEvent.getParameter("width");
 		const iIndex = oResponsiveTable.indexOfColumn(oResponsiveTableColumn);
@@ -527,7 +527,7 @@ sap.ui.define([
 	}
 
 	ResponsiveTableType.prototype.createColumnResizeMenuItem = function(oColumn, oColumnMenu) {
-		const oColumnResizer = ColumnResizer.findOn(this.getInnerTable());
+		const oColumnResizer = ColumnResizer.findOn(this.getInnerControl());
 
 		if (!oColumnResizer) {
 			return;
@@ -537,7 +537,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.createColumnResizeInputMenuItem = function(oColumn, oColumnMenu) {
-		const oColumnResizer = ColumnResizer.findOn(this.getInnerTable());
+		const oColumnResizer = ColumnResizer.findOn(this.getInnerControl());
 
 		if (!oColumnResizer) {
 			return;
@@ -578,7 +578,7 @@ sap.ui.define([
 			return;
 		}
 
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 
 		if (this.bShowDetails) {
 			oResponsiveTable.setHiddenInPopin();
@@ -729,14 +729,14 @@ sap.ui.define([
 		oListItemAction.addDependent(oRowActionItem);
 
 		this.callHook("Press", oRowActionItem, {
-			bindingContext: oListItem.getBindingContext(this.getInnerTable().getBindingInfo("items").model)
+			bindingContext: oListItem.getBindingContext(this.getInnerControl().getBindingInfo("items").model)
 		});
 
 		oListItemAction.removeDependent(oRowActionItem);
 	}
 
 	ResponsiveTableType.prototype.removeToolbar = function() {
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 
 		if (oResponsiveTable) {
 			oResponsiveTable.setHeaderToolbar();
@@ -744,7 +744,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.scrollToIndex = function(iIndex) {
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 
 		if (oResponsiveTable) {
 			return oResponsiveTable.scrollToIndex(iIndex);
@@ -754,12 +754,12 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.getRowBinding = function() {
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 		return oResponsiveTable ? oResponsiveTable.getBinding("items") : undefined;
 	};
 
 	ResponsiveTableType.prototype.bindRows = function(oBindingInfo) {
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 
 		if (oResponsiveTable) {
 			oResponsiveTable.bindItems(oBindingInfo);
@@ -767,7 +767,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.isTableBound = function() {
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 
 		if (oResponsiveTable) {
 			return oResponsiveTable.isBound("items");
@@ -777,7 +777,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.insertFilterInfoBar = function(oFilterInfoBar) {
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 
 		if (oResponsiveTable) {
 			const sFilterInfoBarAccTextId = oFilterInfoBar.getACCTextId();
@@ -791,7 +791,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.setContextMenu = function(oContextMenu) {
-		this.getInnerTable()?.setContextMenu(oContextMenu);
+		this.getInnerControl()?.setContextMenu(oContextMenu);
 	};
 
 	ResponsiveTableType.prototype.createNoColumnsMessage = function() {
@@ -801,7 +801,7 @@ sap.ui.define([
 	};
 
 	ResponsiveTableType.prototype.setNoData = function(vNoData) {
-		const oResponsiveTable = this.getInnerTable();
+		const oResponsiveTable = this.getInnerControl();
 
 		if (!oResponsiveTable) {
 			return;
@@ -838,7 +838,7 @@ sap.ui.define([
 		}
 
 		if (PersonalizationUtils.isUserPersonalizationActive(oTable) &&
-			this.getInnerTable().getHiddenInPopin()?.includes(oColumn.getInnerColumn().getImportance()) &&
+			this.getInnerControl().getHiddenInPopin()?.includes(oColumn.getInnerColumn().getImportance()) &&
 			(oTable.getColumns().pop() === oColumn)) {
 			this._setShowDetailsState(true);
 		}
@@ -854,7 +854,7 @@ sap.ui.define([
 
 			if (iCellIndex > -1) {
 				removeCellFromItem(oRowTemplate, iCellIndex);
-				this.getInnerTable().getItems().forEach((oItem) => {
+				this.getInnerControl().getItems().forEach((oItem) => {
 					removeCellFromItem(oItem, iCellIndex);
 				});
 			}

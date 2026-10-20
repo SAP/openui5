@@ -2,12 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define([], () => {
+sap.ui.define(["sap/ui/events/KeyCodes"], (KeyCodes) => {
 	"use strict";
 
 	/**
 	 * @namespace
 	 * @alias sap.ui.mdc.util.Common
+	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.151
 	 */
@@ -26,6 +27,7 @@ sap.ui.define([], () => {
 		 * @param {function} fnApplySettings The original <code>applySettings</code> function to call
 		 * @param {string} [sTypeProperty="type"] The name of the type property to hoist; defaults to <code>"type"</code>
 		 * @returns {void}
+		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		applySettingsWithEarlyTypeAndDelegate: function(oControl, mSettings, oScope, fnApplySettings, sTypeProperty = "type") {
@@ -52,6 +54,7 @@ sap.ui.define([], () => {
 		 *
 		 * @param {object} oTarget The target object
 		 * @param {string[]} aFields The field names to clean up
+		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		cleanup: function(oTarget, aFields) {
@@ -64,6 +67,30 @@ sap.ui.define([], () => {
 					oTarget[sField] = null;
 				}
 			});
+		},
+
+		/**
+		 * Checks whether the given keyboard event is the export shortcut (Ctrl/Cmd+Shift+E).
+		 *
+		 * @param {jQuery.Event} oEvent The keyboard event
+		 * @returns {boolean} Whether the export shortcut was pressed
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
+		isExportShortcut: function(oEvent) {
+			return (oEvent.metaKey || oEvent.ctrlKey) && oEvent.shiftKey && oEvent.which === KeyCodes.E;
+		},
+
+		/**
+		 * Checks whether the given keyboard event is the open-personalization shortcut (Ctrl/Cmd+Comma).
+		 *
+		 * @param {jQuery.Event} oEvent The keyboard event
+		 * @returns {boolean} Whether the open-personalization shortcut was pressed
+		 * @private
+		 * @ui5-restricted sap.ui.mdc
+		 */
+		isOpenPersonalizationShortcut: function(oEvent) {
+			return (oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA;
 		}
 	};
 

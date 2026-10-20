@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Element'
+	"sap/ui/mdc/table/RowItemSettingsBase"
 ], (
-	Element
+	RowItemSettingsBase
 ) => {
 	"use strict";
 	/**
@@ -19,45 +19,17 @@ sap.ui.define([
 	 * @class
 	 * The <code>RowSettings</code> control is used to configure a row.
 	 * This control can only be used in the context of the <code>sap.ui.mdc.Table</code> control to define row settings.
-	 * @extends sap.ui.core.Element
+	 * @extends sap.ui.mdc.table.RowItemSettingsBase
 	 * @version ${version}
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.mdc.table.RowSettings
 	 */
-
-	const RowSettings = Element.extend("sap.ui.mdc.table.RowSettings", {
+	const RowSettings = RowItemSettingsBase.extend("sap.ui.mdc.table.RowSettings", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
-				/**
-				 * The highlight state of the rows.
-				 *
-				 * If the highlight is set to {@link module:sap/ui/core/message/MessageType MessageType.None} (default), no highlights are visible.
-				 * Valid values for the <code>highlight</code> property are values of the enumerations {@link module:sap/ui/core/message/MessageType}
-				 * or {@link sap.ui.core.IndicationColor} (only values of <code>Indication01</code> to <code>Indication10</code> are supported
-				 * for accessibility contrast reasons).
-				 *
-				 * Accessibility support is provided with the {@link sap.ui.mdc.table.RowSettings#setHighlightText highlightText} property.
-				 * If the <code>highlight</code> property is set to a value of {@link module:sap/ui/core/message/MessageType}, the
-				 * <code>highlightText</code> property does not need to be set because a default text is used. However, the default text can be
-				 * overridden by setting the <code>highlightText</code> property.
-				 * In all other cases the <code>highlightText</code> property must be set.
-				 *
-				 */
-				highlight: {type: "string", group: "Appearance", defaultValue: "None"},
-
-				/**
-				 * Defines the semantics of the {@link sap.ui.mdc.table.RowSettings#setHighlight highlight} property for accessibility purposes.
-				 */
-				highlightText: {type: "string", group: "Misc", defaultValue: ""},
-
-				/**
-				 * The navigated state of a row. The navigation indicator is displayed at the end of a row.
-				 */
-				navigated: {type: "boolean", group: "Appearance", defaultValue: false},
-
 				/**
 				 * Defines the number of row actions to display.
 				 *
@@ -109,86 +81,18 @@ sap.ui.define([
 		}
 	});
 
-	RowSettings.prototype.getAllSettings = function() {
-		const mSettings = {};
-		const thisCloned = this.clone(); // To make sure the binding info instances are not shared between different tables
-
-		if (this.isBound("navigated")) {
-			mSettings.navigated = thisCloned.getBindingInfo("navigated");
-		} else {
-			mSettings.navigated = this.getNavigated();
-		}
-
-		if (this.isBound("highlight")) {
-			mSettings.highlight = thisCloned.getBindingInfo("highlight");
-		} else {
-			mSettings.highlight = this.getHighlight();
-		}
-
-		if (this.isBound("highlightText")) {
-			mSettings.highlightText = thisCloned.getBindingInfo("highlightText");
-		} else {
-			mSettings.highlightText = this.getHighlightText();
-		}
-
-		thisCloned.destroy();
-		return mSettings;
-	};
-
 	RowSettings.prototype.getAllActions = function() {
-		const mSettings = {};
-
-		if (this.isBound("rowActions")) {
-			const thisCloned = this.clone();
-			// Set bindingInfo for items aggregation to bindingInfo of rowActions
-			mSettings.items = thisCloned.getBindingInfo("rowActions");
-			const oTemplate = mSettings.items.template;
-			// Create temporary metdata information for later processing
-			mSettings.templateInfo = {
-				type: oTemplate.isBound("type") ? oTemplate.getBindingInfo("type") : oTemplate.getType(),
-				text: oTemplate.isBound("text") ? oTemplate.getBindingInfo("text") : oTemplate.getText(),
-				icon: oTemplate.isBound("icon") ? oTemplate.getBindingInfo("icon") : oTemplate.getIcon(),
-				visible: oTemplate.isBound("visible") ? oTemplate.getBindingInfo("visible") : oTemplate.getVisible()
-			};
-			thisCloned.destroy();
-		} else {
-			mSettings.items = this.getRowActions();
-		}
-		return mSettings;
+		return RowItemSettingsBase.prototype.getAllActions.call(this, "rowActions", ["type", "text", "icon", "visible"]);
 	};
 
 	/**
 	 * Returns the effective number of row actions to display.
 	 *
-	 * Returns the explicitly set <code>rowActionCount</code> if available. Otherwise:
-	 * <ul>
-	 *   <li>For bound actions: Returns 1 (default fallback)</li>
-	 *   <li>For static actions: Returns the aggregation length</li>
-	 * </ul>
-	 *
-	 * <b>Note:</b> When using bound row actions, set <code>rowActionCount</code> explicitly
-	 * if more than one action should be displayed.
-	 *
 	 * @returns {int} The number of row actions
 	 * @private
 	 */
 	RowSettings.prototype.getEffectiveRowActionCount = function() {
-		// 1. If explicitly set, use that value
-		if (!this.isPropertyInitial("rowActionCount") || this.getProperty("rowActionCount") !== -1) {
-			return this.getProperty("rowActionCount");
-		}
-
-		// 2. Fallback to automatic detection
-		let iCount = 0;
-		if (this.isBound("rowActions")) {
-			// Bound actions: Default to 1 (developer should set explicitly)
-			iCount = 1;
-		} else {
-			// Static actions: Use array length
-			iCount = this.getRowActions().length;
-		}
-
-		return iCount;
+		return this.getEffectiveActionCount("rowActionCount", "rowActions");
 	};
 
 	return RowSettings;

@@ -48,7 +48,8 @@ sap.ui.define([
 		if (iSelectedCount > 0 && iTotalCount > 0) {
 			oRm.class("sapMTableTitleSelectedRowCount");
 			if (oTitle.getShowExtendedView()) {
-				sText = oResourceBundle.getText("TABLETITLE_SELECTED_ROW_COUNT_EXT", [sSelectedCountFormatted, sTotalCountFormatted]);
+				const sExtKey = oTitle.getContext() === "List" ? "TABLETITLE_SELECTED_ITEM_COUNT_EXT" : "TABLETITLE_SELECTED_ROW_COUNT_EXT";
+				sText = oResourceBundle.getText(sExtKey, [sSelectedCountFormatted, sTotalCountFormatted]);
 
 			} else {
 				sText = oResourceBundle.getText("TABLETITLE_SELECTED_ROW_COUNT_COMP", [sSelectedCountFormatted, sTotalCountFormatted]);

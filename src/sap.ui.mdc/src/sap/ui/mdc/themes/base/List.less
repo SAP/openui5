@@ -6,20 +6,7 @@
 @_sap_ui_mdc_List_GridListItem_Compact_HeaderHeight: 2rem;
 
 
-/* --- 1. MDC-specific: headerVisible=false accessibility --- */
-
-/* Keep the title in the DOM for aria-labelledby, but hide it visually and from layout. */
-.sapUiMdcListTitleHidden {
-	position: absolute;
-	width: 0.0625rem;
-	height: 0.0625rem;
-	overflow: hidden;
-	clip-path: inset(50%);
-	white-space: nowrap;
-}
-
-
-/* --- 2. GridList item action buttons --- */
+/* --- 1. GridList item action buttons --- */
 
 .sapUiMdcListGridList {
 
@@ -45,7 +32,7 @@
 	.sapFGLI .sapUiMdcListItemActions {
 		position: absolute;
 		top: 0;
-		right: 2rem;
+		right: 1rem;
 		z-index: 2;
 		display: flex;
 		align-items: center;
@@ -71,7 +58,7 @@
 }
 
 
-/* --- 3. List mode double-wrap side effects --- */
+/* --- 2. List mode double-wrap side effects --- */
 
 /* In list mode the itemTemplate is wrapped in a CustomListItem with padding: 0. When the
    template is itself a ListItemBase subclass, its own background/separator/focus ring

@@ -97,9 +97,6 @@ sap.ui.define(function() {
 					]
 				}
 			},
-			"TableSettings": {
-				group: "Utils"
-			},
 			"Table - Common (ODataV4)": {
 				group: "OPA",
 				module: "./OpaTests/start",
@@ -183,7 +180,7 @@ sap.ui.define(function() {
 					libs: ["sap.m", "sap.ui.table", "sap.ui.mdc"]
 				},
 				coverage: {
-					only: ["sap/ui/mdc/table/DragDropConfig", "sap/ui/mdc/util/DragDropConfigBase"]
+					only: ["sap/ui/mdc/table/DragDropConfig"]
 				}
 			}
 		}

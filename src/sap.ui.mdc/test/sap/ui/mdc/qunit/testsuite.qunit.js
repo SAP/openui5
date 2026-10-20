@@ -221,6 +221,70 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				sinon: true
 			},
+			"ToolbarFactory": {
+				group: "Util",
+				module: "./util/ToolbarFactory.qunit",
+				coverage: {
+					only: ["sap/ui/mdc/util/ToolbarFactory"]
+				},
+				sinon: true
+			},
+			"DragDropConfigBase": {
+				group: "Util",
+				module: "./util/DragDropConfigBase.qunit",
+				coverage: {
+					only: ["sap/ui/mdc/util/DragDropConfigBase"]
+				},
+				sinon: true
+			},
+			"RowItemActionItemBase": {
+				group: "Table",
+				module: "./table/RowItemActionItemBase.qunit",
+				coverage: {
+					only: ["sap/ui/mdc/table/RowItemActionItemBase"]
+				}
+			},
+			"RowItemSettingsBase": {
+				group: "Table",
+				module: "./table/RowItemSettingsBase.qunit",
+				coverage: {
+					only: ["sap/ui/mdc/table/RowItemSettingsBase"]
+				}
+			},
+			"TableToolbarFactory": {
+				group: "Util",
+				module: "./util/TableToolbarFactory.qunit",
+				coverage: {
+					only: ["sap/ui/mdc/util/TableToolbarFactory"]
+				},
+				sinon: true
+			},
+			"ListToolbarFactory": {
+				group: "Util",
+				module: "./util/ListToolbarFactory.qunit",
+				coverage: {
+					only: ["sap/ui/mdc/util/ListToolbarFactory"]
+				},
+				sinon: true
+			},
+			"ListTableBase": {
+				group: "Controls",
+				ui5: {
+					libs: ["sap.f", "sap.m", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/ui/mdc/ListTableBase"]
+				}
+			},
+			"ListTableTypeBase": {
+				group: "Controls",
+				ui5: {
+					libs: ["sap.f", "sap.m", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/ui/mdc/ListTableTypeBase"]
+				}
+			},
 			"EnforceSemanticRendering": {
 				title: "QUnit Page for Semantic Rendering Coverage"
 			},
@@ -288,6 +352,17 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				module: "./odata/v4/TypeUtil.qunit",
 				coverage: {
 					only: "[delegates/odata/v4]"
+				},
+				sinon: true
+			},
+			"ODataV4ListDelegate": {
+				group: "Delegates",
+				module: "./odata/v4/ListDelegate.qunit",
+				ui5: {
+					libs: ["sap.f", "sap.m", "sap.ui.fl", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/ui/mdc/odata/v4/ListDelegate"]
 				},
 				sinon: true
 			},

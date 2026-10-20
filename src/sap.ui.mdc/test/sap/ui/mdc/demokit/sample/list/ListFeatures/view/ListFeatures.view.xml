@@ -38,6 +38,7 @@
 			selectionMode="Multi"
 			threshold="10"
 			width="100%"
+			enableExport="true"
 			selectionChange=".onSelectionChange"
 			beforeOpenContextMenu=".onBeforeOpenContextMenu"
 			itemPress=".onItemPress"
@@ -72,6 +73,14 @@
 					<MenuItem text="Copy Name" icon="sap-icon://copy" press=".onContextMenuCopyName" />
 				</Menu>
 			</mdc:contextMenu>
+			<!--
+				Drag and drop config: makes items draggable and droppable so they can be
+				reordered within the list. Source and target are the same "items" aggregation.
+				No drop handler is provided, so the reorder result is not persisted.
+			-->
+			<mdc:dragDropConfig>
+				<mdcList:DragDropConfig draggable="true" droppable="true" dropPosition="Between" />
+			</mdc:dragDropConfig>
 			<mdc:itemSettings>
 				<!--
 					ItemSettings demonstrates all per-row visual states:

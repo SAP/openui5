@@ -48,7 +48,7 @@ sap.ui.define([
 				infoText: {type: "string"}
 			},
 			associations: {
-				table: {type: "sap.ui.mdc.Table"}
+				table: {type: "sap.ui.mdc.ListTableBase"}
 			}
 		},
 		renderer: ToolbarRenderer

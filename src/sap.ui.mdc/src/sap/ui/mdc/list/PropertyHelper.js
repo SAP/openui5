@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper"
+	"../util/ListTablePropertyHelper"
 ], (
 	PropertyHelperBase
 ) => {
@@ -22,7 +22,7 @@ sap.ui.define([
 	 * Validates the given properties, sets defaults, and provides utilities to work with these properties.
 	 * The utilities can only be used for properties that are known to the helper. Known properties are all those that are passed to the constructor.
 	 *
-	 * @extends sap.ui.mdc.util.PropertyHelper
+	 * @extends sap.ui.mdc.util.ListTablePropertyHelper
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -33,25 +33,7 @@ sap.ui.define([
 	 */
 	const PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.list.PropertyHelper", {
 		constructor: function(aProperties, oParent) {
-			PropertyHelperBase.call(this, aProperties, oParent, {
-				// Enable default attributes relevant for a list
-				filterable: true,
-				sortable: true,
-
-				// Grouping support for the Group p13n mode
-				groupable: {
-					type: "boolean"
-				},
-
-				// Export support
-				exportSettings: {
-					type: "object",
-					"default": {
-						value: {},
-						ignoreIfNull: true
-					}
-				}
-			});
+			PropertyHelperBase.call(this, aProperties, oParent);
 		}
 	});
 
