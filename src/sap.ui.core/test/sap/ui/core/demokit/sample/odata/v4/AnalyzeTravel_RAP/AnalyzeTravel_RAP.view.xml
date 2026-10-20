@@ -97,13 +97,14 @@
 		<Column filterProperty="FlightDate" sortProperty="FlightDate" width="9em">
 			<m:Label text="Flight Date"/>
 			<template>
-				<demo:ValueHelp enabled="{= !%{@$ui5.node.isTotal} }" value="{FlightDate}"/>
+				<demo:ValueHelp enabled="{= !%{@$ui5.node.isTotal} }"
+					selectionChanged=".onChangeBooking" value="{FlightDate}"/>
 			</template>
 		</Column>
 		<Column filterProperty="BookingStatus" sortProperty="BookingStatus" width="8em">
 			<m:Label text="Booking Status"/>
 			<template>
-				<m:Select change=".onBookingStatusChanged" enabled="{= !%{@$ui5.node.isTotal} }"
+				<m:Select change=".onChangeBookingStatus" enabled="{= !%{@$ui5.node.isTotal} }"
 					forceSelection="false" selectedKey="{BookingStatus}"
 					items="{path : 'bookingStatus>/xDMOxI_Booking_Status_VH',
 						parameters : {$$sharedRequest : true}, templateShareable : false}">
@@ -129,7 +130,8 @@
 			<m:Label text="Flight Price"/>
 			<template>
 				<m:HBox>
-					<m:Input editable="{= !%{@$ui5.node.isTotal} }" value="{
+					<m:Input change=".onChangeBooking" editable="{= !%{@$ui5.node.isTotal} }"
+						value="{
 							mode: 'TwoWay',
 							parts : ['FlightPrice', 'CurrencyCode', {
 								mode : 'OneTime',
@@ -148,7 +150,8 @@
 			<m:Label text="Currency"/>
 			<template>
 				<m:HBox>
-					<demo:ValueHelp enabled="{= !%{@$ui5.node.isTotal} }" value="{CurrencyCode}"
+					<demo:ValueHelp enabled="{= !%{@$ui5.node.isTotal} }"
+						selectionChanged=".onChangeBooking" value="{CurrencyCode}"
 						visible="{= !%{@$ui5.context.isOutdated} }"/>
 					<m:Text text="---" tooltip="Content may be outdated - refresh needed"
 						visible="{= !!%{@$ui5.context.isOutdated} }"/>
@@ -230,7 +233,7 @@
 				</m:Toolbar>
 			</form:toolbar>
 			<m:Label text="Flight Date"/>
-			<demo:ValueHelp value="{FlightDate}"/>
+			<demo:ValueHelp selectionChanged=".onChangeBooking" value="{FlightDate}"/>
 			<m:Label text="Booking Status"/>
 			<m:Text text="{BookingStatus} - {BookingStatusText}"/>
 		</form:SimpleForm>

@@ -45,10 +45,21 @@ sap.ui.define([
 			}
 		},
 
-		onBookingStatusChanged : async function (oEvent) {
+		onChangeBooking : async function () {
 			try {
-				await oEvent.getSource().getBindingContext()
-					.requestSideEffects(["BookingStatusText"]);
+				await this.refreshTravelETag();
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			}
+		},
+
+		onChangeBookingStatus : async function (oEvent) {
+			try {
+				await Promise.all([
+					oEvent.getSource().getBindingContext()
+						.requestSideEffects(["BookingStatusText"]),
+					this.refreshTravelETag()
+				]);
 			} catch (oError) {
 				MessageBox.error(oError.message);
 			}
@@ -97,19 +108,31 @@ sap.ui.define([
 				"header");
 		},
 
-		onCreate : function (_oEvent, bAtEnd, bInactive) {
-			const oListBinding = this.byId("table").getBinding("rows");
-			oListBinding.create({
-				CurrencyCode : "USD", // needed by ABAP
-				FlightPrice : "" + oListBinding.getLength() // Edm.Decimal
-			}, /*bSkipRefresh*/true, bAtEnd, bInactive);
+		onCreate : async function (_oEvent, bAtEnd, bInactive) {
+			try {
+				const oListBinding = this.byId("table").getBinding("rows");
+				const oCreatedContext = oListBinding.create({
+					CurrencyCode : "USD", // needed by ABAP
+					FlightPrice : "" + oListBinding.getLength() // Edm.Decimal
+				}, /*bSkipRefresh*/true, bAtEnd, bInactive);
+
+				await Promise.all([
+					oCreatedContext.created(),
+					!bInactive && this.refreshTravelETag()
+				]);
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			}
 		},
 
 		onDeleteBooking : async function () {
 			const oView = this.getView();
 			oView.setBusy(true);
 			try {
-				await this.byId("details").getBindingContext().delete();
+				await Promise.all([
+					this.byId("details").getBindingContext().delete(),
+					this.refreshTravelETag()
+				]);
 
 				MessageToast.show("Booking deleted successfully");
 				this.byId("details").setBindingContext(null);
@@ -125,13 +148,16 @@ sap.ui.define([
 			oView.setBusy(true);
 			const oContext = this.byId("details").getBindingContext();
 			try {
-				await oContext.getModel()
-					// code under test (JIRA: CPOUI5ODATAV4-3460)
-					// Note: passing oContext is for a different use case!
-					.delete(oContext.getCanonicalPath(), "$single", /*bRejectIfNotFound*/true);
+				this.byId("details").setBindingContext(null);
+				await Promise.all([
+					oContext.getModel()
+						// code under test (JIRA: CPOUI5ODATAV4-3460)
+						// Note: passing oContext is for a different use case!
+						.delete(oContext.getCanonicalPath(), "$single", /*bRejectIfNotFound*/true),
+					this.refreshTravelETag()
+				]);
 
 				MessageToast.show("Booking deleted successfully");
-				this.byId("details").setBindingContext(null);
 			} catch (oError) {
 				MessageBox.error(oError.message);
 			} finally {
@@ -240,9 +266,6 @@ sap.ui.define([
 					});
 
 				this.byId("details").setBindingContext(null);
-
-				//TODO: remove this workaround once ETags work fine
-				this.getView().getModel().setIgnoreETag(true);
 
 				this._oAggregation = {
 					aggregate : {
@@ -406,6 +429,11 @@ sap.ui.define([
 			const bGrouped = this.getView().getModel("ui").getProperty("/bGrouped");
 			this._oAggregation.groupLevels = bGrouped ? this._aGroupLevels : [];
 			this.byId("table").getBinding("rows").setAggregation(this._oAggregation);
+		},
+
+		refreshTravelETag : function () {
+			// only the ETag cannot be requested, so request side effects for a key property
+			return this.getView().getBindingContext().requestSideEffects(["TravelUUID"]);
 		}
 	});
 });
