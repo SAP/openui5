@@ -24,14 +24,14 @@
 		&::after {
 			/* The checkbox should always be at the bottom if a custom column header height is specified, or the table has multiple header rows */
 			top: auto;
-			bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_CheckBox_Size ~") / 2");
+			bottom: ~"calc((var(--_sap_ui_table_ColumnHeaderHeight) - var(--_sap_ui_table_CheckBox_Size)) / 2)";
 
 			.sapUiSizeCozy & {
-				bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_CheckBox_SizeCozy ~") / 2");
+				bottom: ~"calc((var(--_sap_ui_table_ColumnHeaderHeightCozy) - var(--_sap_ui_table_CheckBox_SizeCozy)) / 2)";
 			}
 
 			.sapUiTableRowHighlights & {
-				left: @_sap_ui_table_RowHighlightWidth;
+				left: var(--_sap_ui_table_RowHighlightWidth);
 			}
 		}
 	}
@@ -45,15 +45,15 @@
 			position: absolute;
 			width: 100%;
 			font-size: 1rem;
-			line-height: @_sap_ui_table_CheckBox_SizeCozy;
-			bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_CheckBox_SizeCozy ~") / 2");
+			line-height: var(--_sap_ui_table_CheckBox_SizeCozy);
+			bottom: ~"calc((var(--_sap_ui_table_ColumnHeaderHeight) - var(--_sap_ui_table_CheckBox_SizeCozy)) / 2)";
 
 			.sapUiSizeCozy & {
-				bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_CheckBox_SizeCozy ~") / 2");
+				bottom: ~"calc((var(--_sap_ui_table_ColumnHeaderHeightCozy) - var(--_sap_ui_table_CheckBox_SizeCozy)) / 2)";
 			}
 
 			.sapUiTableRowHighlights.sapUiTableRowSelectors & {
-				padding: 0 calc(~"(" @_sap_ui_table_RowHighlightWidth ~") / 2");
+				padding: 0 ~"calc(var(--_sap_ui_table_RowHighlightWidth) / 2)";
 			}
 		}
 

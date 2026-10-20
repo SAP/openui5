@@ -3,9 +3,12 @@
 /* Horizon High Contrast Black theme  */
 /* ================================== */
 
-@_sap_ui_table_Cell_FocusOutlineOffset: ~"calc((var(--sapContent_FocusWidth) * -1) - 0.0625rem)";
-@_sap_ui_table_Cell_BorderColorSelected: var(--sapList_SelectionBorderColor);
-@_sap_ui_table_Cell_DummyBorderColor: @sapUiListTableFixedBorder;
+
+.sapUI5Scope {
+	--_sap_ui_table_Cell_FocusOutlineOffset: ~"calc((var(--sapContent_FocusWidth) * -1) - 0.0625rem)";
+	--_sap_ui_table_Cell_BorderColorSelected: var(--sapList_SelectionBorderColor);
+	--_sap_ui_table_Cell_DummyBorderColor: var(--sapList_TableFixedBorderColor);
+}
 
 .sapUiTableGroupMode .sapUiTableCell.sapUiTableRowSelectionCell {
 	box-shadow: none;

@@ -2,14 +2,17 @@
  * ${copyright}
  */
 
+@_sap_ui_table_DeleteIcon: decline;
+
 @import "../base/library.source.less";
 @import "../../../../../sap/ui/core/themes/sap_horizon/base.less";
 @import "../../../../../sap/ui/core/themes/sap_horizon/global.less";
 
-@_sap_ui_table_DeleteIcon: decline;
-@_sap_ui_table_RowActionItemSize: @_sap_ui_table_BaseSizeCondensed;
-@_sap_ui_table_RowActionItemSizeCozy: @_sap_ui_table_BaseSize;
-@_sap_ui_table_RowActionItemSizeCondensed: calc(@_sap_ui_table_BaseSizeCondensed ~"-" 0.125rem);
+.sapUI5Scope {
+	--_sap_ui_table_RowActionItemSize: var(--_sap_ui_table_BaseSizeCondensed);
+	--_sap_ui_table_RowActionItemSizeCozy: var(--_sap_ui_table_BaseSize);
+	--_sap_ui_table_RowActionItemSizeCondensed: calc(var(--_sap_ui_table_BaseSizeCondensed) ~"-" 0.125rem);
+}
 
 @import "Table.less";
 @import "Cell.less";

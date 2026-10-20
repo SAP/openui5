@@ -4,7 +4,7 @@
 /* ======================================= */
 
 .sapUiTableAction {
-	padding: 0 @_sap_ui_table_RowActionPadding;
+	padding: 0 var(--_sap_ui_table_RowActionPadding);
 
 	&.sapUiTableActionHidden,
 	.sapUiTableGroupHeaderRow &,
@@ -14,22 +14,22 @@
 }
 
 .sapUiTableActionIcon {
-	height: @_sap_ui_table_RowActionItemSize;
-	width: @_sap_ui_table_RowActionItemSize;
-	line-height: @_sap_ui_table_RowActionItemSize;
+	height: var(--_sap_ui_table_RowActionItemSize);
+	width: var(--_sap_ui_table_RowActionItemSize);
+	line-height: var(--_sap_ui_table_RowActionItemSize);
 	color: var(--sapContent_IconColor);
 	font-size: 1rem;
 
 	/* If the first action item is hidden, move the second item to the position where it would be if the first item wasn't hidden. */
 	.sapUiTableAction > .sapUiTableActionHidden + & {
-		margin-left: @_sap_ui_table_RowActionItemSize;
+		margin-left: var(--_sap_ui_table_RowActionItemSize);
 
 		.sapUiSizeCozy & {
-			margin-left: @_sap_ui_table_RowActionItemSizeCozy;
+			margin-left: var(--_sap_ui_table_RowActionItemSizeCozy);
 		}
 
 		.sapUiSizeCondensed & {
-			margin-left: @_sap_ui_table_RowActionItemSizeCondensed;
+			margin-left: var(--_sap_ui_table_RowActionItemSizeCondensed);
 		}
 	}
 
@@ -38,15 +38,15 @@
 	}
 
 	.sapUiSizeCozy & {
-		height: @_sap_ui_table_RowActionItemSizeCozy;
-		width: @_sap_ui_table_RowActionItemSizeCozy;
-		line-height: @_sap_ui_table_RowActionItemSizeCozy;
+		height: var(--_sap_ui_table_RowActionItemSizeCozy);
+		width: var(--_sap_ui_table_RowActionItemSizeCozy);
+		line-height: var(--_sap_ui_table_RowActionItemSizeCozy);
 	}
 
 	.sapUiSizeCondensed & {
-		height: @_sap_ui_table_RowActionItemSizeCondensed;
-		width: @_sap_ui_table_RowActionItemSizeCondensed;
-		line-height: @_sap_ui_table_RowActionItemSizeCondensed;
+		height: var(--_sap_ui_table_RowActionItemSizeCondensed);
+		width: var(--_sap_ui_table_RowActionItemSizeCondensed);
+		line-height: var(--_sap_ui_table_RowActionItemSizeCondensed);
 		font-size: 0.75rem;
 	}
 }
