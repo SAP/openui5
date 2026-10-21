@@ -1,0 +1,23 @@
+<mvc:View
+	controllerName="sap.m.sample.DialogLandmarkInfo.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Button
+			text="Default landmarks"
+			width="260px"
+			press=".onDefaultPress"
+			class="sapUiSmallMarginBottom" />
+		<Button
+			text="Embedded Page (Content suppressed)"
+			width="260px"
+			press=".onEmbeddedPagePress"
+			class="sapUiSmallMarginBottom" />
+		<Button
+			text="Small dialog (no regions)"
+			width="260px"
+			press=".onNoRegionsPress"
+			class="sapUiSmallMarginBottom" />
+	</l:VerticalLayout>
+</mvc:View>

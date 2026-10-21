@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Popup",
 	"sap/m/Dialog",
+	"sap/m/DialogAccessibleLandmarkInfo",
 	"sap/m/Bar",
 	"sap/m/SearchField",
 	"sap/ui/core/HTML",
@@ -51,6 +52,7 @@ sap.ui.define([
 	IconPool,
 	Popup,
 	Dialog,
+	DialogAccessibleLandmarkInfo,
 	Bar,
 	SearchField,
 	HTML,
@@ -1871,6 +1873,88 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+
+	QUnit.module("LandmarkInfo", {
+		beforeEach: function () {
+			this.oRb = Library.getResourceBundleFor("sap.m");
+			this.oDialog = new Dialog({
+				title: "Title",
+				content: new Text({ text: "Content" }),
+				beginButton: new Button({ text: "OK" })
+			});
+		},
+		afterEach: function () {
+			this.oDialog.destroy();
+		},
+		getRegion: function (sClass) {
+			return this.oDialog.$().find(sClass)[0];
+		}
+	});
+
+	QUnit.test("Default landmarks are exposed as region with predefined labels", function (assert) {
+		// Act
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		var oHeader = this.getRegion(".sapMDialogHeader"),
+			oContent = this.oDialog.getDomRef("cont"),
+			oFooter = this.getRegion(".sapMDialogFooter");
+
+		assert.strictEqual(oHeader.getAttribute("role"), "region", "Header is a region landmark");
+		assert.strictEqual(oHeader.getAttribute("aria-label"), this.oRb.getText("DIALOG_REGION_HEADER"), "Header has predefined label");
+		assert.notOk(oHeader.hasAttribute("aria-labelledby"), "Header region has no leaked aria-labelledby");
+		assert.notOk(oHeader.hasAttribute("aria-describedby"), "Header region has no leaked aria-describedby");
+		assert.strictEqual(oContent.getAttribute("role"), "region", "Content is a region landmark");
+		assert.strictEqual(oContent.getAttribute("aria-label"), this.oRb.getText("DIALOG_REGION_CONTENT"), "Content has predefined label");
+		assert.notOk(oContent.hasAttribute("aria-labelledby"), "Content region has no leaked aria-labelledby");
+		assert.strictEqual(oFooter.getAttribute("role"), "region", "Footer is a region landmark");
+		assert.strictEqual(oFooter.getAttribute("aria-label"), this.oRb.getText("DIALOG_REGION_FOOTER"), "Footer has predefined label");
+		assert.notOk(oFooter.hasAttribute("aria-labelledby"), "Footer region has no leaked aria-labelledby");
+	});
+
+	QUnit.test("Landmarks can be suppressed", function (assert) {
+		// Arrange
+		this.oDialog.setLandmarkInfo(new DialogAccessibleLandmarkInfo({
+			showHeaderLandmark: false,
+			showContentLandmark: false,
+			showFooterLandmark: false
+		}));
+
+		// Act
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		var oHeader = this.getRegion(".sapMDialogHeader"),
+			oContent = this.oDialog.getDomRef("cont"),
+			oFooter = this.getRegion(".sapMDialogFooter");
+
+		assert.notOk(oHeader.hasAttribute("role"), "Header region has no role");
+		assert.notOk(oHeader.hasAttribute("aria-label"), "Header region has no label");
+		assert.notOk(oContent.hasAttribute("role"), "Content region has no role");
+		assert.notOk(oContent.hasAttribute("aria-label"), "Content region has no label");
+		assert.notOk(oFooter.hasAttribute("role"), "Footer region has no role");
+		assert.notOk(oFooter.hasAttribute("aria-label"), "Footer region has no label");
+	});
+
+	QUnit.test("Landmark labels can be customized", function (assert) {
+		// Arrange
+		this.oDialog.setLandmarkInfo(new DialogAccessibleLandmarkInfo({
+			headerLabel: "My header",
+			contentLabel: "My content",
+			footerLabel: "My footer"
+		}));
+
+		// Act
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(this.getRegion(".sapMDialogHeader").getAttribute("aria-label"), "My header", "Header has custom label");
+		assert.strictEqual(this.oDialog.getDomRef("cont").getAttribute("aria-label"), "My content", "Content has custom label");
+		assert.strictEqual(this.getRegion(".sapMDialogFooter").getAttribute("aria-label"), "My footer", "Footer has custom label");
+	});
 
 	QUnit.module("Accessibility");
 

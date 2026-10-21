@@ -452,6 +452,7 @@ sap.ui.define([
 			"sap.m.CarouselLayout",
 			"sap.m.Column",
 			"sap.m.ContentConfig",
+			"sap.m.DialogAccessibleLandmarkInfo",
 			"sap.m.DynamicDateOption",
 			"sap.m.DynamicDateValueHelpUIType",
 			"sap.m.FlexItemData",
