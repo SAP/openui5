@@ -201,5 +201,16 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Handles a keyboard shortcut
+	 * @param {string} sType type of the shortcut
+	 * @private
+	 */
+	Item.prototype.onKeyboardShortcut = function(sType) {
+		if (sType === "navigation" && this.getType() === RowActionType.Navigation) {
+			this._firePress();
+		}
+	};
+
 	return Item;
 });

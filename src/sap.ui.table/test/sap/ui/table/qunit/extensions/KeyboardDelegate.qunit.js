@@ -5768,6 +5768,30 @@ sap.ui.define([
 		assert.ok(!this.oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	});
 
+	QUnit.test("Alt+Enter", function(assert) {
+		const oRow = this.oTable.getRows()[0];
+		sinon.spy(oRow, "onKeyboardShortcut");
+		let oCell = this.oTable.qunit.getDataCell(0, 0);
+
+		oCell.focus();
+		qutils.triggerKeydown(oCell, "ENTER", false, true, false);
+		assert.ok(oRow.onKeyboardShortcut.calledWith("navigation"), "Row called for navigation shortcut on data-cell");
+		oRow.onKeyboardShortcut.reset();
+
+		// selection cell
+		oCell = this.oTable.qunit.getRowHeaderCell(0);
+		oCell.focus();
+		qutils.triggerKeydown(oCell, "ENTER", false, true, false);
+		assert.ok(oRow.onKeyboardShortcut.calledWith("navigation"), "Row called for navigation shortcut on selection-cell");
+		oRow.onKeyboardShortcut.reset();
+
+		// action cell
+		oCell = this.oTable.qunit.getRowActionCell(0);
+		oCell.focus();
+		qutils.triggerKeydown(oCell, "ENTER", false, true, false);
+		assert.ok(oRow.onKeyboardShortcut.calledWith("navigation"), "Row called for navigation shortcut on action-cell");
+	});
+
 	QUnit.module("Interaction > Ctrl+A", {
 		beforeEach: async function() {
 			this.oTable = TableQUnitUtils.createTable({

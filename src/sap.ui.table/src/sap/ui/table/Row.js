@@ -765,6 +765,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Triggers keyboard shortcut on row
+	 *
+	 * @param {string} sType type of the shortcut
+	 * @private
+	 */
+	Row.prototype.onKeyboardShortcut = function(sType) {
+		const aRowActionItems = this.getRowAction()?.getItems();
+
+		if (!aRowActionItems) {
+			return;
+		}
+
+		for (let i = 0; i < aRowActionItems.length; i++) {
+			aRowActionItems[i].onKeyboardShortcut(sType);
+		}
+	};
+
+	/**
 	 * Types
 	 *
 	 * @type {Readonly<{GroupHeader: string, Summary: string, Standard: string}>}

@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/message/MessageType",
@@ -33,6 +34,7 @@ function(
 	Device,
 	coreLibrary,
 	Control,
+	Element,
 	IconPool,
 	InvisibleText,
 	MessageType,
@@ -1146,6 +1148,7 @@ function(
 			return;
 		}
 
+		let bActive = false;
 		if (this.isIncludedIntoSelection()) {
 
 			// support old bug and mimic space key handling and
@@ -1154,7 +1157,31 @@ function(
 			this.onsapspace(oEvent);
 
 		} else if (this.hasActiveType()) {
+			bActive = true;
+		}
 
+		this._executeItemPress(oEvent, bActive);
+	};
+
+	ListItemBase.prototype.onsapentermodifiers = function(oEvent) {
+		if (oEvent.isMarked() || !oEvent.altKey || !this.getList()) {
+			return;
+		}
+
+		// handle only item  and cell events
+		if (Element.closestTo(oEvent.target, true) !== this) {
+			return;
+		}
+
+		if (this.getEffectiveType() !== ListItemType.Navigation) {
+			return;
+		}
+
+		this._executeItemPress(oEvent, true);
+	};
+
+	ListItemBase.prototype._executeItemPress = function (oEvent, bActive) {
+		if (bActive) {
 			// active feedback
 			oEvent.setMarked();
 			this.setActive(true);
@@ -1171,6 +1198,7 @@ function(
 		}
 
 		// let the parent know item is pressed
+		const oList = this.getList();
 		oList.onItemPress(this, oEvent.srcControl);
 	};
 

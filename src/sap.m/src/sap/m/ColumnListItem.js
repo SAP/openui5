@@ -188,7 +188,8 @@ sap.ui.define([
 				oncontextmenu: this.oncontextmenu,
 				onkeydown: this.onkeydown,
 				onfocusin: this.onfocusin,
-				onfocusout: this.onfocusout
+				onfocusout: this.onfocusout,
+				onsapentermodifiers: this.onsapentermodifiers
 			}, this).setParent(this, null, true);
 		}
 
