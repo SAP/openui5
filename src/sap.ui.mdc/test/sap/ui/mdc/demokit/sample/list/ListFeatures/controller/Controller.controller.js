@@ -14,7 +14,7 @@ sap.ui.define([
 		onInit: function() {
 			const oList = this.getView().byId("list");
 			oList.setType(this._getGridListType());
-			oList.setItemTemplate(this._createGridListTemplate());
+			oList.setItemContentTemplate(this._createGridListItemContentTemplate());
 			this._enrichModelWithActions();
 		},
 
@@ -25,10 +25,10 @@ sap.ui.define([
 			const oList = this.getView().byId("list");
 			if (sKey === "ListType") {
 				oList.setType(this._getListType());
-				oList.setItemTemplate(this._createListTemplate());
+				oList.setItemContentTemplate(this._createListItemContentTemplate());
 			} else {
 				oList.setType(this._getGridListType());
-				oList.setItemTemplate(this._createGridListTemplate());
+				oList.setItemContentTemplate(this._createGridListItemContentTemplate());
 			}
 		},
 
@@ -126,7 +126,7 @@ sap.ui.define([
 			return this._oListType;
 		},
 
-		_createListTemplate: function() {
+		_createListItemContentTemplate: function() {
 			return new HBox({
 				alignItems: "Center",
 				items: [
@@ -142,7 +142,7 @@ sap.ui.define([
 			}).addStyleClass("sapUiSmallMargin");
 		},
 
-		_createGridListTemplate: function() {
+		_createGridListItemContentTemplate: function() {
 			return new VBox({
 				items: [
 					new Title({text: "{mountains>name}"}),

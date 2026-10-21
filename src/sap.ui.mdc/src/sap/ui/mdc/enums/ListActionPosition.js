@@ -15,16 +15,9 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 */
 	const ListActionPosition = {
 		/**
-		 * Extension point for the modification actions at the start of the group.
-		 * These actions modify the structure or content of the list.
-		 * @public
-		 */
-		ModificationActions: "ModificationActions",
-
-		/**
 		 * Extension point for the personalization actions at the start of the group.
 		 * These actions change the arrangement or personalization of the list at the item level, such as List Settings.
-		 * @public
+		 * @private
 		 */
 		PersonalizationActions: "PersonalizationActions",
 
@@ -35,16 +28,9 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		PersonalizationActionsSettings: "PersonalizationActionsSettings",
 
 		/**
-		 * Extension point for the share actions at the start of the group.
-		 * These actions allow users to share list content with another application or with the homepage as a tile, such as Send as Email, Save as Tile.
-		 * @public
-		 */
-		ShareActions: "ShareActions",
-
-		/**
 		 * Extension point for the export actions at the start of the group.
 		 * These actions convert the content of the list into an external format, such as Excel, PDF, a printed document.
-		 * @public
+		 * @private
 		 */
 		ExportActions: "ExportActions",
 
@@ -53,13 +39,6 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		 * @private
 		 */
 		ExportActionsExport: "ExportActionsExport",
-
-		/**
-		 * Extension point for the view actions at the start of the group.
-		 * These actions change the representation of the entire list, such as View Switch, Fullscreen.
-		 * @public
-		 */
-		ViewActions: "ViewActions",
 
 		/**
 		 * Extension point for actions displayed after all list-relevant actions.
