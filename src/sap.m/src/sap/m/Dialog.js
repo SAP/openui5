@@ -375,6 +375,15 @@ function(
 					footer: {type: "sap.m.Toolbar", multiple: false},
 
 					/**
+					 * Accessible landmark settings to be applied to the Dialog's <code>Header</code>, <code>Content</code>
+					 * and <code>Footer</code> regions.
+					 *
+					 * If not set, all three regions are exposed as <code>region</code> landmarks with predefined labels.
+					 * @since 1.155
+					 */
+					landmarkInfo: {type: "sap.m.DialogAccessibleLandmarkInfo", multiple: false},
+
+					/**
 					 * The hidden aggregation for internal maintained <code>header</code>.
 					 */
 					_header: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
@@ -2598,6 +2607,35 @@ function(
 			return oContainer.findAggregatedObjects(true, function(oObject) {
 				return oObject.isA("sap.m.Title");
 			});
+		};
+
+		// Default resource bundle keys for the region labels.
+		Dialog._mRegionLabelKeys = {
+			Header: "DIALOG_REGION_HEADER",
+			Content: "DIALOG_REGION_CONTENT",
+			Footer: "DIALOG_REGION_FOOTER"
+		};
+
+		/**
+		 * Builds the accessibility state for a Dialog region landmark from the <code>landmarkInfo</code> aggregation.
+		 *
+		 * @param {string} sPartName One of "Header", "Content", "Footer"
+		 * @param {module:sap/base/i18n/ResourceBundle} oResourceBundle The sap.m resource bundle for the predefined labels
+		 * @returns {object} An object with <code>role</code> and <code>label</code> to pass to RenderManager#accessibilityState, or an empty object when the landmark is suppressed
+		 * @private
+		 */
+		Dialog.prototype._formatLandmarkInfo = function (sPartName, oResourceBundle) {
+			var oLandmarkInfo = this.getLandmarkInfo(),
+				bShow = oLandmarkInfo ? oLandmarkInfo["getShow" + sPartName + "Landmark"]() : true;
+
+			if (!bShow) {
+				return {};
+			}
+
+			var sLabel = (oLandmarkInfo && oLandmarkInfo["get" + sPartName + "Label"]())
+				|| oResourceBundle.getText(Dialog._mRegionLabelKeys[sPartName]);
+
+			return { role: "region", label: sLabel };
 		};
 
 		return Dialog;

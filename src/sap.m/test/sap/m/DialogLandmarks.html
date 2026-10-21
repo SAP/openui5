@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>sap.m.Dialog - Accessible Landmarks</title>
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.m"></script>
+<script>
+	var oApp = new sap.m.App();
+	oApp.placeAt("body");
+
+	function openDialog(sTitle, oLandmarkInfo) {
+		var oDialog = new sap.m.Dialog({
+			title: sTitle,
+			landmarkInfo: oLandmarkInfo,
+			content: new sap.m.Text({
+				text: "Inspect the Header, Content and Footer region landmarks of this Dialog."
+			}).addStyleClass("sapUiSmallMargin"),
+			beginButton: new sap.m.Button({
+				text: "Close",
+				press: function () {
+					oDialog.close();
+				}
+			}),
+			endButton: new sap.m.Button({
+				text: "Cancel",
+				press: function () {
+					oDialog.close();
+				}
+			}),
+			afterClose: function () {
+				oDialog.destroy();
+			}
+		});
+		oDialog.open();
+	}
+
+	var oPage = new sap.m.Page({
+		title: "sap.m.Dialog - Accessible Landmarks",
+		content: [
+			new sap.m.Button({
+				text: "Default Landmarks",
+				press: function () {
+					openDialog("Default Landmarks", null);
+				}
+			}),
+			new sap.m.Button({
+				text: "Custom Labels",
+				press: function () {
+					openDialog("Custom Labels", new sap.m.DialogAccessibleLandmarkInfo({
+						headerLabel: "Header label from LandmarkInfo",
+						contentLabel: "Content label from LandmarkInfo",
+						footerLabel: "Footer label from LandmarkInfo"
+					}));
+				}
+			}),
+			new sap.m.Button({
+				text: "Content Landmark Suppressed",
+				press: function () {
+					openDialog("Content Landmark Suppressed", new sap.m.DialogAccessibleLandmarkInfo({
+						showContentLandmark: false
+					}));
+				}
+			}),
+			new sap.m.Button({
+				text: "No Region Landmarks",
+				press: function () {
+					openDialog("No Region Landmarks", new sap.m.DialogAccessibleLandmarkInfo({
+						showHeaderLandmark: false,
+						showContentLandmark: false,
+						showFooterLandmark: false
+					}));
+				}
+			})
+		]
+	});
+	oApp.addPage(oPage);
+</script>
+</head>
+<body id="body" class="sapUiBody" >
+</body>
+</html>

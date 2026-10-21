@@ -19,9 +19,6 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
-	// shortcut for library resource bundle
-	const oResourceBundle = Library.getResourceBundleFor("sap.m");
-
 	/**
 	 * Dialog renderer.
 	 *
@@ -215,10 +212,9 @@ sap.ui.define([
 
 		if (oHeader || oSubHeader) {
 			oRM.openStart("div")
-				.attr("role", "region")
-				.attr("aria-label", oResourceBundle.getText("DIALOG_REGION_HEADER"))
-				.class("sapMDialogHeader")
-				.openEnd();
+				.class("sapMDialogHeader");
+			oRM.accessibilityState(oDialog._formatLandmarkInfo("Header", oRb));
+			oRM.openEnd();
 
 			if (oHeader) {
 				if (oHeader._applyContextClassFor) {
@@ -251,10 +247,9 @@ sap.ui.define([
 		}
 
 		oRM.openStart("div", sId + "-cont")
-			.attr("role", "region")
-			.attr("aria-label", oResourceBundle.getText("DIALOG_REGION_CONTENT"))
-			.class("sapMDialogSection")
-			.openEnd();
+			.class("sapMDialogSection");
+		oRM.accessibilityState(oDialog._formatLandmarkInfo("Content", oRb));
+		oRM.openEnd();
 
 		oRM.openStart("div", sId + "-scroll")
 			.class("sapMDialogScroll")
@@ -277,10 +272,9 @@ sap.ui.define([
 
 		if (hasFooter) {
 			oRM.openStart("div")
-				.attr("role", "region")
-				.attr("aria-label", oResourceBundle.getText("DIALOG_REGION_FOOTER"))
-				.class("sapMDialogFooter")
-				.openEnd();
+				.class("sapMDialogFooter");
+			oRM.accessibilityState(oDialog._formatLandmarkInfo("Footer", oRb));
+			oRM.openEnd();
 
 			if (oFooter) {
 				if (oFooter._applyContextClassFor) {

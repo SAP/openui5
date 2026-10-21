@@ -390,7 +390,8 @@
 			"sap.m.sample.DialogMessage",
 			"sap.m.sample.DialogConfirm",
 			"sap.m.sample.DialogWithinArea",
-			"sap.m.sample.DialogWithMessagePopover"
+			"sap.m.sample.DialogWithMessagePopover",
+			"sap.m.sample.DialogLandmarkInfo"
 		  ]
 		},
 		{
@@ -3542,6 +3543,11 @@
 		  "id": "sap.m.sample.Dialog",
 		  "name": "Dialog",
 		  "description": "Typically a Dialog prompts the user for decisions or additional information required by the application. The content of a dialog is fully customizable. If you want to highlight important information you should use the special type of 'Message Dialog'."
+		},
+		{
+		  "id": "sap.m.sample.DialogLandmarkInfo",
+		  "name": "Dialog - Landmark Roles",
+		  "description": "Configuring the Dialog's Header, Content and Footer region landmarks with DialogAccessibleLandmarkInfo - suppressing the Content region when the content is a Page with its own landmarks, and suppressing all regions for a small dialog."
 		},
 		{
 		  "id": "sap.m.sample.DialogFullScreen",
