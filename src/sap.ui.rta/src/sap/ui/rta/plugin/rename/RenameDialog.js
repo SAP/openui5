@@ -102,10 +102,14 @@ sap.ui.define([
 		return sNewText;
 	};
 
+	// The input field keeps the raw user input (including a trailing blank) so that typing a space
+	// is not immediately eaten on live change. Trimming happens only here, for validation and for
+	// the finally returned text, so trailing spaces are never saved. An empty (or whitespace-only)
+	// text collapses to the empty-text sentinel that the validators recognize as empty.
 	function checkValidRename() {
 		const oModelData = this.oDialogModel.getData();
-		const sNewText = oModelData.newText || "";
-		const sOldText = oModelData.oldText || "";
+		const sNewText = validateText.getTrimmedText(oModelData.newText);
+		const sOldText = validateText.getTrimmedText(oModelData.oldText);
 		try {
 			validateText(sNewText, sOldText, this.oAction);
 			this.oDialogModel.setProperty("/validationError", undefined);
@@ -125,14 +129,13 @@ sap.ui.define([
 	}
 
 	RenameDialog.prototype.onTextChange = function(oEvent) {
-		const sNewText = oEvent.getParameter("value").trim("");
-		this.oDialogModel.setProperty("/newText", sNewText.length ? sNewText : "\xa0");
+		this.oDialogModel.setProperty("/newText", oEvent.getParameter("value"));
 		checkValidRename.call(this);
 	};
 
 	RenameDialog.prototype.onSave = function() {
 		if (checkValidRename.call(this)) {
-			this._fnResolveAfterClose(this.oDialogModel.getData().newText);
+			this._fnResolveAfterClose(validateText.getTrimmedText(this.oDialogModel.getData().newText));
 		}
 	};
 

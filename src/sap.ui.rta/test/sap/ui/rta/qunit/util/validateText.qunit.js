@@ -103,6 +103,24 @@ function(
 		});
 	});
 
+	QUnit.module("validateText.getTrimmedText", function() {
+		QUnit.test("When texts with and without surrounding whitespace are passed", (assert) => {
+			assert.strictEqual(validateText.getTrimmedText("Potato"), "Potato", "then a clean text is returned unchanged");
+			assert.strictEqual(validateText.getTrimmedText("Potato "), "Potato", "then a trailing blank is removed");
+			assert.strictEqual(validateText.getTrimmedText(" Potato"), "Potato", "then a leading blank is removed");
+			assert.strictEqual(validateText.getTrimmedText("  Potato  "), "Potato", "then surrounding blanks are removed");
+		});
+
+		QUnit.test("When empty or whitespace-only text is passed", (assert) => {
+			const sEmptyTextKey = "\xa0";
+			assert.strictEqual(validateText.getTrimmedText(""), sEmptyTextKey, "then the sentinel is returned for an empty string");
+			assert.strictEqual(validateText.getTrimmedText("   "), sEmptyTextKey, "then the sentinel is returned for spaces only");
+			assert.strictEqual(validateText.getTrimmedText(sEmptyTextKey), sEmptyTextKey, "then the sentinel is returned for a nbsp");
+			assert.strictEqual(validateText.getTrimmedText(undefined), sEmptyTextKey, "then the sentinel is returned for undefined");
+			assert.strictEqual(validateText.getTrimmedText(null), sEmptyTextKey, "then the sentinel is returned for null");
+		});
+	});
+
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

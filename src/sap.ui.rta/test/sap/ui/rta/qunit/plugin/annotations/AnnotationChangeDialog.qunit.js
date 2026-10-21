@@ -1683,6 +1683,60 @@ sap.ui.define([
 			};
 			await openDialog(sandbox, oActionConfig, fnAfterOpen);
 		});
+
+		QUnit.test("when typing a trailing blank into a string input, it is kept while typing but trimmed on save", async function(assert) {
+			const oTestDelegate = createStringTestDelegate();
+			const oActionConfig = {
+				title: "Change Some String Prop",
+				type: AnnotationTypes.StringType,
+				delegate: oTestDelegate
+			};
+			let sAnnotationPath;
+			const fnAfterOpen = () => {
+				const aFormElements = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList").getFormElements();
+				const oInput = aFormElements[0].getFields().filter((oField) => oField.getVisible())[0];
+				sAnnotationPath = oInput.getBindingContext().getProperty("annotationPath");
+				const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
+
+				oInput.fireLiveChange({ newValue: "Trimmed Value " });
+				assert.strictEqual(oInput.getValue(), "Trimmed Value ", "then the trailing blank is not eaten while typing");
+				assert.strictEqual(oSaveButton.getEnabled(), true, "then the save button is enabled");
+				oSaveButton.firePress();
+			};
+			const aChanges = await openDialog(sandbox, oActionConfig, fnAfterOpen);
+			assert.strictEqual(aChanges.length, 1, "then one change was returned");
+			assert.strictEqual(aChanges[0].content.annotationPath, sAnnotationPath, "then the correct path was returned");
+			assert.strictEqual(aChanges[0].content.text, "Trimmed Value", "then the saved text has the trailing blank removed");
+		});
+
+		QUnit.test("when a string value differs only by a trailing blank, it is not listed as changed", async function(assert) {
+			const oTestDelegate = createStringTestDelegate();
+			const oActionConfig = {
+				title: "Change Some String Prop",
+				type: AnnotationTypes.StringType,
+				delegate: oTestDelegate
+			};
+			const fnAfterOpen = () => {
+				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
+				const oInput = oList.getFormElements()[0].getFields().filter((oField) => oField.getVisible())[0];
+				const sOriginalValue = oInput.getBindingContext().getProperty("originalValue");
+				const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
+				const oToggleSwitch = Element.getElementById("sapUiRtaChangeAnnotationDialog_toggleShowAllPropertiesSwitch");
+
+				oInput.fireLiveChange({ newValue: `${sOriginalValue} ` });
+				assert.strictEqual(oSaveButton.getEnabled(), false, "then the save button stays disabled for a trailing-only edit");
+
+				oToggleSwitch.fireChange({ state: true });
+				assert.strictEqual(
+					oList.getFormElements().length,
+					0,
+					"then the property is not listed as changed in the show-changed-only view"
+				);
+
+				Element.getElementById("sapUiRtaChangeAnnotationDialog_cancelButton").firePress();
+			};
+			await openDialog(sandbox, oActionConfig, fnAfterOpen);
+		});
 	});
 
 	QUnit.done(function() {

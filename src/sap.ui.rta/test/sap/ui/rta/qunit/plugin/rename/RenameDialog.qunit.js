@@ -147,6 +147,43 @@ sap.ui.define([
 			assert.strictEqual(sNewText, undefined, "then no new text is returned");
 		});
 
+		QUnit.test("when typing a trailing blank, it is kept while typing but trimmed on save", async function(assert) {
+			const sNewText = await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput }) => {
+				oInput.setValue("New Label ");
+				oInput.fireLiveChange({ value: "New Label " });
+				assert.strictEqual(oInput.getValue(), "New Label ", "then the trailing blank is not eaten while typing");
+				assert.strictEqual(oOkButton.getEnabled(), true, "then the OK button is enabled");
+				oOkButton.firePress();
+			});
+			assert.strictEqual(sNewText, "New Label", "then the returned text has the trailing blank removed");
+		});
+
+		QUnit.test("when the current text has surrounding whitespace and is entered without it", async function(assert) {
+			const sNewText = await openDialog(
+				this.oRenameDialog,
+				this.oButtonOverlay,
+				({ oOkButton, oCancelButton, oInput }) => {
+					oInput.setValue("Totally New");
+					oInput.fireLiveChange({ value: "Totally New" });
+					assert.strictEqual(oOkButton.getEnabled(), true, "then the OK button is enabled for a real change");
+
+					oInput.setValue("My Button");
+					oInput.fireLiveChange({ value: "My Button" });
+					assert.strictEqual(oInput.getValueState(), "None", "then no error is shown for the trimmed original");
+					assert.strictEqual(
+						oOkButton.getEnabled(),
+						false,
+						"then the OK button is disabled because the trimmed text equals the original"
+					);
+					oCancelButton.firePress();
+				},
+				{
+					currentText: "My Button "
+				}
+			);
+			assert.strictEqual(sNewText, undefined, "then no new text is returned");
+		});
+
 		QUnit.test("when renaming to an invalid label", function(assert) {
 			return openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput }) => {
 				oInput.setValue("{someBinding}");
