@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/InvisibleMessage",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Tokenizer",
@@ -18,7 +19,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery"
-], function(nextUIUpdate, Element, Library1, InvisibleMessage, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, jQuery) {
+], function(nextUIUpdate, Element, Library1, InvisibleMessage, InvisibleText, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -2534,6 +2535,17 @@ sap.ui.define([
 		var oRPO = oTokenizer.getTokensPopup();
 
 		assert.strictEqual(oRPO.getTitle(), Library1.getResourceBundleFor("sap.m").getText("TOKENIZER_MOBILE_DIALOG_TITLE"), "Default title should be taken from Resource Bundle");
+
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Popup has aria-labelledby referencing the dialog title invisible text", function (assert) {
+		this.stubPlatform();
+		var oTokenizer = this.createTokenizer();
+		var oRPO = oTokenizer.getTokensPopup();
+		var sExpectedId = InvisibleText.getStaticId("sap.m", "TOKENIZER_MOBILE_DIALOG_TITLE");
+
+		assert.ok(oRPO.getAriaLabelledBy().includes(sExpectedId), "The popup has aria-labelledby set to the dialog title invisible text ID");
 
 		oTokenizer.destroy();
 	});

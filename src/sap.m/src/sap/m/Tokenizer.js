@@ -827,6 +827,7 @@ sap.ui.define([
 
 		this.addDependent(this._oPopup);
 		this.addPopupClasses(this._oPopup);
+		this._oPopup.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "TOKENIZER_MOBILE_DIALOG_TITLE"));
 
 		if (Device.system.phone) {
 			this._oPopup.setBeginButton(new Button({
