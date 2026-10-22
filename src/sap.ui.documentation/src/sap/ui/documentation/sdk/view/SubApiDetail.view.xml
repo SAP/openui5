@@ -26,14 +26,14 @@
 				<headerTitle>
 					<ObjectPageDynamicHeaderTitle id="title">
 						<expandedHeading>
-							<m:FlexBox fitContainer="true" direction="Column" alignItems="Start">
+							<m:FlexBox fitContainer="true" direction="Column" alignItems="Stretch">
 								<m:Title text="{/title}" wrapping="true" />
 								<m:Label text="{/subTitle}" class="sapUiTinyMarginTop" />
 							</m:FlexBox>
 						</expandedHeading>
 
 						<snappedHeading>
-							<m:FlexBox fitContainer="true" direction="Column" alignItems="Start">
+							<m:FlexBox fitContainer="true" direction="Column" alignItems="Stretch">
 								<m:Title text="{/title}" wrapping="true" />
 								<m:Label text="{/subTitle}" class="sapUiTinyMarginTop" />
 							</m:FlexBox>
