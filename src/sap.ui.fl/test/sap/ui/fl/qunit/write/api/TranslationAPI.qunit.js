@@ -154,7 +154,13 @@ sap.ui.define([
 				], "the languages are returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "the method is correct");
-				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mPropertyBag, "the propertyBag is passed correct");
+				const oExpectedBag = Object.assign({}, mPropertyBag, { reference: "reference" });
+				const oActualBag = oStubSendRequest.getCall(0).args[2];
+				assert.deepEqual(
+					Object.keys(oExpectedBag).reduce(function(oAcc, vKey) { oAcc[vKey] = oActualBag[vKey]; return oAcc; }, {}),
+					oExpectedBag,
+					"the propertyBag is passed correctly"
+				);
 			});
 		});
 
@@ -175,7 +181,13 @@ sap.ui.define([
 			return TranslationAPI.getTexts(mPropertyBag).then(function() {
 				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "the method is correct");
-				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mPropertyBag, "the propertyBag is passed correct");
+				const oExpectedBag = Object.assign({}, mPropertyBag, { reference: "reference" });
+				const oActualBag = oStubSendRequest.getCall(0).args[2];
+				assert.deepEqual(
+					Object.keys(oExpectedBag).reduce(function(oAcc, vKey) { oAcc[vKey] = oActualBag[vKey]; return oAcc; }, {}),
+					oExpectedBag,
+					"the propertyBag is passed correct"
+				);
 			});
 		});
 

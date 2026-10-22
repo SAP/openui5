@@ -117,19 +117,20 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.hasHigherLayerChanges = async function(mPropertyBag) {
-		mPropertyBag.upToLayer ||= LayerUtils.getCurrentLayer();
+		const sUpToLayer = mPropertyBag.upToLayer || LayerUtils.getCurrentLayer();
+		const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 
 		const aFlexObjects = await FlexObjectManager.getFlexObjects(mPropertyBag);
 		let aFilteredFlexObjects = aFlexObjects.filter(
-			(oFlexObject) => LayerUtils.isOverLayer(oFlexObject.getLayer(), mPropertyBag.upToLayer)
+			(oFlexObject) => LayerUtils.isOverLayer(oFlexObject.getLayer(), sUpToLayer)
 		);
 		if (aFilteredFlexObjects.length === 0) {
 			return false;
 		}
 		// Hidden control variants and their related changes might be necessary for referenced variants, but are not relevant for this check
 		// Same applies for changes of deleted comp variants
-		aFilteredFlexObjects = VariantManagementState.filterHiddenFlexObjects(aFilteredFlexObjects, mPropertyBag.reference);
-		return CompVariantManager.filterHiddenFlexObjects(aFilteredFlexObjects, mPropertyBag.reference).length > 0;
+		aFilteredFlexObjects = VariantManagementState.filterHiddenFlexObjects(aFilteredFlexObjects, sReference);
+		return CompVariantManager.filterHiddenFlexObjects(aFilteredFlexObjects, sReference).length > 0;
 	};
 
 	/**
@@ -455,7 +456,6 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading change; if this parameter is set, the max layer filtering is not applied
 	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that changes are to be loaded without layer filtering
 	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Flag if control variant changes should be included
-	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Flag if dirty UI changes should be included
 	 * @param {string} [mPropertyBag.cacheKey] - Key to validate the cache entry stored on client side
 	 * @param {boolean} [mPropertyBag.onlyCurrentVariants] - Whether only changes for the currently active variants should be considered
 	 *
@@ -463,14 +463,13 @@ sap.ui.define([
 	 * @private
 	 */
 	PersistenceWriteAPI._getUIChanges = function(mPropertyBag) {
-		if (mPropertyBag.layer) {
-			// TODO: sync the layer parameter name with new persistence and remove this line
-			mPropertyBag.currentLayer = mPropertyBag.layer;
-		}
-
-		mPropertyBag.invalidateCache = false;
+		// TODO: sync the layer parameter name with new persistence and remove this line
 		// TODO: Check the mPropertyBag.selector parameter name - the methods called on FlexObjectManager expect a control
-		return FlexObjectManager.getFlexObjects(mPropertyBag);
+		return FlexObjectManager.getFlexObjects({
+			...mPropertyBag,
+			...(mPropertyBag.layer && { currentLayer: mPropertyBag.layer }),
+			invalidateCache: false
+		});
 	};
 
 	/**

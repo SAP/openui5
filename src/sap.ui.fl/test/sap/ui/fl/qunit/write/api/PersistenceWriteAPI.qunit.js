@@ -318,7 +318,7 @@ sap.ui.define([
 			return PersistenceWriteAPI._getUIChanges(mPropertyBag)
 			.then(function(aGetResponse) {
 				assert.equal(fnGetFlexObjectsStub.callCount, 1, "the getFlexObjects was called once");
-				assert.equal(fnGetFlexObjectsStub.getCall(0).args[0], mPropertyBag, "with the passed propertyBag");
+				assert.deepEqual(fnGetFlexObjectsStub.getCall(0).args[0], { selector: mPropertyBag.selector, invalidateCache: false }, "with the passed propertyBag and invalidateCache overridden to false");
 				assert.strictEqual(aGetResponse, aObjects, "and the function resolves with the State response");
 			});
 		});

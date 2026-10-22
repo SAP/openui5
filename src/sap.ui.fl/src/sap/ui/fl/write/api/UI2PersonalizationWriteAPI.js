@@ -39,10 +39,10 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		async create(mPropertyBag) {
-			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
+			const sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			if (
-				!mPropertyBag.reference
+				!sReference
 				|| !mPropertyBag.containerKey
 				|| !mPropertyBag.itemName
 				|| !mPropertyBag.content
@@ -52,7 +52,7 @@ sap.ui.define([
 				throw new Error("not all mandatory properties were provided for the storage of the personalization");
 			}
 
-			await UI2PersonalizationState.setPersonalization(_omit(mPropertyBag, ["selector"]));
+			await UI2PersonalizationState.setPersonalization({ ..._omit(mPropertyBag, ["selector"]), reference: sReference });
 		},
 
 		/**
@@ -69,10 +69,10 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		async deletePersonalization(mPropertyBag) {
-			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
+			const sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			if (
-				!mPropertyBag.reference
+				!sReference
 				|| !mPropertyBag.containerKey
 				|| !mPropertyBag.itemName
 			) {
@@ -80,7 +80,7 @@ sap.ui.define([
 			}
 
 			await UI2PersonalizationState.deletePersonalization(
-				mPropertyBag.reference,
+				sReference,
 				mPropertyBag.containerKey,
 				mPropertyBag.itemName
 			);

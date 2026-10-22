@@ -408,11 +408,10 @@ sap.ui.define([
 
 	/**
 	 * Collects changes from the different states within the <code>sap.ui.fl</code> library.
-	 * This includes the flexState entities as well as the <code>sap.ui.fl.ChangePersistence</code>.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
-	 * @param {string} [mPropertyBag.currentLayer] - Specifies a single layer to filtering changes (without filtering ctrl variant changes)
+	 * @param {string} [mPropertyBag.currentLayer] - Specifies a single layer to filter all returned flex objects by, including ctrl variant changes
 	 * @param {boolean} [mPropertyBag.invalidateCache] - Flag if the cache should be invalidated
 	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Flag if all control variant changes should be included - otherwise only initially applied UIChanges are included
 	 * @param {boolean} [mPropertyBag.includeManifestChanges] - Flag if manifest changes should be included
@@ -421,15 +420,14 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
 	FlexObjectManager.getFlexObjects = async function(mPropertyBag) {
-		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
+		const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 		if (mPropertyBag.invalidateCache) {
 			const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
-			mPropertyBag.componentId = oAppComponent.getId();
-			await FlexState.reinitialize(mPropertyBag);
+			await FlexState.reinitialize({ ...mPropertyBag, reference: sReference, componentId: oAppComponent.getId() });
 		}
 
-		let aRelevantFlexObjects = UIChangesState.getVariantIndependentUIChanges(mPropertyBag.reference)
-		.concat(CompVariantManagementState.getCompEntities(mPropertyBag));
+		let aRelevantFlexObjects = UIChangesState.getVariantIndependentUIChanges(sReference)
+		.concat(CompVariantManagementState.getCompEntities({ ...mPropertyBag, reference: sReference }));
 
 		// getInitialUIChanges will only add variant related UIChanges from the initial variants,
 		// with includeCtrlVariants set all variant related flex objects are added
@@ -437,27 +435,27 @@ sap.ui.define([
 		// will add all variants, all variant management changes, and all UIChanges of all initial variants
 		if (!mPropertyBag.includeCtrlVariants) {
 			aRelevantFlexObjects = aRelevantFlexObjects.concat(
-				VariantManagementState.getInitialUIChanges({ reference: mPropertyBag.reference, includeDirtyChanges: true })
+				VariantManagementState.getInitialUIChanges({ reference: sReference, includeDirtyChanges: true })
 			);
 		} else if (!mPropertyBag.onlyCurrentVariants) {
 			aRelevantFlexObjects = aRelevantFlexObjects.concat(
-				VariantManagementState.getVariantDependentFlexObjects(mPropertyBag.reference)
+				VariantManagementState.getVariantDependentFlexObjects(sReference)
 			);
 		} else {
 			aRelevantFlexObjects = aRelevantFlexObjects.concat(
-				VariantManagementState.getAllCurrentFlexObjects({ reference: mPropertyBag.reference })
+				VariantManagementState.getAllCurrentFlexObjects({ reference: sReference })
 			);
 		}
 
 		if (mPropertyBag.includeManifestChanges) {
 			aRelevantFlexObjects = aRelevantFlexObjects.concat(
-				FlexState.getAppDescriptorChanges(mPropertyBag.reference)
+				FlexState.getAppDescriptorChanges(sReference)
 			);
 		}
 
 		if (mPropertyBag.includeAnnotationChanges) {
 			aRelevantFlexObjects = aRelevantFlexObjects.concat(
-				FlexState.getAnnotationChanges(mPropertyBag.reference)
+				FlexState.getAnnotationChanges(sReference)
 			);
 		}
 

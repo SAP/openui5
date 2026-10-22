@@ -125,15 +125,26 @@ sap.ui.define([
 				const oCompVariantManagerStub = sandbox.stub(CompVariantManager, testData.CompVariantManagerFunctionName).returns(oMockResponse);
 
 				const oResponse = SmartVariantManagementWriteAPI[testData.apiFunctionName](mPropertyBag);
-				assert.equal(this.oGetFlexReferenceForControlStub.getCall(0).args[0], mPropertyBag.control, "then the reference was requested for the passed control,");
-				assert.equal(oResponse, testData.expectedResponse || oMockResponse, "the response was passed to the caller,");
-				assert.equal(oCompVariantManagerStub.callCount, 1, "the CompVariantManager function was called once,");
+				assert.strictEqual(
+					this.oGetFlexReferenceForControlStub.getCall(0).args[0], mPropertyBag.control,
+					"then the reference was requested for the passed control,"
+				);
+				assert.strictEqual(oResponse, testData.expectedResponse || oMockResponse, "the response was passed to the caller,");
+				assert.strictEqual(oCompVariantManagerStub.callCount, 1, "the CompVariantManager function was called once,");
 				const oCompVariantManagerFunctionArguments = oCompVariantManagerStub.getCall(0).args[0];
-				assert.equal(oCompVariantManagerFunctionArguments, mPropertyBag, "the propertyBag was passed,");
-				assert.equal(oCompVariantManagerFunctionArguments.reference, sReference, "the reference was added,");
-				assert.equal(oCompVariantManagerFunctionArguments.persistencyKey, sPersistencyKey, "and the reference was added");
+				assert.ok(
+					Object.keys(mPropertyBag)
+					.filter(function(key) { return key !== "changeSpecificData"; })
+					.every((key) => oCompVariantManagerFunctionArguments[key] === mPropertyBag[key]),
+					"the propertyBag properties were passed,"
+				);
+				assert.strictEqual(oCompVariantManagerFunctionArguments.reference, sReference, "the reference was added,");
+				assert.strictEqual(oCompVariantManagerFunctionArguments.persistencyKey, sPersistencyKey, "and the reference was added");
 				if (testData.expectedSpecificData) {
-					assert.deepEqual(oCompVariantManagerFunctionArguments.changeSpecificData, testData.expectedSpecificData, "and the specific data was set");
+					assert.deepEqual(
+						oCompVariantManagerFunctionArguments.changeSpecificData, testData.expectedSpecificData,
+						"and the specific data was set"
+					);
 				}
 			});
 		});
@@ -148,7 +159,7 @@ sap.ui.define([
 
 			assert.equal(this.oGetFlexReferenceForControlStub.getCall(0).args[0], mPropertyBag.control, "then the reference was requested for the passed control,");
 			assert.equal(oCompVariantManagerRemoveVariantStub.callCount, 1, "then the CompVariantManager.removeVariant was called");
-			assert.equal(oCompVariantManagerRemoveVariantStub.getCall(0).args[0], mPropertyBag, "and the propertyBag was passed");
+			assert.strictEqual(oCompVariantManagerRemoveVariantStub.getCall(0).args[0].reference, sReference, "and the enriched propertyBag was passed");
 		});
 
 		[{
