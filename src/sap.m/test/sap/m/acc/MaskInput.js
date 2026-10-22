@@ -79,9 +79,9 @@ sap.ui.define([
 					level: TitleLevel.H2
 				}),
 				content: [
-					addMask("Serial number", "CCCC-CCCC-CCCC-CCCC-CCCC", "Enter serial number", "_", [ruleCollection[4].rule]),
-					addMask("Product activation key", "SAP-CCCCC-CCCCC", "Enter activation key", "_", [ruleCollection[4].rule]),
-					addMask("ISBN", "999-99-999-9999-9", "Enter ISBN", "_")
+					addMask("Serial number (alphanumeric)", "CCCC-CCCC-CCCC-CCCC-CCCC", "Enter serial number", "_", [ruleCollection[4].rule]),
+					addMask("Activation key (A–Z, 0–9)", "SAP-CCCCC-CCCCC", "Enter activation key", "_", [ruleCollection[4].rule]),
+					addMask("ISBN (13 digits)", "999-99-999-9999-9", "Enter ISBN", "_")
 				]
 			}).addStyleClass("sapUiContentPadding")
 		]
