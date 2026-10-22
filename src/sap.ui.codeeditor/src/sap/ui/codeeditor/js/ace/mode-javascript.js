@@ -878,7 +878,8 @@ var Tag = function () {
     this.end = { row: 0, column: 0 };
 };
 function is(token, type) {
-    return token.type.lastIndexOf(type + ".xml") > -1;
+    // MODIFIED BY SAP: backport of ajaxorg/ace#5752 (Ace 1.39.1), see https://github.com/UI5/openui5/issues/4474
+    return token && token.type && token.type.lastIndexOf(type + ".xml") > -1;
 }
 (function () {
     this.getFoldWidget = function (session, foldStyle, row) {
