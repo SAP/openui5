@@ -172,23 +172,23 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = {},
-			oElement = {
+			oElement = Object.freeze({
 				"@$ui5.node.isExpanded" : aIsExpandedValues[0],
 				"@$ui5.node.level" : 9
-			},
+			}),
 			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
 
 		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
 		// Note: an initial placeholder cannot know "@$ui5.node.isExpanded"!
 		_Helper.setPrivateAnnotation(oPlaceholder, "placeholder", 1);
+		oPlaceholder["@$ui5.context.isTransient"] = "n/a";
 		oPlaceholder["@$ui5.node.isExpanded"] = aIsExpandedValues[1];
+		this.mock(_Helper).expects("copyPrivateAnnotation").never();
 
 		assert.throws(function () {
 			// code under test
 			_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
 		}, new Error("Not a leaf anymore (or vice versa)"));
-
-		assert.strictEqual(oElement["@$ui5.node.isExpanded"], aIsExpandedValues[0], "unchanged");
 	});
 });
 
