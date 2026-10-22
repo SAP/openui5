@@ -3076,6 +3076,7 @@ sap.ui.define([
 			// At this point, busy state should be true since promise is not resolved yet
 			assert.ok(oSetBusySpy.calledWith(true), "setBusy(true) should have been called");
 			assert.ok(this.oVM.oManagementTable.getBusy(), "table should be busy while promise is pending");
+			assert.notOk(this.oVM.oManagementTable.getBinding("items"), "table items must not be bound while promise is pending");
 
 			// Now resolve the promise
 			this.oPromiseResolve();
@@ -3087,6 +3088,7 @@ sap.ui.define([
 				// Verify setBusy was called with false after promise resolved
 				assert.ok(oSetBusySpy.calledWith(false), "setBusy(false) should have been called");
 				assert.ok(oRebindVMTableSpy.calledWith(true), "_rebindVMTable should have been called");
+				assert.ok(this.oVM.oManagementTable.getBinding("items"), "table items must be bound after promise is resolved");
 
 				// Verify the order: setBusy(true) should be called before setBusy(false)
 				let bTrueCalledFirst = false;
