@@ -1047,7 +1047,7 @@ sap.ui.define([
 			sGroupId = "$inactive." + sGroupId;
 		} else if (!oAggregation?.hierarchyQualifier) {
 			this.iActiveContexts += 1;
-			this.setOutdated("header");
+			this.setOutdated("createActive");
 		}
 
 		if (this.bFirstCreateAtEnd === undefined) {
@@ -1969,7 +1969,7 @@ sap.ui.define([
 					if (that.iActiveContexts > 0) {
 						// some persisted entries are still in the creation area, so the header
 						// context has to be marked as outdated and maybe also the grand total
-						that.setOutdated("header");
+						that.setOutdated("createActive");
 					} else {
 						// entries and grand total are in sync again
 						that.oHeaderContext.setOutdated(false);
@@ -2656,7 +2656,7 @@ sap.ui.define([
 	ODataListBinding.prototype.fireCreateActivate = function (oContext) {
 		if (this.fireEvent("createActivate", {context : oContext}, true)) {
 			this.iActiveContexts += 1;
-			this.setOutdated("header");
+			this.setOutdated("createActive");
 			return true;
 		}
 
@@ -4560,7 +4560,7 @@ sap.ui.define([
 				throw new Error("Cannot refresh. Hint: Side-effects refresh in parallel? "
 					+ oContext);
 			}
-			that.setOutdated();
+			that.setOutdated("refreshEntity");
 			const oGroupLock = that.lockGroup(sGroupId, bLocked);
 			aPromises.push(
 				(bAllowRemoval
@@ -5451,46 +5451,102 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the outdated flags at the grand total and the header context considering filters,
-	 * sorters, search, and custom query options.
+	 * Sets the outdated flags at the grand total, the subtotals, and the header context, depending
+	 * on the given use case and paths, the current filters, sorters, search, custom query options,
+	 * and grouping information.
 	 *
-	 * @param {string} [sForce]
-	 *   Whether to force setting the outdated flags. Either use <code>sForce</code> or
-	 *   <code>aPaths</code>. Supported values are:
-	 *   - "both": force setting the outdated flags at the grand total and the header context
-	 *   - "delete": delete in data aggregation with visual grouping, sets the outdated flag at the
-	 *     header context (which also affects subtotals) only in case of visual grouping; MUST not
-	 *     be combined with <code>aPaths</code> or <code>bNoRequest</code>
-	 *   - "header": force setting the outdated flag at the header context
-	 *   - "" or undefined, the outdated flags are set only if needed
+	 * If search or custom query options are used, the client cannot know whether they affect the
+	 * grand total, the subtotals, or the table structure, so a manual refresh might be needed and
+	 * the grand total, the subtotals and the header context are set to outdated (except when
+	 * deleting an entity via its context).
+	 *
+	 * Setting the outdated flag at the header context means that a manual refresh might be needed
+	 * to get the list up-to-date, so setting the grand total or subtotals to outdated also causes
+	 * an outdated header context.
+	 *
+	 * Subtotals are set to outdated independent of the use case.
+	 *
+	 * @param {string} sUseCase
+	 *   The use case which caused the (potential) outdating; supported values are:
+	 *   <ul>
+	 *     <li> "createActive": an active created entity is part of the creation area of the list
+	 *       and it may disappear or appear in a different position after a refresh, so a manual
+	 *       refresh is always needed; the grand total is additionally set to outdated if there are
+	 *       any filters;
+	 *     <li> "delete": an entity is deleted via its context; a manual refresh might be necessary
+	 *       only if visual grouping is used; otherwise, the entity is directly removed from the
+	 *       list and no refresh is needed; the grand total is never set to outdated;
+	 *     <li> "deleteViaPath": an entity was deleted via its path and no grand total is requested,
+	 *       so a manual refresh is needed; the grand total is set to outdated;
+	 *     <li> "refreshEntity": a single entity is refreshed; if there are filters, sorters or
+	 *       grouping, a manual refresh might be needed; the grand total is additionally set to
+	 *       outdated if there are any filters;
+	 *     <li> "": properties given in <code>aPaths</code> are updated or requested as a side
+	 *       effect; if these properties are used for filtering, sorting or grouping, a manual
+	 *       refresh is needed; the grand total is additionally set to outdated if a given property
+	 *       is used for filtering;
+	 *   </ul>
 	 * @param {string[]} [aPaths]
 	 *   An optional array of "14.4.1.5 Expression edm:NavigationPropertyPath" or
 	 *   "14.4.1.6 Expression edm:PropertyPath" strings describing which properties may have changed
 	 *   due to an update or side effects of a previous update, see
-	 *   {@link sap.ui.model.odata.v4.Context#requestSideEffects}; either use <code>sForce</code> or
-	 *   <code>aPaths</code>; if omitted, the whole entity (collection) is affected
+	 *   {@link sap.ui.model.odata.v4.Context#requestSideEffects}; must be given only if
+	 *   <code>sUseCase</code> is the empty string
 	 * @param {boolean} [bNoRequest]
 	 *   Whether the properties given in <code>aPaths</code> are updated without sending a PATCH
 	 *   request to the server; if <code>true</code>, <code>aPaths</code> is mandatory
 	 * @throws {Error}
-	 *   If <code>bNoRequest</code> is set and the header context gets outdated or the property with
-	 *   the given path contributes to the grand total
+	 *   If <code>sUseCase</code> is unknown, <code>aPaths</code> are not supported by the given use
+	 *   case, or if <code>bNoRequest</code> is set and the header context gets outdated or the
+	 *   property with the given path contributes to the grand total
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.setOutdated = function (sForce, aPaths, bNoRequest) {
+	ODataListBinding.prototype.setOutdated = function (sUseCase, aPaths, bNoRequest) {
 		if (_Helper.isDataAggregation(this.mParameters)) {
+			if (sUseCase && aPaths) {
+				throw new Error(`Use case '${sUseCase}' does not support paths`);
+			}
 			const oAggregation = this.mParameters.$$aggregation;
-			const bGrandTotalOutdated = sForce === "delete"
-				? false
-				: sForce === "both"
-					|| this.mParameters.$search || oAggregation.search
-					|| Object.keys(this.mParameters).some((sKey) => sKey[0] !== "$")
-					|| this.isFilteredBy(aPaths);
-			const bHeaderContextOutdated = oAggregation.groupLevels.length > 0
-				|| (sForce === "delete"
-					? false
-					: bGrandTotalOutdated || sForce === "header" || this.isSortedBy(aPaths));
+			const bHasSearchOrCustomQueryOptions = this.mParameters.$search || oAggregation.search
+				|| Object.keys(this.mParameters).some((sKey) => sKey[0] !== "$");
+			const bVisualGrouping = oAggregation.groupLevels.length > 0;
+			let bGrandTotalOutdated;
+			let bHeaderContextOutdated;
+			switch (sUseCase) {
+				case "createActive":
+					bGrandTotalOutdated = bHasSearchOrCustomQueryOptions || this.isFilteredBy();
+					// newly created entities are in the creation area; they may disappear or appear
+					// in a different position after a refresh
+					bHeaderContextOutdated = true;
+					break;
+				case "delete":
+					// independent whether the deleted entity matches the current filters or not the
+					// grand total is properly updated
+					bGrandTotalOutdated = false;
+					// in case of visual grouping a refresh is needed to get rid of an empty group
+					// if the last entry in a group is deleted
+					bHeaderContextOutdated = bVisualGrouping;
+					break;
+				case "deleteViaPath":
+					// no grand total is requested -> set grand total and header context to outdated
+					bGrandTotalOutdated = true;
+					bHeaderContextOutdated = true;
+					break;
+				case "refreshEntity":
+					bGrandTotalOutdated = bHasSearchOrCustomQueryOptions || this.isFilteredBy();
+					bHeaderContextOutdated = bGrandTotalOutdated || bVisualGrouping
+						|| this.isSortedBy();
+					break;
+				case "":
+					bGrandTotalOutdated = bHasSearchOrCustomQueryOptions
+						|| this.isFilteredBy(aPaths);
+					bHeaderContextOutdated = bGrandTotalOutdated || bVisualGrouping
+						|| this.isSortedBy(aPaths);
+					break;
+				default:
+					throw new Error("Unknown use case: " + sUseCase);
+			}
 			if (bNoRequest
 					&& (bHeaderContextOutdated
 					|| _AggregationHelper.isUsedForGrandTotal(aPaths, oAggregation.aggregate))) {

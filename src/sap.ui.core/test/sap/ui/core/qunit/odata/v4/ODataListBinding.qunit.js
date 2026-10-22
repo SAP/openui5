@@ -1805,7 +1805,7 @@ sap.ui.define([
 		const bSetOutdated = !(bLengthFinal || bMoreContexts || bOutdated === undefined);
 		this.mock(oBinding).expects("setOutdated")
 			.exactly(bSetOutdated && iActiveContexts ? 1 : 0)
-			.withExactArgs("header");
+			.withExactArgs("createActive");
 		this.mock(oBinding.oHeaderContext).expects("setOutdated")
 			.exactly(bSetOutdated && !iActiveContexts ? 1 : 0)
 			.withExactArgs(false);
@@ -5754,7 +5754,7 @@ sap.ui.define([
 					.returns(oFixture.sGroupId === "deferred");
 				oBindingMock.expects("getUpdateGroupId").withExactArgs().returns(oFixture.sGroupId);
 				oBindingMock.expects("setOutdated").exactly(oFixture.bInactive ? 0 : 1)
-					.withExactArgs("header");
+					.withExactArgs("createActive");
 				oBindingMock.expects("lockGroup")
 					.withExactArgs(oFixture.bInactive
 							? "$inactive." + oFixture.sGroupId
@@ -6674,7 +6674,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkDeepCreate").never();
 		this.mock(oBinding).expects("isRelative").never();
 		this.mock(oBinding).expects("setOutdated").exactly(bRecursiveHierarchy ? 0 : 1)
-			.withExactArgs("header");
+			.withExactArgs("createActive");
 		this.mock(_Helper).expects("publicClone")
 			.withExactArgs(sinon.match.same(oInitialData), true).returns("~oEntityData~");
 		this.mock(oBinding).expects("lockGroup")
@@ -8882,7 +8882,7 @@ sap.ui.define([
 			.returns("~key~predicate~");
 		this.mock(oBinding).expects("getModelIndex").withExactArgs(sinon.match.same(oContext))
 			.returns(42);
-		this.mock(oBinding).expects("setOutdated").withExactArgs();
+		this.mock(oBinding).expects("setOutdated").withExactArgs("refreshEntity");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", "~bLocked~")
 			.returns(oGroupLock);
 		oRefreshSingleExpectation = this.mock(oCache).expects("refreshSingle")
@@ -9071,7 +9071,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getRelativePath")
 			.withExactArgs("/EMPLOYEES('2')", "/EMPLOYEES")
 			.returns("~key~predicate~");
-		this.mock(oBinding).expects("setOutdated").withExactArgs();
+		this.mock(oBinding).expects("setOutdated").withExactArgs("refreshEntity");
 		oBindingMock.expects("lockGroup")
 			.withExactArgs("groupId", "~bLocked~").returns(oGroupLock);
 		oExpectation = this.mock(oCache).expects("refreshSingleWithRemove")
@@ -9190,7 +9190,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getRelativePath")
 			.withExactArgs("~context~path~", "~header~context~path~")
 			.returns("~key~predicate~");
-		this.mock(oBinding).expects("setOutdated").withExactArgs();
+		this.mock(oBinding).expects("setOutdated").withExactArgs("refreshEntity");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", "~bLocked~")
 			.returns(oGroupLock);
 		oExpectation = this.mock(oCache).expects("refreshSingleWithRemove")
@@ -9239,7 +9239,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("getRelativePath")
 			.withExactArgs("/EMPLOYEES('2')", "/EMPLOYEES")
 			.returns("~key~predicate~");
-		this.mock(oBinding).expects("setOutdated").withExactArgs();
+		this.mock(oBinding).expects("setOutdated").withExactArgs("refreshEntity");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", undefined)
 			.returns(oGroupLock);
 		this.mock(oCache).expects("refreshSingle")
@@ -9279,7 +9279,7 @@ sap.ui.define([
 				.returns("~key~predicate~");
 			this.mock(oBinding).expects("getModelIndex").withExactArgs(sinon.match.same(oContext))
 				.returns(42);
-			this.mock(oBinding).expects("setOutdated").withExactArgs();
+			this.mock(oBinding).expects("setOutdated").withExactArgs("refreshEntity");
 			this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", undefined)
 				.returns(oGroupLock);
 			oExpectation = this.mock(oCache).expects("refreshSingle")
@@ -11044,7 +11044,7 @@ sap.ui.define([
 //*********************************************************************************************
 [false, true].forEach((bDataAggregation) => {
 	[false, true].forEach((bWithAggregationCache) => {
-		[undefined, "", "both", "delete", "header"].forEach((sForce) => {
+		["", "createActive", "deleteViaPath", "delete", "refreshEntity"].forEach((sUseCase) => {
 			[{
 				title : "$search parameter",
 				setup : function (oBinding) {
@@ -11110,11 +11110,12 @@ sap.ui.define([
 					[undefined, false, true].forEach((bNoRequest) => {
 						[[], ["X"]].forEach((aGroupLevels) => {
 	const sTitle = "setOutdated: bDataAggregation=" + bDataAggregation
-		+ ", bWithAggregationCache=" + bWithAggregationCache + ", sForce=" + sForce
+		+ ", bWithAggregationCache=" + bWithAggregationCache + ", sUseCase=" + sUseCase
 		+ ", bWithPath=" + bWithPath + ", bNoRequest=" + bNoRequest
 		+ ", aGroupLevels=" + JSON.stringify(aGroupLevels) + ", " + oFixture.title;
 
-	if (bNoRequest && !bWithPath || sForce === "delete" && (bWithPath || bNoRequest)) {
+	if (bNoRequest && !bWithPath || sUseCase === "delete" && (bWithPath || bNoRequest)
+			|| sUseCase && bWithPath) {
 		return; // bNoRequest requires aPaths to be provided
 	}
 
@@ -11128,17 +11129,17 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters))
 			.returns(bDataAggregation);
-		const bForce = sForce === "both";
+		const bForce = sUseCase === "deleteViaPath";
 		this.mock(oBinding).expects("isFilteredBy")
 			.exactly(bDataAggregation && !bForce && "isFilteredByResult" in oFixture
-				&& sForce !== "delete" ? 1 : 0)
-			.withExactArgs(bWithPath ? "~aPaths~" : undefined)
+				&& sUseCase !== "delete" ? 1 : 0)
+			.withExactArgs(...(sUseCase ? [] : [bWithPath ? "~aPaths~" : undefined]))
 			.returns(oFixture.isFilteredByResult);
-		const bForceHeader = sForce === "header" || bForce || aGroupLevels.length;
+		const bForceHeader = sUseCase === "createActive" || bForce || aGroupLevels.length;
 		this.mock(oBinding).expects("isSortedBy")
-			.exactly(bDataAggregation && !bForceHeader && sForce !== "delete"
+			.exactly(bDataAggregation && !bForceHeader && sUseCase !== "delete"
 				&& "isSortedByResult" in oFixture ? 1 : 0)
-			.withExactArgs(bWithPath ? "~aPaths~" : undefined)
+			.withExactArgs(...(sUseCase ? [] : [bWithPath ? "~aPaths~" : undefined]))
 			.returns(oFixture.isSortedByResult);
 		this.mock(_AggregationHelper).expects("isUsedForGrandTotal")
 			.exactly(bDataAggregation && bNoRequest && !bForceHeader && !oFixture.headerContext
@@ -11150,29 +11151,30 @@ sap.ui.define([
 				&& (bForceHeader || oFixture.headerContext || oFixture.isUsedForGrandTotal)) {
 			assert.throws(() => {
 				// code under test
-				oBinding.setOutdated(sForce, bWithPath ? "~aPaths~" : undefined, true);
+				oBinding.setOutdated(sUseCase, bWithPath ? "~aPaths~" : undefined, true);
 			}, new Error("Missing PATCH request when @$ui5.context.isOutdated would be set"));
 		} else {
 			if (bWithAggregationCache) {
 				oBinding.oCache.setGrandTotalOutdated = mustBeMocked;
 				this.mock(oBinding.oCache).expects("setGrandTotalOutdated")
 					.exactly(bDataAggregation && (bForce || oFixture.grandTotal) && !bNoRequest
-						&& sForce !== "delete" ? 1 : 0)
+						&& sUseCase !== "delete" ? 1 : 0)
 					.withExactArgs(true);
 				oBinding.oCache.setSubtotalsOutdated = mustBeMocked;
 				this.mock(oBinding.oCache).expects("setSubtotalsOutdated")
 					.exactly(bDataAggregation && !bNoRequest
-						&& (bForceHeader || sForce !== "delete" && oFixture.headerContext) ? 1 : 0)
+						&& (bForceHeader || sUseCase !== "delete" && oFixture.headerContext)
+						? 1 : 0)
 					.withExactArgs();
 			}
 			this.mock(oBinding.oHeaderContext).expects("setOutdated")
 				.exactly(bDataAggregation && !bNoRequest
-					&& (bForceHeader || sForce !== "delete" && oFixture.headerContext) ? 1 : 0)
+					&& (bForceHeader || sUseCase !== "delete" && oFixture.headerContext) ? 1 : 0)
 				.withExactArgs(true);
 
 			// code under test
 			assert.strictEqual(
-				oBinding.setOutdated(sForce, bWithPath ? "~aPaths~" : undefined, bNoRequest),
+				oBinding.setOutdated(sUseCase, bWithPath ? "~aPaths~" : undefined, bNoRequest),
 				undefined);
 		}
 	});
@@ -11183,6 +11185,33 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("setOutdated: use case does not support paths", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters))
+			.returns(true);
+
+		assert.throws(() => {
+			// code under test
+			oBinding.setOutdated("foo", ["~path~"]);
+		}, new Error("Use case 'foo' does not support paths"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setOutdated: unknown use case", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		oBinding.mParameters.$$aggregation = {groupLevels : []};
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters))
+			.returns(true);
+
+		assert.throws(() => {
+			// code under test
+			oBinding.setOutdated("foo");
+		}, new Error("Unknown use case: foo"));
+	});
 
 	//*********************************************************************************************
 [{
@@ -12608,7 +12637,7 @@ sap.ui.define([
 		oBindingMock.expects("fireEvent")
 			.withExactArgs("createActivate", {context : "~oContext~"}, true)
 			.returns(true);
-		oBindingMock.expects("setOutdated").withExactArgs("header");
+		oBindingMock.expects("setOutdated").withExactArgs("createActive");
 
 		// code under test
 		assert.strictEqual(oBinding.fireCreateActivate("~oContext~"), true);
