@@ -475,4 +475,40 @@ sap.ui.define([
 		// Act
 		this.oCodeEditor.setValue("function () { some invalid JavaScript }");
 	});
+
+	QUnit.module("Folding", {
+		beforeEach: async function () {
+			this.oCodeEditor = new CodeEditor({
+				type: "html"
+			});
+			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oCodeEditor.destroy();
+		}
+	});
+
+	QUnit.test("Fold widget calculation does not fail for an end tag without tag name", async function (assert) {
+		// Arrange
+		var oSession = this.oCodeEditor._oEditor.getSession();
+		this.oCodeEditor.setValue("<div></");
+		await nextUIUpdate();
+		await new Promise(function (res) {
+			if (oSession.getMode().$id === "ace/mode/html") {
+				res();
+				return;
+			}
+			oSession.on("changeMode", function fnOnChangeMode() {
+				if (oSession.getMode().$id === "ace/mode/html") {
+					oSession.off("changeMode", fnOnChangeMode);
+					res();
+				}
+			});
+		});
+
+		// Assert
+		assert.strictEqual(oSession.getLine(0), "<div></", "the value is applied to the ACE editor");
+		assert.strictEqual(oSession.getFoldWidget(0), "start", "fold widget is calculated without an error for a trailing '</'");
+	});
 });
