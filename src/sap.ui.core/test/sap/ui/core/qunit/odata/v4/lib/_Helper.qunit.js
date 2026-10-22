@@ -3886,26 +3886,42 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getKeyPropertyPaths: no type metadata available", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.getKeyPropertyPaths(), undefined);
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bKeys) {
-		QUnit.test("selectKeyProperties: " + (bKeys ? "w/" : "w/o") + " keys", function () {
-			var aKeyProperties = ["foo", "path/to/key"],
-				mQueryOptions = {},
-				oType = bKeys ? {$Key : ["foo", {alias : "path/to/key"}]} : {};
+		QUnit.test("getKeyPropertyPaths: " + (bKeys ? "w/" : "w/o") + " keys", function (assert) {
+			const oType = bKeys ? {$Key : ["foo", {alias : "path/to/key"}]} : {};
 
-			this.mock(_Helper).expects("addToSelect").exactly(bKeys ? 1 : 0)
-				.withExactArgs(sinon.match.same(mQueryOptions), aKeyProperties);
-
-			// code under test
-			_Helper.selectKeyProperties(mQueryOptions, oType);
+			assert.deepEqual(
+				// code under test
+				_Helper.getKeyPropertyPaths(oType),
+				bKeys ? ["foo", "path/to/key"] : undefined
+			);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("selectKeyProperties: no type metadata available", function () {
+	QUnit.test("selectKeyProperties", function () {
+		this.mock(_Helper).expects("getKeyPropertyPaths").withExactArgs("~oType~")
+			.returns("~aKeyPropertyPaths~");
+		this.mock(_Helper).expects("addToSelect")
+			.withExactArgs("~mQueryOptions~", "~aKeyPropertyPaths~");
+
+		// code under test
+		_Helper.selectKeyProperties("~mQueryOptions~", "~oType~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("selectKeyProperties: no paths to add", function () {
+		this.mock(_Helper).expects("getKeyPropertyPaths").withExactArgs("~oType~").returns();
 		this.mock(_Helper).expects("addToSelect").never();
 
 		// code under test
-		_Helper.selectKeyProperties({});
+		_Helper.selectKeyProperties({}, "~oType~");
 	});
 
 	//*********************************************************************************************
