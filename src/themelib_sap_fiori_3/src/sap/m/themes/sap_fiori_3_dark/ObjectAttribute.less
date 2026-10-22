@@ -3,8 +3,6 @@
 /* Quartz Dark theme                      */
 /* ====================================== */
 
-@_sap_m_ObjectAttribute_ListTextShadowColor: none;
-
 .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
 	position: relative;
 }
@@ -39,9 +37,9 @@ html.sap-desktop .sapMObjectAttributeActive .sapMObjectAttributeText:focus::afte
 	color: var(--sapLink_Hover_Color);
 }
 
-/*=========================================== */
+/* =========================================== */
 /* Custom design for Responsive Object Header */
-/*=========================================== */
+/* =========================================== */
 
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
@@ -51,9 +49,9 @@ html.sap-desktop .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:fo
 	color: var(--sapLink_Hover_Color);
 }
 
-/*=========================================== */
+/* =========================================== */
 /* Custom design for Static Object Header     */
-/*=========================================== */
+/* =========================================== */
 
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover {
@@ -63,5 +61,5 @@ html.sap-desktop .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:fo
 
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText,
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
-	text-shadow: @_sap_m_ObjectAttribute_ListTextShadowColor;
+	text-shadow: none;
 }
