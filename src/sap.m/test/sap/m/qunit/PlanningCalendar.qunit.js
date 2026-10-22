@@ -3629,6 +3629,92 @@ sap.ui.define([
 		await nextUIUpdate();
 	});
 
+	/**
+	 * Regression test for GitHub issue UI5/openui5#4413:
+	 * "Planning Calendar empty cell click outside current month does not fire event"
+	 *
+	 * When clicking an empty cell in a row timeline that belongs to the NEXT month
+	 * (visible in OneMonth view because Feb only has 28/29 days, so Mar 1/2 are shown),
+	 * the PlanningCalendar should navigate to next month AND fire the startDateChange event.
+	 */
+	QUnit.test("intervalselect 1Month View - clicking empty cell outside current month fires startDateChange", async function (assert) {
+		// Arrange: set to February 2017 in OneMonth view (Feb has 28 days, so March cells will be visible)
+		var oSavedStartDate = oPC1.getStartDate(),
+			sSavedViewKey = oPC1.getViewKey();
+		oPC1.setViewKey(CalendarIntervalType.OneMonth);
+		oPC1.setStartDate(UI5Date.getInstance(2017, 1, 1)); // February 2017
+		await nextUIUpdate();
+
+		bStartDateChange = false;
+		bIntervalSelect = false;
+
+		// Act: trigger an intervalSelect event manually (as if the user clicked on a cell in the next month)
+		// simulate what CalendarRow fires when user clicks an "other month" cell (e.g. March 2, 2017)
+		var oPC1Interval = oPC1.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+		// March 2nd (index 29 in February-starting OneMonth view = index of the 2nd "other month" cell)
+		// Trigger the intervalSelect event on the row timeline directly to simulate clicking on an "other month" interval
+		var aRows = oPC1.getRows();
+		var oRowTimeline = oPC1.getAggregation("table").getItems()[0].getTimeline();
+
+		// Fire a synthetic intervalSelect event simulating clicking on March 2nd, 2017 (next month cell)
+		var oMarch2 = UI5Date.getInstance(2017, 2, 2, 0, 0, 0); // March 2, 2017
+		var oMarch2End = UI5Date.getInstance(2017, 2, 2, 23, 59, 59);
+		oRowTimeline.fireIntervalSelect({
+			startDate: oMarch2,
+			endDate: oMarch2End,
+			subInterval: false
+		});
+		await nextUIUpdate();
+
+		// Assert: the PlanningCalendar should have navigated to March 2017 and fired startDateChange
+		assert.ok(bStartDateChange, "startDateChange is fired when clicking an empty cell in the next month (fix for issue UI5/openui5#4413)");
+		assert.equal(oPC1.getStartDate().getMonth(), 2, "PlanningCalendar navigated to March (month index 2)");
+		assert.equal(oPC1.getStartDate().getFullYear(), 2017, "PlanningCalendar navigated to year 2017");
+
+		// Cleanup
+		oPC1.setViewKey(sSavedViewKey);
+		oPC1.setStartDate(oSavedStartDate);
+		await nextUIUpdate();
+	});
+
+	/**
+	 * Test that verifies the fix does NOT affect normal (same-month) interval select behavior.
+	 * Clicking an empty cell in the current month should NOT fire startDateChange.
+	 */
+	QUnit.test("intervalselect 1Month View - clicking empty cell inside current month does NOT fire startDateChange", async function (assert) {
+		// Arrange: set to March 2017 in OneMonth view
+		var oSavedStartDate = oPC1.getStartDate(),
+			sSavedViewKey = oPC1.getViewKey();
+		oPC1.setViewKey(CalendarIntervalType.OneMonth);
+		oPC1.setStartDate(UI5Date.getInstance(2017, 2, 1)); // March 2017
+		await nextUIUpdate();
+
+		bStartDateChange = false;
+		bIntervalSelect = false;
+
+		// Act: simulate clicking on March 15th (inside current month - should NOT navigate)
+		var aRows = oPC1.getRows();
+		var oRowTimeline = oPC1.getAggregation("table").getItems()[0].getTimeline();
+		var oMarch15 = UI5Date.getInstance(2017, 2, 15, 0, 0, 0);
+		var oMarch15End = UI5Date.getInstance(2017, 2, 15, 23, 59, 59);
+		oRowTimeline.fireIntervalSelect({
+			startDate: oMarch15,
+			endDate: oMarch15End,
+			subInterval: false
+		});
+		await nextUIUpdate();
+
+		// Assert: startDateChange should NOT be fired (date is within current month)
+		assert.notOk(bStartDateChange, "startDateChange is NOT fired when clicking an empty cell inside the current month");
+		// intervalSelect should be fired normally
+		assert.ok(bIntervalSelect, "intervalSelect IS fired for a cell within the current month");
+
+		// Cleanup
+		oPC1.setViewKey(sSavedViewKey);
+		oPC1.setStartDate(oSavedStartDate);
+		await nextUIUpdate();
+	});
+
 	QUnit.test("rowHeaderPress", function (assert) {
 		// Arrange
 		var oSpy,

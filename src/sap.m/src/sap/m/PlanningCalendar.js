@@ -3449,7 +3449,7 @@ sap.ui.define([
 
 		if ((sIntervalType === CalendarIntervalType.OneMonth || sIntervalType === "OneMonth")
 			&& CalendarUtils._isNextMonth(oStartDate, this.getStartDate())) {
-			this.shiftToDate(oStartDate);
+			this.shiftToDate(oStartDate, true);
 			this._addMonthFocusDelegate(this._getRowInstanceByViewKey(this.getViewKey()));
 			return;
 		}
