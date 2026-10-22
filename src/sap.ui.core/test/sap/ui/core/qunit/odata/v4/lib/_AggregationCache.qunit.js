@@ -1781,8 +1781,10 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach((bLate) => {
 	[false, true].forEach((bFound) => {
-		const sTitle = "getQueryOptions4Single: late query options = " + bLate
-			+ ", node property found in $select = " + bFound;
+		[false, true].forEach((bKey) => {
+			const sTitle = "getQueryOptions4Single: late query options = " + bLate
+				+ ", node property found in $select = " + bFound
+				+ ", node property found in $Key = " + bKey;
 
 	QUnit.test(sTitle, function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {
@@ -1818,18 +1820,23 @@ sap.ui.define([
 				"sap-client" : "123"
 			})
 			.returns(mClone);
+		this.mock(oCache).expects("getTypes").exactly(bFound ? 1 : 0)
+			.withExactArgs().returns({"/Foo" : "~oType~"});
+		this.mock(_Helper).expects("getKeyPropertyPaths").exactly(bFound ? 1 : 0)
+			.withExactArgs("~oType~").returns(bKey ? ["n/a", "Some/NodeID", "n/a"] : ["n/a"]);
 
 		// code under test
 		const mQueryOptions = oCache.getQueryOptions4Single("");
 
 		assert.strictEqual(mQueryOptions, mClone);
 		assert.deepEqual(mQueryOptions, {
-			$select : ["alpha", "omega"]
+			$select : bFound && bKey ? ["alpha", "Some/NodeID", "omega"] : ["alpha", "omega"]
 		});
 		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions);
 		assert.deepEqual(oCache.mLateExpandSelect,
 			bLate ? {$expand : "lateExpand", $select : "lateSelect"} : null);
 	});
+		});
 	});
 });
 

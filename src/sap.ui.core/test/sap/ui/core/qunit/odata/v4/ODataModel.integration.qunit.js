@@ -37913,7 +37913,8 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			});
 
 			that.expectRequest("EMPLOYEES('0')?sap-client=123"
-					+ "&$select=__CT__FAKE__Message/__FAKE__Messages", {
+					+ "&$select=ID,__CT__FAKE__Message/__FAKE__Messages", {
+					ID : "0",
 					// special handling due to side-effect
 					__CT__FAKE__Message : {
 						__FAKE__Messages : [{

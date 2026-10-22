@@ -1463,9 +1463,12 @@ sap.ui.define([
 		}
 
 		const mQueryOptions = _Helper.clone({...this.mQueryOptions, ...this.mLateExpandSelect});
-		const iIndex = mQueryOptions.$select.indexOf(this.oAggregation.$NodeProperty);
-		if (iIndex >= 0) {
-			mQueryOptions.$select.splice(iIndex, 1);
+		const sNodeProperty = this.oAggregation.$NodeProperty;
+		const isKeyProperty = () => _Helper.getKeyPropertyPaths(this.getTypes()[this.sMetaPath])
+			.includes(sNodeProperty);
+		const iIndex = mQueryOptions.$select.indexOf(sNodeProperty);
+		if (iIndex >= 0 && !isKeyProperty()) {
+			mQueryOptions.$select.splice(iIndex, 1); // Note: do NOT remove key properties!
 		}
 
 		return mQueryOptions;

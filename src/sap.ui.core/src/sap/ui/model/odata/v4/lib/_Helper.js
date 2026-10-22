@@ -1770,6 +1770,23 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the list of paths to the key properties of the given entity type.
+		 *
+		 * @param {object} [oType] - The entity type's metadata "JSON"
+		 * @returns {string[]|undefined}
+		 *   The list of paths to the key properties, or <code>undefined</code> if not available
+		 *
+		 * @public
+		 */
+		getKeyPropertyPaths : function (oType) {
+			return oType?.$Key?.map(function (vKey) {
+				return typeof vKey === "object"
+					? vKey[Object.keys(vKey)[0]]
+					: vKey;
+			});
+		},
+
+		/**
 		 * Returns the OData metadata model path corresponding to the given OData data model path.
 		 * May also be used on relative paths.
 		 *
@@ -2918,18 +2935,15 @@ sap.ui.define([
 		 * Adds the key properties of the given entity type to $select of the given query options.
 		 *
 		 * @param {object} mQueryOptions - The query options to be MODIFIED
-		 * @param {object} oType - The entity type's metadata "JSON"
+		 * @param {object} [oType] - The entity type's metadata "JSON"
 		 *
 		 * @public
+		 * @see .getKeyPropertyPaths
 		 */
 		selectKeyProperties : function (mQueryOptions, oType) {
-			if (oType && oType.$Key) {
-				_Helper.addToSelect(mQueryOptions, oType.$Key.map(function (vKey) {
-					if (typeof vKey === "object") {
-						return vKey[Object.keys(vKey)[0]];
-					}
-					return vKey;
-				}));
+			const aKeyPropertyPaths = _Helper.getKeyPropertyPaths(oType);
+			if (aKeyPropertyPaths) {
+				_Helper.addToSelect(mQueryOptions, aKeyPropertyPaths);
 			}
 		},
 
