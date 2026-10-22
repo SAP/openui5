@@ -4,10 +4,11 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/date/CalendarWeekNumbering",
+	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/CalendarUtils"
-], function(Formatting, CalendarWeekNumbering, LocaleData, CalendarUtils) {
-	/*global QUnit */
+], function(Formatting, CalendarWeekNumbering, Locale, LocaleData, CalendarUtils) {
+	/*global QUnit, sinon*/
 	"use strict";
 
 	//*********************************************************************************************
@@ -24,20 +25,6 @@ sap.ui.define([
 		assert.deepEqual(
 			CalendarUtils.getWeekConfigurationValues(CalendarWeekNumbering.MiddleEastern),
 			{firstDayOfWeek: 6, minimalDaysInFirstWeek: 1});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getWeekConfigurationValues Dynamic", function (assert) {
-		this.stub(LocaleData, "getInstance").returns({
-			getFirstDayOfWeek : function() {
-				return "~firstDay";
-			},
-			getMinimalDaysInFirstWeek : function() {
-				return "~minimalDays";
-			}
-		});
-		assert.deepEqual(CalendarUtils.getWeekConfigurationValues(CalendarWeekNumbering.Default),
-			{firstDayOfWeek: "~firstDay", minimalDaysInFirstWeek: "~minimalDays"});
 	});
 
 	//*********************************************************************************************
@@ -60,17 +47,27 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getWeekConfigurationValues from locale", function (assert) {
-		this.mock(LocaleData).expects("getInstance").withExactArgs("~oLocale").returns({
-			getFirstDayOfWeek : function() {
-				return "~firstDay";
-			},
-			getMinimalDaysInFirstWeek : function() {
-				return "~minimalDays";
-			}
-		});
+[undefined, new Locale("aa-AA")].forEach((vLocale) => {
+	QUnit.test("getWeekConfigurationValues Default with locale " + vLocale, function (assert) {
+		this.mock(Formatting).expects("getLanguageTag")
+			.withExactArgs()
+			.exactly(vLocale ? 0 : 1)
+			.returns("bb-BB");
+		const sExpectedLanguage = vLocale ? "aa-AA" : "bb-BB";
+		const checkLocale = (oLocale) => oLocale.toString() === sExpectedLanguage;
+		this.mock(LocaleData).expects("getInstance")
+			.withExactArgs(sinon.match(checkLocale))
+			.returns({
+				getFirstDayOfWeek : function() {
+					return "~firstDay";
+				},
+				getMinimalDaysInFirstWeek : function() {
+					return "~minimalDays";
+				}
+			});
 		assert.deepEqual(
-			CalendarUtils.getWeekConfigurationValues(CalendarWeekNumbering.Default, "~oLocale"),
+			CalendarUtils.getWeekConfigurationValues(CalendarWeekNumbering.Default, vLocale),
 			{firstDayOfWeek: "~firstDay", minimalDaysInFirstWeek: "~minimalDays"});
 	});
+});
 });
