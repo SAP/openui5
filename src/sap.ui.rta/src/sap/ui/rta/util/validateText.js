@@ -10,7 +10,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const sEmptyTextKey = "\xa0"; // &nbsp; in Unicode
+	const EMPTY_TEXT_KEY = "\xa0"; // &nbsp; in Unicode
 	const oValidators = {
 		noBindingText: {
 			validatorFunction(sNewText) {
@@ -32,13 +32,13 @@ sap.ui.define([
 		},
 		noEmptyText: {
 			validatorFunction(sNewText) {
-				return sNewText !== sEmptyTextKey;
+				return sNewText !== EMPTY_TEXT_KEY;
 			},
 			errorMessage: Lib.getResourceBundleFor("sap.ui.rta").getText("RENAME_EMPTY_ERROR_TEXT")
 		}
 	};
 
-	return function(sNewText, sOldText, oAction) {
+	function validateText(sNewText, sOldText, oAction) {
 		let sErrorText;
 		const aValidators = oAction?.validators || [];
 		const aValidatorsToRun = [
@@ -69,5 +69,22 @@ sap.ui.define([
 		if (sErrorText) {
 			throw Error(sErrorText);
 		}
+	}
+
+	/**
+	 * Trims the given text and returns the empty-text sentinel ("\xa0") when the trimmed result is
+	 * empty. Input fields keep the raw user text while typing; callers use this to normalize the
+	 * value for validation, change detection and the saved value, so trailing spaces are never saved.
+	 *
+	 * @param {string} sText - Raw text to normalize
+	 * @returns {string} The trimmed text, or the empty-text sentinel when the trimmed text is empty
+	 * @private
+	 * @ui5-restricted sap.ui.rta
+	 */
+	validateText.getTrimmedText = function(sText) {
+		const sTrimmedText = (sText || "").trim();
+		return sTrimmedText.length ? sTrimmedText : EMPTY_TEXT_KEY;
 	};
+
+	return validateText;
 });

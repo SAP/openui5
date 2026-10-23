@@ -71,6 +71,14 @@ sap.ui.define([
 		this.filterProperties(sQuery);
 	};
 
+	function isValueEqual(bStringType, oProperty) {
+		// The string input stores the raw text; trailing spaces are removed only now, on save.
+		// Both sides are trimmed for the change check so a trailing-only edit is not persisted.
+		const vCurrentValue = bStringType ? validateText.getTrimmedText(oProperty.currentValue) : oProperty.currentValue;
+		const vOriginalValue = bStringType ? validateText.getTrimmedText(oProperty.originalValue) : oProperty.originalValue;
+		return { bValueEqual: vCurrentValue === vOriginalValue, vCurrentValue };
+	}
+
 	AnnotationChangeDialogController.prototype.switchDisplayMode = function(oEvent) {
 		const bShowChangedPropertiesOnly = oEvent.getParameter("state");
 		const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
@@ -78,13 +86,14 @@ sap.ui.define([
 		oModel.setProperty("/showChangedPropertiesOnly", bShowChangedPropertiesOnly);
 
 		if (bShowChangedPropertiesOnly) {
+			const bStringType = oModel.getProperty("/valueType") === AnnotationTypes.StringType;
 			const aOriginallyChangedProperties = oModel.getProperty("/changedProperties");
-			const aAllChangedProperties = oModel.getProperty("/properties").filter((oProperty) => (
-				aOriginallyChangedProperties.some((oOriginallyChangedProperty) => (
+			const aAllChangedProperties = oModel.getProperty("/properties").filter((oProperty) => {
+				const bIsOriginallyChanged = aOriginallyChangedProperties.some((oOriginallyChangedProperty) => (
 					oOriginallyChangedProperty.annotationPath === oProperty.annotationPath
-				))
-				|| oProperty.originalValue !== oProperty.currentValue
-			));
+				));
+				return bIsOriginallyChanged || !isValueEqual(bStringType, oProperty).bValueEqual;
+			});
 			oModel.setProperty("/propertiesToDisplay", aAllChangedProperties);
 		} else {
 			oModel.setProperty("/propertiesToDisplay", oModel.getProperty("/properties"));
@@ -93,9 +102,11 @@ sap.ui.define([
 
 	function onSave(oEvent) {
 		const oModelData = oEvent.getSource().getModel().getData();
+		const bStringType = oModelData.valueType === AnnotationTypes.StringType;
 		const aChanges = oModelData.properties
 		.map((oProperty) => {
-			if (oProperty.originalValue === oProperty.currentValue) {
+			const { bValueEqual, vCurrentValue } = isValueEqual(bStringType, oProperty);
+			if (bValueEqual) {
 				return null;
 			}
 			const oChangeSpecificData = {
@@ -104,8 +115,8 @@ sap.ui.define([
 					annotationPath: oProperty.annotationPath
 				}
 			};
-			oChangeSpecificData.content[oModelData.valueType === AnnotationTypes.StringType ? "text" : "value"] =
-			oModelData.objectAsKey ? JSON.parse(oProperty.currentValue) : oProperty.currentValue;
+			oChangeSpecificData.content[bStringType ? "text" : "value"] =
+			oModelData.objectAsKey ? JSON.parse(vCurrentValue) : vCurrentValue;
 			return oChangeSpecificData;
 		})
 		.filter(Boolean);
@@ -219,15 +230,19 @@ sap.ui.define([
 					const oSource = oEvent.getSource();
 					const oContext = oSource.getBindingContext();
 					const oModel = oSource.getModel();
-					const sInputValue = oEvent.getParameter("newValue").trim();
-					const sNewText = sInputValue.length ? sInputValue : "\xa0";
+					const sRawValue = oEvent.getParameter("newValue");
+					const sNewText = validateText.getTrimmedText(sRawValue);
 					const sOriginalValue = oContext.getProperty("originalValue");
+					// Change detection and the same-text validator both compare the trimmed values on
+					// both sides so that adding only a trailing blank does not count as a change (and
+					// the empty baseline stays balanced).
+					const sOriginalValueTrimmed = validateText.getTrimmedText(sOriginalValue);
 					const mPropertyBag = {};
-					mPropertyBag.wasChanged = oContext.getProperty("currentValue") !== sOriginalValue;
-					oModel.setProperty("currentValue", sNewText, oContext);
-					mPropertyBag.isChanged = sNewText !== sOriginalValue;
+					mPropertyBag.wasChanged = validateText.getTrimmedText(oContext.getProperty("currentValue")) !== sOriginalValueTrimmed;
+					oModel.setProperty("currentValue", sRawValue, oContext);
+					mPropertyBag.isChanged = sNewText !== sOriginalValueTrimmed;
 					mPropertyBag.wasError = oSource.getValueState() === "Error";
-					this._validateInput(oSource, sNewText, sOriginalValue);
+					this._validateInput(oSource, sNewText, sOriginalValueTrimmed);
 					mPropertyBag.hasError = oSource.getValueState() === "Error";
 					this._updateSaveEnabled(oModel, mPropertyBag);
 				},
