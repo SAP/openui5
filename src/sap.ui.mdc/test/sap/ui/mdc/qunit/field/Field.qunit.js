@@ -1575,6 +1575,8 @@ sap.ui.define([
 	QUnit.test("ParseError handling for Currency", (assert) => {
 
 		Messaging.registerObject(oField4, true); // to test valueState
+		oModel.setProperty("/price", null); // to check not to be updated with undefined
+		sinon.spy(oField4, "setProperty");
 		const aContent = oField4.getAggregation("_content");
 		let oContent = aContent?.length > 0 && aContent[0];
 		oContent.focus();
@@ -1584,6 +1586,7 @@ sap.ui.define([
 		assert.equal(oParseErrorParameters?.element, oField4, "ParseError fired for Field");
 		assert.equal(oParseErrorParameters?.property, "value", "ParseError 'property'");
 		assert.equal(oParseErrorParameters?.type, oType4, "ParseError 'type'");
+		assert.equal(oField4.setProperty.withArgs("value").getCalls().length, 0, "value not updated for wrong input");
 
 		const fnDone = assert.async();
 		setTimeout(() => { // to wait for valueStateMessage
@@ -2116,6 +2119,11 @@ sap.ui.define([
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated with change event");
 		assert.ok(oField.setProperty.withArgs("value").calledWith("value", [null, "USD"]), "value updated with null as number");
 		assert.deepEqual(oField.getValue(), [null, "USD"], "Field value");
+
+		oField.setProperty.reset();
+		oPromise = Promise.reject(new Error("Wrong Input"));
+		oField.fireChangeEvent(oField.getConditions(), false, undefined, oPromise); // fake change eventfor invalid input
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated for wrong input");
 
 	});
 
