@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/m/MenuButton",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
+	"sap/m/OverflowToolbarButton",
 	"sap/ui/core/Control",
 	"sap/ui/events/KeyCodes",
 	"sap/m/SearchField",
@@ -60,6 +61,7 @@ sap.ui.define([
 	MenuButton,
 	Menu,
 	MenuItem,
+	OverflowToolbarButton,
 	Control,
 	KeyCodes,
 	SearchField,
@@ -1235,6 +1237,143 @@ sap.ui.define([
 
 		//Cleanup
 		oLabel.destroy();
+		oTB.destroy();
+	});
+
+	QUnit.test("ArrowRight from last SegmentedButton segment focuses next toolbar control", async function(assert) {
+		const oButtonBefore = new Button({ text: "Before" }),
+			oButtonAfter = new Button({ text: "After" }),
+			oSB = new SegmentedButton({
+				items: [
+					new SegmentedButtonItem({ text: "A" }),
+					new SegmentedButtonItem({ text: "B" }),
+					new SegmentedButtonItem({ text: "C" })
+				]
+			}),
+			oTB = await createToolbar({
+				Toolbar: {
+					content: [oButtonBefore, oSB, oButtonAfter]
+				}
+			}),
+			aButtons = oSB.getButtons(),
+			oLastSegment = aButtons[aButtons.length - 1];
+
+		oLastSegment.focus();
+		QUtils.triggerKeydown(oLastSegment.getDomRef(), KeyCodes.ARROW_RIGHT);
+
+		assert.strictEqual(document.activeElement, oButtonAfter.getFocusDomRef(),
+			"ArrowRight on last segment focuses the next toolbar control");
+
+		oTB.destroy();
+	});
+
+	QUnit.test("ArrowLeft from first SegmentedButton segment focuses previous toolbar control", async function(assert) {
+		const oButtonBefore = new Button({ text: "Before" }),
+			oButtonAfter = new Button({ text: "After" }),
+			oSB = new SegmentedButton({
+				items: [
+					new SegmentedButtonItem({ text: "A" }),
+					new SegmentedButtonItem({ text: "B" }),
+					new SegmentedButtonItem({ text: "C" })
+				]
+			}),
+			oTB = await createToolbar({
+				Toolbar: {
+					content: [oButtonBefore, oSB, oButtonAfter]
+				}
+			}),
+			oFirstSegment = oSB.getButtons()[0];
+
+		oFirstSegment.focus();
+		QUtils.triggerKeydown(oFirstSegment.getDomRef(), KeyCodes.ARROW_LEFT);
+
+		assert.strictEqual(document.activeElement, oButtonBefore.getFocusDomRef(),
+			"ArrowLeft on first segment focuses the previous toolbar control");
+
+		oTB.destroy();
+	});
+
+	QUnit.test("ArrowRight from last Breadcrumbs item focuses next toolbar control", async function(assert) {
+		const oButtonBefore = new Button({ text: "Before" }),
+			oButtonAfter = new Button({ text: "After" }),
+			oLink1 = new Link({ text: "Link1", href: "#" }),
+			oLink2 = new Link({ text: "Link2", href: "#" }),
+			oBreadcrumbs = new Breadcrumbs({
+				links: [oLink1, oLink2],
+				currentLocationText: "Current"
+			}),
+			oTB = await createToolbar({
+				Toolbar: {
+					content: [oButtonBefore, oBreadcrumbs, oButtonAfter]
+				}
+			}),
+			oCurrentLocationDomRef = oBreadcrumbs.getDomRef("currentText");
+
+		// ArrowRight from the last link moves to the current location inside the breadcrumbs
+		oLink2.focus();
+		QUtils.triggerKeydown(oLink2.getFocusDomRef(), KeyCodes.ARROW_RIGHT);
+		assert.strictEqual(document.activeElement, oCurrentLocationDomRef,
+			"ArrowRight on last breadcrumb link focuses the current location");
+
+		// ArrowRight from the current location (border) continues to the next toolbar control
+		QUtils.triggerKeydown(oCurrentLocationDomRef, KeyCodes.ARROW_RIGHT);
+		assert.strictEqual(document.activeElement, oButtonAfter.getFocusDomRef(),
+			"ArrowRight on current location focuses the next toolbar control");
+
+		oTB.destroy();
+	});
+
+	QUnit.test("ArrowRight through toolbar with SegmentedButton matches toolbar_kbh sample order", async function(assert) {
+		const oStart = new Button({ text: "Start here" }),
+			oDisabled1 = new Button({ text: "disabled", enabled: false }),
+			oDisabled2 = new Button({ text: "disabled", enabled: false }),
+			oWorks = new MenuButton({
+				text: "Works",
+				buttonMode: "Regular",
+				useDefaultActionOnly: false,
+				menu: new Menu({
+					items: [new MenuItem({ text: "item" })]
+				})
+			}),
+			oSB = new SegmentedButton({
+				items: [
+					new SegmentedButtonItem({ text: "first" }),
+					new SegmentedButtonItem({ text: "2nd" }),
+					new SegmentedButtonItem({ text: "3rd" })
+				]
+			}),
+			oComeHere = new Button({ text: "come here" }),
+			oTB = await createToolbar({
+				Toolbar: {
+					content: [
+						oStart,
+						oDisabled1,
+						oDisabled2,
+						oWorks,
+						new ToolbarSeparator(),
+						new OverflowToolbarButton({ icon: "sap-icon://world", enabled: false }),
+						oSB,
+						oComeHere
+					]
+				}
+			}),
+			aSegments = oSB.getButtons(),
+			oLastSegment = aSegments[aSegments.length - 1];
+
+		oStart.focus();
+		oTB.getDomRef().dispatchEvent(new KeyboardEvent("keydown", {
+			keyCode: KeyCodes.ARROW_RIGHT,
+			code: "ArrowRight",
+			bubbles: true
+		}));
+		assert.strictEqual(document.activeElement, oWorks._getButtonControl().getDomRef(),
+			"ArrowRight from Start here focuses Works MenuButton");
+
+		oLastSegment.focus();
+		QUtils.triggerKeydown(oLastSegment.getDomRef(), KeyCodes.ARROW_RIGHT);
+		assert.strictEqual(document.activeElement, oComeHere.getFocusDomRef(),
+			"ArrowRight from last segment focuses come here");
+
 		oTB.destroy();
 	});
 
