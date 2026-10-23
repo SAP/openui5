@@ -46,7 +46,7 @@ sap.ui.define([
 				}
 			},
 			selectionMode: ListSelectionMode.Multi,
-			itemTemplate: createTemplate(),
+			itemContentTemplate: createTemplate(),
 			models: oJSONModel
 		}, mSettings);
 

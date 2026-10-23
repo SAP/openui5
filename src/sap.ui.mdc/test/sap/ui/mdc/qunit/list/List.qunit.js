@@ -29,7 +29,7 @@ sap.ui.define([
 		});
 	}
 
-	function createGridListTemplate() {
+	function createGridListItemContentTemplate() {
 		return new VBox({
 			items: [
 				new Title({text: "{name}"}),
@@ -38,7 +38,7 @@ sap.ui.define([
 		});
 	}
 
-	function createListTemplate() {
+	function createListItemContentTemplate() {
 		return new VBox({
 			items: [
 				new Title({text: "{name}"}),
@@ -92,7 +92,7 @@ sap.ui.define([
 
 	QUnit.test("Default type is GridListType", async function(assert) {
 		this.oList = await createMDCList({
-			itemTemplate: createGridListTemplate()
+			itemContentTemplate: createGridListItemContentTemplate()
 		});
 
 		return waitForInitialized(this.oList).then(function() {
@@ -104,7 +104,7 @@ sap.ui.define([
 	QUnit.test("Explicit GridListType", async function(assert) {
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: createGridListTemplate()
+			itemContentTemplate: createGridListItemContentTemplate()
 		});
 
 		return waitForInitialized(this.oList).then(function() {
@@ -116,7 +116,7 @@ sap.ui.define([
 	QUnit.test("ListType creates sap.m.List", async function(assert) {
 		this.oList = await createMDCList({
 			type: new ListType(),
-			itemTemplate: createListTemplate()
+			itemContentTemplate: createListItemContentTemplate()
 		});
 
 		return waitForInitialized(this.oList).then(function() {
@@ -128,7 +128,7 @@ sap.ui.define([
 	QUnit.test("autoBindOnInit=false skips the initial items binding", async function(assert) {
 		this.oList = await createMDCList({
 			autoBindOnInit: false,
-			itemTemplate: createGridListTemplate()
+			itemContentTemplate: createGridListItemContentTemplate()
 		});
 
 		return waitForInitialized(this.oList).then(function() {
@@ -145,7 +145,7 @@ sap.ui.define([
 				threshold: 5,
 				growingMode: "Scroll",
 				noData: "No data",
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -228,7 +228,7 @@ sap.ui.define([
 	QUnit.test("headerLevel set before toolbar creation is applied to title", async function(assert) {
 		const oList = await createMDCList({
 			headerLevel: "H3",
-			itemTemplate: createGridListTemplate()
+			itemContentTemplate: createGridListItemContentTemplate()
 		});
 		await waitForInitialized(oList);
 
@@ -239,7 +239,7 @@ sap.ui.define([
 	QUnit.test("headerStyle set before toolbar creation is applied to title", async function(assert) {
 		const oList = await createMDCList({
 			headerStyle: "H4",
-			itemTemplate: createGridListTemplate()
+			itemContentTemplate: createGridListItemContentTemplate()
 		});
 		await waitForInitialized(oList);
 
@@ -273,7 +273,7 @@ sap.ui.define([
 				showItemCount: true,
 				enableExport: true,
 				p13nMode: ["Sort", "Filter"],
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -325,7 +325,7 @@ sap.ui.define([
 		beforeEach: async function() {
 			this.oList = await createMDCList({
 				type: new GridListType(),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -338,7 +338,7 @@ sap.ui.define([
 		assert.ok(this.oList._oList.isA("sap.f.GridList"), "Initially a GridList");
 		assert.strictEqual(this.oList._oToolbar.getStyle(), "Clear", "GridList toolbar uses the Clear style");
 
-		this.oList.setItemTemplate(createListTemplate());
+		this.oList.setItemContentTemplate(createListItemContentTemplate());
 		this.oList.setType(new ListType());
 
 		return waitForInitialized(this.oList).then(function() {
@@ -356,7 +356,7 @@ sap.ui.define([
 					highlight: "{= ${height} >= 8000 ? 'Success' : 'None'}",
 					navigated: false
 				}),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -385,7 +385,7 @@ sap.ui.define([
 			this.oList = await createMDCList({
 				selectionMode: "Multi",
 				type: new GridListType(),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -421,7 +421,7 @@ sap.ui.define([
 				showItemCount: true,
 				selectionMode: "Multi",
 				type: new GridListType(),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -449,7 +449,7 @@ sap.ui.define([
 			this.oList = await createMDCList({
 				p13nMode: ["Sort", "Filter", "Group"],
 				type: new GridListType(),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -502,7 +502,7 @@ sap.ui.define([
 	QUnit.test("Destroy cleans up resources", async function(assert) {
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: createGridListTemplate()
+			itemContentTemplate: createGridListItemContentTemplate()
 		});
 
 		return waitForInitialized(this.oList).then(function() {
@@ -533,7 +533,7 @@ sap.ui.define([
 			this.oList = await createMDCList({
 				selectionMode: "SingleMaster",
 				type: new GridListType(),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -564,7 +564,7 @@ sap.ui.define([
 		beforeEach: async function() {
 			this.oList = await createMDCList({
 				type: new GridListType(),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -625,7 +625,7 @@ sap.ui.define([
 			this.oList = await createMDCList({
 				enableExport: true,
 				type: new GridListType(),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -666,7 +666,7 @@ sap.ui.define([
 					highlight: "{= ${height} >= 8000 ? 'Success' : 'None'}",
 					navigated: true
 				}),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -726,7 +726,7 @@ sap.ui.define([
 				itemSettings: new ItemSettings({
 					itemActions: [this.oActionItem]
 				}),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -767,7 +767,7 @@ sap.ui.define([
 			itemSettings: new ItemSettings({
 				itemActions: [oHiddenAction]
 			}),
-			itemTemplate: createGridListTemplate()
+			itemContentTemplate: createGridListItemContentTemplate()
 		});
 		await waitForInitialized(this.oList);
 
@@ -816,7 +816,7 @@ sap.ui.define([
 		const oContent = new VBox({items: [new Title({text: "{name}"})]});
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: oContent
+			itemContentTemplate: oContent
 		});
 
 		return waitForInitialized(this.oList).then(function() {
@@ -836,7 +836,7 @@ sap.ui.define([
 		const oContent = new VBox({items: [new Title({text: "{name}"})]});
 		this.oList = await createMDCList({
 			type: new ListType(),
-			itemTemplate: oContent
+			itemContentTemplate: oContent
 		});
 
 		return waitForInitialized(this.oList).then(function() {
@@ -866,7 +866,7 @@ sap.ui.define([
 				itemSettings: new ItemSettings({
 					itemActions: [this.oActionItem]
 				}),
-				itemTemplate: createListTemplate()
+				itemContentTemplate: createListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},
@@ -900,7 +900,7 @@ sap.ui.define([
 				itemActionCount: 3,
 				itemActions: [oAction]
 			}),
-			itemTemplate: createListTemplate()
+			itemContentTemplate: createListItemContentTemplate()
 		});
 		await waitForInitialized(this.oList);
 
@@ -918,7 +918,7 @@ sap.ui.define([
 			itemSettings: new ItemSettings({
 				itemActions: [oAction1, oAction2]
 			}),
-			itemTemplate: createListTemplate()
+			itemContentTemplate: createListItemContentTemplate()
 		});
 		await waitForInitialized(this.oList);
 
@@ -945,7 +945,7 @@ sap.ui.define([
 	QUnit.test("p13nMode accepts only valid ListP13nMode values", async function(assert) {
 		this.oList = await createMDCList({
 			p13nMode: [ListP13nMode.Sort, ListP13nMode.Filter, ListP13nMode.Group],
-			itemTemplate: createGridListTemplate()
+			itemContentTemplate: createGridListItemContentTemplate()
 		});
 
 		assert.deepEqual(
@@ -957,7 +957,7 @@ sap.ui.define([
 
 	QUnit.test("'Column' and 'Aggregate' from TableP13nMode are not valid ListP13nMode values", async function(assert) {
 		// The DataType validation throws for unknown enum values.
-		this.oList = await createMDCList({itemTemplate: createGridListTemplate()});
+		this.oList = await createMDCList({itemContentTemplate: createGridListItemContentTemplate()});
 		assert.throws(function() {
 			this.oList.setP13nMode(["Column", "Aggregate"]);
 		}.bind(this), "Setting invalid enum values throws");
@@ -974,7 +974,7 @@ sap.ui.define([
 		assert.notOk("Aggregate" in ListP13nMode, "Aggregate is not part of ListP13nMode");
 	});
 
-	QUnit.module("itemTemplate", {
+	QUnit.module("itemContentTemplate", {
 		afterEach: function() {
 			if (this.oList) {
 				this.oList.destroy();
@@ -982,11 +982,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("App-provided itemTemplate is used for item binding", async function(assert) {
-		const oTemplate = createGridListTemplate();
+	QUnit.test("App-provided itemContentTemplate is used for item binding", async function(assert) {
+		const oTemplate = createGridListItemContentTemplate();
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: oTemplate
+			itemContentTemplate: oTemplate
 		});
 
 		return waitForInitialized(this.oList).then(function() {
@@ -994,23 +994,23 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("No itemTemplate means no item binding", async function(assert) {
+	QUnit.test("No itemContentTemplate means no item binding", async function(assert) {
 		this.oList = await createMDCList({
 			type: new GridListType()
 		});
 
 		return waitForInitialized(this.oList).then(function() {
-			assert.notOk(this.oList._oList.isBound("items"), "Items are not bound without an itemTemplate");
+			assert.notOk(this.oList._oList.isBound("items"), "Items are not bound without an itemContentTemplate");
 		}.bind(this));
 	});
 
-	QUnit.module("itemTemplate binding propagation", {
+	QUnit.module("itemContentTemplate binding propagation", {
 		beforeEach: function() {
 			// Do NOT use createMDCList here — we need the list but don't need items bound.
 			this.oList = new MDCList({
 				delegate: { name: "sap/ui/mdc/ListDelegate", payload: { bindingPath: "/" } },
 				type: new GridListType(),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			this.oList.setModel(new JSONModel(aData));
 			this.oList.placeAt("qunit-fixture");
@@ -1020,30 +1020,30 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("itemTemplate is in mSkipPropagation", function(assert) {
-		// The itemTemplate aggregation must be listed in mSkipPropagation so that V4
+	QUnit.test("itemContentTemplate is in mSkipPropagation", function(assert) {
+		// The itemContentTemplate aggregation must be listed in mSkipPropagation so that V4
 		// auto-$expand/$select does not walk into the template and try to resolve item
 		// properties (e.g. SalesOrderItemText) against the parent entity type.
-		assert.ok(this.oList.mSkipPropagation["itemTemplate"], "itemTemplate is in mSkipPropagation");
+		assert.ok(this.oList.mSkipPropagation["itemContentTemplate"], "itemContentTemplate is in mSkipPropagation");
 	});
 
-	QUnit.test("itemTemplate does not inherit the list's binding context", function(assert) {
+	QUnit.test("itemContentTemplate does not inherit the list's binding context", function(assert) {
 		// Set a binding context on the list to simulate the Object Page page context.
 		const oModel = this.oList.getModel();
 		this.oList.setBindingContext(oModel.createBindingContext("/0"));
 
-		const oTemplate = this.oList.getItemTemplate();
+		const oTemplate = this.oList.getItemContentTemplate();
 		// The template must not receive the page context due to mSkipPropagation.
 		// getBindingContext() returns undefined (not null) when propagation is skipped.
-		assert.notOk(oTemplate.getBindingContext(), "itemTemplate has no binding context propagated from the list");
+		assert.notOk(oTemplate.getBindingContext(), "itemContentTemplate has no binding context propagated from the list");
 	});
 
-	QUnit.test("itemTemplate does not inherit the list's model (mSkipPropagation skips both context and model)", function(assert) {
+	QUnit.test("itemContentTemplate does not inherit the list's model (mSkipPropagation skips both context and model)", function(assert) {
 		// mSkipPropagation prevents both binding context AND model propagation into the template.
 		// This is intentional: the template is a blueprint — it gets a proper context when
 		// cloned per row by the inner list's bindItems(). The template itself needs no model.
-		const oTemplate = this.oList.getItemTemplate();
-		assert.notOk(oTemplate.getModel(), "itemTemplate does not receive the list's model (expected — clones get it instead)");
+		const oTemplate = this.oList.getItemContentTemplate();
+		assert.notOk(oTemplate.getModel(), "itemContentTemplate does not receive the list's model (expected — clones get it instead)");
 	});
 
 	QUnit.test("itemSettings is also in mSkipPropagation (regression guard)", function(assert) {
@@ -1061,7 +1061,7 @@ sap.ui.define([
 		const oMenu = new Menu();
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: createGridListTemplate(),
+			itemContentTemplate: createGridListItemContentTemplate(),
 			contextMenu: oMenu
 		});
 
@@ -1073,7 +1073,7 @@ sap.ui.define([
 	QUnit.test("set after the inner list exists is forwarded immediately", async function(assert) {
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: createGridListTemplate()
+			itemContentTemplate: createGridListItemContentTemplate()
 		});
 		await waitForInitialized(this.oList);
 
@@ -1086,7 +1086,7 @@ sap.ui.define([
 		const oMenu = new Menu();
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: createGridListTemplate(),
+			itemContentTemplate: createGridListItemContentTemplate(),
 			contextMenu: oMenu
 		});
 		await waitForInitialized(this.oList);
@@ -1099,7 +1099,7 @@ sap.ui.define([
 		const oMenu = new Menu();
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: createGridListTemplate(),
+			itemContentTemplate: createGridListItemContentTemplate(),
 			contextMenu: oMenu
 		});
 		await waitForInitialized(this.oList);
@@ -1119,7 +1119,7 @@ sap.ui.define([
 	QUnit.test("string noData is forwarded to the inner list", async function(assert) {
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: createGridListTemplate(),
+			itemContentTemplate: createGridListItemContentTemplate(),
 			noData: "Nothing here"
 		});
 		await waitForInitialized(this.oList);
@@ -1129,7 +1129,7 @@ sap.ui.define([
 	QUnit.test("noData set after creation is forwarded immediately", async function(assert) {
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: createGridListTemplate()
+			itemContentTemplate: createGridListItemContentTemplate()
 		});
 		await waitForInitialized(this.oList);
 
@@ -1140,7 +1140,7 @@ sap.ui.define([
 	QUnit.test("type switch re-forwards noData to the new inner list", async function(assert) {
 		this.oList = await createMDCList({
 			type: new GridListType(),
-			itemTemplate: createGridListTemplate(),
+			itemContentTemplate: createGridListItemContentTemplate(),
 			noData: "Empty"
 		});
 		await waitForInitialized(this.oList);
@@ -1154,7 +1154,7 @@ sap.ui.define([
 		beforeEach: async function() {
 			this.oList = await createMDCList({
 				type: new GridListType(),
-				itemTemplate: createGridListTemplate()
+				itemContentTemplate: createGridListItemContentTemplate()
 			});
 			return waitForInitialized(this.oList);
 		},

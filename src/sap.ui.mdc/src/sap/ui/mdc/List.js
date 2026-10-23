@@ -58,7 +58,7 @@ sap.ui.define([
 	 * @class
 	 * A metadata-driven list to simplify the usage of list-like controls such as <code>sap.f.GridList</code> and <code>sap.m.List</code>.
 	 *
-	 * The template for the item content is provided by the application via <code>itemTemplate</code>.
+	 * The template for the item content is provided by the application via <code>itemContentTemplate</code>.
 	 *
 	 * @extends sap.ui.mdc.ListTableBase
 	 * @author SAP SE
@@ -148,9 +148,9 @@ sap.ui.define([
 					multiple: false
 				},
 				/**
-				 * Content template for the items of the list.
+				 * Template for the content of each list item.
 				 */
-				itemTemplate: {
+				itemContentTemplate: {
 					type: "sap.ui.core.Control",
 					multiple: false
 				},
@@ -208,11 +208,11 @@ sap.ui.define([
 		ListTableBase.prototype.init.apply(this, arguments);
 		this._oInitialized = Promise.withResolvers();
 		this._oInitialized.promise.catch(() => { /* suppress unhandled rejection when List is destroyed before initialization */ });
-		// Prevent propagation of models and binding contexts into the itemSettings and itemTemplate
+		// Prevent propagation of models and binding contexts into the itemSettings and itemContentTemplate
 		// aggregations, as bindings there must be relative to the list items, not the list itself.
 		// Without this, V4 auto-$expand/$select walks the template's property bindings and tries to
 		// resolve item properties (e.g. SalesOrderItemText) against the page-level entity type.
-		this.mSkipPropagation = { itemSettings: true, itemTemplate: true };
+		this.mSkipPropagation = { itemSettings: true, itemContentTemplate: true };
 
 		this._setPropertyHelperClass(PropertyHelper);
 	};
@@ -269,8 +269,8 @@ sap.ui.define([
 		return this;
 	};
 
-	List.prototype.setItemTemplate = function(oTemplate) {
-		this.setAggregation("itemTemplate", oTemplate, true);
+	List.prototype.setItemContentTemplate = function(oTemplate) {
+		this.setAggregation("itemContentTemplate", oTemplate, true);
 		this._bindItems();
 		return this;
 	};
@@ -664,7 +664,7 @@ sap.ui.define([
 			return;
 		}
 
-		const oItemTemplate = this.getItemTemplate();
+		const oItemTemplate = this.getItemContentTemplate();
 
 		if (!oItemTemplate) {
 			this._updateExportButton();
@@ -677,7 +677,7 @@ sap.ui.define([
 			oOldTemplate?.destroy();
 		}
 
-		const oContentClone = oItemTemplate.clone(this.getId() + "-itemTemplate");
+		const oContentClone = oItemTemplate.clone(this.getId() + "-itemContentTemplate");
 		const oWrapper = this._getType().wrapItemTemplate(oContentClone);
 		// Extract the model name before bindItems() is called so that applyItemActions
 		// can correctly resolve the per-row binding context via getBindingContext(sModelName).

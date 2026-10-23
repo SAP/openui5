@@ -36,7 +36,7 @@ sap.ui.define([
 				payload: {}
 			},
 			itemsPath: "/",
-			itemTemplate: createTemplate(),
+			itemContentTemplate: createTemplate(),
 			models: oJSONModel
 		}, mSettings);
 
@@ -146,7 +146,7 @@ sap.ui.define([
 			this.oType = new ListType();
 			this.oList = await createMDCList({
 				type: this.oType,
-				itemTemplate: new StandardListItem({title: "{name}"})
+				itemContentTemplate: new StandardListItem({title: "{name}"})
 			});
 			return waitForInitialized(this.oList);
 		},
