@@ -85,7 +85,7 @@ sap.ui.define([
 
 	// --- Lazy Loading: Simulated dynamic variants ---
 	// These variants will be loaded dynamically when the Manage Views dialog is opened
-	const oDynamicVariants = [
+	const aDynamicVariants = [
 		{
 			key: "variantLazy1",
 			title: "Lazy Loaded View 1",
@@ -211,7 +211,8 @@ sap.ui.define([
 					if (!bDynamicVariantsLoaded) {
 						// Add dynamic variants to the model
 						const aVariants = oModel.getProperty("/variants");
-						aVariants.push(...oDynamicVariants);
+						aVariants.splice(1, 0, aDynamicVariants[0]);
+						aVariants.push(aDynamicVariants[1]);
 						oModel.setProperty("/variants", aVariants);
 						bDynamicVariantsLoaded = true;
 

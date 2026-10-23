@@ -2627,10 +2627,12 @@ sap.ui.define([
 
 		//Lazy loading of variants
 		if (!this.oManagementDialog.isOpen()){
-			this._executeDynamicVariantsLoadedCallback(this.oManagementTable, function() {
+			this._executeDynamicVariantsLoadedCallback(this.oManagementTable, () => {
+				this.oManagementTable.unbindAggregation("items", true); // will be bound again at the end. Suppending will not help as update might be forced from model
+			}, () => {
 				//Rebind table to display refreshed data after lazy loading variants
 				this._rebindVMTable(true);
-			}.bind(this));
+			});
 		}
 
 		this.oManagementDialog.open();
@@ -2672,15 +2674,19 @@ sap.ui.define([
 	 * The control will be set to busy until the returned <code>Promise</code> is settled.
 	 *
 	 * @param {sap.ui.core.Control} oControl - The control to set busy during loading
+	 * @param {function} [fnOnLoad] - Optional callback to execute when the Promise is returned
 	 * @param {function} [fnAfterLoad] - Optional callback to execute after the promise is settled
 	 * @private
 	 */
-	VariantManagement.prototype._executeDynamicVariantsLoadedCallback = function(oControl, fnAfterLoad) {
+	VariantManagement.prototype._executeDynamicVariantsLoadedCallback = function(oControl, fnOnLoad, fnAfterLoad) {
 		const fnCallback = this.getDynamicVariantsLoadedCallback();
 		if (typeof fnCallback === "function") {
 			const oResult = fnCallback();
 			if (oResult instanceof Promise && !oControl.isDestroyed()) {
 				oControl.setBusy(true);
+				if (fnOnLoad) {
+					fnOnLoad();
+				}
 				oResult.finally(function() {
 					oControl.setBusy(false);
 					// Variants loaded during the callback (e.g. shared PUBLIC variants) are added to the items
