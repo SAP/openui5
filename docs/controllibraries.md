@@ -4,9 +4,10 @@ Developing Content for UI5
 1.  [Control Libraries](#control-libraries)
     1.  [File Structure](#file-structure)
     2.  [The .library file](#the-library-file)
-    3.  [library.js file](#libraryjs-file)
-    4.  [Translation file (messagebundle.properties) and translation](#translation-file-messagebundleproperties-and-translation)
-    5.  [Themes (library.source.less, shared.css, img, img-RTL)](#themes-librarysourceless-sharedcss-img-img-rtl)
+    3.  [Manifest Generation from .library](#manifest-generation-from-library)
+    4.  [library.js file](#libraryjs-file)
+    5.  [Translation file (messagebundle.properties) and translation](#translation-file-messagebundleproperties-and-translation)
+    6.  [Themes (library.source.less, shared.css, img, img-RTL)](#themes-librarysourceless-sharedcss-img-img-rtl)
 
 2.  [Developing a Control inside a Library](#developing-a-control-inside-a-library)
     1.  [The Control API and Behavior](#the-control-api-and-behavior)
@@ -104,6 +105,39 @@ This is one example file from an existing library:
 
 </library>
 ```
+
+### Manifest Generation from .library
+
+The `manifest.json` is the central file for storing metadata of an application, a component, or a library — including its ID, version, data sources, and dependencies. For libraries, this metadata was historically maintained only in the `.library` file. To bridge the two, the **UI5 CLI build** can automatically generate a `manifest.json` from the `.library` file when no hand-written `manifest.json` is present. This allows library developers to keep the `.library` file as the single source of truth while still benefiting from the manifest at runtime.
+
+> **Note:** Starting with UI5 CLI Specification Version 5.0, the automatic generation of `manifest.json` from `.library` files is no longer performed for library projects. Libraries using Specification Version 5.0 or higher must provide a `manifest.json` directly in their source directory.
+>
+> **This does not apply to OpenUI5 framework libraries**, for which `manifest.json` continues to be generated automatically from the `.library` file. A `manifest.json` can still be maintained manually for these libraries, but doing so disables the automatic generation.
+
+The following table documents how `.library` entries map to the generated `manifest.json` properties:
+
+| manifest.json | .library | Comment |
+|---|---|---|
+| `sap.app/ach` | `appData/ownership/component` | |
+| `sap.app/applicationVersion/version` | `version` | |
+| `sap.app/description` | `documentation` | Text symbol syntax (`{{...}}`) |
+| `sap.app/embeds` | — | Generated |
+| `sap.app/i18n` | `appData/manifest/i18n` | |
+| `sap.app/id` | `name` | |
+| `sap.app/offline` | `appData/manifest/offline` | |
+| `sap.app/openSourceComponents` | `appData/manifest/openSourceComponents` | |
+| `sap.app/resources` | — | Generated with value `resources.json` |
+| `sap.app/title` | `title` | Text symbol syntax (`{{...}}`) |
+| `sap.app/type` | — | Generated with value `library` |
+| `sap.ui/supportedThemes` | — | Generated and merged. Starting with UI5 CLI v4.0.62, generation is only done when the manifest version is lower than 2.0.0. With UI5 CLI v5, generation of this property is no longer performed. |
+| `sap.ui/technology` | — | Generated with value `UI5` |
+| `sap.ui5/contentDensities` | `appData/manifest/contentDensities` | |
+| `sap.ui5/dependencies/libs` | `dependencies` | |
+| `sap.ui5/dependencies/minUI5Version` | — | Generated |
+| `sap.ui5/library/css` | `appData/manifest/sap.ui5/library/css` | If present in the `.library` file, this value is used directly. Otherwise, if the `Core#initLibrary` or `Lib.init` call in `library.js` sets `noLibraryCSS` to a truthy value, this property is set to `false`. |
+| `sap.ui5/library/i18n` | `appData/manifest/sap.ui5/library/i18n` | If present in the `.library` file, this value is used directly. Otherwise, the library's resource bundles at the default location (`messagebundle*.properties`) are considered and the property is derived from them if available. If a non-default name or location is used, the `.library` entry is mandatory. Value can be a boolean, a string, or an object. |
+
+Entries marked with "—" in the `.library` column are derived or generated automatically by UI5 CLI and do not require a corresponding entry in the `.library` file.
 
 ### library.js file
 
