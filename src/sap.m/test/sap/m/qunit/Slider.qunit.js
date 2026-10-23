@@ -453,6 +453,38 @@ sap.ui.define([
 		fnDestroyAggregationSpy.restore();
 	});
 
+	QUnit.test("Advanced tooltip input should not overflow its box when glyphs are widened (e.g. letter-spacing)", async function(assert) {
+		// arrange
+		var oStyle = document.createElement("style");
+		oStyle.textContent = ".sapMSliderTooltipInput { letter-spacing: 0.12em !important; word-spacing: 0.16em !important; font-size: 2rem !important; }";
+		document.head.appendChild(oStyle);
+
+		var oSlider = new Slider({
+			width: "300px",
+			min: 0,
+			max: 100000,
+			step: 0.5,
+			value: 99999.5,
+			showAdvancedTooltip: true,
+			inputsAsTooltips: true
+		});
+		oSlider.placeAt("content");
+		await nextUIUpdate();
+
+		// act
+		oSlider._showTooltipsIfNeeded();
+		await nextUIUpdate();
+
+		var oInput = oSlider.getAggregation("_defaultTooltips")[0].getDomRef("input");
+
+		// assert
+		assert.ok(oInput.scrollWidth <= oInput.clientWidth, "The tooltip input content does not overflow its box");
+
+		// cleanup
+		oSlider.destroy();
+		oStyle.remove();
+	});
+
 	QUnit.test("_handleSliderResize is called after Slider is rendered", async function(assert) {
 		var oSlider = new Slider({
 			width: "300px"
