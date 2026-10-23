@@ -7,6 +7,10 @@
 /* Base theme                                  */
 /* =========================================== */
 
+/* Keep AnimDuration as a top-level LESS var: ShellLayout.js reads it synchronously, without a callback, via ThemeParameters.get().
+ * The inline LESS fallback provides a value even before the theme CSS (and its .sapUI5Scope custom properties) is applied. */
+@_sap_ui_unified_ShellLayout_AnimDuration: 500ms;
+
 .sapUI5Scope {
 	--_sap_ui_unified_ShellLayout_BrandHeight: 4px;
 	--_sap_ui_unified_ShellLayout_HeaderBarHeight: 44px;
@@ -49,7 +53,7 @@
 .sapUiUfdShellAnim .sapUiUfdShellHead > div,
 .sapUiUfdShellAnim .sapUiUfdShellCurtain,
 .sapUiUfdShellAnim .sapUiUfdShellCanvas {
-	transition-duration: 500ms;
+	transition-duration: @_sap_ui_unified_ShellLayout_AnimDuration;
 }
 
 .sapUiUfdShellAnim .sapUiUfdShellCanvas {

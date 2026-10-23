@@ -7,17 +7,16 @@
 /* Base theme                                  */
 /* =========================================== */
 
-@_sap_ui_unified_ShellHeader_CenterAnimDuration: 200ms; /*Duration of the transitions of the header center area width (must be defined in ms)*/
-@_sap_ui_unified_ShellHeader_CenterAnimDelay: 30ms; /*Delay of the transitions of the header center area width (must be defined in ms)*/
-@_sap_ui_unified_ShellHeader_ButtonOuterSpace: 4px; /*Left/Right spacing of the header buttons*/
-@_sap_ui_unified_ShellHeader_ButtonInnerSpace: 9px; /*Spacing between icons and text (user button)*/
-@_sap_ui_unified_ShellHeader_ButtonOutlineWidth: 1px;
-@_sap_ui_unified_ShellHeader_ButtonSeparatorWidth: 1px;
-@_sap_ui_unified_ShellHeader_ButtonBorderRadius: 2px;
-@_sap_ui_unified_ShellHeader_BrandHeight: 4px;
-@_sap_ui_unified_ShellHeader_HeaderBarHeight: 44px;
-@_sap_ui_unified_ShellHeader_ButtonHeight: @_sap_ui_unified_ShellHeader_HeaderBarHeight - 2*@_sap_ui_unified_ShellHeader_ButtonOuterSpace;
-@_sap_ui_unified_ShellHeader_AnimDuration: 500ms; /*Duration of the transitions (must be defined in ms)*/
+.sapUI5Scope {
+	--_sap_ui_unified_ShellHeader_ButtonOuterSpace: 4px; /*Left/Right spacing of the header buttons*/
+	--_sap_ui_unified_ShellHeader_ButtonInnerSpace: 9px; /*Spacing between icons and text (user button)*/
+	--_sap_ui_unified_ShellHeader_ButtonOutlineWidth: 1px;
+	--_sap_ui_unified_ShellHeader_ButtonSeparatorWidth: 1px;
+	--_sap_ui_unified_ShellHeader_ButtonBorderRadius: 2px;
+	--_sap_ui_unified_ShellHeader_BrandHeight: 4px;
+	--_sap_ui_unified_ShellHeader_HeaderBarHeight: 44px;
+	--_sap_ui_unified_ShellHeader_ButtonHeight: ~"calc(var(--_sap_ui_unified_ShellHeader_HeaderBarHeight) - 2 * var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace))";
+}
 
 
 .sapUiUfdShellHeader {
@@ -31,12 +30,12 @@
 /* Animations */
 
 .sapUiUfdShellAnim .sapUiUfdShellHeadItmMarker {
-	transition-duration: @_sap_ui_unified_ShellHeader_AnimDuration;
+	transition-duration: 500ms;
 }
 
 .sapUiUfdShellAnim .sapUiUfdShellHeadCenter.sapUiUfdShellAnim {
-	transition-duration: @_sap_ui_unified_ShellHeader_CenterAnimDuration;
-	transition-delay: @_sap_ui_unified_ShellHeader_CenterAnimDelay;
+	transition-duration: 200ms;
+	transition-delay: 30ms;
 	transition-property: left, right;
 	z-index: 1;
 }
@@ -94,7 +93,7 @@
 
 .sapUiUfdShellHeadEnd > .sapUiUfdShellIco > img,
 .sapUiUfdShellHeadBegin > .sapUiUfdShellIco > img {
-	max-height: @_sap_ui_unified_ShellHeader_HeaderBarHeight - @_sap_ui_unified_ShellHeader_BrandHeight * 2;
+	max-height: ~"calc(var(--_sap_ui_unified_ShellHeader_HeaderBarHeight) - var(--_sap_ui_unified_ShellHeader_BrandHeight) * 2)";
 	max-width: 96px;
 	vertical-align: middle;
 }
@@ -113,7 +112,7 @@
 }
 
 .sapUiUfdShellHeadItm {
-	width: @_sap_ui_unified_ShellHeader_HeaderBarHeight;
+	width: var(--_sap_ui_unified_ShellHeader_HeaderBarHeight);
 	height: 100%;
 	display: inline-block;
 	text-decoration: none;
@@ -123,7 +122,7 @@
 }
 
 .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep {
-	width: @_sap_ui_unified_ShellHeader_HeaderBarHeight + 2*@_sap_ui_unified_ShellHeader_ButtonOuterSpace + @_sap_ui_unified_ShellHeader_ButtonSeparatorWidth;
+	width: ~"calc(var(--_sap_ui_unified_ShellHeader_HeaderBarHeight) + 2 * var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace) + var(--_sap_ui_unified_ShellHeader_ButtonSeparatorWidth))";
 }
 
 .sapUiUfdShellHeadItm.sapUiUfdShellHidden {
@@ -131,53 +130,53 @@
 }
 
 .sapUiUfdShellHeadItm > span {
-	width: @_sap_ui_unified_ShellHeader_ButtonHeight;
-	height: @_sap_ui_unified_ShellHeader_ButtonHeight;
+	width: var(--_sap_ui_unified_ShellHeader_ButtonHeight);
+	height: var(--_sap_ui_unified_ShellHeader_ButtonHeight);
 	display: inline-block;
 	font-weight: normal;
-	line-height: @_sap_ui_unified_ShellHeader_ButtonHeight - 2*@_sap_ui_unified_ShellHeader_ButtonOutlineWidth;
+	line-height: ~"calc(var(--_sap_ui_unified_ShellHeader_ButtonHeight) - 2 * var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth))";
 	text-align: center;
-	font-size: @_sap_ui_unified_ShellHeader_HeaderBarHeight / 2;
-	margin: @_sap_ui_unified_ShellHeader_ButtonOuterSpace - @_sap_ui_unified_ShellHeader_ButtonOutlineWidth;
-	margin-top: @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
+	font-size: ~"calc(var(--_sap_ui_unified_ShellHeader_HeaderBarHeight) / 2)";
+	margin: ~"calc(var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace) - var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth))";
+	margin-top: var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace);
 	color: var(--sapButton_IconColor);
-	border-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
-	border: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth solid transparent;
+	border-radius: var(--_sap_ui_unified_ShellHeader_ButtonBorderRadius);
+	border: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) solid transparent;
 	box-sizing: border-box;
 }
 
 .sapUiUfdShellHeadBegin .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep > span {
-	margin-right: 3*@_sap_ui_unified_ShellHeader_ButtonOuterSpace + @_sap_ui_unified_ShellHeader_ButtonSeparatorWidth;
-	margin-left: @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
+	margin-right: ~"calc(3 * var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace) + var(--_sap_ui_unified_ShellHeader_ButtonSeparatorWidth))";
+	margin-left: var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace);
 }
 
 .sapUiUfdShellHeadEnd .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep > span {
-	margin-left: 3*@_sap_ui_unified_ShellHeader_ButtonOuterSpace + @_sap_ui_unified_ShellHeader_ButtonSeparatorWidth;
-	margin-right: @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
+	margin-left: ~"calc(3 * var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace) + var(--_sap_ui_unified_ShellHeader_ButtonSeparatorWidth))";
+	margin-right: var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace);
 }
 
 .sapUiUfdShellHeadUsrItm::before,
 .sapUiUfdShellHeadEnd .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep::before,
 .sapUiUfdShellHeadBegin .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep::after {
 	content: ' ';
-	height: @_sap_ui_unified_ShellHeader_ButtonHeight - @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
-	top: @_sap_ui_unified_ShellHeader_ButtonOuterSpace * 3 / 2;
+	height: ~"calc(var(--_sap_ui_unified_ShellHeader_ButtonHeight) - var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace))";
+	top: ~"calc(var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace) * 3 / 2)";
 	position: absolute;
-	width: @_sap_ui_unified_ShellHeader_ButtonOuterSpace + @_sap_ui_unified_ShellHeader_ButtonSeparatorWidth;
+	width: ~"calc(var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace) + var(--_sap_ui_unified_ShellHeader_ButtonSeparatorWidth))";
 	box-sizing: border-box;
 }
 
 .sapUiUfdShellHeadBegin .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep::after {
 	right: 0;
-	border-right: @_sap_ui_unified_ShellHeader_ButtonOuterSpace solid transparent;
-	border-left: @_sap_ui_unified_ShellHeader_ButtonSeparatorWidth solid var(--sapToolbar_SeparatorColor);
+	border-right: var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace) solid transparent;
+	border-left: var(--_sap_ui_unified_ShellHeader_ButtonSeparatorWidth) solid var(--sapToolbar_SeparatorColor);
 }
 
 .sapUiUfdShellHeadUsrItm::before,
 .sapUiUfdShellHeadEnd .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSep::before {
 	left: 0;
-	border-left: @_sap_ui_unified_ShellHeader_ButtonOuterSpace solid transparent;
-	border-right: @_sap_ui_unified_ShellHeader_ButtonSeparatorWidth solid var(--sapToolbar_SeparatorColor);
+	border-left: var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace) solid transparent;
+	border-right: var(--_sap_ui_unified_ShellHeader_ButtonSeparatorWidth) solid var(--sapToolbar_SeparatorColor);
 }
 
 html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm:hover > span,
@@ -205,9 +204,9 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSel:hover 
 }
 
 .sapUiUfdShellHeadItm > span > img {
-	margin-top: @_sap_ui_unified_ShellHeader_HeaderBarHeight / 4 - 4px;
-	width: @_sap_ui_unified_ShellHeader_HeaderBarHeight / 2;
-	height: @_sap_ui_unified_ShellHeader_HeaderBarHeight / 2;
+	margin-top: ~"calc(var(--_sap_ui_unified_ShellHeader_HeaderBarHeight) / 4 - 4px)";
+	width: ~"calc(var(--_sap_ui_unified_ShellHeader_HeaderBarHeight) / 2)";
+	height: ~"calc(var(--_sap_ui_unified_ShellHeader_HeaderBarHeight) / 2)";
 	border-width: 0;
 }
 
@@ -217,7 +216,7 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSel:hover 
 }
 
 .sapUiUfdShellHeadItm:focus > span {
-	border: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth dotted var(--sapContent_FocusColor);
+	border: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) dotted var(--sapContent_FocusColor);
 }
 
 .sapUiUfdShellSearch {
@@ -228,9 +227,9 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSel:hover 
 	height: 100%;
 	box-sizing: border-box;
 	text-align: left;
-	line-height: @_sap_ui_unified_ShellHeader_HeaderBarHeight - @_sap_ui_unified_ShellHeader_HeaderBarHeight/10;
-	padding-left: @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
-	padding-right: @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
+	line-height: ~"calc(var(--_sap_ui_unified_ShellHeader_HeaderBarHeight) - var(--_sap_ui_unified_ShellHeader_HeaderBarHeight) / 10)";
+	padding-left: var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace);
+	padding-right: var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace);
 }
 
 .sapUiUfdShellSearch.sapUiUfdShellHidden {
@@ -291,7 +290,7 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSel:hover 
 	text-decoration: none;
 	overflow: hidden;
 	position: relative;
-	line-height: @_sap_ui_unified_ShellHeader_HeaderBarHeight;
+	line-height: var(--_sap_ui_unified_ShellHeader_HeaderBarHeight);
 	display: inline-block;
 	vertical-align: top;
 	height: 100%;
@@ -301,38 +300,38 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSel:hover 
 .sapUiUfdShellHeadUsrItm > * {
 	display: inline-block;
 	vertical-align: top;
-	height: @_sap_ui_unified_ShellHeader_ButtonHeight;
-	line-height: @_sap_ui_unified_ShellHeader_ButtonHeight - 2*@_sap_ui_unified_ShellHeader_ButtonOutlineWidth;
-	margin-top: @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
-	margin-bottom: @_sap_ui_unified_ShellHeader_ButtonOuterSpace - @_sap_ui_unified_ShellHeader_ButtonOutlineWidth;
+	height: var(--_sap_ui_unified_ShellHeader_ButtonHeight);
+	line-height: ~"calc(var(--_sap_ui_unified_ShellHeader_ButtonHeight) - 2 * var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth))";
+	margin-top: var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace);
+	margin-bottom: ~"calc(var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace) - var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth))";
 	box-sizing: border-box;
 }
 
 .sapUiUfdShellHeadUsrItmImg {
 	font-weight: normal;
 	text-align: center;
-	font-size: @_sap_ui_unified_ShellHeader_HeaderBarHeight / 2;
-	border-top-left-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
-	border-bottom-left-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
-	margin-left: 3*@_sap_ui_unified_ShellHeader_ButtonOuterSpace + @_sap_ui_unified_ShellHeader_ButtonSeparatorWidth;
-	border-left: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth solid transparent;
-	border-top: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth solid transparent;
-	border-bottom: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth solid transparent;
-	padding-left: @_sap_ui_unified_ShellHeader_ButtonInnerSpace;
-	padding-right: @_sap_ui_unified_ShellHeader_ButtonInnerSpace;
+	font-size: ~"calc(var(--_sap_ui_unified_ShellHeader_HeaderBarHeight) / 2)";
+	border-top-left-radius: var(--_sap_ui_unified_ShellHeader_ButtonBorderRadius);
+	border-bottom-left-radius: var(--_sap_ui_unified_ShellHeader_ButtonBorderRadius);
+	margin-left: ~"calc(3 * var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace) + var(--_sap_ui_unified_ShellHeader_ButtonSeparatorWidth))";
+	border-left: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) solid transparent;
+	border-top: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) solid transparent;
+	border-bottom: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) solid transparent;
+	padding-left: var(--_sap_ui_unified_ShellHeader_ButtonInnerSpace);
+	padding-right: var(--_sap_ui_unified_ShellHeader_ButtonInnerSpace);
 }
 
 .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmImg {
-	border-left: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth dotted var(--sapContent_FocusColor);
-	border-top: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth dotted var(--sapContent_FocusColor);
-	border-bottom: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth dotted var(--sapContent_FocusColor);
+	border-left: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) dotted var(--sapContent_FocusColor);
+	border-top: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) dotted var(--sapContent_FocusColor);
+	border-bottom: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) dotted var(--sapContent_FocusColor);
 }
 
 .sapUiUfdShellHeadUsrItmImg > img {
 	margin-top: 1px;
-	width: @_sap_ui_unified_ShellHeader_ButtonHeight - 2*@_sap_ui_unified_ShellHeader_ButtonOutlineWidth - 2px;
-	height: @_sap_ui_unified_ShellHeader_ButtonHeight - 2*@_sap_ui_unified_ShellHeader_ButtonOutlineWidth - 2px;
-	border-radius: @_sap_ui_unified_ShellHeader_ButtonHeight - 2*@_sap_ui_unified_ShellHeader_ButtonOutlineWidth - 2px;
+	width: ~"calc(var(--_sap_ui_unified_ShellHeader_ButtonHeight) - 2 * var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) - 2px)";
+	height: ~"calc(var(--_sap_ui_unified_ShellHeader_ButtonHeight) - 2 * var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) - 2px)";
+	border-radius: ~"calc(var(--_sap_ui_unified_ShellHeader_ButtonHeight) - 2 * var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) - 2px)";
 	border-width: 0;
 }
 
@@ -340,15 +339,15 @@ html.sapUiMedia-Std-Desktop .sapUiUfdShellHeadItm.sapUiUfdShellHeadItmSel:hover 
 	font-size: 14px;
 	max-width: 241px; /*15rem + 1px*/
 	overflow: hidden;
-	padding-right: @_sap_ui_unified_ShellHeader_ButtonInnerSpace;
+	padding-right: var(--_sap_ui_unified_ShellHeader_ButtonInnerSpace);
 	text-overflow: ellipsis;
-	border-top: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth solid transparent;
-	border-bottom: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth solid transparent;
+	border-top: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) solid transparent;
+	border-bottom: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) solid transparent;
 }
 
 .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmName {
-	border-top: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth dotted var(--sapContent_FocusColor);
-	border-bottom: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth dotted var(--sapContent_FocusColor);
+	border-top: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) dotted var(--sapContent_FocusColor);
+	border-bottom: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) dotted var(--sapContent_FocusColor);
 }
 
 .sapUiUfdShellHeadUsrItmLimit > .sapUiUfdShellHeadUsrItmName,
@@ -358,19 +357,19 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellHeadUsrItmExp {
 }
 
 html.sapUiMedia-Std-Phone .sapUiUfdShellHeadUsrItmImg {
-	margin-right: @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
-	border-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
+	margin-right: var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace);
+	border-radius: var(--_sap_ui_unified_ShellHeader_ButtonBorderRadius);
 }
 
 .sapUiUfdShellHeadUsrItmExp {
 	font-size: 16px;
-	padding-right: @_sap_ui_unified_ShellHeader_ButtonInnerSpace;
-	margin-right: @_sap_ui_unified_ShellHeader_ButtonOuterSpace;
-	border-top-right-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
-	border-bottom-right-radius: @_sap_ui_unified_ShellHeader_ButtonBorderRadius;
-	border-right: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth solid transparent;
-	border-top: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth solid transparent;
-	border-bottom: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth solid transparent;
+	padding-right: var(--_sap_ui_unified_ShellHeader_ButtonInnerSpace);
+	margin-right: var(--_sap_ui_unified_ShellHeader_ButtonOuterSpace);
+	border-top-right-radius: var(--_sap_ui_unified_ShellHeader_ButtonBorderRadius);
+	border-bottom-right-radius: var(--_sap_ui_unified_ShellHeader_ButtonBorderRadius);
+	border-right: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) solid transparent;
+	border-top: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) solid transparent;
+	border-bottom: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) solid transparent;
 }
 
 .sapUiUfdShellHeadUsrItmExp::after {
@@ -380,9 +379,9 @@ html.sapUiMedia-Std-Phone .sapUiUfdShellHeadUsrItmImg {
 }
 
 .sapUiUfdShellHeadUsrItm:focus .sapUiUfdShellHeadUsrItmExp {
-	border-right: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth dotted var(--sapContent_FocusColor);
-	border-top: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth dotted var(--sapContent_FocusColor);
-	border-bottom: @_sap_ui_unified_ShellHeader_ButtonOutlineWidth dotted var(--sapContent_FocusColor);
+	border-right: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) dotted var(--sapContent_FocusColor);
+	border-top: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) dotted var(--sapContent_FocusColor);
+	border-bottom: var(--_sap_ui_unified_ShellHeader_ButtonOutlineWidth) dotted var(--sapContent_FocusColor);
 }
 
 .sapUiUfdShellHeadUsrItmWithoutPopup .sapUiUfdShellHeadUsrItmExp {
