@@ -3,9 +3,12 @@
 /* Base theme                        */
 /* ================================= */
 
-@_sap_ui_table_Row_Color: var(--sapList_TextColor);
-@_sap_ui_table_Row_ColorHovered: @_sap_ui_table_Row_Color;
-@_sap_ui_table_Row_NavigationIndicatorColor: var(--sapList_SelectionBorderColor);
+
+.sapUI5Scope {
+	--_sap_ui_table_Row_Color: var(--sapList_TextColor);
+	--_sap_ui_table_Row_ColorHovered: var(--_sap_ui_table_Row_Color);
+	--_sap_ui_table_Row_NavigationIndicatorColor: var(--sapList_SelectionBorderColor);
+}
 
 .sapUiTableHeaderRow {
 	background-color: var(--sapList_HeaderBackground);
@@ -25,7 +28,7 @@
 
 	&.sapUiTableRowHvr {
 		background-color: var(--sapList_Hover_Background);
-		color: @_sap_ui_table_Row_ColorHovered;
+		color: var(--_sap_ui_table_Row_ColorHovered);
 		cursor: pointer;
 
 		[data-sap-ui] {
@@ -44,11 +47,11 @@
 
 .sapUiTableColHdrTr,
 .sapUiTableTr {
-	color: @_sap_ui_table_Row_Color;
-	height: @_sap_ui_table_RowHeight;
+	color: var(--_sap_ui_table_Row_Color);
+	height: var(--_sap_ui_table_RowHeight);
 
 	.sapUiSizeCozy & {
-		height: @_sap_ui_table_RowHeightCozy;
+		height: var(--_sap_ui_table_RowHeightCozy);
 	}
 }
 
@@ -57,7 +60,7 @@
 	box-sizing: border-box;
 
 	.sapUiSizeCondensed & {
-		height: @_sap_ui_table_RowHeightCondensed;
+		height: var(--_sap_ui_table_RowHeightCondensed);
 	}
 
 	.sapUiTableResizing .sapUiTableCtrlCnt & {
@@ -75,5 +78,5 @@
 	position: absolute;
 	top: 0;
 	right: 0;
-	background-color: @_sap_ui_table_Row_NavigationIndicatorColor;
+	background-color: var(--_sap_ui_table_Row_NavigationIndicatorColor);
 }

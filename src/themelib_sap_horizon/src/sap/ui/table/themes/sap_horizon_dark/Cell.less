@@ -3,12 +3,15 @@
 /* Evening Horizon theme      */
 /* ========================== */
 
-@_sap_ui_table_Cell_FocusOutlineOffset: ~"calc((var(--sapContent_FocusWidth) * -1) - 0.0625rem)";
-@_sap_ui_table_Cell_BorderColorSelected: var(--sapList_SelectionBorderColor);
-@_sap_ui_table_Cell_BorderColorFixedSelected: var(--sapList_SelectionBorderColor);
-@_sap_ui_table_Cell_ShadowColorFixed: @sapUiListTableFixedBorder;
-@_sap_ui_table_Cell_BorderBottomFocus: transparent;
-@_sap_ui_table_Cell_DummyBorderColor: @sapUiListTableFixedBorder;
+
+.sapUI5Scope {
+	--_sap_ui_table_Cell_FocusOutlineOffset: ~"calc((var(--sapContent_FocusWidth) * -1) - 0.0625rem)";
+	--_sap_ui_table_Cell_BorderColorSelected: var(--sapList_SelectionBorderColor);
+	--_sap_ui_table_Cell_BorderColorFixedSelected: var(--sapList_SelectionBorderColor);
+	--_sap_ui_table_Cell_ShadowColorFixed: var(--sapList_TableFixedBorderColor);
+	--_sap_ui_table_Cell_BorderBottomFocus: transparent;
+	--_sap_ui_table_Cell_DummyBorderColor: var(--sapList_TableFixedBorderColor);
+}
 
 .sapUiTableCellDummy {
 

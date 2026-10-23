@@ -3,15 +3,14 @@
 /* Base theme                          */
 /* =================================== */
 
-@_sap_ui_table_Table_HeaderHeight: @_sap_ui_table_BaseSizeCozy;
-@_sap_ui_table_Table_HeaderPaddingLeft: 1rem;
-@_sap_ui_table_Table_HeaderPaddingRight: 1rem;
-@_sap_ui_table_Table_FooterHeight: @_sap_ui_table_BaseSizeCozy;
-@_sap_ui_table_Table_FooterPaddingLeft: 1rem;
-@_sap_ui_table_Table_FooterPaddingRight: 1rem;
-@_sap_ui_table_Table_TableHeaderBorderWidth: @_sap_ui_table_BaseBorderWidth;
 
 /* Can be used in other themes to add styles for which there are no style definitions in the base theme and therefore no theme parameters. */
+.sapUI5Scope {
+	--_sap_ui_table_Table_HeaderPaddingRight: 1rem;
+	--_sap_ui_table_Table_FooterPaddingRight: 1rem;
+	--_sap_ui_table_Table_TableHeaderBorderWidth: var(--_sap_ui_table_BaseBorderWidth);
+}
+
 ._sap_ui_table_Table_TitleContainer() {}
 ._sap_ui_table_Table_ExtensionContainer() {}
 ._sap_ui_table_Table_GridContainer() {}
@@ -35,10 +34,10 @@
 .sapUiTableHdr {
 	display: flex;
 	align-items: center;
-	padding-left: @_sap_ui_table_Table_HeaderPaddingLeft;
-	padding-right: @_sap_ui_table_Table_HeaderPaddingRight;
+	padding-left: 1rem;
+	padding-right: var(--_sap_ui_table_Table_HeaderPaddingRight);
 	background-color: var(--sapGroup_TitleBackground);
-	min-height: @_sap_ui_table_Table_HeaderHeight;
+	min-height: var(--_sap_ui_table_BaseSizeCozy);
 
 	> * {
 		flex: 1 1 auto;
@@ -64,9 +63,9 @@
 	box-sizing: border-box;
 	position: relative;
 	overflow: hidden; /* avoid scrollbar for column resize handlers */
-	border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
-	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
-	border-top: @_sap_ui_table_BaseBorderWidth solid var(--sapList_BorderColor);
+	border-left: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_BorderColor);
+	border-right: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_BorderColor);
+	border-top: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_BorderColor);
 	background-color: var(--sapBackgroundColor);
 
 	._sap_ui_table_Table_GridContainer();
@@ -75,14 +74,14 @@
 .sapUiTableFtr {
 	display: flex;
 	align-items: center;
-	border-bottom: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
-	border-left: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
-	border-right: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
+	border-bottom: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_HeaderBorderColor);
+	border-left: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_HeaderBorderColor);
+	border-right: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_HeaderBorderColor);
 	box-sizing: border-box;
-	min-height: @_sap_ui_table_Table_FooterHeight;
+	min-height: var(--_sap_ui_table_BaseSizeCozy);
 	background-color: var(--sapList_Background);
-	padding-left: @_sap_ui_table_Table_FooterPaddingLeft;
-	padding-right: @_sap_ui_table_Table_FooterPaddingRight;
+	padding-left: 1rem;
+	padding-right: var(--_sap_ui_table_Table_FooterPaddingRight);
 	font-weight: bold;
 
 	> * {
@@ -97,7 +96,7 @@
 .sapUiTablePlaceholder {
 	background-color: var(--sapList_Background);
 	box-sizing: border-box;
-	border-bottom: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
+	border-bottom: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_HeaderBorderColor);
 }
 
 .sapUiTableOuterAfter,
@@ -260,8 +259,8 @@
 	max-width: 100%;
 	overflow: hidden;
 	white-space: nowrap;
-	min-height: @_sap_ui_table_ColumnHeaderHeight;
-	border-bottom: @_sap_ui_table_Table_TableHeaderBorderWidth solid var(--sapList_HeaderBorderColor);
+	min-height: var(--_sap_ui_table_ColumnHeaderHeight);
+	border-bottom: var(--_sap_ui_table_Table_TableHeaderBorderWidth) solid var(--sapList_HeaderBorderColor);
 	color: var(--sapList_TextColor);
 }
 
@@ -270,7 +269,7 @@
 }
 
 .sapUiSizeCozy .sapUiTableColHdrCnt {
-	min-height: @_sap_ui_table_ColumnHeaderHeightCozy;
+	min-height: var(--_sap_ui_table_ColumnHeaderHeightCozy);
 	border-bottom-color: var(--sapList_HeaderBorderColor);
 }
 
@@ -288,11 +287,11 @@
 }
 
 .sapUiTableColHdrScr.sapUiTableHasNoColumns {
-	min-height: @_sap_ui_table_ColumnHeaderHeight;
+	min-height: var(--_sap_ui_table_ColumnHeaderHeight);
 }
 
 .sapUiSizeCozy .sapUiTableColHdrScr.sapUiTableHasNoColumns {
-	min-height: @_sap_ui_table_ColumnHeaderHeightCozy;
+	min-height: var(--_sap_ui_table_ColumnHeaderHeightCozy);
 }
 
 /**********************************************
@@ -305,7 +304,7 @@
 	top: 0;
 	left: 0;
 	box-sizing: border-box;
-	min-height: @_sap_ui_table_RowHeight;
+	min-height: var(--_sap_ui_table_RowHeight);
 	touch-action: none; /* for touch scrolling */
 
 	.sapUiTableRowSelectors &,
@@ -314,45 +313,45 @@
 	}
 
 	.sapUiTableRowSelectors:not(.sapUiTableRowHighlights) & {
-		width: @_sap_ui_table_RowSelectorWidth;
+		width: var(--_sap_ui_table_RowSelectorWidth);
 	}
 
 	.sapUiTableRowHighlights:not(.sapUiTableRowSelectors) & {
-		width: @_sap_ui_table_RowHighlightWidth;
+		width: var(--_sap_ui_table_RowHighlightWidth);
 	}
 
 	.sapUiTableRowHighlights.sapUiTableRowSelectors & {
-		width: calc(@_sap_ui_table_RowSelectorWidth ~"+" @_sap_ui_table_RowHighlightWidth);
+		width: ~"calc(var(--_sap_ui_table_RowSelectorWidth) + var(--_sap_ui_table_RowHighlightWidth))";
 	}
 }
 
 .sapUiSizeCondensed {
 
 	.sapUiTableRowHdrScr {
-		min-height: @_sap_ui_table_RowHeightCondensed;
+		min-height: var(--_sap_ui_table_RowHeightCondensed);
 	}
 
 	.sapUiTableRowSelectors:not(.sapUiTableRowHighlights) .sapUiTableRowHdrScr {
-		width: @_sap_ui_table_RowSelectorWidthCondensed;
+		width: var(--_sap_ui_table_RowSelectorWidthCondensed);
 	}
 
 	.sapUiTableRowHighlights.sapUiTableRowSelectors .sapUiTableRowHdrScr {
-		width: calc(@_sap_ui_table_RowSelectorWidthCondensed ~"+" @_sap_ui_table_RowHighlightWidth);
+		width: ~"calc(var(--_sap_ui_table_RowSelectorWidthCondensed) + var(--_sap_ui_table_RowHighlightWidth))";
 	}
 }
 
 .sapUiSizeCozy {
 
 	.sapUiTableRowHdrScr {
-		min-height: @_sap_ui_table_RowHeightCozy;
+		min-height: var(--_sap_ui_table_RowHeightCozy);
 	}
 
 	.sapUiTableRowSelectors:not(.sapUiTableRowHighlights) .sapUiTableRowHdrScr {
-		width: @_sap_ui_table_RowSelectorWidthCozy;
+		width: var(--_sap_ui_table_RowSelectorWidthCozy);
 	}
 
 	.sapUiTableRowHighlights.sapUiTableRowSelectors .sapUiTableRowHdrScr {
-		width: calc(@_sap_ui_table_RowSelectorWidthCozy ~"+" @_sap_ui_table_RowHighlightWidth);
+		width: ~"calc(var(--_sap_ui_table_RowSelectorWidthCozy) + var(--_sap_ui_table_RowHighlightWidth))";
 	}
 }
 
@@ -396,20 +395,20 @@
 .sapUiTableCCnt {
 	position: relative;
 	overflow: hidden;
-	border-bottom: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
+	border-bottom: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_HeaderBorderColor);
 }
 
 .sapUiTableCtrlCnt {
 	box-sizing: border-box;
-	min-height: @_sap_ui_table_RowHeight;
+	min-height: var(--_sap_ui_table_RowHeight);
 }
 
 .sapUiSizeCozy .sapUiTableCtrlCnt {
-	min-height: @_sap_ui_table_RowHeightCozy;
+	min-height: var(--_sap_ui_table_RowHeightCozy);
 }
 
 .sapUiSizeCondensed .sapUiTableCtrlCnt {
-	min-height: @_sap_ui_table_RowHeightCondensed;
+	min-height: var(--_sap_ui_table_RowHeightCondensed);
 }
 
 .sapUiTableCtrl {
@@ -456,7 +455,7 @@
 
 	.sapUiTableCtrlScr,
 	.sapUiTableCtrlScrFixed {
-		margin-left: @_sap_ui_table_RowSelectorWidth;
+		margin-left: var(--_sap_ui_table_RowSelectorWidth);
 	}
 }
 
@@ -464,7 +463,7 @@
 
 	.sapUiTableCtrlScr,
 	.sapUiTableCtrlScrFixed {
-		margin-left: @_sap_ui_table_RowHighlightWidth;
+		margin-left: var(--_sap_ui_table_RowHighlightWidth);
 	}
 }
 
@@ -472,7 +471,7 @@
 
 	.sapUiTableCtrlScr,
 	.sapUiTableCtrlScrFixed {
-		margin-left: calc(@_sap_ui_table_RowSelectorWidth ~"+" @_sap_ui_table_RowHighlightWidth);
+		margin-left: ~"calc(var(--_sap_ui_table_RowSelectorWidth) + var(--_sap_ui_table_RowHighlightWidth))";
 	}
 }
 
@@ -485,7 +484,7 @@
 
 			.sapUiTableCtrlScr,
 			.sapUiTableCtrlScrFixed {
-				margin-left: @_sap_ui_table_RowSelectorWidthCozy;
+				margin-left: var(--_sap_ui_table_RowSelectorWidthCozy);
 			}
 		}
 	}
@@ -497,7 +496,7 @@
 
 			.sapUiTableCtrlScr,
 			.sapUiTableCtrlScrFixed {
-				margin-left: calc(@_sap_ui_table_RowSelectorWidthCozy ~"+" @_sap_ui_table_RowHighlightWidth);
+				margin-left: ~"calc(var(--_sap_ui_table_RowSelectorWidthCozy) + var(--_sap_ui_table_RowHighlightWidth))";
 			}
 		}
 	}
@@ -512,7 +511,7 @@
 
 			.sapUiTableCtrlScr,
 			.sapUiTableCtrlScrFixed {
-				margin-left: @_sap_ui_table_RowSelectorWidthCondensed;
+				margin-left: var(--_sap_ui_table_RowSelectorWidthCondensed);
 			}
 		}
 	}
@@ -524,7 +523,7 @@
 
 			.sapUiTableCtrlScr,
 			.sapUiTableCtrlScrFixed {
-				margin-left: calc(@_sap_ui_table_RowSelectorWidthCondensed ~"+" @_sap_ui_table_RowHighlightWidth);
+				margin-left: ~"calc(var(--_sap_ui_table_RowSelectorWidthCondensed) + var(--_sap_ui_table_RowHighlightWidth))";
 			}
 		}
 	}

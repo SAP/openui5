@@ -3,8 +3,11 @@
 /* Base theme                     */
 /* ============================== */
 
-@_sap_ui_table_DragDrop_ColumnDnDHighlightColor: @sapUiListHighlightColor;
-@_sap_ui_table_DragDrop_ReorderIndicatorWidth: 2px;
+
+.sapUI5Scope {
+	--_sap_ui_table_DragDrop_ColumnDnDHighlightColor: var(--sapList_HighlightColor);
+	--_sap_ui_table_DragDrop_ReorderIndicatorWidth: 2px;
+}
 
 .sapUiTableDragDrop {
 	cursor: move;
@@ -30,14 +33,14 @@
 	width: auto;
 	max-width: 200px;
 	cursor: pointer;
-	border: @_sap_ui_table_BaseBorderWidth solid var(--sapList_BorderColor);
+	border: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_BorderColor);
 	background-color: var(--sapList_HeaderBackground);
 	box-shadow: @sapUiShadowLevel2;
 }
 
 .sapUiSizeCozy.sapUiTableHeaderCell.sapUiTableColReorderGhost .sapUiTableCellInner > * {
 	height: 100%;
-	line-height: @_sap_ui_table_BaseSizeCozy;
+	line-height: var(--_sap_ui_table_BaseSizeCozy);
 }
 
 .sapUiSizeCozy.sapUiTableHeaderCell.sapUiTableColReorderGhost {
@@ -50,14 +53,14 @@
 	top: 0;
 	bottom: 0;
 	left: auto; /*set dynamically*/
-	width: 4 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	margin-left: (-4) * @_sap_ui_table_DragDrop_ReorderIndicatorWidth + @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	width: ~"calc(4 * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth))";
+	margin-left: ~"calc((-4) * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth) + var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth))";
 	z-index: 3;
 	display: none;
 }
 
 html[dir=rtl] .sapUiTableColReorderIndicator {
-	margin-right: (-4) * @_sap_ui_table_DragDrop_ReorderIndicatorWidth + 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	margin-right: ~"calc((-4) * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth) + 2 * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth))";
 }
 
 .sapUiTableColReorderIndicatorActive {
@@ -71,11 +74,11 @@ html[data-sap-ui-animation^='on'] .sapUiTableColReorderIndicator {
 
 .sapUiTableColReorderIndicatorInner {
 	position: absolute;
-	top: 4 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	left: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	top: ~"calc(4 * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth))";
+	left: ~"calc(2 * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth))";
 	bottom: 0;
-	width: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
+	width: var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth);
+	background-color: var(--_sap_ui_table_DragDrop_ColumnDnDHighlightColor);
 }
 
 .sapUiTableColReorderIndicatorArrow {
@@ -93,19 +96,19 @@ html[data-sap-ui-animation^='on'] .sapUiTableColReorderIndicator {
 }
 
 .sapUiTableColReorderIndicatorArrow::after {
-	height: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	width: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	border-radius: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	top: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	left: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	height: ~"calc(2 * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth))";
+	width: ~"calc(2 * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth))";
+	border-radius: var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth);
+	top: var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth);
+	left: var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth);
 	background-color: var(--sapList_HeaderBackground);
 }
 
 .sapUiTableColReorderIndicatorArrow::before {
-	height: 4 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	width: 4 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	border-radius: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
+	height: ~"calc(4 * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth))";
+	width: ~"calc(4 * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth))";
+	border-radius: ~"calc(2 * var(--_sap_ui_table_DragDrop_ReorderIndicatorWidth))";
+	background-color: var(--_sap_ui_table_DragDrop_ColumnDnDHighlightColor);
 }
 
 .sapUiTableColReorderFade {
@@ -152,7 +155,7 @@ html[dir=rtl] .sapUiTableColRsz {
 }
 
 html.sap-desktop .sapUiTableColRsz:hover {
-	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
+	background-color: var(--_sap_ui_table_DragDrop_ColumnDnDHighlightColor);
 	opacity: 0.5;
 }
 
@@ -161,7 +164,7 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 	background: linear-gradient(
 		to left,
 		transparent 0% 40%,
-		@_sap_ui_table_DragDrop_ColumnDnDHighlightColor 40% 60%,
+		var(--_sap_ui_table_DragDrop_ColumnDnDHighlightColor) 40% 60%,
 		transparent 60%
 	);
 	opacity: 1;
@@ -277,19 +280,19 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 		position: absolute;
 		top: -0.625rem;
 		right: 0;
-		height: @_sap_ui_table_RowHeight;
-		width: @_sap_ui_table_RowHeight;
+		height: var(--_sap_ui_table_RowHeight);
+		width: var(--_sap_ui_table_RowHeight);
 
 		.sapUiSizeCozy &,
 		.sapUiSizeCozy& {
-			height: @_sap_ui_table_RowHeightCozy;
-			width: @_sap_ui_table_RowHeightCozy;
+			height: var(--_sap_ui_table_RowHeightCozy);
+			width: var(--_sap_ui_table_RowHeightCozy);
 		}
 
 		.sapUiSizeCondensed &,
 		.sapUiSizeCondensed& {
-			height: @_sap_ui_table_RowHeightCondensed;
-			width: @_sap_ui_table_RowHeightCondensed;
+			height: var(--_sap_ui_table_RowHeightCondensed);
+			width: var(--_sap_ui_table_RowHeightCondensed);
 		}
 
 		display: flex;

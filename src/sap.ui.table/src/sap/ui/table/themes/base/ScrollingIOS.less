@@ -13,7 +13,7 @@
 		position: relative;
 		background-color: #949494;
 		border-radius: 0.25rem;
-		left: @_sap_ui_table_BaseBorderWidth;
-		width: calc(100% ~"-" calc(2 * @_sap_ui_table_BaseBorderWidth));
+		left: var(--_sap_ui_table_BaseBorderWidth);
+		width: ~"calc(100% - 2 * var(--_sap_ui_table_BaseBorderWidth))";
 	}
 }

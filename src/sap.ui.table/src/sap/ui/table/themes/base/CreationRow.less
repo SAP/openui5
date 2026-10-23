@@ -6,12 +6,12 @@
 .sapUiTableCreationRow {
 	display: flex;
 	background-color: var(--sapList_HeaderBackground);
-	border-bottom: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
+	border-bottom: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_HeaderBorderColor);
 
 	> .sapUiTableCreationRowBeginSection {
 		flex: none;
 		position: relative;
-		border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
+		border-right: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_BorderColor);
 	}
 
 	> .sapUiTableCreationRowMiddleSection {
@@ -29,7 +29,7 @@
 		}
 
 		&.sapUiTableVSbBg {
-			border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor !important;
+			border-left: var(--_sap_ui_table_BaseBorderWidth) solid var(--sapList_BorderColor) !important;
 			box-sizing: content-box !important;
 		}
 	}
@@ -55,25 +55,25 @@
 
 			/* Fixed data column border */
 			&.sapUiTableCellLastFixed {
-				border-right-color: @sapUiListTableFixedBorder;
+				border-right-color: var(--sapList_TableFixedBorderColor);
 			}
 
 			/* Row action column border */
 			.sapUiTableHScr &.sapUiTableRowActionHeaderCell {
-				border-left-color: @sapUiListTableFixedBorder;
+				border-left-color: var(--sapList_TableFixedBorderColor);
 			}
 
 			/* The height is fixed to the default row height (or the application defined height, see TableRenderer) until variable row heights are */
 			/* generally supported. */
 			> .sapUiTableCellInner {
-				max-height: @_sap_ui_table_BaseSize;
+				max-height: var(--_sap_ui_table_BaseSize);
 
 				.sapUiSizeCozy & {
-					max-height: @_sap_ui_table_BaseSizeCozy;
+					max-height: var(--_sap_ui_table_BaseSizeCozy);
 				}
 
 				.sapUiSizeCondensed & {
-					max-height: @_sap_ui_table_BaseSizeCondensed;
+					max-height: var(--_sap_ui_table_BaseSizeCondensed);
 				}
 			}
 		}

@@ -3,25 +3,15 @@
 /* Base theme                         */
 /* ================================== */
 
-@_sap_ui_table_RowHighlight_SuccessColor: var(--sapSuccessBorderColor);
-@_sap_ui_table_RowHighlight_ErrorColor: var(--sapErrorBorderColor);
-@_sap_ui_table_RowHighlight_WarningColor: var(--sapWarningBorderColor);
-@_sap_ui_table_RowHighlight_InformationColor: var(--sapInformationBorderColor);
-@_sap_ui_table_RowHighlight_Indication01Color: var(--sapIndicationColor_1);
-@_sap_ui_table_RowHighlight_Indication02Color: var(--sapIndicationColor_2);
-@_sap_ui_table_RowHighlight_Indication03Color: var(--sapIndicationColor_3);
-@_sap_ui_table_RowHighlight_Indication04Color: var(--sapIndicationColor_4);
-@_sap_ui_table_RowHighlight_Indication05Color: var(--sapIndicationColor_5);
-@_sap_ui_table_RowHighlight_Indication06Color: var(--sapIndicationColor_6);
-@_sap_ui_table_RowHighlight_Indication07Color: var(--sapIndicationColor_7);
-@_sap_ui_table_RowHighlight_Indication08Color: var(--sapIndicationColor_8);
-@_sap_ui_table_RowHighlight_Indication09Color: var(--sapIndicationColor_9);
-@_sap_ui_table_RowHighlight_Indication10Color: var(--sapIndicationColor_10);
+
+.sapUI5Scope {
+	--_sap_ui_table_RowHighlight_InformationColor: var(--sapInformationBorderColor);
+}
 
 .sapUiTableRowHighlight {
 	height: 100%;
-	width: @_sap_ui_table_RowHighlightIndicatorWidth;
-	border-right: @_sap_ui_table_RowHighlightBorderRightWidth solid var(--sapList_Background);
+	width: 0.375rem;
+	border-right: 0.0625rem solid var(--sapList_Background);
 
 	&.sapUiTableRowHighlightNone {
 		border-right-color: transparent;
@@ -33,58 +23,58 @@
 	}
 
 	&.sapUiTableRowHighlightSuccess {
-		background-color: @_sap_ui_table_RowHighlight_SuccessColor;
+		background-color: var(--sapSuccessBorderColor);
 	}
 
 	&.sapUiTableRowHighlightError {
-		background-color: @_sap_ui_table_RowHighlight_ErrorColor;
+		background-color: var(--sapErrorBorderColor);
 	}
 
 	&.sapUiTableRowHighlightWarning {
-		background-color: @_sap_ui_table_RowHighlight_WarningColor;
+		background-color: var(--sapWarningBorderColor);
 	}
 
 	&.sapUiTableRowHighlightInformation {
-		background-color: @_sap_ui_table_RowHighlight_InformationColor;
+		background-color: var(--_sap_ui_table_RowHighlight_InformationColor);
 	}
 
 	&.sapUiTableRowHighlightIndication01 {
-		background-color: @_sap_ui_table_RowHighlight_Indication01Color;
+		background-color: var(--sapIndicationColor_1);
 	}
 
 	&.sapUiTableRowHighlightIndication02 {
-		background-color: @_sap_ui_table_RowHighlight_Indication02Color;
+		background-color: var(--sapIndicationColor_2);
 	}
 
 	&.sapUiTableRowHighlightIndication03 {
-		background-color: @_sap_ui_table_RowHighlight_Indication03Color;
+		background-color: var(--sapIndicationColor_3);
 	}
 
 	&.sapUiTableRowHighlightIndication04 {
-		background-color: @_sap_ui_table_RowHighlight_Indication04Color;
+		background-color: var(--sapIndicationColor_4);
 	}
 
 	&.sapUiTableRowHighlightIndication05 {
-		background-color: @_sap_ui_table_RowHighlight_Indication05Color;
+		background-color: var(--sapIndicationColor_5);
 	}
 
 	&.sapUiTableRowHighlightIndication06 {
-		background-color: @_sap_ui_table_RowHighlight_Indication06Color;
+		background-color: var(--sapIndicationColor_6);
 	}
 
 	&.sapUiTableRowHighlightIndication07 {
-		background-color: @_sap_ui_table_RowHighlight_Indication07Color;
+		background-color: var(--sapIndicationColor_7);
 	}
 
 	&.sapUiTableRowHighlightIndication08 {
-		background-color: @_sap_ui_table_RowHighlight_Indication08Color;
+		background-color: var(--sapIndicationColor_8);
 	}
 
 	&.sapUiTableRowHighlightIndication09 {
-		background-color: @_sap_ui_table_RowHighlight_Indication09Color;
+		background-color: var(--sapIndicationColor_9);
 	}
 
 	&.sapUiTableRowHighlightIndication10 {
-		background-color: @_sap_ui_table_RowHighlight_Indication10Color;
+		background-color: var(--sapIndicationColor_10);
 	}
 }
