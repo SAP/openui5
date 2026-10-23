@@ -449,7 +449,6 @@ sap.ui.define([
 		 * @throws {TypeError} When <code>sLanguage</code> can't be interpreted as a BCP47 language or when
 		 *   <code>sSAPLanguage</code> is given and can't be interpreted as SAP language code.
 		 *
-		 * @see http://scn.sap.com/docs/DOC-14377
 		 * @public
 		 * @since 1.120.0
 		 */
