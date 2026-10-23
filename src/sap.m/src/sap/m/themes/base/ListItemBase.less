@@ -4,12 +4,11 @@
 /* =================================== */
 
 @_sap_m_ListItemBase_DeleteIcon: sys-cancel;
-@_sap_m_ListItemBase_ButtonMarginTop: auto;
-@_sap_m_ListItemBase_Highlight_InformationColor: var(--sapInformationBorderColor);
-@_sap_m_ListItemBase_Navigated: var(--sapList_SelectionBorderColor);
-@_sap_m_ListItemBase_Detail_Delete_MarginLeft: 0.125rem;
-@_sap_m_ListItemBase_Focus_Outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
-@_sap_m_ListItemBase_Focus_OffsetWithGap: calc(-@sapUiContentFocusWidth ~"- 0.0625rem");
+
+.sapUI5Scope {
+	--_sap_m_ListItemBase_Highlight_InformationColor: var(--sapInformationBorderColor);
+	--_sap_m_ListItemBase_Detail_Delete_MarginLeft: 0.125rem;
+}
 
 .sapMLIB {
 	display: flex;
@@ -24,7 +23,7 @@
 .sapMLIB > .sapMLIBImgNav,
 .sapMLIB > .sapMLIBIconDet,
 .sapMLIB > .sapMLIBIconDel {
-	margin-left: @_sap_m_ListItemBase_Detail_Delete_MarginLeft;
+	margin-left: var(--_sap_m_ListItemBase_Detail_Delete_MarginLeft);
 }
 
 .sapMLIBContent {
@@ -35,8 +34,8 @@
 
 .sapMLIBFocusable:focus,
 .sapMTblCellFocusable:focus {
-	outline: @_sap_m_ListItemBase_Focus_Outline;
-	outline-offset: @_sap_m_ListItemBase_Focus_OffsetWithGap;
+	outline: var(--_sap_m_ListItemBase_Focus_Outline);
+	outline-offset: var(--_sap_m_ListItemBase_Focus_OffsetWithGap);
 }
 
 /* makes the focus outline visible when hightlight is used */
@@ -102,7 +101,7 @@
 }
 
 .sapMLIBHighlightInformation {
-	background: @_sap_m_ListItemBase_Highlight_InformationColor;
+	background: var(--_sap_m_ListItemBase_Highlight_InformationColor);
 }
 
 .sapMLIBHighlightSuccess {
@@ -279,7 +278,7 @@
 	right: 0;
 	top: 0;
 	bottom: 0;
-	background-color: @_sap_m_ListItemBase_Navigated;
+	background-color: var(--sapList_SelectionBorderColor);
 }
 
 /* to make the focus outline visible when navigated=true */
