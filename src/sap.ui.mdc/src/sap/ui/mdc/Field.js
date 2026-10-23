@@ -550,7 +550,8 @@ sap.ui.define([
 
 		if (this.getCurrentContent().length > 1) {
 			// in unit/currency field update value with change event to prevent update by navigating from number to unit
-			if (aConditions) {
+			if (aConditions && bValid) {
+				// if invalid don't update value as this might remove the error message. (There is no real change in error case only between null/undefined)
 				_updateValue.call(this, this.getConditions());
 			} else if (oPromise) {
 				// update value after Promise resolved
